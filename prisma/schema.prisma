@@ -1,0 +1,502 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../server/generated/prisma"
+}
+
+enum Role {
+  user
+  creator
+  moderator
+  admin
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum TransactionType {
+  EARN_AD
+  BUY_CHAPTER
+  BUY_POINTS
+  WITHDRAWAL
+  REFERRAL_BONUS
+}
+
+enum SeriesType {
+  MANHWA
+  MANGA
+  MANHUA
+  COMIC
+}
+
+enum SeriesStatus {
+  ONGOING
+  COMPLETED
+  HIATUS
+  DROPPED
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+model User {
+  id            String    @id @default(uuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          Role      @default(user)
+  banned        Boolean   @default(false)
+  banReason     String?
+  banExpires    DateTime?
+  points        Int       @default(0)
+
+  transactionsFrozen Boolean @default(false)
+  referralCode       String?  @unique @default(uuid())
+  referredById       String?
+  referredBy         User?   @relation("Referrals", fields: [referredById], references: [id])
+  referrals          User[]  @relation("Referrals")
+
+  dailyAdViews        Int      @default(0)
+  dailyAdPointsEarned Int      @default(0)
+  lastAdWatchDate     DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions          Session[]
+  accounts          Account[]
+  bookmarks         Bookmark[]
+  history           History[]
+  pointTransactions PointTransaction[]
+  chapterPurchases  ChapterPurchase[]
+  payments          Payment[]
+
+  creatorProfile     CreatorProfile?
+  series             Series[]
+  seriesApplications SeriesApplication[]
+  withdrawals        WithdrawalRequest[]
+  comments           Comment[]
+  reviews            Review[]
+  reports            Report[]
+  featuredRequests   FeaturedRequest[]
+  achievements       UserAchievement[]
+  chatMessages       ChatMessage[]
+
+  @@map("user")
+}
+
+model CreatorProfile {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channelName     String
+  description     String?
+  bannerUrl       String?
+  profileImage    String?
+  totalEarnings   Int     @default(0)
+  withdrawnAmount Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("creator_profile")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+model Series {
+  id          String       @id @default(uuid())
+  creatorId   String?
+  creator     User?         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  title       String
+  slug        String       @unique
+  altTitles   String?
+  description String?
+  coverUrl    String?
+  bgUrl       String?
+  type        SeriesType   @default(MANHWA)
+  status      SeriesStatus @default(ONGOING)
+  rating      Float        @default(0.0)
+  favorites   Int          @default(0)
+  totalViews  Int          @default(0)
+  isPinned    Boolean      @default(false)
+  discount    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  genres    Genre[]
+  chapters  Chapter[]
+  bookmarks Bookmark[]
+  history   History[]
+  featured  FeaturedSeries?
+  reviews   Review[]
+  reports   Report[]
+  featuredRequests FeaturedRequest[]
+
+  @@map("series")
+}
+
+model SeriesApplication {
+  id          String            @id @default(uuid())
+  creatorId   String
+  creator     User              @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  status      ApplicationStatus @default(PENDING)
+  notes       String? // Mod/Admin feedback
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@map("series_application")
+}
+
+model FeaturedSeries {
+  id        String   @id @default(uuid())
+  seriesId  String   @unique
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("featured_series")
+}
+
+model SiteConfig {
+  id                   String   @id @default("global")
+  announceText         String?
+  announceLink         String?
+  socialLinks          Json?
+  referralBonusPercent Int      @default(10)
+  referralActiveMonths Int      @default(3)
+  maxDailyAdPoints     Int      @default(1000)
+  pointToFiatRate      Float    @default(0.01) // 1 point = $0.01
+  featuredRequestFee   Int      @default(500)
+  customAdScript       String?
+  updatedAt            DateTime @updatedAt
+
+  @@map("site_config")
+}
+
+model Genre {
+  id     String   @id @default(uuid())
+  name   String   @unique
+  series Series[]
+
+  @@map("genre")
+}
+
+model Chapter {
+  id        String   @id @default(uuid())
+  seriesId  String
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  number    Float
+  title     String?
+  isLocked  Boolean  @default(false)
+  coinCost  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  images    ChapterImage[]
+  history   History[]
+  purchases ChapterPurchase[]
+  comments  Comment[]
+
+  @@unique([seriesId, number])
+  @@map("chapter")
+}
+
+model ChapterImage {
+  id        String  @id @default(uuid())
+  chapterId String
+  chapter   Chapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  url       String
+  order     Int
+
+  @@map("chapter_image")
+}
+
+model Bookmark {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seriesId  String
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, seriesId])
+  @@map("bookmark")
+}
+
+model History {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seriesId  String
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, seriesId])
+  @@map("history")
+}
+
+model PointTransaction {
+  id          String          @id @default(uuid())
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        TransactionType
+  amount      Int
+  description String
+  createdAt   DateTime        @default(now())
+
+  @@map("point_transaction")
+}
+
+model ChapterPurchase {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId   String
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  pointsSpent Int
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, chapterId])
+  @@map("chapter_purchase")
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  amount          Float
+  points          Int
+  currency        String        @default("usd")
+  status          PaymentStatus @default(PENDING)
+  stripeSessionId String?       @unique
+  stripePaymentId String?       @unique
+  packageId       String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([userId])
+  @@map("payment")
+}
+
+model PointPackage {
+  id        String   @id @default(uuid())
+  name      String
+  points    Int
+  price     Float
+  popular   Boolean  @default(false)
+  color     String   @default("blue")
+  icon      String   @default("Zap")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("point_package")
+}
+
+model AdRewardConfig {
+  id          String   @id @default(uuid())
+  countryCode String[]
+  points      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("ad_reward_config")
+}
+
+model CustomAd {
+  id              String   @id @default(uuid())
+  title           String   @default("")
+  imageUrl        String
+  linkUrl         String
+  videoUrl        String?
+  adType          String   @default("BANNER")
+  socialPlatform  String?
+  socialActionUrl String?
+  points          Int
+  isActive        Boolean  @default(true)
+  targetCountries String[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("custom_ad")
+}
+
+model WithdrawalRequest {
+  id              String            @id @default(uuid())
+  userId          String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pointsRequested Int
+  fiatAmount      Float
+  bankDetails     String
+  status          ApplicationStatus @default(PENDING)
+  notes           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@map("withdrawal_request")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId String
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("comment")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seriesId  String
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  rating    Int
+  content   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("review")
+}
+
+model Report {
+  id         String       @id @default(uuid())
+  reporterId String
+  reporter   User         @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reason     String
+  targetType String
+  targetId   String
+  status     ReportStatus @default(PENDING)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  series     Series?      @relation(fields: [seriesId], references: [id])
+  seriesId   String?
+
+  @@map("report")
+}
+
+enum FeaturedRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model FeaturedRequest {
+  id        String                @id @default(uuid())
+  seriesId  String
+  series    Series                @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  creatorId String
+  creator   User                  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  status    FeaturedRequestStatus @default(PENDING)
+  notes     String?
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+
+  @@map("featured_request")
+}
+
+model Achievement {
+  id           String            @id @default(uuid())
+  title        String
+  description  String
+  badgeIcon    String            // Flame, Trophy, Star, Zap, Gem, etc.
+  pointsReward Int               @default(0)
+  createdAt    DateTime          @default(now())
+  users        UserAchievement[]
+
+  @@map("achievement")
+}
+
+model UserAchievement {
+  id            String      @id @default(uuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  unlockedAt    DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+  @@map("user_achievement")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+
+  @@map("chat_message")
+}
+
