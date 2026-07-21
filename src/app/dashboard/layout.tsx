@@ -14,7 +14,7 @@ export default function DashboardLayout({
       <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
       <Sidebar />
-      
+
       <main className="flex-1 md:ml-64 relative min-h-screen flex flex-col">
         {/* Top bar */}
         <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-xl z-[90]">
