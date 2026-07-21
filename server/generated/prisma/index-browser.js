@@ -401,22 +401,6 @@ exports.Prisma.FeaturedRequestScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.AchievementScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  badgeIcon: 'badgeIcon',
-  pointsReward: 'pointsReward',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.UserAchievementScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  achievementId: 'achievementId',
-  unlockedAt: 'unlockedAt'
-};
-
 exports.Prisma.ChatMessageScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -529,8 +513,6 @@ exports.Prisma.ModelName = {
   Review: 'Review',
   Report: 'Report',
   FeaturedRequest: 'FeaturedRequest',
-  Achievement: 'Achievement',
-  UserAchievement: 'UserAchievement',
   ChatMessage: 'ChatMessage'
 };
 

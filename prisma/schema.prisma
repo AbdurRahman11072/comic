@@ -96,7 +96,6 @@ model User {
   reviews            Review[]
   reports            Report[]
   featuredRequests   FeaturedRequest[]
-  achievements       UserAchievement[]
   chatMessages       ChatMessage[]
 
   @@map("user")
@@ -464,30 +463,6 @@ model FeaturedRequest {
   updatedAt DateTime              @updatedAt
 
   @@map("featured_request")
-}
-
-model Achievement {
-  id           String            @id @default(uuid())
-  title        String
-  description  String
-  badgeIcon    String            // Flame, Trophy, Star, Zap, Gem, etc.
-  pointsReward Int               @default(0)
-  createdAt    DateTime          @default(now())
-  users        UserAchievement[]
-
-  @@map("achievement")
-}
-
-model UserAchievement {
-  id            String      @id @default(uuid())
-  userId        String
-  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  achievementId String
-  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
-  unlockedAt    DateTime    @default(now())
-
-  @@unique([userId, achievementId])
-  @@map("user_achievement")
 }
 
 model ChatMessage {

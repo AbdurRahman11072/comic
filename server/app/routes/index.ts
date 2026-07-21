@@ -13,7 +13,6 @@ import { AdRoutes } from '../modules/ad/ad.route';
 import { WithdrawalRoutes } from '../modules/withdrawal/withdrawal.route';
 import { ModeratorRoutes } from '../modules/moderator/moderator.route';
 import { CommunityRoutes } from '../modules/community/community.route';
-import { AchievementRoutes } from '../modules/achievement/achievement.routes';
 
 const router = Router();
 
@@ -69,10 +68,6 @@ const moduleRoutes = [
   {
     path: '/community',
     route: CommunityRoutes,
-  },
-  {
-    path: '/achievements',
-    route: AchievementRoutes,
   },
 ];
 

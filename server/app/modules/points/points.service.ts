@@ -1,7 +1,6 @@
 import httpStatus from 'http-status';
 import { prisma } from '../../../lib/prisma';
 import AppError from '../../error/AppError';
-import { AchievementService } from '../achievement/achievement.service';
 
 const POINTS_PER_AD = 10;
 
@@ -46,19 +45,7 @@ const earnFromAd = async (userId: string, amount: number = 10) => {
     }),
   ]);
 
-  // Run achievement checks
-  try {
-    await AchievementService.checkAndUnlockAchievements(userId);
-  } catch (err) {
-    console.error("Achievement check failed:", err);
-  }
-
-  const finalUser = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { points: true },
-  });
-
-  return { points: finalUser?.points ?? user.points, transaction };
+  return { points: user.points, transaction };
 };
 
 /** Spend points to unlock a locked chapter */
@@ -145,20 +132,7 @@ const buyChapter = async (userId: string, chapterId: string) => {
   const transaction = results[1];
   const purchase = results[2];
 
-  // Run achievement checks
-  try {
-    await AchievementService.checkAndUnlockAchievements(userId);
-  } catch (err) {
-    console.error("Achievement check failed:", err);
-  }
-
-  // Fetch final user balance after achievement rewards
-  const finalUser = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { points: true },
-  });
-
-  return { points: finalUser?.points ?? updatedUser.points, transaction, purchase };
+  return { points: updatedUser.points, transaction, purchase };
 };
 
 export const PointsService = {

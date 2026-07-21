@@ -139,16 +139,6 @@ export type Report = $Result.DefaultSelection<Prisma.$ReportPayload>
  */
 export type FeaturedRequest = $Result.DefaultSelection<Prisma.$FeaturedRequestPayload>
 /**
- * Model Achievement
- * 
- */
-export type Achievement = $Result.DefaultSelection<Prisma.$AchievementPayload>
-/**
- * Model UserAchievement
- * 
- */
-export type UserAchievement = $Result.DefaultSelection<Prisma.$UserAchievementPayload>
-/**
  * Model ChatMessage
  * 
  */
@@ -641,26 +631,6 @@ export class PrismaClient<
   get featuredRequest(): Prisma.FeaturedRequestDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.achievement`: Exposes CRUD operations for the **Achievement** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Achievements
-    * const achievements = await prisma.achievement.findMany()
-    * ```
-    */
-  get achievement(): Prisma.AchievementDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.userAchievement`: Exposes CRUD operations for the **UserAchievement** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more UserAchievements
-    * const userAchievements = await prisma.userAchievement.findMany()
-    * ```
-    */
-  get userAchievement(): Prisma.UserAchievementDelegate<ExtArgs, ClientOptions>;
-
-  /**
    * `prisma.chatMessage`: Exposes CRUD operations for the **ChatMessage** model.
     * Example usage:
     * ```ts
@@ -1128,8 +1098,6 @@ export namespace Prisma {
     Review: 'Review',
     Report: 'Report',
     FeaturedRequest: 'FeaturedRequest',
-    Achievement: 'Achievement',
-    UserAchievement: 'UserAchievement',
     ChatMessage: 'ChatMessage'
   };
 
@@ -1146,7 +1114,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "creatorProfile" | "session" | "account" | "verification" | "series" | "seriesApplication" | "featuredSeries" | "siteConfig" | "genre" | "chapter" | "chapterImage" | "bookmark" | "history" | "pointTransaction" | "chapterPurchase" | "payment" | "pointPackage" | "adRewardConfig" | "customAd" | "withdrawalRequest" | "comment" | "review" | "report" | "featuredRequest" | "achievement" | "userAchievement" | "chatMessage"
+      modelProps: "user" | "creatorProfile" | "session" | "account" | "verification" | "series" | "seriesApplication" | "featuredSeries" | "siteConfig" | "genre" | "chapter" | "chapterImage" | "bookmark" | "history" | "pointTransaction" | "chapterPurchase" | "payment" | "pointPackage" | "adRewardConfig" | "customAd" | "withdrawalRequest" | "comment" | "review" | "report" | "featuredRequest" | "chatMessage"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3000,154 +2968,6 @@ export namespace Prisma {
           }
         }
       }
-      Achievement: {
-        payload: Prisma.$AchievementPayload<ExtArgs>
-        fields: Prisma.AchievementFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.AchievementFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.AchievementFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
-          }
-          findFirst: {
-            args: Prisma.AchievementFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.AchievementFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
-          }
-          findMany: {
-            args: Prisma.AchievementFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>[]
-          }
-          create: {
-            args: Prisma.AchievementCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
-          }
-          createMany: {
-            args: Prisma.AchievementCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.AchievementCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>[]
-          }
-          delete: {
-            args: Prisma.AchievementDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
-          }
-          update: {
-            args: Prisma.AchievementUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
-          }
-          deleteMany: {
-            args: Prisma.AchievementDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.AchievementUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.AchievementUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>[]
-          }
-          upsert: {
-            args: Prisma.AchievementUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AchievementPayload>
-          }
-          aggregate: {
-            args: Prisma.AchievementAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateAchievement>
-          }
-          groupBy: {
-            args: Prisma.AchievementGroupByArgs<ExtArgs>
-            result: $Utils.Optional<AchievementGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.AchievementCountArgs<ExtArgs>
-            result: $Utils.Optional<AchievementCountAggregateOutputType> | number
-          }
-        }
-      }
-      UserAchievement: {
-        payload: Prisma.$UserAchievementPayload<ExtArgs>
-        fields: Prisma.UserAchievementFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.UserAchievementFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.UserAchievementFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>
-          }
-          findFirst: {
-            args: Prisma.UserAchievementFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.UserAchievementFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>
-          }
-          findMany: {
-            args: Prisma.UserAchievementFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>[]
-          }
-          create: {
-            args: Prisma.UserAchievementCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>
-          }
-          createMany: {
-            args: Prisma.UserAchievementCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.UserAchievementCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>[]
-          }
-          delete: {
-            args: Prisma.UserAchievementDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>
-          }
-          update: {
-            args: Prisma.UserAchievementUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>
-          }
-          deleteMany: {
-            args: Prisma.UserAchievementDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.UserAchievementUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.UserAchievementUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>[]
-          }
-          upsert: {
-            args: Prisma.UserAchievementUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$UserAchievementPayload>
-          }
-          aggregate: {
-            args: Prisma.UserAchievementAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateUserAchievement>
-          }
-          groupBy: {
-            args: Prisma.UserAchievementGroupByArgs<ExtArgs>
-            result: $Utils.Optional<UserAchievementGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.UserAchievementCountArgs<ExtArgs>
-            result: $Utils.Optional<UserAchievementCountAggregateOutputType> | number
-          }
-        }
-      }
       ChatMessage: {
         payload: Prisma.$ChatMessagePayload<ExtArgs>
         fields: Prisma.ChatMessageFieldRefs
@@ -3355,8 +3175,6 @@ export namespace Prisma {
     review?: ReviewOmit
     report?: ReportOmit
     featuredRequest?: FeaturedRequestOmit
-    achievement?: AchievementOmit
-    userAchievement?: UserAchievementOmit
     chatMessage?: ChatMessageOmit
   }
 
@@ -3453,7 +3271,6 @@ export namespace Prisma {
     reviews: number
     reports: number
     featuredRequests: number
-    achievements: number
     chatMessages: number
   }
 
@@ -3473,7 +3290,6 @@ export namespace Prisma {
     reviews?: boolean | UserCountOutputTypeCountReviewsArgs
     reports?: boolean | UserCountOutputTypeCountReportsArgs
     featuredRequests?: boolean | UserCountOutputTypeCountFeaturedRequestsArgs
-    achievements?: boolean | UserCountOutputTypeCountAchievementsArgs
     chatMessages?: boolean | UserCountOutputTypeCountChatMessagesArgs
   }
 
@@ -3591,13 +3407,6 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountFeaturedRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: FeaturedRequestWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountAchievementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UserAchievementWhereInput
   }
 
   /**
@@ -3779,37 +3588,6 @@ export namespace Prisma {
    */
   export type ChapterCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommentWhereInput
-  }
-
-
-  /**
-   * Count Type AchievementCountOutputType
-   */
-
-  export type AchievementCountOutputType = {
-    users: number
-  }
-
-  export type AchievementCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | AchievementCountOutputTypeCountUsersArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * AchievementCountOutputType without action
-   */
-  export type AchievementCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AchievementCountOutputType
-     */
-    select?: AchievementCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * AchievementCountOutputType without action
-   */
-  export type AchievementCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UserAchievementWhereInput
   }
 
 
@@ -4144,7 +3922,6 @@ export namespace Prisma {
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     reports?: boolean | User$reportsArgs<ExtArgs>
     featuredRequests?: boolean | User$featuredRequestsArgs<ExtArgs>
-    achievements?: boolean | User$achievementsArgs<ExtArgs>
     chatMessages?: boolean | User$chatMessagesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -4233,7 +4010,6 @@ export namespace Prisma {
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     reports?: boolean | User$reportsArgs<ExtArgs>
     featuredRequests?: boolean | User$featuredRequestsArgs<ExtArgs>
-    achievements?: boolean | User$achievementsArgs<ExtArgs>
     chatMessages?: boolean | User$chatMessagesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -4264,7 +4040,6 @@ export namespace Prisma {
       reviews: Prisma.$ReviewPayload<ExtArgs>[]
       reports: Prisma.$ReportPayload<ExtArgs>[]
       featuredRequests: Prisma.$FeaturedRequestPayload<ExtArgs>[]
-      achievements: Prisma.$UserAchievementPayload<ExtArgs>[]
       chatMessages: Prisma.$ChatMessagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -4697,7 +4472,6 @@ export namespace Prisma {
     reviews<T extends User$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reports<T extends User$reportsArgs<ExtArgs> = {}>(args?: Subset<T, User$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     featuredRequests<T extends User$featuredRequestsArgs<ExtArgs> = {}>(args?: Subset<T, User$featuredRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeaturedRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    achievements<T extends User$achievementsArgs<ExtArgs> = {}>(args?: Subset<T, User$achievementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     chatMessages<T extends User$chatMessagesArgs<ExtArgs> = {}>(args?: Subset<T, User$chatMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5542,30 +5316,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FeaturedRequestScalarFieldEnum | FeaturedRequestScalarFieldEnum[]
-  }
-
-  /**
-   * User.achievements
-   */
-  export type User$achievementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    where?: UserAchievementWhereInput
-    orderBy?: UserAchievementOrderByWithRelationInput | UserAchievementOrderByWithRelationInput[]
-    cursor?: UserAchievementWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: UserAchievementScalarFieldEnum | UserAchievementScalarFieldEnum[]
   }
 
   /**
@@ -32650,2186 +32400,6 @@ export namespace Prisma {
 
 
   /**
-   * Model Achievement
-   */
-
-  export type AggregateAchievement = {
-    _count: AchievementCountAggregateOutputType | null
-    _avg: AchievementAvgAggregateOutputType | null
-    _sum: AchievementSumAggregateOutputType | null
-    _min: AchievementMinAggregateOutputType | null
-    _max: AchievementMaxAggregateOutputType | null
-  }
-
-  export type AchievementAvgAggregateOutputType = {
-    pointsReward: number | null
-  }
-
-  export type AchievementSumAggregateOutputType = {
-    pointsReward: number | null
-  }
-
-  export type AchievementMinAggregateOutputType = {
-    id: string | null
-    title: string | null
-    description: string | null
-    badgeIcon: string | null
-    pointsReward: number | null
-    createdAt: Date | null
-  }
-
-  export type AchievementMaxAggregateOutputType = {
-    id: string | null
-    title: string | null
-    description: string | null
-    badgeIcon: string | null
-    pointsReward: number | null
-    createdAt: Date | null
-  }
-
-  export type AchievementCountAggregateOutputType = {
-    id: number
-    title: number
-    description: number
-    badgeIcon: number
-    pointsReward: number
-    createdAt: number
-    _all: number
-  }
-
-
-  export type AchievementAvgAggregateInputType = {
-    pointsReward?: true
-  }
-
-  export type AchievementSumAggregateInputType = {
-    pointsReward?: true
-  }
-
-  export type AchievementMinAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    badgeIcon?: true
-    pointsReward?: true
-    createdAt?: true
-  }
-
-  export type AchievementMaxAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    badgeIcon?: true
-    pointsReward?: true
-    createdAt?: true
-  }
-
-  export type AchievementCountAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    badgeIcon?: true
-    pointsReward?: true
-    createdAt?: true
-    _all?: true
-  }
-
-  export type AchievementAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Achievement to aggregate.
-     */
-    where?: AchievementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Achievements to fetch.
-     */
-    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: AchievementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Achievements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Achievements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Achievements
-    **/
-    _count?: true | AchievementCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: AchievementAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: AchievementSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: AchievementMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: AchievementMaxAggregateInputType
-  }
-
-  export type GetAchievementAggregateType<T extends AchievementAggregateArgs> = {
-        [P in keyof T & keyof AggregateAchievement]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateAchievement[P]>
-      : GetScalarType<T[P], AggregateAchievement[P]>
-  }
-
-
-
-
-  export type AchievementGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AchievementWhereInput
-    orderBy?: AchievementOrderByWithAggregationInput | AchievementOrderByWithAggregationInput[]
-    by: AchievementScalarFieldEnum[] | AchievementScalarFieldEnum
-    having?: AchievementScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: AchievementCountAggregateInputType | true
-    _avg?: AchievementAvgAggregateInputType
-    _sum?: AchievementSumAggregateInputType
-    _min?: AchievementMinAggregateInputType
-    _max?: AchievementMaxAggregateInputType
-  }
-
-  export type AchievementGroupByOutputType = {
-    id: string
-    title: string
-    description: string
-    badgeIcon: string
-    pointsReward: number
-    createdAt: Date
-    _count: AchievementCountAggregateOutputType | null
-    _avg: AchievementAvgAggregateOutputType | null
-    _sum: AchievementSumAggregateOutputType | null
-    _min: AchievementMinAggregateOutputType | null
-    _max: AchievementMaxAggregateOutputType | null
-  }
-
-  type GetAchievementGroupByPayload<T extends AchievementGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<AchievementGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof AchievementGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], AchievementGroupByOutputType[P]>
-            : GetScalarType<T[P], AchievementGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type AchievementSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    badgeIcon?: boolean
-    pointsReward?: boolean
-    createdAt?: boolean
-    users?: boolean | Achievement$usersArgs<ExtArgs>
-    _count?: boolean | AchievementCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["achievement"]>
-
-  export type AchievementSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    badgeIcon?: boolean
-    pointsReward?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["achievement"]>
-
-  export type AchievementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    badgeIcon?: boolean
-    pointsReward?: boolean
-    createdAt?: boolean
-  }, ExtArgs["result"]["achievement"]>
-
-  export type AchievementSelectScalar = {
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    badgeIcon?: boolean
-    pointsReward?: boolean
-    createdAt?: boolean
-  }
-
-  export type AchievementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "badgeIcon" | "pointsReward" | "createdAt", ExtArgs["result"]["achievement"]>
-  export type AchievementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | Achievement$usersArgs<ExtArgs>
-    _count?: boolean | AchievementCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type AchievementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type AchievementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-
-  export type $AchievementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Achievement"
-    objects: {
-      users: Prisma.$UserAchievementPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      title: string
-      description: string
-      badgeIcon: string
-      pointsReward: number
-      createdAt: Date
-    }, ExtArgs["result"]["achievement"]>
-    composites: {}
-  }
-
-  type AchievementGetPayload<S extends boolean | null | undefined | AchievementDefaultArgs> = $Result.GetResult<Prisma.$AchievementPayload, S>
-
-  type AchievementCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<AchievementFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: AchievementCountAggregateInputType | true
-    }
-
-  export interface AchievementDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Achievement'], meta: { name: 'Achievement' } }
-    /**
-     * Find zero or one Achievement that matches the filter.
-     * @param {AchievementFindUniqueArgs} args - Arguments to find a Achievement
-     * @example
-     * // Get one Achievement
-     * const achievement = await prisma.achievement.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends AchievementFindUniqueArgs>(args: SelectSubset<T, AchievementFindUniqueArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Achievement that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {AchievementFindUniqueOrThrowArgs} args - Arguments to find a Achievement
-     * @example
-     * // Get one Achievement
-     * const achievement = await prisma.achievement.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends AchievementFindUniqueOrThrowArgs>(args: SelectSubset<T, AchievementFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Achievement that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AchievementFindFirstArgs} args - Arguments to find a Achievement
-     * @example
-     * // Get one Achievement
-     * const achievement = await prisma.achievement.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends AchievementFindFirstArgs>(args?: SelectSubset<T, AchievementFindFirstArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Achievement that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AchievementFindFirstOrThrowArgs} args - Arguments to find a Achievement
-     * @example
-     * // Get one Achievement
-     * const achievement = await prisma.achievement.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends AchievementFindFirstOrThrowArgs>(args?: SelectSubset<T, AchievementFindFirstOrThrowArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Achievements that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AchievementFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Achievements
-     * const achievements = await prisma.achievement.findMany()
-     * 
-     * // Get first 10 Achievements
-     * const achievements = await prisma.achievement.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const achievementWithIdOnly = await prisma.achievement.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends AchievementFindManyArgs>(args?: SelectSubset<T, AchievementFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Achievement.
-     * @param {AchievementCreateArgs} args - Arguments to create a Achievement.
-     * @example
-     * // Create one Achievement
-     * const Achievement = await prisma.achievement.create({
-     *   data: {
-     *     // ... data to create a Achievement
-     *   }
-     * })
-     * 
-     */
-    create<T extends AchievementCreateArgs>(args: SelectSubset<T, AchievementCreateArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Achievements.
-     * @param {AchievementCreateManyArgs} args - Arguments to create many Achievements.
-     * @example
-     * // Create many Achievements
-     * const achievement = await prisma.achievement.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends AchievementCreateManyArgs>(args?: SelectSubset<T, AchievementCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Achievements and returns the data saved in the database.
-     * @param {AchievementCreateManyAndReturnArgs} args - Arguments to create many Achievements.
-     * @example
-     * // Create many Achievements
-     * const achievement = await prisma.achievement.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Achievements and only return the `id`
-     * const achievementWithIdOnly = await prisma.achievement.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends AchievementCreateManyAndReturnArgs>(args?: SelectSubset<T, AchievementCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Achievement.
-     * @param {AchievementDeleteArgs} args - Arguments to delete one Achievement.
-     * @example
-     * // Delete one Achievement
-     * const Achievement = await prisma.achievement.delete({
-     *   where: {
-     *     // ... filter to delete one Achievement
-     *   }
-     * })
-     * 
-     */
-    delete<T extends AchievementDeleteArgs>(args: SelectSubset<T, AchievementDeleteArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Achievement.
-     * @param {AchievementUpdateArgs} args - Arguments to update one Achievement.
-     * @example
-     * // Update one Achievement
-     * const achievement = await prisma.achievement.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends AchievementUpdateArgs>(args: SelectSubset<T, AchievementUpdateArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Achievements.
-     * @param {AchievementDeleteManyArgs} args - Arguments to filter Achievements to delete.
-     * @example
-     * // Delete a few Achievements
-     * const { count } = await prisma.achievement.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends AchievementDeleteManyArgs>(args?: SelectSubset<T, AchievementDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Achievements.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AchievementUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Achievements
-     * const achievement = await prisma.achievement.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends AchievementUpdateManyArgs>(args: SelectSubset<T, AchievementUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Achievements and returns the data updated in the database.
-     * @param {AchievementUpdateManyAndReturnArgs} args - Arguments to update many Achievements.
-     * @example
-     * // Update many Achievements
-     * const achievement = await prisma.achievement.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Achievements and only return the `id`
-     * const achievementWithIdOnly = await prisma.achievement.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends AchievementUpdateManyAndReturnArgs>(args: SelectSubset<T, AchievementUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Achievement.
-     * @param {AchievementUpsertArgs} args - Arguments to update or create a Achievement.
-     * @example
-     * // Update or create a Achievement
-     * const achievement = await prisma.achievement.upsert({
-     *   create: {
-     *     // ... data to create a Achievement
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Achievement we want to update
-     *   }
-     * })
-     */
-    upsert<T extends AchievementUpsertArgs>(args: SelectSubset<T, AchievementUpsertArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Achievements.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AchievementCountArgs} args - Arguments to filter Achievements to count.
-     * @example
-     * // Count the number of Achievements
-     * const count = await prisma.achievement.count({
-     *   where: {
-     *     // ... the filter for the Achievements we want to count
-     *   }
-     * })
-    **/
-    count<T extends AchievementCountArgs>(
-      args?: Subset<T, AchievementCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], AchievementCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Achievement.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AchievementAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends AchievementAggregateArgs>(args: Subset<T, AchievementAggregateArgs>): Prisma.PrismaPromise<GetAchievementAggregateType<T>>
-
-    /**
-     * Group by Achievement.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AchievementGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends AchievementGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: AchievementGroupByArgs['orderBy'] }
-        : { orderBy?: AchievementGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, AchievementGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAchievementGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Achievement model
-   */
-  readonly fields: AchievementFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Achievement.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__AchievementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    users<T extends Achievement$usersArgs<ExtArgs> = {}>(args?: Subset<T, Achievement$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Achievement model
-   */
-  interface AchievementFieldRefs {
-    readonly id: FieldRef<"Achievement", 'String'>
-    readonly title: FieldRef<"Achievement", 'String'>
-    readonly description: FieldRef<"Achievement", 'String'>
-    readonly badgeIcon: FieldRef<"Achievement", 'String'>
-    readonly pointsReward: FieldRef<"Achievement", 'Int'>
-    readonly createdAt: FieldRef<"Achievement", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Achievement findUnique
-   */
-  export type AchievementFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which Achievement to fetch.
-     */
-    where: AchievementWhereUniqueInput
-  }
-
-  /**
-   * Achievement findUniqueOrThrow
-   */
-  export type AchievementFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which Achievement to fetch.
-     */
-    where: AchievementWhereUniqueInput
-  }
-
-  /**
-   * Achievement findFirst
-   */
-  export type AchievementFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which Achievement to fetch.
-     */
-    where?: AchievementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Achievements to fetch.
-     */
-    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Achievements.
-     */
-    cursor?: AchievementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Achievements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Achievements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Achievements.
-     */
-    distinct?: AchievementScalarFieldEnum | AchievementScalarFieldEnum[]
-  }
-
-  /**
-   * Achievement findFirstOrThrow
-   */
-  export type AchievementFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which Achievement to fetch.
-     */
-    where?: AchievementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Achievements to fetch.
-     */
-    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Achievements.
-     */
-    cursor?: AchievementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Achievements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Achievements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Achievements.
-     */
-    distinct?: AchievementScalarFieldEnum | AchievementScalarFieldEnum[]
-  }
-
-  /**
-   * Achievement findMany
-   */
-  export type AchievementFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which Achievements to fetch.
-     */
-    where?: AchievementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Achievements to fetch.
-     */
-    orderBy?: AchievementOrderByWithRelationInput | AchievementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Achievements.
-     */
-    cursor?: AchievementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Achievements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Achievements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Achievements.
-     */
-    distinct?: AchievementScalarFieldEnum | AchievementScalarFieldEnum[]
-  }
-
-  /**
-   * Achievement create
-   */
-  export type AchievementCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Achievement.
-     */
-    data: XOR<AchievementCreateInput, AchievementUncheckedCreateInput>
-  }
-
-  /**
-   * Achievement createMany
-   */
-  export type AchievementCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Achievements.
-     */
-    data: AchievementCreateManyInput | AchievementCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Achievement createManyAndReturn
-   */
-  export type AchievementCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * The data used to create many Achievements.
-     */
-    data: AchievementCreateManyInput | AchievementCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Achievement update
-   */
-  export type AchievementUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Achievement.
-     */
-    data: XOR<AchievementUpdateInput, AchievementUncheckedUpdateInput>
-    /**
-     * Choose, which Achievement to update.
-     */
-    where: AchievementWhereUniqueInput
-  }
-
-  /**
-   * Achievement updateMany
-   */
-  export type AchievementUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Achievements.
-     */
-    data: XOR<AchievementUpdateManyMutationInput, AchievementUncheckedUpdateManyInput>
-    /**
-     * Filter which Achievements to update
-     */
-    where?: AchievementWhereInput
-    /**
-     * Limit how many Achievements to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Achievement updateManyAndReturn
-   */
-  export type AchievementUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * The data used to update Achievements.
-     */
-    data: XOR<AchievementUpdateManyMutationInput, AchievementUncheckedUpdateManyInput>
-    /**
-     * Filter which Achievements to update
-     */
-    where?: AchievementWhereInput
-    /**
-     * Limit how many Achievements to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Achievement upsert
-   */
-  export type AchievementUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Achievement to update in case it exists.
-     */
-    where: AchievementWhereUniqueInput
-    /**
-     * In case the Achievement found by the `where` argument doesn't exist, create a new Achievement with this data.
-     */
-    create: XOR<AchievementCreateInput, AchievementUncheckedCreateInput>
-    /**
-     * In case the Achievement was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<AchievementUpdateInput, AchievementUncheckedUpdateInput>
-  }
-
-  /**
-   * Achievement delete
-   */
-  export type AchievementDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-    /**
-     * Filter which Achievement to delete.
-     */
-    where: AchievementWhereUniqueInput
-  }
-
-  /**
-   * Achievement deleteMany
-   */
-  export type AchievementDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Achievements to delete
-     */
-    where?: AchievementWhereInput
-    /**
-     * Limit how many Achievements to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Achievement.users
-   */
-  export type Achievement$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    where?: UserAchievementWhereInput
-    orderBy?: UserAchievementOrderByWithRelationInput | UserAchievementOrderByWithRelationInput[]
-    cursor?: UserAchievementWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: UserAchievementScalarFieldEnum | UserAchievementScalarFieldEnum[]
-  }
-
-  /**
-   * Achievement without action
-   */
-  export type AchievementDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Achievement
-     */
-    select?: AchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Achievement
-     */
-    omit?: AchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AchievementInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model UserAchievement
-   */
-
-  export type AggregateUserAchievement = {
-    _count: UserAchievementCountAggregateOutputType | null
-    _min: UserAchievementMinAggregateOutputType | null
-    _max: UserAchievementMaxAggregateOutputType | null
-  }
-
-  export type UserAchievementMinAggregateOutputType = {
-    id: string | null
-    userId: string | null
-    achievementId: string | null
-    unlockedAt: Date | null
-  }
-
-  export type UserAchievementMaxAggregateOutputType = {
-    id: string | null
-    userId: string | null
-    achievementId: string | null
-    unlockedAt: Date | null
-  }
-
-  export type UserAchievementCountAggregateOutputType = {
-    id: number
-    userId: number
-    achievementId: number
-    unlockedAt: number
-    _all: number
-  }
-
-
-  export type UserAchievementMinAggregateInputType = {
-    id?: true
-    userId?: true
-    achievementId?: true
-    unlockedAt?: true
-  }
-
-  export type UserAchievementMaxAggregateInputType = {
-    id?: true
-    userId?: true
-    achievementId?: true
-    unlockedAt?: true
-  }
-
-  export type UserAchievementCountAggregateInputType = {
-    id?: true
-    userId?: true
-    achievementId?: true
-    unlockedAt?: true
-    _all?: true
-  }
-
-  export type UserAchievementAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which UserAchievement to aggregate.
-     */
-    where?: UserAchievementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UserAchievements to fetch.
-     */
-    orderBy?: UserAchievementOrderByWithRelationInput | UserAchievementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: UserAchievementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UserAchievements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UserAchievements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned UserAchievements
-    **/
-    _count?: true | UserAchievementCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: UserAchievementMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: UserAchievementMaxAggregateInputType
-  }
-
-  export type GetUserAchievementAggregateType<T extends UserAchievementAggregateArgs> = {
-        [P in keyof T & keyof AggregateUserAchievement]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateUserAchievement[P]>
-      : GetScalarType<T[P], AggregateUserAchievement[P]>
-  }
-
-
-
-
-  export type UserAchievementGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: UserAchievementWhereInput
-    orderBy?: UserAchievementOrderByWithAggregationInput | UserAchievementOrderByWithAggregationInput[]
-    by: UserAchievementScalarFieldEnum[] | UserAchievementScalarFieldEnum
-    having?: UserAchievementScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: UserAchievementCountAggregateInputType | true
-    _min?: UserAchievementMinAggregateInputType
-    _max?: UserAchievementMaxAggregateInputType
-  }
-
-  export type UserAchievementGroupByOutputType = {
-    id: string
-    userId: string
-    achievementId: string
-    unlockedAt: Date
-    _count: UserAchievementCountAggregateOutputType | null
-    _min: UserAchievementMinAggregateOutputType | null
-    _max: UserAchievementMaxAggregateOutputType | null
-  }
-
-  type GetUserAchievementGroupByPayload<T extends UserAchievementGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<UserAchievementGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof UserAchievementGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], UserAchievementGroupByOutputType[P]>
-            : GetScalarType<T[P], UserAchievementGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type UserAchievementSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    achievementId?: boolean
-    unlockedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    achievement?: boolean | AchievementDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["userAchievement"]>
-
-  export type UserAchievementSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    achievementId?: boolean
-    unlockedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    achievement?: boolean | AchievementDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["userAchievement"]>
-
-  export type UserAchievementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    userId?: boolean
-    achievementId?: boolean
-    unlockedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    achievement?: boolean | AchievementDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["userAchievement"]>
-
-  export type UserAchievementSelectScalar = {
-    id?: boolean
-    userId?: boolean
-    achievementId?: boolean
-    unlockedAt?: boolean
-  }
-
-  export type UserAchievementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "achievementId" | "unlockedAt", ExtArgs["result"]["userAchievement"]>
-  export type UserAchievementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    achievement?: boolean | AchievementDefaultArgs<ExtArgs>
-  }
-  export type UserAchievementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    achievement?: boolean | AchievementDefaultArgs<ExtArgs>
-  }
-  export type UserAchievementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-    achievement?: boolean | AchievementDefaultArgs<ExtArgs>
-  }
-
-  export type $UserAchievementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "UserAchievement"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-      achievement: Prisma.$AchievementPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      userId: string
-      achievementId: string
-      unlockedAt: Date
-    }, ExtArgs["result"]["userAchievement"]>
-    composites: {}
-  }
-
-  type UserAchievementGetPayload<S extends boolean | null | undefined | UserAchievementDefaultArgs> = $Result.GetResult<Prisma.$UserAchievementPayload, S>
-
-  type UserAchievementCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<UserAchievementFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: UserAchievementCountAggregateInputType | true
-    }
-
-  export interface UserAchievementDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserAchievement'], meta: { name: 'UserAchievement' } }
-    /**
-     * Find zero or one UserAchievement that matches the filter.
-     * @param {UserAchievementFindUniqueArgs} args - Arguments to find a UserAchievement
-     * @example
-     * // Get one UserAchievement
-     * const userAchievement = await prisma.userAchievement.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends UserAchievementFindUniqueArgs>(args: SelectSubset<T, UserAchievementFindUniqueArgs<ExtArgs>>): Prisma__UserAchievementClient<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one UserAchievement that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {UserAchievementFindUniqueOrThrowArgs} args - Arguments to find a UserAchievement
-     * @example
-     * // Get one UserAchievement
-     * const userAchievement = await prisma.userAchievement.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends UserAchievementFindUniqueOrThrowArgs>(args: SelectSubset<T, UserAchievementFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserAchievementClient<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first UserAchievement that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserAchievementFindFirstArgs} args - Arguments to find a UserAchievement
-     * @example
-     * // Get one UserAchievement
-     * const userAchievement = await prisma.userAchievement.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends UserAchievementFindFirstArgs>(args?: SelectSubset<T, UserAchievementFindFirstArgs<ExtArgs>>): Prisma__UserAchievementClient<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first UserAchievement that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserAchievementFindFirstOrThrowArgs} args - Arguments to find a UserAchievement
-     * @example
-     * // Get one UserAchievement
-     * const userAchievement = await prisma.userAchievement.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends UserAchievementFindFirstOrThrowArgs>(args?: SelectSubset<T, UserAchievementFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserAchievementClient<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more UserAchievements that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserAchievementFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all UserAchievements
-     * const userAchievements = await prisma.userAchievement.findMany()
-     * 
-     * // Get first 10 UserAchievements
-     * const userAchievements = await prisma.userAchievement.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const userAchievementWithIdOnly = await prisma.userAchievement.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends UserAchievementFindManyArgs>(args?: SelectSubset<T, UserAchievementFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a UserAchievement.
-     * @param {UserAchievementCreateArgs} args - Arguments to create a UserAchievement.
-     * @example
-     * // Create one UserAchievement
-     * const UserAchievement = await prisma.userAchievement.create({
-     *   data: {
-     *     // ... data to create a UserAchievement
-     *   }
-     * })
-     * 
-     */
-    create<T extends UserAchievementCreateArgs>(args: SelectSubset<T, UserAchievementCreateArgs<ExtArgs>>): Prisma__UserAchievementClient<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many UserAchievements.
-     * @param {UserAchievementCreateManyArgs} args - Arguments to create many UserAchievements.
-     * @example
-     * // Create many UserAchievements
-     * const userAchievement = await prisma.userAchievement.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends UserAchievementCreateManyArgs>(args?: SelectSubset<T, UserAchievementCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many UserAchievements and returns the data saved in the database.
-     * @param {UserAchievementCreateManyAndReturnArgs} args - Arguments to create many UserAchievements.
-     * @example
-     * // Create many UserAchievements
-     * const userAchievement = await prisma.userAchievement.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many UserAchievements and only return the `id`
-     * const userAchievementWithIdOnly = await prisma.userAchievement.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends UserAchievementCreateManyAndReturnArgs>(args?: SelectSubset<T, UserAchievementCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a UserAchievement.
-     * @param {UserAchievementDeleteArgs} args - Arguments to delete one UserAchievement.
-     * @example
-     * // Delete one UserAchievement
-     * const UserAchievement = await prisma.userAchievement.delete({
-     *   where: {
-     *     // ... filter to delete one UserAchievement
-     *   }
-     * })
-     * 
-     */
-    delete<T extends UserAchievementDeleteArgs>(args: SelectSubset<T, UserAchievementDeleteArgs<ExtArgs>>): Prisma__UserAchievementClient<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one UserAchievement.
-     * @param {UserAchievementUpdateArgs} args - Arguments to update one UserAchievement.
-     * @example
-     * // Update one UserAchievement
-     * const userAchievement = await prisma.userAchievement.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends UserAchievementUpdateArgs>(args: SelectSubset<T, UserAchievementUpdateArgs<ExtArgs>>): Prisma__UserAchievementClient<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more UserAchievements.
-     * @param {UserAchievementDeleteManyArgs} args - Arguments to filter UserAchievements to delete.
-     * @example
-     * // Delete a few UserAchievements
-     * const { count } = await prisma.userAchievement.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends UserAchievementDeleteManyArgs>(args?: SelectSubset<T, UserAchievementDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more UserAchievements.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserAchievementUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many UserAchievements
-     * const userAchievement = await prisma.userAchievement.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends UserAchievementUpdateManyArgs>(args: SelectSubset<T, UserAchievementUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more UserAchievements and returns the data updated in the database.
-     * @param {UserAchievementUpdateManyAndReturnArgs} args - Arguments to update many UserAchievements.
-     * @example
-     * // Update many UserAchievements
-     * const userAchievement = await prisma.userAchievement.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more UserAchievements and only return the `id`
-     * const userAchievementWithIdOnly = await prisma.userAchievement.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends UserAchievementUpdateManyAndReturnArgs>(args: SelectSubset<T, UserAchievementUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one UserAchievement.
-     * @param {UserAchievementUpsertArgs} args - Arguments to update or create a UserAchievement.
-     * @example
-     * // Update or create a UserAchievement
-     * const userAchievement = await prisma.userAchievement.upsert({
-     *   create: {
-     *     // ... data to create a UserAchievement
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the UserAchievement we want to update
-     *   }
-     * })
-     */
-    upsert<T extends UserAchievementUpsertArgs>(args: SelectSubset<T, UserAchievementUpsertArgs<ExtArgs>>): Prisma__UserAchievementClient<$Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of UserAchievements.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserAchievementCountArgs} args - Arguments to filter UserAchievements to count.
-     * @example
-     * // Count the number of UserAchievements
-     * const count = await prisma.userAchievement.count({
-     *   where: {
-     *     // ... the filter for the UserAchievements we want to count
-     *   }
-     * })
-    **/
-    count<T extends UserAchievementCountArgs>(
-      args?: Subset<T, UserAchievementCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], UserAchievementCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a UserAchievement.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserAchievementAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends UserAchievementAggregateArgs>(args: Subset<T, UserAchievementAggregateArgs>): Prisma.PrismaPromise<GetUserAchievementAggregateType<T>>
-
-    /**
-     * Group by UserAchievement.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {UserAchievementGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends UserAchievementGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: UserAchievementGroupByArgs['orderBy'] }
-        : { orderBy?: UserAchievementGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, UserAchievementGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetUserAchievementGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the UserAchievement model
-   */
-  readonly fields: UserAchievementFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for UserAchievement.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__UserAchievementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    achievement<T extends AchievementDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AchievementDefaultArgs<ExtArgs>>): Prisma__AchievementClient<$Result.GetResult<Prisma.$AchievementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the UserAchievement model
-   */
-  interface UserAchievementFieldRefs {
-    readonly id: FieldRef<"UserAchievement", 'String'>
-    readonly userId: FieldRef<"UserAchievement", 'String'>
-    readonly achievementId: FieldRef<"UserAchievement", 'String'>
-    readonly unlockedAt: FieldRef<"UserAchievement", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * UserAchievement findUnique
-   */
-  export type UserAchievementFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which UserAchievement to fetch.
-     */
-    where: UserAchievementWhereUniqueInput
-  }
-
-  /**
-   * UserAchievement findUniqueOrThrow
-   */
-  export type UserAchievementFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which UserAchievement to fetch.
-     */
-    where: UserAchievementWhereUniqueInput
-  }
-
-  /**
-   * UserAchievement findFirst
-   */
-  export type UserAchievementFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which UserAchievement to fetch.
-     */
-    where?: UserAchievementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UserAchievements to fetch.
-     */
-    orderBy?: UserAchievementOrderByWithRelationInput | UserAchievementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for UserAchievements.
-     */
-    cursor?: UserAchievementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UserAchievements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UserAchievements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of UserAchievements.
-     */
-    distinct?: UserAchievementScalarFieldEnum | UserAchievementScalarFieldEnum[]
-  }
-
-  /**
-   * UserAchievement findFirstOrThrow
-   */
-  export type UserAchievementFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which UserAchievement to fetch.
-     */
-    where?: UserAchievementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UserAchievements to fetch.
-     */
-    orderBy?: UserAchievementOrderByWithRelationInput | UserAchievementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for UserAchievements.
-     */
-    cursor?: UserAchievementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UserAchievements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UserAchievements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of UserAchievements.
-     */
-    distinct?: UserAchievementScalarFieldEnum | UserAchievementScalarFieldEnum[]
-  }
-
-  /**
-   * UserAchievement findMany
-   */
-  export type UserAchievementFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * Filter, which UserAchievements to fetch.
-     */
-    where?: UserAchievementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of UserAchievements to fetch.
-     */
-    orderBy?: UserAchievementOrderByWithRelationInput | UserAchievementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing UserAchievements.
-     */
-    cursor?: UserAchievementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` UserAchievements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` UserAchievements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of UserAchievements.
-     */
-    distinct?: UserAchievementScalarFieldEnum | UserAchievementScalarFieldEnum[]
-  }
-
-  /**
-   * UserAchievement create
-   */
-  export type UserAchievementCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * The data needed to create a UserAchievement.
-     */
-    data: XOR<UserAchievementCreateInput, UserAchievementUncheckedCreateInput>
-  }
-
-  /**
-   * UserAchievement createMany
-   */
-  export type UserAchievementCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many UserAchievements.
-     */
-    data: UserAchievementCreateManyInput | UserAchievementCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * UserAchievement createManyAndReturn
-   */
-  export type UserAchievementCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * The data used to create many UserAchievements.
-     */
-    data: UserAchievementCreateManyInput | UserAchievementCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * UserAchievement update
-   */
-  export type UserAchievementUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * The data needed to update a UserAchievement.
-     */
-    data: XOR<UserAchievementUpdateInput, UserAchievementUncheckedUpdateInput>
-    /**
-     * Choose, which UserAchievement to update.
-     */
-    where: UserAchievementWhereUniqueInput
-  }
-
-  /**
-   * UserAchievement updateMany
-   */
-  export type UserAchievementUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update UserAchievements.
-     */
-    data: XOR<UserAchievementUpdateManyMutationInput, UserAchievementUncheckedUpdateManyInput>
-    /**
-     * Filter which UserAchievements to update
-     */
-    where?: UserAchievementWhereInput
-    /**
-     * Limit how many UserAchievements to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * UserAchievement updateManyAndReturn
-   */
-  export type UserAchievementUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * The data used to update UserAchievements.
-     */
-    data: XOR<UserAchievementUpdateManyMutationInput, UserAchievementUncheckedUpdateManyInput>
-    /**
-     * Filter which UserAchievements to update
-     */
-    where?: UserAchievementWhereInput
-    /**
-     * Limit how many UserAchievements to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * UserAchievement upsert
-   */
-  export type UserAchievementUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * The filter to search for the UserAchievement to update in case it exists.
-     */
-    where: UserAchievementWhereUniqueInput
-    /**
-     * In case the UserAchievement found by the `where` argument doesn't exist, create a new UserAchievement with this data.
-     */
-    create: XOR<UserAchievementCreateInput, UserAchievementUncheckedCreateInput>
-    /**
-     * In case the UserAchievement was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<UserAchievementUpdateInput, UserAchievementUncheckedUpdateInput>
-  }
-
-  /**
-   * UserAchievement delete
-   */
-  export type UserAchievementDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-    /**
-     * Filter which UserAchievement to delete.
-     */
-    where: UserAchievementWhereUniqueInput
-  }
-
-  /**
-   * UserAchievement deleteMany
-   */
-  export type UserAchievementDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which UserAchievements to delete
-     */
-    where?: UserAchievementWhereInput
-    /**
-     * Limit how many UserAchievements to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * UserAchievement without action
-   */
-  export type UserAchievementDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the UserAchievement
-     */
-    select?: UserAchievementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the UserAchievement
-     */
-    omit?: UserAchievementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: UserAchievementInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Model ChatMessage
    */
 
@@ -36249,28 +33819,6 @@ export namespace Prisma {
   export type FeaturedRequestScalarFieldEnum = (typeof FeaturedRequestScalarFieldEnum)[keyof typeof FeaturedRequestScalarFieldEnum]
 
 
-  export const AchievementScalarFieldEnum: {
-    id: 'id',
-    title: 'title',
-    description: 'description',
-    badgeIcon: 'badgeIcon',
-    pointsReward: 'pointsReward',
-    createdAt: 'createdAt'
-  };
-
-  export type AchievementScalarFieldEnum = (typeof AchievementScalarFieldEnum)[keyof typeof AchievementScalarFieldEnum]
-
-
-  export const UserAchievementScalarFieldEnum: {
-    id: 'id',
-    userId: 'userId',
-    achievementId: 'achievementId',
-    unlockedAt: 'unlockedAt'
-  };
-
-  export type UserAchievementScalarFieldEnum = (typeof UserAchievementScalarFieldEnum)[keyof typeof UserAchievementScalarFieldEnum]
-
-
   export const ChatMessageScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -36558,7 +34106,6 @@ export namespace Prisma {
     reviews?: ReviewListRelationFilter
     reports?: ReportListRelationFilter
     featuredRequests?: FeaturedRequestListRelationFilter
-    achievements?: UserAchievementListRelationFilter
     chatMessages?: ChatMessageListRelationFilter
   }
 
@@ -36598,7 +34145,6 @@ export namespace Prisma {
     reviews?: ReviewOrderByRelationAggregateInput
     reports?: ReportOrderByRelationAggregateInput
     featuredRequests?: FeaturedRequestOrderByRelationAggregateInput
-    achievements?: UserAchievementOrderByRelationAggregateInput
     chatMessages?: ChatMessageOrderByRelationAggregateInput
   }
 
@@ -36641,7 +34187,6 @@ export namespace Prisma {
     reviews?: ReviewListRelationFilter
     reports?: ReportListRelationFilter
     featuredRequests?: FeaturedRequestListRelationFilter
-    achievements?: UserAchievementListRelationFilter
     chatMessages?: ChatMessageListRelationFilter
   }, "id" | "email" | "referralCode">
 
@@ -38432,122 +35977,6 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"FeaturedRequest"> | Date | string
   }
 
-  export type AchievementWhereInput = {
-    AND?: AchievementWhereInput | AchievementWhereInput[]
-    OR?: AchievementWhereInput[]
-    NOT?: AchievementWhereInput | AchievementWhereInput[]
-    id?: StringFilter<"Achievement"> | string
-    title?: StringFilter<"Achievement"> | string
-    description?: StringFilter<"Achievement"> | string
-    badgeIcon?: StringFilter<"Achievement"> | string
-    pointsReward?: IntFilter<"Achievement"> | number
-    createdAt?: DateTimeFilter<"Achievement"> | Date | string
-    users?: UserAchievementListRelationFilter
-  }
-
-  export type AchievementOrderByWithRelationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    badgeIcon?: SortOrder
-    pointsReward?: SortOrder
-    createdAt?: SortOrder
-    users?: UserAchievementOrderByRelationAggregateInput
-  }
-
-  export type AchievementWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: AchievementWhereInput | AchievementWhereInput[]
-    OR?: AchievementWhereInput[]
-    NOT?: AchievementWhereInput | AchievementWhereInput[]
-    title?: StringFilter<"Achievement"> | string
-    description?: StringFilter<"Achievement"> | string
-    badgeIcon?: StringFilter<"Achievement"> | string
-    pointsReward?: IntFilter<"Achievement"> | number
-    createdAt?: DateTimeFilter<"Achievement"> | Date | string
-    users?: UserAchievementListRelationFilter
-  }, "id">
-
-  export type AchievementOrderByWithAggregationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    badgeIcon?: SortOrder
-    pointsReward?: SortOrder
-    createdAt?: SortOrder
-    _count?: AchievementCountOrderByAggregateInput
-    _avg?: AchievementAvgOrderByAggregateInput
-    _max?: AchievementMaxOrderByAggregateInput
-    _min?: AchievementMinOrderByAggregateInput
-    _sum?: AchievementSumOrderByAggregateInput
-  }
-
-  export type AchievementScalarWhereWithAggregatesInput = {
-    AND?: AchievementScalarWhereWithAggregatesInput | AchievementScalarWhereWithAggregatesInput[]
-    OR?: AchievementScalarWhereWithAggregatesInput[]
-    NOT?: AchievementScalarWhereWithAggregatesInput | AchievementScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Achievement"> | string
-    title?: StringWithAggregatesFilter<"Achievement"> | string
-    description?: StringWithAggregatesFilter<"Achievement"> | string
-    badgeIcon?: StringWithAggregatesFilter<"Achievement"> | string
-    pointsReward?: IntWithAggregatesFilter<"Achievement"> | number
-    createdAt?: DateTimeWithAggregatesFilter<"Achievement"> | Date | string
-  }
-
-  export type UserAchievementWhereInput = {
-    AND?: UserAchievementWhereInput | UserAchievementWhereInput[]
-    OR?: UserAchievementWhereInput[]
-    NOT?: UserAchievementWhereInput | UserAchievementWhereInput[]
-    id?: StringFilter<"UserAchievement"> | string
-    userId?: StringFilter<"UserAchievement"> | string
-    achievementId?: StringFilter<"UserAchievement"> | string
-    unlockedAt?: DateTimeFilter<"UserAchievement"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    achievement?: XOR<AchievementScalarRelationFilter, AchievementWhereInput>
-  }
-
-  export type UserAchievementOrderByWithRelationInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    achievementId?: SortOrder
-    unlockedAt?: SortOrder
-    user?: UserOrderByWithRelationInput
-    achievement?: AchievementOrderByWithRelationInput
-  }
-
-  export type UserAchievementWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    userId_achievementId?: UserAchievementUserIdAchievementIdCompoundUniqueInput
-    AND?: UserAchievementWhereInput | UserAchievementWhereInput[]
-    OR?: UserAchievementWhereInput[]
-    NOT?: UserAchievementWhereInput | UserAchievementWhereInput[]
-    userId?: StringFilter<"UserAchievement"> | string
-    achievementId?: StringFilter<"UserAchievement"> | string
-    unlockedAt?: DateTimeFilter<"UserAchievement"> | Date | string
-    user?: XOR<UserScalarRelationFilter, UserWhereInput>
-    achievement?: XOR<AchievementScalarRelationFilter, AchievementWhereInput>
-  }, "id" | "userId_achievementId">
-
-  export type UserAchievementOrderByWithAggregationInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    achievementId?: SortOrder
-    unlockedAt?: SortOrder
-    _count?: UserAchievementCountOrderByAggregateInput
-    _max?: UserAchievementMaxOrderByAggregateInput
-    _min?: UserAchievementMinOrderByAggregateInput
-  }
-
-  export type UserAchievementScalarWhereWithAggregatesInput = {
-    AND?: UserAchievementScalarWhereWithAggregatesInput | UserAchievementScalarWhereWithAggregatesInput[]
-    OR?: UserAchievementScalarWhereWithAggregatesInput[]
-    NOT?: UserAchievementScalarWhereWithAggregatesInput | UserAchievementScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"UserAchievement"> | string
-    userId?: StringWithAggregatesFilter<"UserAchievement"> | string
-    achievementId?: StringWithAggregatesFilter<"UserAchievement"> | string
-    unlockedAt?: DateTimeWithAggregatesFilter<"UserAchievement"> | Date | string
-  }
-
   export type ChatMessageWhereInput = {
     AND?: ChatMessageWhereInput | ChatMessageWhereInput[]
     OR?: ChatMessageWhereInput[]
@@ -38633,7 +36062,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -38672,7 +36100,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -38711,7 +36138,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -38750,7 +36176,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -40662,120 +38087,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type AchievementCreateInput = {
-    id?: string
-    title: string
-    description: string
-    badgeIcon: string
-    pointsReward?: number
-    createdAt?: Date | string
-    users?: UserAchievementCreateNestedManyWithoutAchievementInput
-  }
-
-  export type AchievementUncheckedCreateInput = {
-    id?: string
-    title: string
-    description: string
-    badgeIcon: string
-    pointsReward?: number
-    createdAt?: Date | string
-    users?: UserAchievementUncheckedCreateNestedManyWithoutAchievementInput
-  }
-
-  export type AchievementUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    badgeIcon?: StringFieldUpdateOperationsInput | string
-    pointsReward?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    users?: UserAchievementUpdateManyWithoutAchievementNestedInput
-  }
-
-  export type AchievementUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    badgeIcon?: StringFieldUpdateOperationsInput | string
-    pointsReward?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    users?: UserAchievementUncheckedUpdateManyWithoutAchievementNestedInput
-  }
-
-  export type AchievementCreateManyInput = {
-    id?: string
-    title: string
-    description: string
-    badgeIcon: string
-    pointsReward?: number
-    createdAt?: Date | string
-  }
-
-  export type AchievementUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    badgeIcon?: StringFieldUpdateOperationsInput | string
-    pointsReward?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AchievementUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    badgeIcon?: StringFieldUpdateOperationsInput | string
-    pointsReward?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserAchievementCreateInput = {
-    id?: string
-    unlockedAt?: Date | string
-    user: UserCreateNestedOneWithoutAchievementsInput
-    achievement: AchievementCreateNestedOneWithoutUsersInput
-  }
-
-  export type UserAchievementUncheckedCreateInput = {
-    id?: string
-    userId: string
-    achievementId: string
-    unlockedAt?: Date | string
-  }
-
-  export type UserAchievementUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutAchievementsNestedInput
-    achievement?: AchievementUpdateOneRequiredWithoutUsersNestedInput
-  }
-
-  export type UserAchievementUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    achievementId?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserAchievementCreateManyInput = {
-    id?: string
-    userId: string
-    achievementId: string
-    unlockedAt?: Date | string
-  }
-
-  export type UserAchievementUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserAchievementUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    achievementId?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type ChatMessageCreateInput = {
     id?: string
     content: string
@@ -40999,12 +38310,6 @@ export namespace Prisma {
     none?: FeaturedRequestWhereInput
   }
 
-  export type UserAchievementListRelationFilter = {
-    every?: UserAchievementWhereInput
-    some?: UserAchievementWhereInput
-    none?: UserAchievementWhereInput
-  }
-
   export type ChatMessageListRelationFilter = {
     every?: ChatMessageWhereInput
     some?: ChatMessageWhereInput
@@ -41073,10 +38378,6 @@ export namespace Prisma {
   }
 
   export type FeaturedRequestOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type UserAchievementOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -42443,72 +39744,6 @@ export namespace Prisma {
     _max?: NestedEnumFeaturedRequestStatusFilter<$PrismaModel>
   }
 
-  export type AchievementCountOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    badgeIcon?: SortOrder
-    pointsReward?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type AchievementAvgOrderByAggregateInput = {
-    pointsReward?: SortOrder
-  }
-
-  export type AchievementMaxOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    badgeIcon?: SortOrder
-    pointsReward?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type AchievementMinOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    badgeIcon?: SortOrder
-    pointsReward?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type AchievementSumOrderByAggregateInput = {
-    pointsReward?: SortOrder
-  }
-
-  export type AchievementScalarRelationFilter = {
-    is?: AchievementWhereInput
-    isNot?: AchievementWhereInput
-  }
-
-  export type UserAchievementUserIdAchievementIdCompoundUniqueInput = {
-    userId: string
-    achievementId: string
-  }
-
-  export type UserAchievementCountOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    achievementId?: SortOrder
-    unlockedAt?: SortOrder
-  }
-
-  export type UserAchievementMaxOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    achievementId?: SortOrder
-    unlockedAt?: SortOrder
-  }
-
-  export type UserAchievementMinOrderByAggregateInput = {
-    id?: SortOrder
-    userId?: SortOrder
-    achievementId?: SortOrder
-    unlockedAt?: SortOrder
-  }
-
   export type ChatMessageCountOrderByAggregateInput = {
     id?: SortOrder
     userId?: SortOrder
@@ -42647,13 +39882,6 @@ export namespace Prisma {
     connect?: FeaturedRequestWhereUniqueInput | FeaturedRequestWhereUniqueInput[]
   }
 
-  export type UserAchievementCreateNestedManyWithoutUserInput = {
-    create?: XOR<UserAchievementCreateWithoutUserInput, UserAchievementUncheckedCreateWithoutUserInput> | UserAchievementCreateWithoutUserInput[] | UserAchievementUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UserAchievementCreateOrConnectWithoutUserInput | UserAchievementCreateOrConnectWithoutUserInput[]
-    createMany?: UserAchievementCreateManyUserInputEnvelope
-    connect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-  }
-
   export type ChatMessageCreateNestedManyWithoutUserInput = {
     create?: XOR<ChatMessageCreateWithoutUserInput, ChatMessageUncheckedCreateWithoutUserInput> | ChatMessageCreateWithoutUserInput[] | ChatMessageUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatMessageCreateOrConnectWithoutUserInput | ChatMessageCreateOrConnectWithoutUserInput[]
@@ -42770,13 +39998,6 @@ export namespace Prisma {
     connectOrCreate?: FeaturedRequestCreateOrConnectWithoutCreatorInput | FeaturedRequestCreateOrConnectWithoutCreatorInput[]
     createMany?: FeaturedRequestCreateManyCreatorInputEnvelope
     connect?: FeaturedRequestWhereUniqueInput | FeaturedRequestWhereUniqueInput[]
-  }
-
-  export type UserAchievementUncheckedCreateNestedManyWithoutUserInput = {
-    create?: XOR<UserAchievementCreateWithoutUserInput, UserAchievementUncheckedCreateWithoutUserInput> | UserAchievementCreateWithoutUserInput[] | UserAchievementUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UserAchievementCreateOrConnectWithoutUserInput | UserAchievementCreateOrConnectWithoutUserInput[]
-    createMany?: UserAchievementCreateManyUserInputEnvelope
-    connect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
   }
 
   export type ChatMessageUncheckedCreateNestedManyWithoutUserInput = {
@@ -43048,20 +40269,6 @@ export namespace Prisma {
     deleteMany?: FeaturedRequestScalarWhereInput | FeaturedRequestScalarWhereInput[]
   }
 
-  export type UserAchievementUpdateManyWithoutUserNestedInput = {
-    create?: XOR<UserAchievementCreateWithoutUserInput, UserAchievementUncheckedCreateWithoutUserInput> | UserAchievementCreateWithoutUserInput[] | UserAchievementUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UserAchievementCreateOrConnectWithoutUserInput | UserAchievementCreateOrConnectWithoutUserInput[]
-    upsert?: UserAchievementUpsertWithWhereUniqueWithoutUserInput | UserAchievementUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: UserAchievementCreateManyUserInputEnvelope
-    set?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    disconnect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    delete?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    connect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    update?: UserAchievementUpdateWithWhereUniqueWithoutUserInput | UserAchievementUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: UserAchievementUpdateManyWithWhereWithoutUserInput | UserAchievementUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: UserAchievementScalarWhereInput | UserAchievementScalarWhereInput[]
-  }
-
   export type ChatMessageUpdateManyWithoutUserNestedInput = {
     create?: XOR<ChatMessageCreateWithoutUserInput, ChatMessageUncheckedCreateWithoutUserInput> | ChatMessageCreateWithoutUserInput[] | ChatMessageUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ChatMessageCreateOrConnectWithoutUserInput | ChatMessageCreateOrConnectWithoutUserInput[]
@@ -43294,20 +40501,6 @@ export namespace Prisma {
     update?: FeaturedRequestUpdateWithWhereUniqueWithoutCreatorInput | FeaturedRequestUpdateWithWhereUniqueWithoutCreatorInput[]
     updateMany?: FeaturedRequestUpdateManyWithWhereWithoutCreatorInput | FeaturedRequestUpdateManyWithWhereWithoutCreatorInput[]
     deleteMany?: FeaturedRequestScalarWhereInput | FeaturedRequestScalarWhereInput[]
-  }
-
-  export type UserAchievementUncheckedUpdateManyWithoutUserNestedInput = {
-    create?: XOR<UserAchievementCreateWithoutUserInput, UserAchievementUncheckedCreateWithoutUserInput> | UserAchievementCreateWithoutUserInput[] | UserAchievementUncheckedCreateWithoutUserInput[]
-    connectOrCreate?: UserAchievementCreateOrConnectWithoutUserInput | UserAchievementCreateOrConnectWithoutUserInput[]
-    upsert?: UserAchievementUpsertWithWhereUniqueWithoutUserInput | UserAchievementUpsertWithWhereUniqueWithoutUserInput[]
-    createMany?: UserAchievementCreateManyUserInputEnvelope
-    set?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    disconnect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    delete?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    connect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    update?: UserAchievementUpdateWithWhereUniqueWithoutUserInput | UserAchievementUpdateWithWhereUniqueWithoutUserInput[]
-    updateMany?: UserAchievementUpdateManyWithWhereWithoutUserInput | UserAchievementUpdateManyWithWhereWithoutUserInput[]
-    deleteMany?: UserAchievementScalarWhereInput | UserAchievementScalarWhereInput[]
   }
 
   export type ChatMessageUncheckedUpdateManyWithoutUserNestedInput = {
@@ -44274,76 +41467,6 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFeaturedRequestsInput, UserUpdateWithoutFeaturedRequestsInput>, UserUncheckedUpdateWithoutFeaturedRequestsInput>
   }
 
-  export type UserAchievementCreateNestedManyWithoutAchievementInput = {
-    create?: XOR<UserAchievementCreateWithoutAchievementInput, UserAchievementUncheckedCreateWithoutAchievementInput> | UserAchievementCreateWithoutAchievementInput[] | UserAchievementUncheckedCreateWithoutAchievementInput[]
-    connectOrCreate?: UserAchievementCreateOrConnectWithoutAchievementInput | UserAchievementCreateOrConnectWithoutAchievementInput[]
-    createMany?: UserAchievementCreateManyAchievementInputEnvelope
-    connect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-  }
-
-  export type UserAchievementUncheckedCreateNestedManyWithoutAchievementInput = {
-    create?: XOR<UserAchievementCreateWithoutAchievementInput, UserAchievementUncheckedCreateWithoutAchievementInput> | UserAchievementCreateWithoutAchievementInput[] | UserAchievementUncheckedCreateWithoutAchievementInput[]
-    connectOrCreate?: UserAchievementCreateOrConnectWithoutAchievementInput | UserAchievementCreateOrConnectWithoutAchievementInput[]
-    createMany?: UserAchievementCreateManyAchievementInputEnvelope
-    connect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-  }
-
-  export type UserAchievementUpdateManyWithoutAchievementNestedInput = {
-    create?: XOR<UserAchievementCreateWithoutAchievementInput, UserAchievementUncheckedCreateWithoutAchievementInput> | UserAchievementCreateWithoutAchievementInput[] | UserAchievementUncheckedCreateWithoutAchievementInput[]
-    connectOrCreate?: UserAchievementCreateOrConnectWithoutAchievementInput | UserAchievementCreateOrConnectWithoutAchievementInput[]
-    upsert?: UserAchievementUpsertWithWhereUniqueWithoutAchievementInput | UserAchievementUpsertWithWhereUniqueWithoutAchievementInput[]
-    createMany?: UserAchievementCreateManyAchievementInputEnvelope
-    set?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    disconnect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    delete?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    connect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    update?: UserAchievementUpdateWithWhereUniqueWithoutAchievementInput | UserAchievementUpdateWithWhereUniqueWithoutAchievementInput[]
-    updateMany?: UserAchievementUpdateManyWithWhereWithoutAchievementInput | UserAchievementUpdateManyWithWhereWithoutAchievementInput[]
-    deleteMany?: UserAchievementScalarWhereInput | UserAchievementScalarWhereInput[]
-  }
-
-  export type UserAchievementUncheckedUpdateManyWithoutAchievementNestedInput = {
-    create?: XOR<UserAchievementCreateWithoutAchievementInput, UserAchievementUncheckedCreateWithoutAchievementInput> | UserAchievementCreateWithoutAchievementInput[] | UserAchievementUncheckedCreateWithoutAchievementInput[]
-    connectOrCreate?: UserAchievementCreateOrConnectWithoutAchievementInput | UserAchievementCreateOrConnectWithoutAchievementInput[]
-    upsert?: UserAchievementUpsertWithWhereUniqueWithoutAchievementInput | UserAchievementUpsertWithWhereUniqueWithoutAchievementInput[]
-    createMany?: UserAchievementCreateManyAchievementInputEnvelope
-    set?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    disconnect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    delete?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    connect?: UserAchievementWhereUniqueInput | UserAchievementWhereUniqueInput[]
-    update?: UserAchievementUpdateWithWhereUniqueWithoutAchievementInput | UserAchievementUpdateWithWhereUniqueWithoutAchievementInput[]
-    updateMany?: UserAchievementUpdateManyWithWhereWithoutAchievementInput | UserAchievementUpdateManyWithWhereWithoutAchievementInput[]
-    deleteMany?: UserAchievementScalarWhereInput | UserAchievementScalarWhereInput[]
-  }
-
-  export type UserCreateNestedOneWithoutAchievementsInput = {
-    create?: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAchievementsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type AchievementCreateNestedOneWithoutUsersInput = {
-    create?: XOR<AchievementCreateWithoutUsersInput, AchievementUncheckedCreateWithoutUsersInput>
-    connectOrCreate?: AchievementCreateOrConnectWithoutUsersInput
-    connect?: AchievementWhereUniqueInput
-  }
-
-  export type UserUpdateOneRequiredWithoutAchievementsNestedInput = {
-    create?: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAchievementsInput
-    upsert?: UserUpsertWithoutAchievementsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAchievementsInput, UserUpdateWithoutAchievementsInput>, UserUncheckedUpdateWithoutAchievementsInput>
-  }
-
-  export type AchievementUpdateOneRequiredWithoutUsersNestedInput = {
-    create?: XOR<AchievementCreateWithoutUsersInput, AchievementUncheckedCreateWithoutUsersInput>
-    connectOrCreate?: AchievementCreateOrConnectWithoutUsersInput
-    upsert?: AchievementUpsertWithoutUsersInput
-    connect?: AchievementWhereUniqueInput
-    update?: XOR<XOR<AchievementUpdateToOneWithWhereWithoutUsersInput, AchievementUpdateWithoutUsersInput>, AchievementUncheckedUpdateWithoutUsersInput>
-  }
-
   export type UserCreateNestedOneWithoutChatMessagesInput = {
     create?: XOR<UserCreateWithoutChatMessagesInput, UserUncheckedCreateWithoutChatMessagesInput>
     connectOrCreate?: UserCreateOrConnectWithoutChatMessagesInput
@@ -44741,7 +41864,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -44779,7 +41901,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -44822,7 +41943,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -44860,7 +41980,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -45347,28 +42466,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserAchievementCreateWithoutUserInput = {
-    id?: string
-    unlockedAt?: Date | string
-    achievement: AchievementCreateNestedOneWithoutUsersInput
-  }
-
-  export type UserAchievementUncheckedCreateWithoutUserInput = {
-    id?: string
-    achievementId: string
-    unlockedAt?: Date | string
-  }
-
-  export type UserAchievementCreateOrConnectWithoutUserInput = {
-    where: UserAchievementWhereUniqueInput
-    create: XOR<UserAchievementCreateWithoutUserInput, UserAchievementUncheckedCreateWithoutUserInput>
-  }
-
-  export type UserAchievementCreateManyUserInputEnvelope = {
-    data: UserAchievementCreateManyUserInput | UserAchievementCreateManyUserInput[]
-    skipDuplicates?: boolean
-  }
-
   export type ChatMessageCreateWithoutUserInput = {
     id?: string
     content: string
@@ -45436,7 +42533,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -45474,7 +42570,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -45977,32 +43072,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"FeaturedRequest"> | Date | string
   }
 
-  export type UserAchievementUpsertWithWhereUniqueWithoutUserInput = {
-    where: UserAchievementWhereUniqueInput
-    update: XOR<UserAchievementUpdateWithoutUserInput, UserAchievementUncheckedUpdateWithoutUserInput>
-    create: XOR<UserAchievementCreateWithoutUserInput, UserAchievementUncheckedCreateWithoutUserInput>
-  }
-
-  export type UserAchievementUpdateWithWhereUniqueWithoutUserInput = {
-    where: UserAchievementWhereUniqueInput
-    data: XOR<UserAchievementUpdateWithoutUserInput, UserAchievementUncheckedUpdateWithoutUserInput>
-  }
-
-  export type UserAchievementUpdateManyWithWhereWithoutUserInput = {
-    where: UserAchievementScalarWhereInput
-    data: XOR<UserAchievementUpdateManyMutationInput, UserAchievementUncheckedUpdateManyWithoutUserInput>
-  }
-
-  export type UserAchievementScalarWhereInput = {
-    AND?: UserAchievementScalarWhereInput | UserAchievementScalarWhereInput[]
-    OR?: UserAchievementScalarWhereInput[]
-    NOT?: UserAchievementScalarWhereInput | UserAchievementScalarWhereInput[]
-    id?: StringFilter<"UserAchievement"> | string
-    userId?: StringFilter<"UserAchievement"> | string
-    achievementId?: StringFilter<"UserAchievement"> | string
-    unlockedAt?: DateTimeFilter<"UserAchievement"> | Date | string
-  }
-
   export type ChatMessageUpsertWithWhereUniqueWithoutUserInput = {
     where: ChatMessageWhereUniqueInput
     update: XOR<ChatMessageUpdateWithoutUserInput, ChatMessageUncheckedUpdateWithoutUserInput>
@@ -46063,7 +43132,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -46101,7 +43169,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -46155,7 +43222,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -46193,7 +43259,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -46231,7 +43296,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -46269,7 +43333,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -46323,7 +43386,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -46361,7 +43423,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -46399,7 +43460,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -46437,7 +43497,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -46491,7 +43550,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -46529,7 +43587,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -46567,7 +43624,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -46605,7 +43661,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -46863,7 +43918,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -46901,7 +43955,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -47096,7 +44149,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -47134,7 +44186,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -47188,7 +44239,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -47226,7 +44276,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -47829,7 +44878,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -47867,7 +44915,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -47980,7 +45027,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -48018,7 +45064,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -48121,7 +45166,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -48159,7 +45203,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -48305,7 +45348,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -48343,7 +45385,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -48485,7 +45526,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -48523,7 +45563,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -48577,7 +45616,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -48615,7 +45653,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -48653,7 +45690,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -48691,7 +45727,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -48778,7 +45813,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -48816,7 +45850,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -48893,7 +45926,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -48931,7 +45963,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -48985,7 +46016,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -49023,7 +46053,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -49061,7 +46090,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -49099,7 +46127,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -49153,7 +46180,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -49191,7 +46217,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -49229,7 +46254,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -49267,7 +46291,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -49354,7 +46377,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -49392,7 +46414,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -49469,7 +46490,6 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -49507,7 +46527,6 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -49620,7 +46639,6 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -49658,7 +46676,6 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -49761,7 +46778,6 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -49799,7 +46815,6 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -49912,7 +46927,6 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -49950,7 +46964,6 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -50112,7 +47125,6 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
   }
 
@@ -50150,7 +47162,6 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
     chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -50269,7 +47280,6 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -50307,266 +47317,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserAchievementCreateWithoutAchievementInput = {
-    id?: string
-    unlockedAt?: Date | string
-    user: UserCreateNestedOneWithoutAchievementsInput
-  }
-
-  export type UserAchievementUncheckedCreateWithoutAchievementInput = {
-    id?: string
-    userId: string
-    unlockedAt?: Date | string
-  }
-
-  export type UserAchievementCreateOrConnectWithoutAchievementInput = {
-    where: UserAchievementWhereUniqueInput
-    create: XOR<UserAchievementCreateWithoutAchievementInput, UserAchievementUncheckedCreateWithoutAchievementInput>
-  }
-
-  export type UserAchievementCreateManyAchievementInputEnvelope = {
-    data: UserAchievementCreateManyAchievementInput | UserAchievementCreateManyAchievementInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type UserAchievementUpsertWithWhereUniqueWithoutAchievementInput = {
-    where: UserAchievementWhereUniqueInput
-    update: XOR<UserAchievementUpdateWithoutAchievementInput, UserAchievementUncheckedUpdateWithoutAchievementInput>
-    create: XOR<UserAchievementCreateWithoutAchievementInput, UserAchievementUncheckedCreateWithoutAchievementInput>
-  }
-
-  export type UserAchievementUpdateWithWhereUniqueWithoutAchievementInput = {
-    where: UserAchievementWhereUniqueInput
-    data: XOR<UserAchievementUpdateWithoutAchievementInput, UserAchievementUncheckedUpdateWithoutAchievementInput>
-  }
-
-  export type UserAchievementUpdateManyWithWhereWithoutAchievementInput = {
-    where: UserAchievementScalarWhereInput
-    data: XOR<UserAchievementUpdateManyMutationInput, UserAchievementUncheckedUpdateManyWithoutAchievementInput>
-  }
-
-  export type UserCreateWithoutAchievementsInput = {
-    id?: string
-    name: string
-    email: string
-    emailVerified?: boolean
-    image?: string | null
-    role?: $Enums.Role
-    banned?: boolean
-    banReason?: string | null
-    banExpires?: Date | string | null
-    points?: number
-    transactionsFrozen?: boolean
-    referralCode?: string | null
-    dailyAdViews?: number
-    dailyAdPointsEarned?: number
-    lastAdWatchDate?: Date | string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    referredBy?: UserCreateNestedOneWithoutReferralsInput
-    referrals?: UserCreateNestedManyWithoutReferredByInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    bookmarks?: BookmarkCreateNestedManyWithoutUserInput
-    history?: HistoryCreateNestedManyWithoutUserInput
-    pointTransactions?: PointTransactionCreateNestedManyWithoutUserInput
-    chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
-    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
-    seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
-    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
-    comments?: CommentCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutUserInput
-    reports?: ReportCreateNestedManyWithoutReporterInput
-    featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutAchievementsInput = {
-    id?: string
-    name: string
-    email: string
-    emailVerified?: boolean
-    image?: string | null
-    role?: $Enums.Role
-    banned?: boolean
-    banReason?: string | null
-    banExpires?: Date | string | null
-    points?: number
-    transactionsFrozen?: boolean
-    referralCode?: string | null
-    referredById?: string | null
-    dailyAdViews?: number
-    dailyAdPointsEarned?: number
-    lastAdWatchDate?: Date | string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
-    history?: HistoryUncheckedCreateNestedManyWithoutUserInput
-    pointTransactions?: PointTransactionUncheckedCreateNestedManyWithoutUserInput
-    chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
-    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
-    seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
-    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
-    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
-    featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutAchievementsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
-  }
-
-  export type AchievementCreateWithoutUsersInput = {
-    id?: string
-    title: string
-    description: string
-    badgeIcon: string
-    pointsReward?: number
-    createdAt?: Date | string
-  }
-
-  export type AchievementUncheckedCreateWithoutUsersInput = {
-    id?: string
-    title: string
-    description: string
-    badgeIcon: string
-    pointsReward?: number
-    createdAt?: Date | string
-  }
-
-  export type AchievementCreateOrConnectWithoutUsersInput = {
-    where: AchievementWhereUniqueInput
-    create: XOR<AchievementCreateWithoutUsersInput, AchievementUncheckedCreateWithoutUsersInput>
-  }
-
-  export type UserUpsertWithoutAchievementsInput = {
-    update: XOR<UserUpdateWithoutAchievementsInput, UserUncheckedUpdateWithoutAchievementsInput>
-    create: XOR<UserCreateWithoutAchievementsInput, UserUncheckedCreateWithoutAchievementsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutAchievementsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutAchievementsInput, UserUncheckedUpdateWithoutAchievementsInput>
-  }
-
-  export type UserUpdateWithoutAchievementsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    banned?: BoolFieldUpdateOperationsInput | boolean
-    banReason?: NullableStringFieldUpdateOperationsInput | string | null
-    banExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    points?: IntFieldUpdateOperationsInput | number
-    transactionsFrozen?: BoolFieldUpdateOperationsInput | boolean
-    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
-    dailyAdViews?: IntFieldUpdateOperationsInput | number
-    dailyAdPointsEarned?: IntFieldUpdateOperationsInput | number
-    lastAdWatchDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    referredBy?: UserUpdateOneWithoutReferralsNestedInput
-    referrals?: UserUpdateManyWithoutReferredByNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
-    history?: HistoryUpdateManyWithoutUserNestedInput
-    pointTransactions?: PointTransactionUpdateManyWithoutUserNestedInput
-    chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
-    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
-    seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
-    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
-    comments?: CommentUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutUserNestedInput
-    reports?: ReportUpdateManyWithoutReporterNestedInput
-    featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutAchievementsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    banned?: BoolFieldUpdateOperationsInput | boolean
-    banReason?: NullableStringFieldUpdateOperationsInput | string | null
-    banExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    points?: IntFieldUpdateOperationsInput | number
-    transactionsFrozen?: BoolFieldUpdateOperationsInput | boolean
-    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
-    referredById?: NullableStringFieldUpdateOperationsInput | string | null
-    dailyAdViews?: IntFieldUpdateOperationsInput | number
-    dailyAdPointsEarned?: IntFieldUpdateOperationsInput | number
-    lastAdWatchDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
-    history?: HistoryUncheckedUpdateManyWithoutUserNestedInput
-    pointTransactions?: PointTransactionUncheckedUpdateManyWithoutUserNestedInput
-    chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
-    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
-    seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
-    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
-    featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type AchievementUpsertWithoutUsersInput = {
-    update: XOR<AchievementUpdateWithoutUsersInput, AchievementUncheckedUpdateWithoutUsersInput>
-    create: XOR<AchievementCreateWithoutUsersInput, AchievementUncheckedCreateWithoutUsersInput>
-    where?: AchievementWhereInput
-  }
-
-  export type AchievementUpdateToOneWithWhereWithoutUsersInput = {
-    where?: AchievementWhereInput
-    data: XOR<AchievementUpdateWithoutUsersInput, AchievementUncheckedUpdateWithoutUsersInput>
-  }
-
-  export type AchievementUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    badgeIcon?: StringFieldUpdateOperationsInput | string
-    pointsReward?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AchievementUncheckedUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: StringFieldUpdateOperationsInput | string
-    badgeIcon?: StringFieldUpdateOperationsInput | string
-    pointsReward?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserCreateWithoutChatMessagesInput = {
@@ -50604,7 +47355,6 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutUserInput
     reports?: ReportCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChatMessagesInput = {
@@ -50642,7 +47392,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
     reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChatMessagesInput = {
@@ -50696,7 +47445,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatMessagesInput = {
@@ -50734,7 +47482,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyReferredByInput = {
@@ -50901,12 +47648,6 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type UserAchievementCreateManyUserInput = {
-    id?: string
-    achievementId: string
-    unlockedAt?: Date | string
-  }
-
   export type ChatMessageCreateManyUserInput = {
     id?: string
     content: string
@@ -50947,7 +47688,6 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutUserNestedInput
     reports?: ReportUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -50985,7 +47725,6 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
     reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
     chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -51457,24 +48196,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserAchievementUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    achievement?: AchievementUpdateOneRequiredWithoutUsersNestedInput
-  }
-
-  export type UserAchievementUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    achievementId?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserAchievementUncheckedUpdateManyWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    achievementId?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type ChatMessageUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
@@ -51908,30 +48629,6 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserAchievementCreateManyAchievementInput = {
-    id?: string
-    userId: string
-    unlockedAt?: Date | string
-  }
-
-  export type UserAchievementUpdateWithoutAchievementInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutAchievementsNestedInput
-  }
-
-  export type UserAchievementUncheckedUpdateWithoutAchievementInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserAchievementUncheckedUpdateManyWithoutAchievementInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    userId?: StringFieldUpdateOperationsInput | string
-    unlockedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 
