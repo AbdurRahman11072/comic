@@ -3,6 +3,8 @@ import { Poppins, Bebas_Neue } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
+export const dynamic = "force-dynamic";
+
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
