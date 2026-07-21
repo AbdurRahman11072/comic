@@ -379,6 +379,16 @@ CREATE TABLE "featured_request" (
 );
 
 -- CreateTable
+CREATE TABLE "chat_message" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "chat_message_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_GenreToSeries" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
@@ -514,6 +524,9 @@ ALTER TABLE "featured_request" ADD CONSTRAINT "featured_request_seriesId_fkey" F
 
 -- AddForeignKey
 ALTER TABLE "featured_request" ADD CONSTRAINT "featured_request_creatorId_fkey" FOREIGN KEY ("creatorId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "chat_message" ADD CONSTRAINT "chat_message_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_GenreToSeries" ADD CONSTRAINT "_GenreToSeries_A_fkey" FOREIGN KEY ("A") REFERENCES "genre"("id") ON DELETE CASCADE ON UPDATE CASCADE;

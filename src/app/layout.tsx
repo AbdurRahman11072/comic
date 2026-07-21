@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   title: "Genz Toon — Read Manga, Manhwa & Comics Online",
   description:
     "A standard scanlation site dedicated to providing high-quality translations. Enjoy a vast library of manga, manhwa and comic series, updated regularly.",
+  other: {
+    "google-adsense-account": "ca-pub-8954395091807116",
+  },
 };
 
 import { siteService } from "@/services/site.service";
