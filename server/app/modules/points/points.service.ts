@@ -46,10 +46,19 @@ const earnFromAd = async (userId: string, amount: number = 10) => {
     }),
   ]);
 
-  // Run achievement checks asynchronously
-  AchievementService.checkAndUnlockAchievements(userId).catch(console.error);
+  // Run achievement checks
+  try {
+    await AchievementService.checkAndUnlockAchievements(userId);
+  } catch (err) {
+    console.error("Achievement check failed:", err);
+  }
 
-  return { points: user.points, transaction };
+  const finalUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { points: true },
+  });
+
+  return { points: finalUser?.points ?? user.points, transaction };
 };
 
 /** Spend points to unlock a locked chapter */
@@ -136,10 +145,20 @@ const buyChapter = async (userId: string, chapterId: string) => {
   const transaction = results[1];
   const purchase = results[2];
 
-  // Run achievement checks asynchronously
-  AchievementService.checkAndUnlockAchievements(userId).catch(console.error);
+  // Run achievement checks
+  try {
+    await AchievementService.checkAndUnlockAchievements(userId);
+  } catch (err) {
+    console.error("Achievement check failed:", err);
+  }
 
-  return { points: updatedUser.points, transaction, purchase };
+  // Fetch final user balance after achievement rewards
+  const finalUser = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { points: true },
+  });
+
+  return { points: finalUser?.points ?? updatedUser.points, transaction, purchase };
 };
 
 export const PointsService = {
