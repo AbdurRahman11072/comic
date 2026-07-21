@@ -31,7 +31,7 @@ server
         credentials: true,
       }),
     );
-    app.use(helmet());
+    app.use('/api', helmet());
 
     // Stripe webhook MUST come before express.json() for raw body
     app.post(
