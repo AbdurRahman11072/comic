@@ -13,6 +13,7 @@ import globalErrorHandler from "./app/middleware/globalErrorHandler";
 import notFound from "./app/middleware/notFound";
 import { PaymentController } from "./app/modules/payment/payment.controller";
 import { RootRoutes } from "./app/routes";
+import { apiLimiter, authLimiter } from "./app/middleware/rateLimiter";
 
 const dev = process.env.NODE_ENV !== "production";
 const server = next({ dev });
@@ -24,6 +25,8 @@ server
   .then(async () => {
     const app = express();
 
+    app.set('trust proxy', 1);
+
     // Security & CORS
     app.use(
       cors({
@@ -32,6 +35,8 @@ server
       }),
     );
     app.use('/api', helmet());
+    app.use('/api', apiLimiter);
+    app.use('/api/auth', authLimiter);
 
     // Stripe webhook MUST come before express.json() for raw body
     app.post(

@@ -11,8 +11,11 @@ import { envConfig } from './app/config/envConfig';
 import { auth } from './lib/auth';
 import { PaymentController } from './app/modules/payment/payment.controller';
 import { prisma } from './lib/prisma';
+import { apiLimiter, authLimiter } from './app/middleware/rateLimiter';
 
 const app: Application = express();
+
+app.set('trust proxy', 1);
 
 app.use(
   cors({
@@ -22,6 +25,8 @@ app.use(
 );
 
 app.use('/api', helmet());
+app.use('/api', apiLimiter);
+app.use('/api/auth', authLimiter);
 
 // Stripe webhook must come before express.json() to get raw body
 // Both the raw body parser AND the handler must be on this route
