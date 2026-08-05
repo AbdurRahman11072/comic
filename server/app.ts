@@ -1,17 +1,16 @@
 import { toNodeHandler } from 'better-auth/node';
 import cors from 'cors';
-import helmet from 'helmet';
 import express, { Application } from 'express';
+import helmet from 'helmet';
 import httpStatus from 'http-status';
 import globalErrorHandler from './app/middleware/globalErrorHandler';
-import notFound from './app/middleware/notFound';
 import { RootRoutes } from './app/routes';
 
 import { envConfig } from './app/config/envConfig';
-import { auth } from './lib/auth';
-import { PaymentController } from './app/modules/payment/payment.controller';
-import { prisma } from './lib/prisma';
 import { apiLimiter, authLimiter } from './app/middleware/rateLimiter';
+import { PaymentController } from './app/modules/payment/payment.controller';
+import { auth } from './lib/auth';
+import { prisma } from './lib/prisma';
 
 const app: Application = express();
 
