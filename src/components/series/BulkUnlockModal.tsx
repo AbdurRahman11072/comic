@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Lock, Unlock, Sparkles, Gift, Check, Loader2, Coins, AlertCircle } from "lucide-react";
+import { Lock, Unlock, Sparkles, Gift, Check, Loader2, Coins, CheckCheck, XCircle } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { useGetPointsBalanceQuery, useBuyBulkChaptersMutation } from "@/redux/api/pointsApi";
 import { toast } from "react-hot-toast";
@@ -43,16 +43,18 @@ export function BulkUnlockModal({
 
   const [buyBulkMutate, { isLoading: unlocking }] = useBuyBulkChaptersMutation();
 
-  // Filter only locked, unpurchased chapters
+  // Filter only locked, unpurchased chapters in natural ascending order
   const lockedChapters = useMemo(() => {
-    return chapters.filter((c) => c.isLocked && !c.isPurchased && c.id);
+    return chapters
+      .filter((c) => c.isLocked && !c.isPurchased && c.id)
+      .sort((a, b) => a.number - b.number);
   }, [chapters]);
 
   // Selected chapter IDs
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [promoCode, setPromoCode] = useState("");
 
-  // Initialize selected IDs when modal opens
+  // Initialize selected IDs (default selects all locked chapters) when modal opens
   const handleOpenChange = (v: boolean) => {
     if (v) {
       setSelectedIds(lockedChapters.map((c) => c.id!).filter(Boolean));
@@ -61,12 +63,17 @@ export function BulkUnlockModal({
     onOpenChange(v);
   };
 
-  const toggleSelectAll = () => {
-    if (selectedIds.length === lockedChapters.length) {
-      setSelectedIds([]);
-    } else {
-      setSelectedIds(lockedChapters.map((c) => c.id!).filter(Boolean));
-    }
+  const selectAll = () => {
+    setSelectedIds(lockedChapters.map((c) => c.id!).filter(Boolean));
+  };
+
+  const selectNextN = (count: number) => {
+    const nextBatch = lockedChapters.slice(0, count).map((c) => c.id!).filter(Boolean);
+    setSelectedIds(nextBatch);
+  };
+
+  const deselectAll = () => {
+    setSelectedIds([]);
   };
 
   const toggleChapter = (id: string) => {
@@ -124,26 +131,73 @@ export function BulkUnlockModal({
               </p>
             </DialogHeader>
 
-            {/* Selection Toolbar */}
-            <div className="flex items-center justify-between text-xs glass px-4 py-3 rounded-2xl border border-white/5">
-              <div className="flex items-center gap-2">
+            {/* Quick Batch Selection Chips */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-muted-foreground font-medium">Quick Batch Select:</span>
+                <span className="text-primary font-mono font-bold">
+                  {selectedIds.length} / {lockedChapters.length} Selected
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <button
                   type="button"
-                  onClick={toggleSelectAll}
-                  className="font-bold text-primary hover:underline cursor-pointer"
+                  onClick={selectAll}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    selectedIds.length === lockedChapters.length
+                      ? "bg-primary text-white shadow-sm shadow-primary/20"
+                      : "glass text-muted-foreground hover:text-white"
+                  }`}
                 >
-                  {selectedIds.length === lockedChapters.length ? "Deselect All" : "Select All Locked"}
+                  <CheckCheck className="w-3.5 h-3.5" />
+                  Select All Premium ({lockedChapters.length})
                 </button>
-                <span className="text-muted-foreground">({selectedIds.length} of {lockedChapters.length} selected)</span>
-              </div>
-              <div className="flex items-center gap-1.5 font-bold text-amber-400">
-                <Coins className="w-4 h-4" />
-                <span>{baseCost} Points</span>
+
+                {lockedChapters.length > 5 && (
+                  <button
+                    type="button"
+                    onClick={() => selectNextN(5)}
+                    className="px-2.5 py-1.5 glass rounded-xl text-xs font-semibold text-muted-foreground hover:text-white transition cursor-pointer"
+                  >
+                    First 5
+                  </button>
+                )}
+
+                {lockedChapters.length > 10 && (
+                  <button
+                    type="button"
+                    onClick={() => selectNextN(10)}
+                    className="px-2.5 py-1.5 glass rounded-xl text-xs font-semibold text-muted-foreground hover:text-white transition cursor-pointer"
+                  >
+                    First 10
+                  </button>
+                )}
+
+                {lockedChapters.length > 20 && (
+                  <button
+                    type="button"
+                    onClick={() => selectNextN(20)}
+                    className="px-2.5 py-1.5 glass rounded-xl text-xs font-semibold text-muted-foreground hover:text-white transition cursor-pointer"
+                  >
+                    First 20
+                  </button>
+                )}
+
+                {selectedIds.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={deselectAll}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold text-red-400/80 hover:text-red-400 hover:bg-red-400/10 transition cursor-pointer ml-auto"
+                  >
+                    <XCircle className="w-3.5 h-3.5" />
+                    Clear
+                  </button>
+                )}
               </div>
             </div>
 
             {/* Chapters Checkbox List */}
-            <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin">
+            <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin">
               {lockedChapters.map((ch) => {
                 const isSelected = selectedIds.includes(ch.id!);
                 return (
