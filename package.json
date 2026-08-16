@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "nodemon --watch server --watch tsconfig.server.json --ext ts --exec \"tsx --tsconfig tsconfig.server.json\" server/index.ts",
     "build": "npx prisma generate && next build && tsc --project tsconfig.server.json",
+    "build:frontend": "npx prisma generate && next build",
+    "build:server": "npx prisma generate && tsc --project tsconfig.server.json",
     "start": "tsx server/index.ts",
+    "start:server": "tsx server/server.ts",
     "lint": "next lint",
     "mg": "npx prisma migrate dev",
     "ge": "npx prisma generate",

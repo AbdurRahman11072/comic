@@ -32,7 +32,20 @@ app.use(
 
 app.use(
   cors({
-    origin: envConfig.FRONTEND_URL,
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const allowed = [
+        envConfig.FRONTEND_URL,
+        envConfig.BACKEND_URL,
+        'http://localhost:3000',
+        'http://localhost:5000',
+        ...(process.env.ADDITIONAL_ORIGINS ? process.env.ADDITIONAL_ORIGINS.split(',').map((s) => s.trim()) : []),
+      ];
+      if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
