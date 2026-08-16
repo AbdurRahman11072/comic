@@ -7,10 +7,10 @@ import {
   useDeletePromoCodeMutation,
 } from "@/redux/api/promoApi";
 import {
-  Gift, Plus, Trash2, Copy, Check, Users, Sparkles, Loader2, Calendar, AlertCircle
+  Gift, Plus, Trash2, Copy, Check, Sparkles, Loader2, Calendar, AlertCircle, Percent, Clock
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { format } from "date-fns";
+import { format, isPast } from "date-fns";
 
 export default function PromoCodesDashboardPage() {
   const { data: promoData, isLoading } = useGetPromoCodesQuery();
@@ -20,6 +20,7 @@ export default function PromoCodesDashboardPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [code, setCode] = useState("");
   const [pointsReward, setPointsReward] = useState("50");
+  const [discountPercent, setDiscountPercent] = useState("0");
   const [maxUses, setMaxUses] = useState("100");
   const [expiresAt, setExpiresAt] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -37,6 +38,7 @@ export default function PromoCodesDashboardPage() {
       await createPromoMutate({
         code: code.trim(),
         pointsReward: Number(pointsReward) || 0,
+        discountPercent: Number(discountPercent) || 0,
         maxUses: Number(maxUses) || 100,
         expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
       }).unwrap();
@@ -44,6 +46,10 @@ export default function PromoCodesDashboardPage() {
       toast.success("Promo code created successfully!");
       setModalOpen(false);
       setCode("");
+      setPointsReward("50");
+      setDiscountPercent("0");
+      setMaxUses("100");
+      setExpiresAt("");
     } catch (err: any) {
       toast.error(err?.data?.message || "Failed to create promo code");
     }
@@ -84,7 +90,7 @@ export default function PromoCodesDashboardPage() {
             <Gift className="w-6 h-6 text-primary" /> Promo & Coupon Codes
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Create reward promo codes for your channel followers, Discord community, and marketing campaigns.
+            Create 1-time reward & bulk chapter discount promo codes with custom expiry for your readers and campaigns.
           </p>
         </div>
         <button
@@ -92,10 +98,18 @@ export default function PromoCodesDashboardPage() {
             generateRandomCode();
             setModalOpen(true);
           }}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20 shrink-0 self-start sm:self-auto"
+          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20 shrink-0 self-start sm:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" /> Create Promo Code
         </button>
+      </div>
+
+      {/* Info Alert */}
+      <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 flex items-center gap-3 text-xs text-muted-foreground">
+        <AlertCircle className="w-4 h-4 text-primary shrink-0" />
+        <span>
+          <strong>1-Time Per User & Expiry Enforced:</strong> Each user can redeem a promo code only once. Set an expiration date and time to run limited-time flash promotions.
+        </span>
       </div>
 
       {/* Promos List Table */}
@@ -110,25 +124,25 @@ export default function PromoCodesDashboardPage() {
               <thead className="border-b border-white/10 bg-white/[0.02] text-xs uppercase tracking-wider text-muted-foreground">
                 <tr>
                   <th className="py-4 px-6">Promo Code</th>
-                  <th className="py-4 px-6">Reward (Points)</th>
+                  <th className="py-4 px-6">Type / Reward</th>
                   <th className="py-4 px-6">Redemptions</th>
-                  <th className="py-4 px-6">Expiry</th>
+                  <th className="py-4 px-6">Expiry Time</th>
                   <th className="py-4 px-6">Status</th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {promos.map((promo) => {
-                  const isExpired = promo.expiresAt && new Date(promo.expiresAt) < new Date();
+                  const isExpired = promo.expiresAt && isPast(new Date(promo.expiresAt));
                   const isFull = promo.usedCount >= promo.maxUses;
 
                   return (
                     <tr key={promo.id} className="hover:bg-white/[0.02] transition">
                       <td className="py-4 px-6 font-mono font-bold text-white flex items-center gap-2">
-                        <span>{promo.code}</span>
+                        <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">{promo.code}</span>
                         <button
                           onClick={() => handleCopy(promo.code, promo.id)}
-                          className="text-white/40 hover:text-white transition p-1"
+                          className="text-white/40 hover:text-white transition p-1 cursor-pointer"
                           title="Copy Code"
                         >
                           {copiedId === promo.id ? (
@@ -138,8 +152,22 @@ export default function PromoCodesDashboardPage() {
                           )}
                         </button>
                       </td>
-                      <td className="py-4 px-6 font-bold text-amber-400">
-                        +{promo.pointsReward} pts
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          {promo.pointsReward > 0 && (
+                            <span className="font-bold text-amber-400 text-xs px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
+                              +{promo.pointsReward} Points
+                            </span>
+                          )}
+                          {promo.discountPercent > 0 && (
+                            <span className="font-bold text-emerald-400 text-xs px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                              {promo.discountPercent}% Off Bulk
+                            </span>
+                          )}
+                          {promo.pointsReward === 0 && promo.discountPercent === 0 && (
+                            <span className="text-muted-foreground text-xs">Standard</span>
+                          )}
+                        </div>
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-2">
@@ -148,9 +176,14 @@ export default function PromoCodesDashboardPage() {
                         </div>
                       </td>
                       <td className="py-4 px-6 text-xs text-muted-foreground">
-                        {promo.expiresAt
-                          ? format(new Date(promo.expiresAt), "MMM dd, yyyy")
-                          : "Never"}
+                        {promo.expiresAt ? (
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-white/40" />
+                            <span>{format(new Date(promo.expiresAt), "MMM dd, yyyy HH:mm")}</span>
+                          </div>
+                        ) : (
+                          <span className="text-emerald-400 font-medium">No Expiration</span>
+                        )}
                       </td>
                       <td className="py-4 px-6">
                         {isExpired ? (
@@ -159,7 +192,7 @@ export default function PromoCodesDashboardPage() {
                           </span>
                         ) : isFull ? (
                           <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                            FULL
+                            LIMIT REACHED
                           </span>
                         ) : (
                           <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -170,7 +203,7 @@ export default function PromoCodesDashboardPage() {
                       <td className="py-4 px-6 text-right">
                         <button
                           onClick={() => handleDelete(promo.id)}
-                          className="p-2 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition"
+                          className="p-2 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition cursor-pointer"
                           title="Delete Code"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -184,7 +217,7 @@ export default function PromoCodesDashboardPage() {
           </div>
         ) : (
           <div className="text-center py-20 text-muted-foreground text-sm">
-            No promo codes created yet. Click "Create Promo Code" to get started!
+            No promo codes created yet. Click &quot;Create Promo Code&quot; to get started!
           </div>
         )}
       </div>
@@ -200,21 +233,21 @@ export default function PromoCodesDashboardPage() {
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
-                  Promo Code Name
+                  Promo Code *
                 </label>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={code}
                     onChange={(e) => setCode(e.target.value.toUpperCase())}
-                    placeholder="SUMMER50"
+                    placeholder="FLASH50"
                     required
                     className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white font-mono font-bold tracking-wider uppercase"
                   />
                   <button
                     type="button"
                     onClick={generateRandomCode}
-                    className="px-3 py-2 glass rounded-xl text-xs font-bold text-white/70 hover:text-white"
+                    className="px-3 py-2 glass rounded-xl text-xs font-bold text-white/70 hover:text-white cursor-pointer"
                   >
                     Random
                   </button>
@@ -224,40 +257,54 @@ export default function PromoCodesDashboardPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
-                    Points Reward
+                    Points Reward (Optional)
                   </label>
                   <input
                     type="number"
-                    min="1"
-                    max="1000"
+                    min="0"
+                    max="10000"
                     value={pointsReward}
                     onChange={(e) => setPointsReward(e.target.value)}
-                    required
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm"
                   />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
-                    Max Redemptions
+                    Bulk Discount % (Optional)
                   </label>
                   <input
                     type="number"
-                    min="1"
-                    max="100000"
-                    value={maxUses}
-                    onChange={(e) => setMaxUses(e.target.value)}
-                    required
-                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white"
+                    min="0"
+                    max="100"
+                    value={discountPercent}
+                    onChange={(e) => setDiscountPercent(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm"
                   />
                 </div>
               </div>
 
               <div>
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
-                  Expiry Date (Optional)
+                  Max Redemptions
                 </label>
                 <input
-                  type="date"
+                  type="number"
+                  min="1"
+                  max="100000"
+                  value={maxUses}
+                  onChange={(e) => setMaxUses(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2 flex items-center justify-between">
+                  <span>Expiry Date & Time (Optional)</span>
+                  <span className="text-[10px] text-primary lowercase">Limited Time Control</span>
+                </label>
+                <input
+                  type="datetime-local"
                   value={expiresAt}
                   onChange={(e) => setExpiresAt(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm"
@@ -268,17 +315,17 @@ export default function PromoCodesDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-5 py-2.5 glass rounded-xl text-sm font-semibold text-white/70 hover:text-white"
+                  className="px-5 py-2.5 glass rounded-xl text-sm font-semibold text-white/70 hover:text-white cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creating || !code.trim()}
-                  className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary/90 transition disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary/90 transition disabled:opacity-50 flex items-center gap-2 cursor-pointer"
                 >
                   {creating && <Loader2 className="w-4 h-4 animate-spin" />}
-                  Create Code
+                  Create Promo Code
                 </button>
               </div>
             </form>

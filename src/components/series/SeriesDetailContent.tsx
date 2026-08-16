@@ -9,8 +9,10 @@ import { SeriesActions } from "./SeriesActions";
 import { SeriesDescription } from "./SeriesDescription";
 import { ChapterRow } from "./ChapterRow";
 import { ReviewSection } from "./ReviewSection";
+import { BulkUnlockModal } from "./BulkUnlockModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, Star, BookOpen, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { MessageSquare, Star, BookOpen, ArrowUpDown, ChevronLeft, ChevronRight, Unlock } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface Chapter {
   id?: string;
@@ -48,9 +50,15 @@ interface SeriesDetailContentProps {
 }
 
 export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
+  const router = useRouter();
   const [reverseOrder, setReverseOrder] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const itemsPerPage = 20;
+
+  const lockedChaptersCount = useMemo(() => {
+    return series.chapters.filter((c) => c.isLocked && !c.isPurchased).length;
+  }, [series.chapters]);
 
   const chaptersToDisplay = useMemo(() => {
     let sorted = [...series.chapters];
@@ -65,7 +73,7 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
 
   const handleReverseToggle = () => {
     setReverseOrder((prev) => !prev);
-    setCurrentPage(1); // Reset to first page on sort change
+    setCurrentPage(1);
   };
 
   return (
@@ -144,20 +152,34 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
 
                 {/* Chapter List */}
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between px-2">
+                  <div className="flex items-center justify-between px-2 flex-wrap gap-2">
                     <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                       Chapters
                       <span className="text-sm font-normal text-foreground/40">
                         ({series.chapters.length})
                       </span>
                     </h3>
-                    <button 
-                      onClick={handleReverseToggle}
-                      className="text-xs text-primary hover:underline flex items-center gap-1 glass px-3 py-1.5 rounded-full border border-primary/20 hover:bg-primary/10 transition-colors"
-                    >
-                      <ArrowUpDown className="w-3.5 h-3.5" />
-                      {reverseOrder ? "Oldest First" : "Newest First"}
-                    </button>
+
+                    <div className="flex items-center gap-2">
+                      {lockedChaptersCount > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setBulkModalOpen(true)}
+                          className="text-xs font-bold text-white flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary hover:bg-primary/90 shadow-md shadow-primary/20 transition-all cursor-pointer"
+                        >
+                          <Unlock className="w-3.5 h-3.5" />
+                          <span>Bulk Unlock ({lockedChaptersCount})</span>
+                        </button>
+                      )}
+
+                      <button 
+                        onClick={handleReverseToggle}
+                        className="text-xs text-primary hover:underline flex items-center gap-1 glass px-3 py-1.5 rounded-full border border-primary/20 hover:bg-primary/10 transition-colors cursor-pointer"
+                      >
+                        <ArrowUpDown className="w-3.5 h-3.5" />
+                        {reverseOrder ? "Oldest First" : "Newest First"}
+                      </button>
+                    </div>
                   </div>
                   
                   <div className="grid gap-1 rounded-2xl glass p-2 max-h-[600px] overflow-y-auto scrollbar-thin">
@@ -215,6 +237,17 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
           </div>
         </div>
       </div>
+
+      {/* Bulk Unlock Modal */}
+      <BulkUnlockModal
+        open={bulkModalOpen}
+        onOpenChange={setBulkModalOpen}
+        seriesTitle={series.title}
+        chapters={series.chapters}
+        onSuccess={() => {
+          router.refresh();
+        }}
+      />
     </div>
   );
 }

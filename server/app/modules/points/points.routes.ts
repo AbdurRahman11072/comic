@@ -6,9 +6,10 @@ import { pointsLimiter } from '../../middleware/rateLimiter';
 const router = Router();
 
 // All points routes require authentication
-router.get('/balance', authMiddleware(['user', 'admin']), PointsController.getBalance);
-router.get('/transactions', authMiddleware(['user', 'admin']), PointsController.getTransactions);
-router.post('/earn-ad', authMiddleware(['user', 'admin']), pointsLimiter, PointsController.earnFromAd);
-router.post('/buy-chapter', authMiddleware(['user', 'admin']), pointsLimiter, PointsController.buyChapter);
+router.get('/balance', authMiddleware(['user', 'creator', 'moderator', 'admin']), PointsController.getBalance);
+router.get('/transactions', authMiddleware(['user', 'creator', 'moderator', 'admin']), PointsController.getTransactions);
+router.post('/earn-ad', authMiddleware(['user', 'creator', 'moderator', 'admin']), pointsLimiter, PointsController.earnFromAd);
+router.post('/buy-chapter', authMiddleware(['user', 'creator', 'moderator', 'admin']), pointsLimiter, PointsController.buyChapter);
+router.post('/buy-bulk-chapters', authMiddleware(['user', 'creator', 'moderator', 'admin']), pointsLimiter, PointsController.buyBulkChapters);
 
 export const PointsRoutes = router;

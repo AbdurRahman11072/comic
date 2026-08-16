@@ -65,9 +65,29 @@ const buyChapter = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const buyBulkChapters = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const { chapterIds, promoCode } = req.body;
+
+  if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, 'User not authenticated');
+  if (!chapterIds || !Array.isArray(chapterIds) || chapterIds.length === 0) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'chapterIds array is required');
+  }
+
+  const result = await PointsService.buyBulkChapters(userId, chapterIds, promoCode);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: `Successfully unlocked ${result.unlockedCount} chapters`,
+    data: result,
+  });
+});
+
 export const PointsController = {
   getBalance,
   getTransactions,
   earnFromAd,
   buyChapter,
+  buyBulkChapters,
 };

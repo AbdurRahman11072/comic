@@ -55,6 +55,18 @@ export const pointsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Points', 'Transactions', 'Chapters', 'History', 'User'],
     }),
+
+    buyBulkChapters: builder.mutation<
+      any,
+      { chapterIds: string[]; promoCode?: string }
+    >({
+      query: (body) => ({
+        url: '/points/buy-bulk-chapters',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Points', 'Transactions', 'Chapters', 'History', 'User'],
+    }),
   }),
 });
 
@@ -63,4 +75,5 @@ export const {
   useGetTransactionsQuery,
   useEarnFromAdMutation,
   useBuyChapterMutation,
+  useBuyBulkChaptersMutation,
 } = pointsApi;
