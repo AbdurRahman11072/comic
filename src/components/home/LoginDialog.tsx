@@ -10,7 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { signIn, signUp } from "@/lib/auth-client";
-import { Clock, AlertTriangle } from "lucide-react";
+import { Clock, AlertTriangle, Eye, EyeOff } from "lucide-react";
+import { SITE_DEFAULTS } from "@/config/site";
 
 const COVERS = [
   "https://wsrv.nl/?url=cdn.meowing.org/uploads/H70SqQB-7tA&w=300",
@@ -50,12 +51,19 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
 
   const reset = () => {
-    setName(""); setEmail(""); setPassword(""); setError(null); setLoading(false); setRetryCountdown(null);
+    setName("");
+    setEmail("");
+    setPassword("");
+    setShowPassword(false);
+    setError(null);
+    setLoading(false);
+    setRetryCountdown(null);
   };
 
   useEffect(() => {
@@ -84,7 +92,6 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
         const res = await signIn.email({ email, password });
         if (res.error) {
           const errMsg = res.error.message || "Login failed";
-          // Check for rate limit countdown
           const match = errMsg.match(/(\d+)\s*s/);
           if (match && match[1]) {
             setRetryCountdown(parseInt(match[1]));
@@ -125,8 +132,8 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
             </DialogTitle>
             <DialogDescription className="text-[13px] text-muted-foreground mt-1">
               {tab === "login"
-                ? "Welcome back! Sign in to track progress and spend your points."
-                : "Join Genz Toon and earn your first points today."}
+                ? `Welcome back! Sign in to ${SITE_DEFAULTS.appName} to track progress and spend points.`
+                : `Join ${SITE_DEFAULTS.appName} and earn your first points today.`}
             </DialogDescription>
           </DialogHeader>
 
@@ -152,30 +159,47 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
             {tab === "signup" && (
               <input
                 type="text"
-                placeholder="Name"
+                placeholder="Full Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full rounded-xl px-4 py-2.5 text-[13px] bg-white/5 border border-white/10 outline-none focus:border-primary/60 transition-colors"
+                className="w-full rounded-xl px-4 py-2.5 text-[13px] bg-white/5 border border-white/10 outline-none focus:border-primary/60 transition-colors text-white"
               />
             )}
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Email address"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full rounded-xl px-4 py-2.5 text-[13px] bg-white/5 border border-white/10 outline-none focus:border-primary/60 transition-colors"
+              className="w-full rounded-xl px-4 py-2.5 text-[13px] bg-white/5 border border-white/10 outline-none focus:border-primary/60 transition-colors text-white"
             />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              className="w-full rounded-xl px-4 py-2.5 text-[13px] bg-white/5 border border-white/10 outline-none focus:border-primary/60 transition-colors"
-            />
+            
+            {/* Password Input with Show/Hide Toggle */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                className="w-full rounded-xl pl-4 pr-11 py-2.5 text-[13px] bg-white/5 border border-white/10 outline-none focus:border-primary/60 transition-colors text-white"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors p-1"
+                title={showPassword ? "Hide password" : "Show password"}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
+              </button>
+            </div>
 
             {error && (
               <div className="text-[12px] text-red-400 bg-red-400/10 border border-red-500/20 rounded-xl px-3.5 py-2.5 space-y-1">

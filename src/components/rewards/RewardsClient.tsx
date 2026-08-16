@@ -14,6 +14,7 @@ import {
 import api from "@/lib/api";
 import { useEarnFromAdMutation } from "@/redux/api/pointsApi";
 import { useRedeemPromoCodeMutation } from "@/redux/api/promoApi";
+import { LoginDialog } from "@/components/home/LoginDialog";
 
 const YoutubeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -59,6 +60,9 @@ export function RewardsClient() {
 function RewardsContent() {
   const { data: session, isPending } = useSession();
   const searchParams = useSearchParams();
+
+  // Login Dialog state for rewards page
+  const [loginOpen, setLoginOpen] = useState(false);
 
   // Ad Pack State
   const [targetAds, setTargetAds] = useState(5);
@@ -255,12 +259,8 @@ function RewardsContent() {
                 </p>
               </div>
               <button
-                onClick={() => {
-                  const authBtn = document.querySelector('[data-auth-trigger="true"]') as HTMLButtonElement;
-                  if (authBtn) authBtn.click();
-                  else window.location.href = "/profile";
-                }}
-                className="w-full max-w-xs py-3.5 bg-primary text-white rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/25"
+                onClick={() => setLoginOpen(true)}
+                className="w-full max-w-xs py-3.5 bg-primary text-white rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/25 cursor-pointer"
               >
                 Log In / Register
               </button>
@@ -405,6 +405,13 @@ function RewardsContent() {
       </main>
 
       <Footer />
+
+      {/* Direct Login Modal on Rewards Page */}
+      <LoginDialog
+        open={loginOpen}
+        onOpenChange={setLoginOpen}
+        onAuthSuccess={() => setLoginOpen(false)}
+      />
     </div>
   );
 }
