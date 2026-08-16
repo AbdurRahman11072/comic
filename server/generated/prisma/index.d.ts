@@ -14177,6 +14177,7 @@ export namespace Prisma {
     termsOfService: string | null
     privacyPolicy: string | null
     aboutUs: string | null
+    dmcaEmail: string | null
     isMaintenanceMode: boolean | null
     maintenanceMessage: string | null
     allowNewRegistrations: boolean | null
@@ -14187,6 +14188,7 @@ export namespace Prisma {
     seoKeywords: string | null
     ogImageUrl: string | null
     gaTrackingId: string | null
+    adClient: string | null
     minWithdrawalPoints: number | null
     creatorRevenueSharePercent: number | null
     referralBonusPercent: number | null
@@ -14212,6 +14214,7 @@ export namespace Prisma {
     termsOfService: string | null
     privacyPolicy: string | null
     aboutUs: string | null
+    dmcaEmail: string | null
     isMaintenanceMode: boolean | null
     maintenanceMessage: string | null
     allowNewRegistrations: boolean | null
@@ -14222,6 +14225,7 @@ export namespace Prisma {
     seoKeywords: string | null
     ogImageUrl: string | null
     gaTrackingId: string | null
+    adClient: string | null
     minWithdrawalPoints: number | null
     creatorRevenueSharePercent: number | null
     referralBonusPercent: number | null
@@ -14248,6 +14252,7 @@ export namespace Prisma {
     termsOfService: number
     privacyPolicy: number
     aboutUs: number
+    dmcaEmail: number
     isMaintenanceMode: number
     maintenanceMessage: number
     allowNewRegistrations: number
@@ -14258,6 +14263,7 @@ export namespace Prisma {
     seoKeywords: number
     ogImageUrl: number
     gaTrackingId: number
+    adClient: number
     minWithdrawalPoints: number
     creatorRevenueSharePercent: number
     referralBonusPercent: number
@@ -14305,6 +14311,7 @@ export namespace Prisma {
     termsOfService?: true
     privacyPolicy?: true
     aboutUs?: true
+    dmcaEmail?: true
     isMaintenanceMode?: true
     maintenanceMessage?: true
     allowNewRegistrations?: true
@@ -14315,6 +14322,7 @@ export namespace Prisma {
     seoKeywords?: true
     ogImageUrl?: true
     gaTrackingId?: true
+    adClient?: true
     minWithdrawalPoints?: true
     creatorRevenueSharePercent?: true
     referralBonusPercent?: true
@@ -14340,6 +14348,7 @@ export namespace Prisma {
     termsOfService?: true
     privacyPolicy?: true
     aboutUs?: true
+    dmcaEmail?: true
     isMaintenanceMode?: true
     maintenanceMessage?: true
     allowNewRegistrations?: true
@@ -14350,6 +14359,7 @@ export namespace Prisma {
     seoKeywords?: true
     ogImageUrl?: true
     gaTrackingId?: true
+    adClient?: true
     minWithdrawalPoints?: true
     creatorRevenueSharePercent?: true
     referralBonusPercent?: true
@@ -14376,6 +14386,7 @@ export namespace Prisma {
     termsOfService?: true
     privacyPolicy?: true
     aboutUs?: true
+    dmcaEmail?: true
     isMaintenanceMode?: true
     maintenanceMessage?: true
     allowNewRegistrations?: true
@@ -14386,6 +14397,7 @@ export namespace Prisma {
     seoKeywords?: true
     ogImageUrl?: true
     gaTrackingId?: true
+    adClient?: true
     minWithdrawalPoints?: true
     creatorRevenueSharePercent?: true
     referralBonusPercent?: true
@@ -14499,6 +14511,7 @@ export namespace Prisma {
     termsOfService: string | null
     privacyPolicy: string | null
     aboutUs: string | null
+    dmcaEmail: string | null
     isMaintenanceMode: boolean
     maintenanceMessage: string | null
     allowNewRegistrations: boolean
@@ -14509,6 +14522,7 @@ export namespace Prisma {
     seoKeywords: string | null
     ogImageUrl: string | null
     gaTrackingId: string | null
+    adClient: string | null
     minWithdrawalPoints: number
     creatorRevenueSharePercent: number
     referralBonusPercent: number
@@ -14554,6 +14568,7 @@ export namespace Prisma {
     termsOfService?: boolean
     privacyPolicy?: boolean
     aboutUs?: boolean
+    dmcaEmail?: boolean
     isMaintenanceMode?: boolean
     maintenanceMessage?: boolean
     allowNewRegistrations?: boolean
@@ -14564,6 +14579,7 @@ export namespace Prisma {
     seoKeywords?: boolean
     ogImageUrl?: boolean
     gaTrackingId?: boolean
+    adClient?: boolean
     minWithdrawalPoints?: boolean
     creatorRevenueSharePercent?: boolean
     referralBonusPercent?: boolean
@@ -14590,6 +14606,7 @@ export namespace Prisma {
     termsOfService?: boolean
     privacyPolicy?: boolean
     aboutUs?: boolean
+    dmcaEmail?: boolean
     isMaintenanceMode?: boolean
     maintenanceMessage?: boolean
     allowNewRegistrations?: boolean
@@ -14600,6 +14617,7 @@ export namespace Prisma {
     seoKeywords?: boolean
     ogImageUrl?: boolean
     gaTrackingId?: boolean
+    adClient?: boolean
     minWithdrawalPoints?: boolean
     creatorRevenueSharePercent?: boolean
     referralBonusPercent?: boolean
@@ -14626,6 +14644,7 @@ export namespace Prisma {
     termsOfService?: boolean
     privacyPolicy?: boolean
     aboutUs?: boolean
+    dmcaEmail?: boolean
     isMaintenanceMode?: boolean
     maintenanceMessage?: boolean
     allowNewRegistrations?: boolean
@@ -14636,6 +14655,7 @@ export namespace Prisma {
     seoKeywords?: boolean
     ogImageUrl?: boolean
     gaTrackingId?: boolean
+    adClient?: boolean
     minWithdrawalPoints?: boolean
     creatorRevenueSharePercent?: boolean
     referralBonusPercent?: boolean
@@ -14662,6 +14682,7 @@ export namespace Prisma {
     termsOfService?: boolean
     privacyPolicy?: boolean
     aboutUs?: boolean
+    dmcaEmail?: boolean
     isMaintenanceMode?: boolean
     maintenanceMessage?: boolean
     allowNewRegistrations?: boolean
@@ -14672,6 +14693,7 @@ export namespace Prisma {
     seoKeywords?: boolean
     ogImageUrl?: boolean
     gaTrackingId?: boolean
+    adClient?: boolean
     minWithdrawalPoints?: boolean
     creatorRevenueSharePercent?: boolean
     referralBonusPercent?: boolean
@@ -14683,7 +14705,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
+  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
 
   export type $SiteConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SiteConfig"
@@ -14703,6 +14725,7 @@ export namespace Prisma {
       termsOfService: string | null
       privacyPolicy: string | null
       aboutUs: string | null
+      dmcaEmail: string | null
       isMaintenanceMode: boolean
       maintenanceMessage: string | null
       allowNewRegistrations: boolean
@@ -14713,6 +14736,7 @@ export namespace Prisma {
       seoKeywords: string | null
       ogImageUrl: string | null
       gaTrackingId: string | null
+      adClient: string | null
       minWithdrawalPoints: number
       creatorRevenueSharePercent: number
       referralBonusPercent: number
@@ -15159,6 +15183,7 @@ export namespace Prisma {
     readonly termsOfService: FieldRef<"SiteConfig", 'String'>
     readonly privacyPolicy: FieldRef<"SiteConfig", 'String'>
     readonly aboutUs: FieldRef<"SiteConfig", 'String'>
+    readonly dmcaEmail: FieldRef<"SiteConfig", 'String'>
     readonly isMaintenanceMode: FieldRef<"SiteConfig", 'Boolean'>
     readonly maintenanceMessage: FieldRef<"SiteConfig", 'String'>
     readonly allowNewRegistrations: FieldRef<"SiteConfig", 'Boolean'>
@@ -15169,6 +15194,7 @@ export namespace Prisma {
     readonly seoKeywords: FieldRef<"SiteConfig", 'String'>
     readonly ogImageUrl: FieldRef<"SiteConfig", 'String'>
     readonly gaTrackingId: FieldRef<"SiteConfig", 'String'>
+    readonly adClient: FieldRef<"SiteConfig", 'String'>
     readonly minWithdrawalPoints: FieldRef<"SiteConfig", 'Int'>
     readonly creatorRevenueSharePercent: FieldRef<"SiteConfig", 'Int'>
     readonly referralBonusPercent: FieldRef<"SiteConfig", 'Int'>
@@ -39205,6 +39231,7 @@ export namespace Prisma {
     termsOfService: 'termsOfService',
     privacyPolicy: 'privacyPolicy',
     aboutUs: 'aboutUs',
+    dmcaEmail: 'dmcaEmail',
     isMaintenanceMode: 'isMaintenanceMode',
     maintenanceMessage: 'maintenanceMessage',
     allowNewRegistrations: 'allowNewRegistrations',
@@ -39215,6 +39242,7 @@ export namespace Prisma {
     seoKeywords: 'seoKeywords',
     ogImageUrl: 'ogImageUrl',
     gaTrackingId: 'gaTrackingId',
+    adClient: 'adClient',
     minWithdrawalPoints: 'minWithdrawalPoints',
     creatorRevenueSharePercent: 'creatorRevenueSharePercent',
     referralBonusPercent: 'referralBonusPercent',
@@ -40583,6 +40611,7 @@ export namespace Prisma {
     termsOfService?: StringNullableFilter<"SiteConfig"> | string | null
     privacyPolicy?: StringNullableFilter<"SiteConfig"> | string | null
     aboutUs?: StringNullableFilter<"SiteConfig"> | string | null
+    dmcaEmail?: StringNullableFilter<"SiteConfig"> | string | null
     isMaintenanceMode?: BoolFilter<"SiteConfig"> | boolean
     maintenanceMessage?: StringNullableFilter<"SiteConfig"> | string | null
     allowNewRegistrations?: BoolFilter<"SiteConfig"> | boolean
@@ -40593,6 +40622,7 @@ export namespace Prisma {
     seoKeywords?: StringNullableFilter<"SiteConfig"> | string | null
     ogImageUrl?: StringNullableFilter<"SiteConfig"> | string | null
     gaTrackingId?: StringNullableFilter<"SiteConfig"> | string | null
+    adClient?: StringNullableFilter<"SiteConfig"> | string | null
     minWithdrawalPoints?: IntFilter<"SiteConfig"> | number
     creatorRevenueSharePercent?: IntFilter<"SiteConfig"> | number
     referralBonusPercent?: IntFilter<"SiteConfig"> | number
@@ -40619,6 +40649,7 @@ export namespace Prisma {
     termsOfService?: SortOrderInput | SortOrder
     privacyPolicy?: SortOrderInput | SortOrder
     aboutUs?: SortOrderInput | SortOrder
+    dmcaEmail?: SortOrderInput | SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrderInput | SortOrder
     allowNewRegistrations?: SortOrder
@@ -40629,6 +40660,7 @@ export namespace Prisma {
     seoKeywords?: SortOrderInput | SortOrder
     ogImageUrl?: SortOrderInput | SortOrder
     gaTrackingId?: SortOrderInput | SortOrder
+    adClient?: SortOrderInput | SortOrder
     minWithdrawalPoints?: SortOrder
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
@@ -40658,6 +40690,7 @@ export namespace Prisma {
     termsOfService?: StringNullableFilter<"SiteConfig"> | string | null
     privacyPolicy?: StringNullableFilter<"SiteConfig"> | string | null
     aboutUs?: StringNullableFilter<"SiteConfig"> | string | null
+    dmcaEmail?: StringNullableFilter<"SiteConfig"> | string | null
     isMaintenanceMode?: BoolFilter<"SiteConfig"> | boolean
     maintenanceMessage?: StringNullableFilter<"SiteConfig"> | string | null
     allowNewRegistrations?: BoolFilter<"SiteConfig"> | boolean
@@ -40668,6 +40701,7 @@ export namespace Prisma {
     seoKeywords?: StringNullableFilter<"SiteConfig"> | string | null
     ogImageUrl?: StringNullableFilter<"SiteConfig"> | string | null
     gaTrackingId?: StringNullableFilter<"SiteConfig"> | string | null
+    adClient?: StringNullableFilter<"SiteConfig"> | string | null
     minWithdrawalPoints?: IntFilter<"SiteConfig"> | number
     creatorRevenueSharePercent?: IntFilter<"SiteConfig"> | number
     referralBonusPercent?: IntFilter<"SiteConfig"> | number
@@ -40694,6 +40728,7 @@ export namespace Prisma {
     termsOfService?: SortOrderInput | SortOrder
     privacyPolicy?: SortOrderInput | SortOrder
     aboutUs?: SortOrderInput | SortOrder
+    dmcaEmail?: SortOrderInput | SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrderInput | SortOrder
     allowNewRegistrations?: SortOrder
@@ -40704,6 +40739,7 @@ export namespace Prisma {
     seoKeywords?: SortOrderInput | SortOrder
     ogImageUrl?: SortOrderInput | SortOrder
     gaTrackingId?: SortOrderInput | SortOrder
+    adClient?: SortOrderInput | SortOrder
     minWithdrawalPoints?: SortOrder
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
@@ -40738,6 +40774,7 @@ export namespace Prisma {
     termsOfService?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     privacyPolicy?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     aboutUs?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
+    dmcaEmail?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     isMaintenanceMode?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
     maintenanceMessage?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     allowNewRegistrations?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
@@ -40748,6 +40785,7 @@ export namespace Prisma {
     seoKeywords?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     ogImageUrl?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     gaTrackingId?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
+    adClient?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     minWithdrawalPoints?: IntWithAggregatesFilter<"SiteConfig"> | number
     creatorRevenueSharePercent?: IntWithAggregatesFilter<"SiteConfig"> | number
     referralBonusPercent?: IntWithAggregatesFilter<"SiteConfig"> | number
@@ -43147,6 +43185,7 @@ export namespace Prisma {
     termsOfService?: string | null
     privacyPolicy?: string | null
     aboutUs?: string | null
+    dmcaEmail?: string | null
     isMaintenanceMode?: boolean
     maintenanceMessage?: string | null
     allowNewRegistrations?: boolean
@@ -43157,6 +43196,7 @@ export namespace Prisma {
     seoKeywords?: string | null
     ogImageUrl?: string | null
     gaTrackingId?: string | null
+    adClient?: string | null
     minWithdrawalPoints?: number
     creatorRevenueSharePercent?: number
     referralBonusPercent?: number
@@ -43183,6 +43223,7 @@ export namespace Prisma {
     termsOfService?: string | null
     privacyPolicy?: string | null
     aboutUs?: string | null
+    dmcaEmail?: string | null
     isMaintenanceMode?: boolean
     maintenanceMessage?: string | null
     allowNewRegistrations?: boolean
@@ -43193,6 +43234,7 @@ export namespace Prisma {
     seoKeywords?: string | null
     ogImageUrl?: string | null
     gaTrackingId?: string | null
+    adClient?: string | null
     minWithdrawalPoints?: number
     creatorRevenueSharePercent?: number
     referralBonusPercent?: number
@@ -43219,6 +43261,7 @@ export namespace Prisma {
     termsOfService?: NullableStringFieldUpdateOperationsInput | string | null
     privacyPolicy?: NullableStringFieldUpdateOperationsInput | string | null
     aboutUs?: NullableStringFieldUpdateOperationsInput | string | null
+    dmcaEmail?: NullableStringFieldUpdateOperationsInput | string | null
     isMaintenanceMode?: BoolFieldUpdateOperationsInput | boolean
     maintenanceMessage?: NullableStringFieldUpdateOperationsInput | string | null
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
@@ -43229,6 +43272,7 @@ export namespace Prisma {
     seoKeywords?: NullableStringFieldUpdateOperationsInput | string | null
     ogImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     gaTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    adClient?: NullableStringFieldUpdateOperationsInput | string | null
     minWithdrawalPoints?: IntFieldUpdateOperationsInput | number
     creatorRevenueSharePercent?: IntFieldUpdateOperationsInput | number
     referralBonusPercent?: IntFieldUpdateOperationsInput | number
@@ -43255,6 +43299,7 @@ export namespace Prisma {
     termsOfService?: NullableStringFieldUpdateOperationsInput | string | null
     privacyPolicy?: NullableStringFieldUpdateOperationsInput | string | null
     aboutUs?: NullableStringFieldUpdateOperationsInput | string | null
+    dmcaEmail?: NullableStringFieldUpdateOperationsInput | string | null
     isMaintenanceMode?: BoolFieldUpdateOperationsInput | boolean
     maintenanceMessage?: NullableStringFieldUpdateOperationsInput | string | null
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
@@ -43265,6 +43310,7 @@ export namespace Prisma {
     seoKeywords?: NullableStringFieldUpdateOperationsInput | string | null
     ogImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     gaTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    adClient?: NullableStringFieldUpdateOperationsInput | string | null
     minWithdrawalPoints?: IntFieldUpdateOperationsInput | number
     creatorRevenueSharePercent?: IntFieldUpdateOperationsInput | number
     referralBonusPercent?: IntFieldUpdateOperationsInput | number
@@ -43291,6 +43337,7 @@ export namespace Prisma {
     termsOfService?: string | null
     privacyPolicy?: string | null
     aboutUs?: string | null
+    dmcaEmail?: string | null
     isMaintenanceMode?: boolean
     maintenanceMessage?: string | null
     allowNewRegistrations?: boolean
@@ -43301,6 +43348,7 @@ export namespace Prisma {
     seoKeywords?: string | null
     ogImageUrl?: string | null
     gaTrackingId?: string | null
+    adClient?: string | null
     minWithdrawalPoints?: number
     creatorRevenueSharePercent?: number
     referralBonusPercent?: number
@@ -43327,6 +43375,7 @@ export namespace Prisma {
     termsOfService?: NullableStringFieldUpdateOperationsInput | string | null
     privacyPolicy?: NullableStringFieldUpdateOperationsInput | string | null
     aboutUs?: NullableStringFieldUpdateOperationsInput | string | null
+    dmcaEmail?: NullableStringFieldUpdateOperationsInput | string | null
     isMaintenanceMode?: BoolFieldUpdateOperationsInput | boolean
     maintenanceMessage?: NullableStringFieldUpdateOperationsInput | string | null
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
@@ -43337,6 +43386,7 @@ export namespace Prisma {
     seoKeywords?: NullableStringFieldUpdateOperationsInput | string | null
     ogImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     gaTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    adClient?: NullableStringFieldUpdateOperationsInput | string | null
     minWithdrawalPoints?: IntFieldUpdateOperationsInput | number
     creatorRevenueSharePercent?: IntFieldUpdateOperationsInput | number
     referralBonusPercent?: IntFieldUpdateOperationsInput | number
@@ -43363,6 +43413,7 @@ export namespace Prisma {
     termsOfService?: NullableStringFieldUpdateOperationsInput | string | null
     privacyPolicy?: NullableStringFieldUpdateOperationsInput | string | null
     aboutUs?: NullableStringFieldUpdateOperationsInput | string | null
+    dmcaEmail?: NullableStringFieldUpdateOperationsInput | string | null
     isMaintenanceMode?: BoolFieldUpdateOperationsInput | boolean
     maintenanceMessage?: NullableStringFieldUpdateOperationsInput | string | null
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
@@ -43373,6 +43424,7 @@ export namespace Prisma {
     seoKeywords?: NullableStringFieldUpdateOperationsInput | string | null
     ogImageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     gaTrackingId?: NullableStringFieldUpdateOperationsInput | string | null
+    adClient?: NullableStringFieldUpdateOperationsInput | string | null
     minWithdrawalPoints?: IntFieldUpdateOperationsInput | number
     creatorRevenueSharePercent?: IntFieldUpdateOperationsInput | number
     referralBonusPercent?: IntFieldUpdateOperationsInput | number
@@ -45846,6 +45898,7 @@ export namespace Prisma {
     termsOfService?: SortOrder
     privacyPolicy?: SortOrder
     aboutUs?: SortOrder
+    dmcaEmail?: SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrder
     allowNewRegistrations?: SortOrder
@@ -45856,6 +45909,7 @@ export namespace Prisma {
     seoKeywords?: SortOrder
     ogImageUrl?: SortOrder
     gaTrackingId?: SortOrder
+    adClient?: SortOrder
     minWithdrawalPoints?: SortOrder
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
@@ -45891,6 +45945,7 @@ export namespace Prisma {
     termsOfService?: SortOrder
     privacyPolicy?: SortOrder
     aboutUs?: SortOrder
+    dmcaEmail?: SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrder
     allowNewRegistrations?: SortOrder
@@ -45901,6 +45956,7 @@ export namespace Prisma {
     seoKeywords?: SortOrder
     ogImageUrl?: SortOrder
     gaTrackingId?: SortOrder
+    adClient?: SortOrder
     minWithdrawalPoints?: SortOrder
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
@@ -45926,6 +45982,7 @@ export namespace Prisma {
     termsOfService?: SortOrder
     privacyPolicy?: SortOrder
     aboutUs?: SortOrder
+    dmcaEmail?: SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrder
     allowNewRegistrations?: SortOrder
@@ -45936,6 +45993,7 @@ export namespace Prisma {
     seoKeywords?: SortOrder
     ogImageUrl?: SortOrder
     gaTrackingId?: SortOrder
+    adClient?: SortOrder
     minWithdrawalPoints?: SortOrder
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder

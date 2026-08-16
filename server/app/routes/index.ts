@@ -16,10 +16,15 @@ import { CommunityRoutes } from '../modules/community/community.route';
 import { PromoRoutes } from '../modules/promo/promo.routes';
 import { AuditRoutes } from '../modules/audit/audit.routes';
 import { BackupRoutes } from '../modules/admin/backup.routes';
+import { HealthRoutes } from './health.routes';
 
 const router = Router();
 
 const moduleRoutes = [
+  {
+    path: '/health',
+    route: HealthRoutes,
+  },
   {
     path: '/series',
     route: SeriesRoutes,

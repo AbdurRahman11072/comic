@@ -202,12 +202,47 @@ async function seedSeries() {
   console.log('📚 Series seeding completed!');
 }
 
+async function seedAds() {
+  console.log('\n📢 Seeding default AdSense placements...');
+  const placements = [
+    { title: 'Home Top Banner AdSense', placement: 'home_top', adSlotId: '1234567890' },
+    { title: 'Home Bottom Banner AdSense', placement: 'home_bottom', adSlotId: '0987654321' },
+    { title: 'Reader Bottom Banner AdSense', placement: 'reader_bottom', adSlotId: '1122334455' },
+    { title: 'Browse Banner AdSense', placement: 'browse_banner', adSlotId: '5566778899' },
+  ];
+
+  for (const p of placements) {
+    const existing = await prisma.customAd.findFirst({
+      where: { placement: p.placement, provider: 'ADSENSE' },
+    });
+
+    if (!existing) {
+      await prisma.customAd.create({
+        data: {
+          title: p.title,
+          provider: 'ADSENSE',
+          format: 'BANNER',
+          placement: p.placement,
+          adClient: process.env.NEXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-8848458851675460',
+          adSlotId: p.adSlotId,
+          isActive: true,
+          status: 'ACTIVE',
+        },
+      });
+      console.log(`  ✅ Ad created: ${p.placement}`);
+    } else {
+      console.log(`  ℹ️ Ad already exists: ${p.placement}`);
+    }
+  }
+}
+
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 async function main() {
   console.log('🌱 Starting seed...\n');
 
   await seedAdmin();
   await seedSeries();
+  await seedAds();
 
   console.log('\n✨ Seed completed successfully!');
   console.log(`\n🔑 Admin credentials:`);

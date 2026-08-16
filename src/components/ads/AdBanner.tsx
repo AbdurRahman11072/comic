@@ -52,7 +52,7 @@ export function AdBanner({ placement, className = "", slotName }: AdBannerProps)
           <ins
             className="adsbygoogle"
             style={{ display: "block", textAlign: "center" }}
-            data-ad-client={ad.adClient || "ca-pub-XXXXXXXXXX"}
+            data-ad-client={ad.adClient || process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "ca-pub-8848458851675460"}
             data-ad-slot={ad.adSlotId}
             data-ad-format="auto"
             data-full-width-responsive="true"

@@ -1,4 +1,5 @@
 import { prisma } from '../../../lib/prisma';
+import { cacheService } from '../../utils/redis';
 
 const getAllSeries = async (query: any) => {
   const { page = 1, limit = 10, type, status, genre, sort, isPinned, isDiscounted, creatorId, search, includeHidden } = query;
@@ -44,13 +45,17 @@ const getAllSeries = async (query: any) => {
     orderBy,
     include: {
       genres: true,
-      featured: true,
       chapters: {
-        take: 3,
+        take: 4,
         orderBy: { number: 'desc' },
       },
-      _count: {
-        select: { chapters: true },
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+        },
       },
     },
   });
@@ -122,13 +127,17 @@ const getAdminSeriesList = async (query: any) => {
 };
 
 const toggleHideSeries = async (id: string, isHidden: boolean, hiddenReason?: string) => {
-  return await prisma.series.update({
+  const result = await prisma.series.update({
     where: { id },
     data: {
       isHidden,
       hiddenReason: isHidden ? (hiddenReason || 'Hidden by administration') : null,
     },
   });
+
+  cacheService.delByPattern('cache:series:*').catch(() => null);
+
+  return result;
 };
 
 const getPinnedSeries = async () => {
@@ -251,6 +260,8 @@ const createSeries = async (data: any) => {
     },
   });
 
+  cacheService.delByPattern('cache:series:*').catch(() => null);
+
   return result;
 };
 
@@ -273,13 +284,19 @@ const updateSeries = async (id: string, data: any) => {
     },
   });
 
+  cacheService.delByPattern('cache:series:*').catch(() => null);
+
   return result;
 };
 
 const deleteSeries = async (id: string) => {
-  return await prisma.series.delete({
+  const result = await prisma.series.delete({
     where: { id },
   });
+
+  cacheService.delByPattern('cache:series:*').catch(() => null);
+
+  return result;
 };
 
 const toggleFeatured = async (seriesId: string) => {
@@ -287,17 +304,22 @@ const toggleFeatured = async (seriesId: string) => {
     where: { seriesId },
   });
 
+  let result;
   if (existing) {
     await prisma.featuredSeries.delete({
       where: { seriesId },
     });
-    return { featured: false };
+    result = { featured: false };
   } else {
     await prisma.featuredSeries.create({
       data: { seriesId },
     });
-    return { featured: true };
+    result = { featured: true };
   }
+
+  cacheService.delByPattern('cache:series:*').catch(() => null);
+
+  return result;
 };
 
 const getFeaturedSeries = async () => {

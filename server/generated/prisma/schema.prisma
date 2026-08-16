@@ -241,6 +241,7 @@ model SiteConfig {
   termsOfService String?
   privacyPolicy  String?
   aboutUs        String?
+  dmcaEmail      String?
 
   // 🛡️ System & Access Controls
   isMaintenanceMode        Boolean @default(false)
@@ -255,6 +256,7 @@ model SiteConfig {
   seoKeywords    String?
   ogImageUrl     String?
   gaTrackingId   String?
+  adClient       String?
 
   // 💰 Economy & Payout Rules
   minWithdrawalPoints        Int      @default(1000)

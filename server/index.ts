@@ -16,6 +16,11 @@ import { RootRoutes } from "./app/routes";
 import { apiLimiter, authLimiter } from "./app/middleware/rateLimiter";
 import { verifyCaptcha } from "./app/middleware/captchaMiddleware";
 
+import pinoHttp from "pino-http";
+import { logger } from "./app/utils/logger";
+import { apiVersionMiddleware } from "./app/middleware/apiVersion";
+import { HealthRoutes } from "./app/routes/health.routes";
+
 const dev = process.env.NODE_ENV !== "production";
 const server = next({ dev });
 const handle = server.getRequestHandler();
@@ -28,6 +33,20 @@ server
 
     app.set('trust proxy', 1);
 
+    // Structured HTTP request logging
+    app.use(
+      pinoHttp({
+        logger,
+        autoLogging: {
+          ignore: (req) =>
+            req.url?.includes("/health") ||
+            req.url?.includes("/_next") ||
+            req.url?.includes("/api/health") ||
+            false,
+        },
+      })
+    );
+
     // Security & CORS
     app.use(
       cors({
@@ -35,9 +54,15 @@ server
         credentials: true,
       }),
     );
+
+    app.use(apiVersionMiddleware);
     app.use('/api', helmet());
     app.use('/api', apiLimiter);
     app.use('/api/auth', authLimiter);
+
+    // Health checks (both root and api paths)
+    app.use("/health", HealthRoutes);
+    app.use("/api/health", HealthRoutes);
 
     // Stripe webhook MUST come before express.json() for raw body
     app.post(
@@ -46,21 +71,13 @@ server
       PaymentController.handleWebhook,
     );
 
-    app.use(express.json());
+    app.use(express.json({ limit: "10mb" }));
 
     // Registration security: apply authLimiter and optional CAPTCHA verification
     app.post("/api/auth/sign-up/email", authLimiter, verifyCaptcha);
 
     // Better-auth handler
     app.all("/api/auth/*path", toNodeHandler(auth));
-
-    // Health check
-    app.get("/api/health", (req: Request, res: Response) => {
-      res.json({
-        status: "ok",
-        timestamp: new Date(),
-      });
-    });
 
     // API routes - BEFORE Next.js handler
     app.use("/api/v1", RootRoutes);

@@ -152,7 +152,31 @@ const getAdByPlacement = async (placement: string, countryCode?: string) => {
       where: { isActive: true, status: 'ACTIVE' },
       orderBy: { createdAt: 'desc' },
     });
-    return generalAd;
+    if (generalAd) return generalAd;
+
+    // Fallback: If global AdSense publisher ID exists, return a responsive AdSense banner
+    const siteConfig = await prisma.siteConfig.findUnique({
+      where: { id: 'global' },
+      select: { adClient: true },
+    });
+    const adClient = siteConfig?.adClient || process.env.NEXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-8848458851675460';
+    if (adClient) {
+      return {
+        id: `auto-${placement}`,
+        title: `Google AdSense ${placement}`,
+        provider: 'ADSENSE',
+        format: 'BANNER',
+        placement,
+        adClient,
+        adSlotId: null,
+        isActive: true,
+        status: 'ACTIVE',
+        targetCountries: [],
+        impressions: 0,
+        clicks: 0,
+      };
+    }
+    return null;
   }
 
   // Country targeting check

@@ -204,6 +204,10 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
                         isPurchased={chapter.isPurchased}
                         coinCost={chapter.coinCost}
                         href={`/series/${series.slug}/chapter-${chapter.number}`}
+                        onUnlocked={(unlockedId) => {
+                          setLocalPurchasedIds((prev) => new Set([...prev, unlockedId]));
+                          router.refresh();
+                        }}
                       />
                     ))}
                     

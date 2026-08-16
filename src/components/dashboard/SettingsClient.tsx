@@ -65,6 +65,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
     seoKeywords: configData.seoKeywords ?? "manga, manhwa, webtoon, comics, read manga online",
     ogImageUrl: configData.ogImageUrl ?? "",
     gaTrackingId: configData.gaTrackingId ?? "",
+    adClient: configData.adClient ?? "",
 
     // Mobile Apps
     playStoreUrl: configData.playStoreUrl ?? "",
@@ -74,6 +75,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
     aboutUs: configData.aboutUs ?? "",
     termsOfService: configData.termsOfService ?? "",
     privacyPolicy: configData.privacyPolicy ?? "",
+    dmcaEmail: configData.dmcaEmail ?? "",
   });
 
   const updateField = (key: string, value: any) => {
@@ -526,6 +528,19 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
                   className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-mono"
                 />
               </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
+                  Google AdSense Publisher / Client ID
+                </label>
+                <input
+                  type="text"
+                  value={form.adClient}
+                  onChange={(e) => updateField("adClient", e.target.value)}
+                  placeholder="ca-pub-8848458851675460"
+                  className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-mono"
+                />
+              </div>
             </div>
           </div>
         )}
@@ -595,6 +610,19 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
                   value={form.termsOfService}
                   onChange={(e) => updateField("termsOfService", e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white font-mono text-xs outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
+                  DMCA Designated Agent Contact Email
+                </label>
+                <input
+                  type="email"
+                  value={form.dmcaEmail}
+                  onChange={(e) => updateField("dmcaEmail", e.target.value)}
+                  placeholder="dmca@yourdomain.com"
+                  className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-primary"
                 />
               </div>
 

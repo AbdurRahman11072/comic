@@ -2,6 +2,8 @@ import express from 'express';
 import { AdController } from './ad.controller';
 import authMiddleware from '../../middleware/authMiddleware';
 import { pointsLimiter } from '../../middleware/rateLimiter';
+import { validateRequest } from '../../middleware/validateRequest';
+import { createAdSchema, updateAdSchema, earnAdPointsSchema } from './ad.validation';
 
 const router = express.Router();
 
@@ -17,14 +19,15 @@ router.post(
   '/earn',
   authMiddleware(['user', 'creator', 'moderator', 'admin']),
   pointsLimiter,
+  validateRequest(earnAdPointsSchema),
   AdController.earnAdPoints
 );
 
 // Admin / Moderator Management & Analytics
 router.get('/stats', modOrAdmin, AdController.getAdStats);
 router.get('/', modOrAdmin, AdController.getCustomAds);
-router.post('/', modOrAdmin, AdController.createCustomAd);
-router.put('/:id', modOrAdmin, AdController.updateCustomAd);
+router.post('/', modOrAdmin, validateRequest(createAdSchema), AdController.createCustomAd);
+router.put('/:id', modOrAdmin, validateRequest(updateAdSchema), AdController.updateCustomAd);
 router.delete('/:id', modOrAdmin, AdController.deleteCustomAd);
 
 export const AdRoutes = router;

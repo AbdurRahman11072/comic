@@ -1,4 +1,5 @@
 import { prisma } from '../../../lib/prisma';
+import { cacheService } from '../../utils/redis';
 
 const getConfig = async () => {
   let config = await prisma.siteConfig.findUnique({
@@ -83,6 +84,8 @@ const updateConfig = async (data: any) => {
       ...configData,
     },
   });
+
+  cacheService.delByPattern('cache:*site-config*').catch(() => null);
 
   // Return flattened
   return {

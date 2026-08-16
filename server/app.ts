@@ -3,8 +3,12 @@ import cors from 'cors';
 import express, { Application } from 'express';
 import helmet from 'helmet';
 import httpStatus from 'http-status';
+import pinoHttp from 'pino-http';
 import globalErrorHandler from './app/middleware/globalErrorHandler';
 import { RootRoutes } from './app/routes';
+import { HealthRoutes } from './app/routes/health.routes';
+import { apiVersionMiddleware } from './app/middleware/apiVersion';
+import { logger } from './app/utils/logger';
 
 import { envConfig } from './app/config/envConfig';
 import { apiLimiter, authLimiter } from './app/middleware/rateLimiter';
@@ -16,6 +20,16 @@ const app: Application = express();
 
 app.set('trust proxy', 1);
 
+// Structured HTTP request logging
+app.use(
+  pinoHttp({
+    logger,
+    autoLogging: {
+      ignore: (req) => req.url?.includes('/health') || req.url?.includes('/_next') || false,
+    },
+  })
+);
+
 app.use(
   cors({
     origin: envConfig.FRONTEND_URL,
@@ -23,19 +37,26 @@ app.use(
   })
 );
 
+// Versioning and client platform detection
+app.use(apiVersionMiddleware);
+
+// Security and rate limiting
 app.use('/api', helmet());
 app.use('/api', apiLimiter);
 app.use('/api/auth', authLimiter);
 
+// 🩺 Health & Readiness Probes (publicly accessible by orchestrators / uptime bots)
+app.use('/health', HealthRoutes);
+app.use('/api/health', HealthRoutes);
+
 // Stripe webhook must come before express.json() to get raw body
-// Both the raw body parser AND the handler must be on this route
 app.post(
   '/api/v1/payments/webhook',
   express.raw({ type: 'application/json' }),
   PaymentController.handleWebhook
 );
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // Sign-up guard: Check if registration is open and check IP restriction
 app.post('/api/auth/sign-up/email', async (req, res, next) => {

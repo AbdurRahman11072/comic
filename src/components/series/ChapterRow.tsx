@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Lock, Coins, CheckCircle2 } from "lucide-react";
+import { Lock, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import { BuyChapterAction } from "@/actions/points";
@@ -19,6 +19,7 @@ interface ChapterRowProps {
   isPurchased?: boolean;
   coinCost?: number;
   href?: string;
+  onUnlocked?: (chapterId: string) => void;
 }
 
 export function ChapterRow({
@@ -31,14 +32,19 @@ export function ChapterRow({
   isPurchased: initialIsPurchased,
   coinCost = 20,
   href = "#",
+  onUnlocked,
 }: ChapterRowProps) {
   const { data: session } = useSession();
   const { data: balanceData } = useGetPointsBalanceQuery(undefined, { skip: !session });
   const userPoints = balanceData?.data?.points ?? 0;
 
-  const [isLocked, setIsLocked] = useState(initialIsLocked && !initialIsPurchased);
+  const [localPurchased, setLocalPurchased] = useState(false);
   const [loading, setLoading] = useState(false);
   const [insufficientPointsOpen, setInsufficientPointsOpen] = useState(false);
+
+  // Directly derive state from props & local purchase
+  const isPurchased = Boolean(initialIsPurchased || localPurchased);
+  const isLocked = Boolean(initialIsLocked && !isPurchased);
 
   const handleBuy = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -65,7 +71,10 @@ export function ChapterRow({
       if (!result.success) {
         throw new Error(result.message || "Failed to unlock chapter");
       }
-      setIsLocked(false);
+      setLocalPurchased(true);
+      if (id) {
+        onUnlocked?.(id);
+      }
       
       // Refresh points in navbar
       if ((window as any).__refreshNavPoints) {
@@ -91,9 +100,13 @@ export function ChapterRow({
       <Link
         href={isLocked ? "#" : href}
         className={`group flex items-center justify-between px-3 py-2.5 rounded-lg transition-all ${
-          isLocked ? "cursor-default opacity-90" : "glass-hover"
+          isLocked ? "cursor-default opacity-90" : "glass-hover cursor-pointer"
         }`}
-        onClick={(e) => isLocked && e.preventDefault()}
+        onClick={(e) => {
+          if (isLocked) {
+            e.preventDefault();
+          }
+        }}
       >
         {/* Left: number + title + badges */}
         <div className="flex items-center gap-2 min-w-0">
@@ -112,8 +125,8 @@ export function ChapterRow({
             </span>
           )}
 
-          {initialIsPurchased && !isLocked && (
-            <span className="shrink-0 flex items-center gap-1 text-green-400">
+          {isPurchased && (
+            <span className="shrink-0 flex items-center gap-1 text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span className="text-[10px] font-bold">UNLOCKED</span>
             </span>

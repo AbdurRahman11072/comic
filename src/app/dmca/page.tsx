@@ -76,7 +76,7 @@ export default async function DmcaPage() {
             <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-1 font-mono text-xs text-white">
               <div>Attn: DMCA Copyright Agent</div>
               <div>Platform: {appName}</div>
-              <div>Email: <span className="text-primary font-bold">dmca@{appName.toLowerCase().replace(/\s+/g, "")}.com</span></div>
+              <div>Email: <span className="text-primary font-bold">{config?.dmcaEmail || `dmca@${appName.toLowerCase().replace(/\s+/g, "")}.com`}</span></div>
             </div>
           </section>
 
