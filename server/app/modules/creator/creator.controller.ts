@@ -4,6 +4,17 @@ import asyncHandler from '../../utils/asyncHandler';
 import sendResponse from '../../utils/sendResponse';
 import { CreatorService } from './creator.service';
 
+const getAllCreators = asyncHandler(async (req: Request, res: Response) => {
+  const result = await CreatorService.getAllCreators(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'All creators fetched successfully',
+    data: result,
+  });
+});
+
 const getProfile = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const result = await CreatorService.getProfile(userId as string);
@@ -77,11 +88,65 @@ const getCreatorFeatureRequests = asyncHandler(async (req: Request, res: Respons
   });
 });
 
+const getPublicChannel = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await CreatorService.getPublicChannel(id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Creator channel fetched successfully',
+    data: result,
+  });
+});
+
+const createCreatorPost = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const result = await CreatorService.createCreatorPost(userId as string, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: 'Channel announcement posted successfully',
+    data: result,
+  });
+});
+
+const getCreatorPosts = asyncHandler(async (req: Request, res: Response) => {
+  const { creatorId } = req.params;
+  const result = await CreatorService.getCreatorPosts(creatorId as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Creator announcements fetched successfully',
+    data: result,
+  });
+});
+
+const deleteCreatorPost = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userId = req.user?.id;
+  await CreatorService.deleteCreatorPost(id as string, userId as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Announcement deleted successfully',
+    data: null,
+  });
+});
+
 export const CreatorController = {
+  getAllCreators,
   getProfile,
   updateProfile,
   applyForSeries,
   getAnalytics,
   requestFeatureSeries,
   getCreatorFeatureRequests,
+  getPublicChannel,
+  createCreatorPost,
+  getCreatorPosts,
+  deleteCreatorPost,
 };

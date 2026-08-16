@@ -2,6 +2,85 @@ import { prisma } from '../../../lib/prisma';
 import AppError from '../../error/AppError';
 import httpStatus from 'http-status';
 
+const getAllCreators = async (query: any) => {
+  const { search } = query;
+
+  const where: any = {
+    role: { in: ['creator', 'admin'] },
+  };
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { email: { contains: search, mode: 'insensitive' } },
+      { creatorProfile: { channelName: { contains: search, mode: 'insensitive' } } },
+    ];
+  }
+
+  const creators = await prisma.user.findMany({
+    where,
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      image: true,
+      points: true,
+      banned: true,
+      createdAt: true,
+      creatorProfile: true,
+      series: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          totalViews: true,
+          _count: {
+            select: { chapters: true },
+          },
+        },
+      },
+      createdPromoCodes: {
+        select: {
+          id: true,
+          code: true,
+          usedCount: true,
+          maxUses: true,
+          isActive: true,
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  const formatted = creators.map((c) => {
+    const totalViews = c.series.reduce((sum, s) => sum + s.totalViews, 0);
+    const totalChapters = c.series.reduce((sum, s) => sum + s._count.chapters, 0);
+    return {
+      id: c.id,
+      name: c.name,
+      email: c.email,
+      role: c.role,
+      image: c.image,
+      points: c.points,
+      banned: c.banned,
+      createdAt: c.createdAt,
+      channelId: c.creatorProfile?.id || c.id,
+      channelName: c.creatorProfile?.channelName || c.name,
+      channelDescription: c.creatorProfile?.description || null,
+      channelBanner: c.creatorProfile?.bannerUrl || null,
+      totalEarnings: c.creatorProfile?.totalEarnings || 0,
+      withdrawnAmount: c.creatorProfile?.withdrawnAmount || 0,
+      seriesCount: c.series.length,
+      totalChapters,
+      totalViews,
+      promoCodesCount: c.createdPromoCodes.length,
+    };
+  });
+
+  return formatted;
+};
+
 const getProfile = async (userId: string) => {
   const profile = await prisma.creatorProfile.findUnique({
     where: { userId },
@@ -20,7 +99,6 @@ const updateProfile = async (userId: string, payload: any) => {
   });
 
   if (!profile) {
-    // If not found, create it (in case they were just promoted to creator and don't have one)
     return await prisma.creatorProfile.create({
       data: {
         userId,
@@ -45,7 +123,6 @@ const applyForSeries = async (userId: string, payload: any) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Series title is required');
   }
 
-  // Check for similar titles using basic ILIKE in Postgres
   const similarSeries = await prisma.series.findMany({
     where: {
       title: {
@@ -75,7 +152,6 @@ const applyForSeries = async (userId: string, payload: any) => {
 };
 
 const getAnalytics = async (userId: string) => {
-  // Fetch all series by this creator with aggregated counts
   const series = await prisma.series.findMany({
     where: { creatorId: userId },
     select: {
@@ -97,13 +173,11 @@ const getAnalytics = async (userId: string) => {
     orderBy: { totalViews: 'desc' },
   });
 
-  // Aggregate totals
   const totalViews = series.reduce((sum, s) => sum + s.totalViews, 0);
   const totalChapters = series.reduce((sum, s) => sum + s._count.chapters, 0);
   const totalBookmarks = series.reduce((sum, s) => sum + s._count.bookmarks, 0);
   const totalReviews = series.reduce((sum, s) => sum + s._count.reviews, 0);
 
-  // Calculate chapter purchase revenue for this creator's chapters
   const chapterPurchases = await prisma.chapterPurchase.findMany({
     where: {
       chapter: {
@@ -122,7 +196,6 @@ const getAnalytics = async (userId: string) => {
 
   const totalRevenue = chapterPurchases.reduce((sum, p) => sum + p.pointsSpent, 0);
 
-  // Group purchases by day for the last 30 days for a chart
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
   const recentPurchases = chapterPurchases.filter(p => new Date(p.createdAt) >= thirtyDaysAgo);
@@ -140,7 +213,6 @@ const getAnalytics = async (userId: string) => {
     }
   });
 
-  // Convert to sorted array
   const revenueChart = Object.entries(dailyRevenue)
     .map(([date, points]) => ({ date, points }))
     .sort((a, b) => a.date.localeCompare(b.date));
@@ -160,7 +232,6 @@ const getAnalytics = async (userId: string) => {
 };
 
 const requestFeatureSeries = async (userId: string, seriesId: string, notes?: string) => {
-  // Validate that series exists and belongs to the creator
   const series = await prisma.series.findUnique({
     where: { id: seriesId },
   });
@@ -173,14 +244,12 @@ const requestFeatureSeries = async (userId: string, seriesId: string, notes?: st
     throw new AppError(httpStatus.FORBIDDEN, 'You do not own this series');
   }
 
-  // Get site configuration for the fee
   let config = await prisma.siteConfig.findUnique({
     where: { id: 'global' },
   });
 
   const fee = config ? config.featuredRequestFee : 500;
 
-  // Check if creator has enough points
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
@@ -189,15 +258,12 @@ const requestFeatureSeries = async (userId: string, seriesId: string, notes?: st
     throw new AppError(httpStatus.BAD_REQUEST, `Insufficient points. You need ${fee} points to request featured series.`);
   }
 
-  // Perform point deduction, point transaction log, and featured request creation atomically
   const result = await prisma.$transaction(async (tx) => {
-    // Deduct points
     const updatedUser = await tx.user.update({
       where: { id: userId },
       data: { points: { decrement: fee } },
     });
 
-    // Create transaction log
     await tx.pointTransaction.create({
       data: {
         userId,
@@ -207,7 +273,6 @@ const requestFeatureSeries = async (userId: string, seriesId: string, notes?: st
       },
     });
 
-    // Create request
     const request = await tx.featuredRequest.create({
       data: {
         seriesId,
@@ -236,11 +301,102 @@ const getCreatorFeatureRequests = async (userId: string) => {
   });
 };
 
+const getPublicChannel = async (channelIdOrUserId: string) => {
+  const profile = await prisma.creatorProfile.findFirst({
+    where: {
+      OR: [{ id: channelIdOrUserId }, { userId: channelIdOrUserId }],
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          createdAt: true,
+          series: {
+            where: { status: { not: 'DROPPED' } },
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              coverUrl: true,
+              type: true,
+              status: true,
+              rating: true,
+              totalViews: true,
+              _count: { select: { chapters: true, bookmarks: true } },
+            },
+          },
+          creatorPosts: {
+            orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
+          },
+          createdPromoCodes: {
+            where: { isActive: true },
+            select: {
+              id: true,
+              code: true,
+              pointsReward: true,
+              discountPercent: true,
+              expiresAt: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!profile) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Creator channel not found');
+  }
+
+  return profile;
+};
+
+const createCreatorPost = async (userId: string, payload: { title: string; content: string; imageUrl?: string; isPinned?: boolean }) => {
+  if (!payload.title?.trim() || !payload.content?.trim()) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Title and content are required');
+  }
+
+  const result = await prisma.creatorPost.create({
+    data: {
+      creatorId: userId,
+      title: payload.title.trim(),
+      content: payload.content.trim(),
+      imageUrl: payload.imageUrl || null,
+      isPinned: !!payload.isPinned,
+    },
+  });
+
+  return result;
+};
+
+const getCreatorPosts = async (creatorId: string) => {
+  return await prisma.creatorPost.findMany({
+    where: { creatorId },
+    orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
+  });
+};
+
+const deleteCreatorPost = async (id: string, userId: string) => {
+  const post = await prisma.creatorPost.findUnique({ where: { id } });
+  if (!post) throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
+  if (post.creatorId !== userId) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You can only delete your own posts');
+  }
+
+  return await prisma.creatorPost.delete({ where: { id } });
+};
+
 export const CreatorService = {
+  getAllCreators,
   getProfile,
   updateProfile,
   getAnalytics,
   applyForSeries,
   requestFeatureSeries,
   getCreatorFeatureRequests,
+  getPublicChannel,
+  createCreatorPost,
+  getCreatorPosts,
+  deleteCreatorPost,
 };

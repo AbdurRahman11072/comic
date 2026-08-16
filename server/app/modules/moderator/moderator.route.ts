@@ -10,6 +10,7 @@ const modAuth = authMiddleware(['moderator', 'admin']);
 // User Management
 router.post('/users/:id/ban', modAuth, ModeratorController.banUser);
 router.post('/users/:id/freeze', modAuth, ModeratorController.freezeUser);
+router.post('/users/:id/mute', modAuth, ModeratorController.muteUser);
 
 // Series Applications
 router.get('/series-applications', modAuth, ModeratorController.getSeriesApplications);

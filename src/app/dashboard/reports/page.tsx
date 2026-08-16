@@ -1,51 +1,176 @@
 "use client";
 
-import { DataTable } from "@/components/dashboard/DataTable";
-import { Search, CheckCircle, XCircle, Clock } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
+import api from "@/lib/api";
+import {
+  AlertTriangle, CheckCircle2, XCircle, Shield, Ban, VolumeX, Loader2, RefreshCw, MessageSquare
+} from "lucide-react";
+import { toast } from "react-hot-toast";
+import { formatDistanceToNow } from "date-fns";
 
-const REPORTS = [
-  { id: "1", user: "John Doe", type: "Bug", subject: "Images not loading", priority: "High", status: "Pending", date: "2m ago" },
-  { id: "2", user: "Jane Smith", type: "DMCA", subject: "Copyright claim #42", priority: "Urgent", status: "In Progress", date: "1h ago" },
-  { id: "3", user: "Alex Wong", type: "Payment", subject: "Double charge issue", priority: "Medium", status: "Resolved", date: "3h ago" },
-];
+export default function ReportsManagementPage() {
+  const [reports, setReports] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<string>("PENDING");
 
-export default function ReportsPage() {
+  const fetchReports = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get(`/api/v1/community/reports?status=${statusFilter}`);
+      if (res.data.success) {
+        setReports(res.data.data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch reports", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+  }, [statusFilter]);
+
+  const handleResolve = async (id: string, status: "RESOLVED" | "DISMISSED") => {
+    try {
+      await api.patch(`/api/v1/community/reports/${id}`, { status });
+      toast.success(`Report marked as ${status.toLowerCase()}`);
+      fetchReports();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to update report");
+    }
+  };
+
+  const handleMuteUser = async (userId: string, hours: number) => {
+    try {
+      await api.post(`/api/v1/moderator/users/${userId}/mute`, { durationHours: hours });
+      toast.success(`User muted for ${hours} hours`);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to mute user");
+    }
+  };
+
+  const handleBanUser = async (userId: string, reason: string) => {
+    if (!confirm("Are you sure you want to ban this user?")) return;
+    try {
+      await api.post(`/api/v1/moderator/users/${userId}/ban`, {
+        banned: true,
+        banReason: reason,
+      });
+      toast.success("User banned successfully");
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to ban user");
+    }
+  };
+
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold">Report Management</h1>
-        <p className="text-sm text-muted-foreground">Handle user feedback, bug reports, and legal claims.</p>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-white">
+            <AlertTriangle className="w-6 h-6 text-primary" /> Moderation & Reports Queue
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Review reported comments, reviews, series, and take immediate moderation action.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3.5 py-2 glass rounded-xl text-sm font-semibold text-white outline-none border border-white/10"
+          >
+            <option value="PENDING" className="bg-neutral-900">Pending Reports</option>
+            <option value="RESOLVED" className="bg-neutral-900">Resolved Reports</option>
+            <option value="DISMISSED" className="bg-neutral-900">Dismissed Reports</option>
+          </select>
+          <button
+            onClick={fetchReports}
+            className="p-2.5 glass glass-hover rounded-xl text-white/80 hover:text-white"
+            title="Refresh"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
+        </div>
       </div>
 
-      <DataTable 
-        data={REPORTS}
-        columns={[
-          { header: "User", accessor: "user" },
-          { header: "Type", accessor: "type" },
-          { header: "Subject", accessor: "subject", className: "max-w-xs truncate" },
-          { 
-            header: "Priority", 
-            accessor: (item) => (
-              <span className={`font-bold text-[11px] ${
-                item.priority === "Urgent" ? "text-red-500" : item.priority === "High" ? "text-orange-500" : "text-blue-500"
-              }`}>
-                {item.priority}
-              </span>
-            )
-          },
-          { 
-            header: "Status", 
-            accessor: (item) => (
-              <div className="flex items-center gap-2">
-                {item.status === "Resolved" ? <CheckCircle className="w-3 h-3 text-green-500" /> : <Clock className="w-3 h-3 text-yellow-500" />}
-                <span>{item.status}</span>
+      {/* Reports List */}
+      <div className="space-y-4">
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : reports.length > 0 ? (
+          reports.map((report) => (
+            <div
+              key={report.id}
+              className="glass p-6 rounded-2xl border border-white/5 space-y-4 hover:border-white/10 transition"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+                <div className="flex items-center gap-3">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary/20 text-primary uppercase">
+                    {report.targetType}
+                  </span>
+                  <span className="text-xs text-white/50">
+                    Reported by <strong className="text-white">{report.reporter?.name || "Anonymous"}</strong>
+                  </span>
+                </div>
+                <span className="text-xs text-white/40">
+                  {formatDistanceToNow(new Date(report.createdAt), { addSuffix: true })}
+                </span>
               </div>
-            )
-          },
-          { header: "Date", accessor: "date", className: "text-muted-foreground" },
-        ]}
-      />
+
+              <div>
+                <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1">Reason</p>
+                <p className="text-sm font-medium text-white/90 bg-white/[0.02] p-3 rounded-xl border border-white/5">
+                  "{report.reason}"
+                </p>
+              </div>
+
+              {/* Quick Actions */}
+              {report.status === "PENDING" && (
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleMuteUser(report.reporterId, 24)}
+                      className="px-3 py-1.5 glass glass-hover text-yellow-400 rounded-lg text-xs font-semibold flex items-center gap-1.5"
+                    >
+                      <VolumeX className="w-3.5 h-3.5" /> Mute 24h
+                    </button>
+                    <button
+                      onClick={() => handleBanUser(report.reporterId, `Violated rules: ${report.reason}`)}
+                      className="px-3 py-1.5 glass glass-hover text-red-400 rounded-lg text-xs font-semibold flex items-center gap-1.5"
+                    >
+                      <Ban className="w-3.5 h-3.5" /> Ban User
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleResolve(report.id, "DISMISSED")}
+                      className="px-4 py-1.5 glass glass-hover text-white/70 hover:text-white rounded-xl text-xs font-bold"
+                    >
+                      Dismiss
+                    </button>
+                    <button
+                      onClick={() => handleResolve(report.id, "RESOLVED")}
+                      className="px-4 py-1.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Mark Resolved
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-20 glass rounded-2xl border border-white/5 text-muted-foreground text-sm">
+            No {statusFilter.toLowerCase()} reports to review. Everything is clean! 🎉
+          </div>
+        )}
+      </div>
     </div>
   );
 }

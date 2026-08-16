@@ -22,64 +22,107 @@ interface CommentSectionProps {
   chapterId: string;
 }
 
+// Helper to render comment text with [spoiler]...[/spoiler] support
+function RenderCommentContent({ content }: { content: string }) {
+  const parts = content.split(/(\[spoiler\][\s\S]*?\[\/spoiler\])/gi);
+
+  return (
+    <p className="text-sm text-white/80 leading-relaxed">
+      {parts.map((part, index) => {
+        const match = part.match(/^\[spoiler\]([\s\S]*?)\[\/spoiler\]$/i);
+        if (match) {
+          return <SpoilerText key={index} text={match[1]} />;
+        }
+        return <span key={index}>{part}</span>;
+      })}
+    </p>
+  );
+}
+
+function SpoilerText({ text }: { text: string }) {
+  const [revealed, setRevealed] = useState(false);
+
+  return (
+    <span
+      onClick={() => setRevealed(!revealed)}
+      className={`inline-block px-1.5 py-0.5 rounded cursor-pointer transition-all ${
+        revealed
+          ? "bg-white/10 text-white border border-white/20"
+          : "bg-neutral-800 text-transparent select-none hover:bg-neutral-700 blur-[3px]"
+      }`}
+      title={revealed ? "Click to hide spoiler" : "Click to reveal spoiler"}
+    >
+      {text}
+    </span>
+  );
+}
+
+import {
+  useGetCommentsQuery,
+  useCreateCommentMutation,
+  useDeleteCommentMutation,
+} from "@/redux/api/communityApi";
+
 export function CommentSection({ chapterId }: CommentSectionProps) {
   const { data: session } = useSession();
-  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
 
-  const fetchComments = async () => {
-    try {
-      const res = await api.get(`/community/chapters/${chapterId}/comments`);
-      setComments(res.data.data || []);
-    } catch (err) {
-      console.error("Failed to fetch comments", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // RTK Query: automatically fetches, caches, and refetches when comments change
+  const { data: commentsData, isLoading: loading } = useGetCommentsQuery(chapterId);
+  const comments = commentsData?.data || [];
 
-  useEffect(() => {
-    fetchComments();
-  }, [chapterId]);
+  const [createCommentMutate, { isLoading: submitting }] = useCreateCommentMutation();
+  const [deleteCommentMutate] = useDeleteCommentMutation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim() || !session) return;
     
-    setSubmitting(true);
     try {
-      await api.post(`/community/chapters/${chapterId}/comments`, {
-        content: newComment.trim()
-      });
+      await createCommentMutate({
+        chapterId,
+        content: newComment.trim(),
+      }).unwrap();
       setNewComment("");
-      fetchComments();
+      toast.success("Comment posted!");
     } catch (err) {
       console.error("Failed to post comment", err);
       toast.error("Failed to post comment.");
-    } finally {
-      setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this comment?")) return;
     try {
-      await api.delete(`/community/comments/${id}`);
-      fetchComments();
+      await deleteCommentMutate({ commentId: id, chapterId }).unwrap();
+      toast.success("Comment deleted.");
     } catch (err) {
       console.error("Failed to delete comment", err);
       toast.error("Failed to delete comment.");
     }
   };
 
+  const insertSpoilerTag = () => {
+    setNewComment((prev) => prev + " [spoiler]your spoiler here[/spoiler] ");
+  };
+
   return (
     <div className="w-full max-w-[800px] mx-auto mt-8 px-4 border-t border-white/10 pt-8">
-      <h3 className="text-xl font-bold flex items-center gap-2 mb-6 text-white">
-        <MessageSquare className="w-5 h-5 text-primary" />
-        Comments ({comments.length})
-      </h3>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold flex items-center gap-2 text-white">
+          <MessageSquare className="w-5 h-5 text-primary" />
+          Comments ({comments.length})
+        </h3>
+        {session && (
+          <button
+            type="button"
+            onClick={insertSpoilerTag}
+            className="text-xs px-2.5 py-1 rounded-lg glass glass-hover text-white/70 hover:text-white transition"
+          >
+            + Add Spoiler Tag
+          </button>
+        )}
+      </div>
 
       {/* Comment Input */}
       {session ? (
@@ -96,7 +139,7 @@ export function CommentSection({ chapterId }: CommentSectionProps) {
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
+              placeholder="Add a comment... (use [spoiler]text[/spoiler] for spoilers)"
               className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2 focus:border-primary/50 outline-none text-white text-sm transition"
             />
             <button 
@@ -110,7 +153,7 @@ export function CommentSection({ chapterId }: CommentSectionProps) {
         </form>
       ) : (
         <div className="mb-8 p-4 glass rounded-xl border border-white/5 text-center text-sm text-white/60">
-          Please <a href="/signin" className="text-primary hover:underline font-medium">sign in</a> to leave a comment.
+          Please sign in to leave a comment.
         </div>
       )}
 
@@ -139,7 +182,7 @@ export function CommentSection({ chapterId }: CommentSectionProps) {
                     {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
                   </span>
                 </div>
-                <p className="text-sm text-white/80 leading-relaxed">{comment.content}</p>
+                <RenderCommentContent content={comment.content} />
               </div>
               
               {/* Only show delete if user owns comment or is admin/mod */}

@@ -132,6 +132,7 @@ exports.Prisma.UserScalarFieldEnum = {
   banExpires: 'banExpires',
   points: 'points',
   transactionsFrozen: 'transactionsFrozen',
+  mutedUntil: 'mutedUntil',
   referralCode: 'referralCode',
   referredById: 'referredById',
   dailyAdViews: 'dailyAdViews',
@@ -206,6 +207,8 @@ exports.Prisma.SeriesScalarFieldEnum = {
   favorites: 'favorites',
   totalViews: 'totalViews',
   isPinned: 'isPinned',
+  isHidden: 'isHidden',
+  hiddenReason: 'hiddenReason',
   discount: 'discount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -231,9 +234,31 @@ exports.Prisma.FeaturedSeriesScalarFieldEnum = {
 
 exports.Prisma.SiteConfigScalarFieldEnum = {
   id: 'id',
+  appName: 'appName',
+  appTagline: 'appTagline',
+  appLogoUrl: 'appLogoUrl',
+  heroHeadline: 'heroHeadline',
+  heroSubtitle: 'heroSubtitle',
+  playStoreUrl: 'playStoreUrl',
+  appStoreUrl: 'appStoreUrl',
   announceText: 'announceText',
   announceLink: 'announceLink',
   socialLinks: 'socialLinks',
+  termsOfService: 'termsOfService',
+  privacyPolicy: 'privacyPolicy',
+  aboutUs: 'aboutUs',
+  isMaintenanceMode: 'isMaintenanceMode',
+  maintenanceMessage: 'maintenanceMessage',
+  allowNewRegistrations: 'allowNewRegistrations',
+  allowCreatorApplications: 'allowCreatorApplications',
+  enableGlobalChat: 'enableGlobalChat',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  seoKeywords: 'seoKeywords',
+  ogImageUrl: 'ogImageUrl',
+  gaTrackingId: 'gaTrackingId',
+  minWithdrawalPoints: 'minWithdrawalPoints',
+  creatorRevenueSharePercent: 'creatorRevenueSharePercent',
   referralBonusPercent: 'referralBonusPercent',
   referralActiveMonths: 'referralActiveMonths',
   maxDailyAdPoints: 'maxDailyAdPoints',
@@ -255,6 +280,8 @@ exports.Prisma.ChapterScalarFieldEnum = {
   title: 'title',
   isLocked: 'isLocked',
   coinCost: 'coinCost',
+  isFastPass: 'isFastPass',
+  publishAt: 'publishAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -405,6 +432,50 @@ exports.Prisma.ChatMessageScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   content: 'content',
+  imageUrl: 'imageUrl',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CreatorPostScalarFieldEnum = {
+  id: 'id',
+  creatorId: 'creatorId',
+  title: 'title',
+  content: 'content',
+  imageUrl: 'imageUrl',
+  isPinned: 'isPinned',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PromoCodeScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  creatorId: 'creatorId',
+  seriesId: 'seriesId',
+  pointsReward: 'pointsReward',
+  discountPercent: 'discountPercent',
+  maxUses: 'maxUses',
+  usedCount: 'usedCount',
+  expiresAt: 'expiresAt',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PromoCodeRedemptionScalarFieldEnum = {
+  id: 'id',
+  promoCodeId: 'promoCodeId',
+  userId: 'userId',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AuditLogScalarFieldEnum = {
+  id: 'id',
+  actorId: 'actorId',
+  action: 'action',
+  targetType: 'targetType',
+  targetId: 'targetId',
+  details: 'details',
   createdAt: 'createdAt'
 };
 
@@ -513,7 +584,11 @@ exports.Prisma.ModelName = {
   Review: 'Review',
   Report: 'Report',
   FeaturedRequest: 'FeaturedRequest',
-  ChatMessage: 'ChatMessage'
+  ChatMessage: 'ChatMessage',
+  CreatorPost: 'CreatorPost',
+  PromoCode: 'PromoCode',
+  PromoCodeRedemption: 'PromoCodeRedemption',
+  AuditLog: 'AuditLog'
 };
 
 /**

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -57,6 +58,8 @@
   --discord: #5865F2;
   --coin: #f59e0b;
   --radius: 12px;
+  --font-poppins: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-bebas-neue: 'Bebas Neue', Impact, sans-serif;
 }
 
 @layer base {

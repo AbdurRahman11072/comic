@@ -1,8 +1,19 @@
+import type { Metadata } from "next";
 import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
 import { userService } from "@/services/user.service";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { constructMetadata } from "@/lib/metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return constructMetadata({
+    title: "My Reading History",
+    description: "View and resume your recently read comic chapters and webtoons.",
+    noIndex: true,
+  });
+}
 
 export default async function HistoryPage() {
   const profileResponse = await userService.getProfile();
@@ -13,9 +24,6 @@ export default async function HistoryPage() {
   }
 
   const history = profileData.history || [];
-
-
-
 
   return (
     <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
@@ -39,35 +47,38 @@ export default async function HistoryPage() {
             {history.map((item: any) => (
               <Link
                 key={item.id}
-                href={`/series/${item.series.slug}/chapter/${item.chapter.number}`}
-                className="group relative flex flex-col gap-3"
+                href={`/series/${item.series.slug}/${item.chapter?.number || 1}`}
+                className="group relative flex flex-col rounded-2xl overflow-hidden glass border border-white/5 hover:border-primary/50 transition-all duration-300"
               >
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden glass border-white/5">
-                  <div
-                    className="w-full h-full bg-white/5 bg-center bg-cover transition-transform duration-500 group-hover:scale-110"
-                    style={item.series.coverUrl ? { backgroundImage: `url(${item.series.coverUrl})` } : undefined}
-                  >
-                    {!item.series.coverUrl && (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-muted-foreground text-xs">No Cover</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="absolute bottom-4 left-4">
-                      <span className="bg-primary/90 text-primary-foreground text-xs font-bold px-2 py-1 rounded-md">
-                        Ch. {item.chapter.number}
-                      </span>
-                    </div>
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
+                  <Image
+                    src={item.series.coverUrl || "/placeholder.jpg"}
+                    alt={item.series.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute bottom-2 left-2 right-2 bg-background/80 backdrop-blur-md rounded-lg p-2 border border-white/10">
+                    <span className="text-[10px] text-muted-foreground block">Last Read:</span>
+                    <span className="text-xs font-bold text-primary block truncate">
+                      Chapter {item.chapter?.number || "N/A"}
+                    </span>
                   </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-sm line-clamp-1 group-hover:text-primary transition-colors">
-                    {item.series.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Read {new Date(item.updatedAt).toLocaleDateString()}
-                  </p>
+
+                <div className="p-4 flex flex-col flex-1 justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                      {item.series.type}
+                    </span>
+                    <h3 className="font-bold text-sm leading-tight text-foreground line-clamp-1 mt-1 group-hover:text-primary transition-colors">
+                      {item.series.title}
+                    </h3>
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{new Date(item.updatedAt).toLocaleDateString()}</span>
+                  </div>
                 </div>
               </Link>
             ))}

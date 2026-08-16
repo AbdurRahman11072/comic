@@ -12,6 +12,8 @@ import {
   Image as ImageIcon,
   Type,
   FileText,
+  MessageSquare,
+  Trash2,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -312,11 +314,21 @@ export default function ChannelSettingsPage() {
         )}
 
         {/* Save Button */}
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between pt-4">
+          {profile && (
+            <a
+              href={`/channel/${session?.user?.id}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-xs text-primary hover:underline font-semibold flex items-center gap-1.5"
+            >
+              View My Public Channel →
+            </a>
+          )}
           <button
             type="submit"
             disabled={saving || !channelName.trim()}
-            className="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20"
+            className="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20 ml-auto"
           >
             {saving ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -327,6 +339,173 @@ export default function ChannelSettingsPage() {
           </button>
         </div>
       </form>
+
+      {/* Creator Announcements Manager */}
+      {profile && (
+        <div className="glass rounded-2xl p-6 border border-white/5 space-y-6 mt-12">
+          <div>
+            <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+              <MessageSquare className="w-5 h-5 text-primary" /> Channel Announcements
+            </h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              Post updates, hiatus notices, and announcements visible to everyone on your channel.
+            </p>
+          </div>
+
+          <ChannelAnnouncementComposer creatorId={session?.user?.id as string} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ChannelAnnouncementComposer({ creatorId }: { creatorId: string }) {
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [isPinned, setIsPinned] = useState(false);
+  const [posting, setPosting] = useState(false);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+
+  const fetchPosts = async () => {
+    try {
+      const res = await api.get(`/api/v1/creators/${creatorId}/posts`);
+      if (res.data.success) {
+        setPosts(res.data.data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingPosts(false);
+    }
+  };
+
+  useEffect(() => {
+    if (creatorId) fetchPosts();
+  }, [creatorId]);
+
+  const handlePost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !content.trim()) return;
+
+    setPosting(true);
+    try {
+      const res = await api.post("/api/v1/creators/posts", {
+        title: title.trim(),
+        content: content.trim(),
+        isPinned,
+      });
+      if (res.data.success) {
+        toast.success("Announcement published!");
+        setTitle("");
+        setContent("");
+        setIsPinned(false);
+        fetchPosts();
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to publish announcement");
+    } finally {
+      setPosting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this announcement?")) return;
+    try {
+      await api.delete(`/api/v1/creators/posts/${id}`);
+      toast.success("Announcement deleted");
+      fetchPosts();
+    } catch (err) {
+      toast.error("Failed to delete");
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <form onSubmit={handlePost} className="space-y-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+        <div>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Announcement Title (e.g. Next Chapter Delayed to Friday)"
+            required
+            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm"
+          />
+        </div>
+        <div>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Write your announcement content..."
+            rows={3}
+            required
+            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm resize-none"
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isPinned}
+              onChange={(e) => setIsPinned(e.target.checked)}
+              className="w-4 h-4 rounded text-primary border-white/10"
+            />
+            Pin to top of channel
+          </label>
+          <button
+            type="submit"
+            disabled={posting || !title.trim() || !content.trim()}
+            className="px-5 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary/90 transition disabled:opacity-50 flex items-center gap-2"
+          >
+            {posting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+            Publish Announcement
+          </button>
+        </div>
+      </form>
+
+      {/* Published Announcements List */}
+      <div className="space-y-3">
+        <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+          Published Announcements ({posts.length})
+        </h3>
+        {loadingPosts ? (
+          <div className="flex justify-center py-6">
+            <Loader2 className="w-5 h-5 animate-spin text-primary" />
+          </div>
+        ) : posts.length > 0 ? (
+          posts.map((p) => (
+            <div
+              key={p.id}
+              className="p-4 rounded-xl glass border border-white/5 flex items-start justify-between gap-4"
+            >
+              <div>
+                <div className="flex items-center gap-2">
+                  {p.isPinned && (
+                    <span className="px-1.5 py-0.5 rounded bg-primary/20 text-primary text-[10px] font-bold">
+                      PINNED
+                    </span>
+                  )}
+                  <h4 className="font-bold text-sm text-white">{p.title}</h4>
+                </div>
+                <p className="text-xs text-white/70 mt-1 line-clamp-2">{p.content}</p>
+                <span className="text-[10px] text-white/40 mt-2 block">
+                  {new Date(p.createdAt).toLocaleDateString()}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleDelete(p.id)}
+                className="p-2 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition shrink-0"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+          ))
+        ) : (
+          <p className="text-xs text-muted-foreground">No announcements posted yet.</p>
+        )}
+      </div>
     </div>
   );
 }

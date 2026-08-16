@@ -9,6 +9,10 @@ const getConfig = async () => {
     config = await prisma.siteConfig.create({
       data: {
         id: 'global',
+        appName: 'Genz Toon',
+        appTagline: 'Read Trending Webtoons, Manga & Comics',
+        heroHeadline: 'Discover Unlimited Stories & Comics',
+        heroSubtitle: 'Read high quality manhwa, manga and manhua translated with lightning speed.',
         announceText: 'Welcome to Genz Toon! Enjoy our latest manhwa and manga collection.',
         announceLink: '/series',
         socialLinks: {
@@ -17,6 +21,8 @@ const getConfig = async () => {
           discord: 'https://discord.gg',
           instagram: '',
           youtube: '',
+          telegram: '',
+          reddit: '',
         },
       },
     });
@@ -31,11 +37,13 @@ const getConfig = async () => {
     discord: links.discord || '',
     instagram: links.instagram || '',
     youtube: links.youtube || '',
+    telegram: links.telegram || '',
+    reddit: links.reddit || '',
   };
 };
 
 const updateConfig = async (data: any) => {
-  const { facebook, twitter, discord, instagram, youtube, ...rest } = data;
+  const { facebook, twitter, discord, instagram, youtube, telegram, reddit, ...rest } = data;
 
   const socialLinks = {
     facebook: facebook || '',
@@ -43,6 +51,8 @@ const updateConfig = async (data: any) => {
     discord: discord || '',
     instagram: instagram || '',
     youtube: youtube || '',
+    telegram: telegram || '',
+    reddit: reddit || '',
   };
 
   const configData = {
@@ -50,12 +60,20 @@ const updateConfig = async (data: any) => {
     socialLinks,
   };
 
-  // Convert types if they are sent as strings
+  // Convert numeric types safely
   if (configData.pointToFiatRate !== undefined) configData.pointToFiatRate = Number(configData.pointToFiatRate);
   if (configData.maxDailyAdPoints !== undefined) configData.maxDailyAdPoints = Number(configData.maxDailyAdPoints);
   if (configData.featuredRequestFee !== undefined) configData.featuredRequestFee = Number(configData.featuredRequestFee);
   if (configData.referralBonusPercent !== undefined) configData.referralBonusPercent = Number(configData.referralBonusPercent);
   if (configData.referralActiveMonths !== undefined) configData.referralActiveMonths = Number(configData.referralActiveMonths);
+  if (configData.minWithdrawalPoints !== undefined) configData.minWithdrawalPoints = Number(configData.minWithdrawalPoints);
+  if (configData.creatorRevenueSharePercent !== undefined) configData.creatorRevenueSharePercent = Number(configData.creatorRevenueSharePercent);
+
+  // Convert boolean types safely
+  if (configData.isMaintenanceMode !== undefined) configData.isMaintenanceMode = Boolean(configData.isMaintenanceMode);
+  if (configData.allowNewRegistrations !== undefined) configData.allowNewRegistrations = Boolean(configData.allowNewRegistrations);
+  if (configData.allowCreatorApplications !== undefined) configData.allowCreatorApplications = Boolean(configData.allowCreatorApplications);
+  if (configData.enableGlobalChat !== undefined) configData.enableGlobalChat = Boolean(configData.enableGlobalChat);
 
   const updated = await prisma.siteConfig.upsert({
     where: { id: 'global' },
@@ -74,6 +92,8 @@ const updateConfig = async (data: any) => {
     discord: socialLinks.discord,
     instagram: socialLinks.instagram,
     youtube: socialLinks.youtube,
+    telegram: socialLinks.telegram,
+    reddit: socialLinks.reddit,
   };
 };
 

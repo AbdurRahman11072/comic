@@ -134,8 +134,8 @@ const getChatMessages = asyncHandler(async (req: Request, res: Response) => {
 
 const createChatMessage = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  const { content } = req.body;
-  const result = await CommunityService.createChatMessage(userId as string, content as string);
+  const { content, imageUrl } = req.body;
+  const result = await CommunityService.createChatMessage(userId as string, content, imageUrl);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,

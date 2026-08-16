@@ -14,6 +14,7 @@ import notFound from "./app/middleware/notFound";
 import { PaymentController } from "./app/modules/payment/payment.controller";
 import { RootRoutes } from "./app/routes";
 import { apiLimiter, authLimiter } from "./app/middleware/rateLimiter";
+import { verifyCaptcha } from "./app/middleware/captchaMiddleware";
 
 const dev = process.env.NODE_ENV !== "production";
 const server = next({ dev });
@@ -47,29 +48,8 @@ server
 
     app.use(express.json());
 
-    // IP-based signup restriction (1 account per IP)
-    app.post("/api/auth/sign-up/email", async (req, res, next) => {
-      const ip =
-        req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-      const ipStr = String(ip);
-
-      try {
-        const existingSession = await prisma.session.findFirst({
-          where: { ipAddress: ipStr },
-        });
-
-        if (existingSession) {
-          return res.status(httpStatus.FORBIDDEN).json({
-            success: false,
-            message:
-              "An account has already been created from this IP address.",
-          });
-        }
-        next();
-      } catch (error) {
-        next(error);
-      }
-    });
+    // Registration security: apply authLimiter and optional CAPTCHA verification
+    app.post("/api/auth/sign-up/email", authLimiter, verifyCaptcha);
 
     // Better-auth handler
     app.all("/api/auth/*path", toNodeHandler(auth));

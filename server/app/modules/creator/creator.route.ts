@@ -4,6 +4,16 @@ import authMiddleware from '../../middleware/authMiddleware';
 
 const router = express.Router();
 
+// Admin / Moderator list of all creators
+router.get('/admin/all', authMiddleware(['moderator', 'admin']), CreatorController.getAllCreators);
+
+// Public channel and announcements
+router.get('/channel/:id', CreatorController.getPublicChannel);
+router.get('/:creatorId/posts', CreatorController.getCreatorPosts);
+router.post('/posts', authMiddleware(['creator', 'admin']), CreatorController.createCreatorPost);
+router.delete('/posts/:id', authMiddleware(['creator', 'admin']), CreatorController.deleteCreatorPost);
+
+// Creator private dashboard
 router.get('/profile', authMiddleware(['creator', 'admin']), CreatorController.getProfile);
 router.put('/profile', authMiddleware(['creator', 'admin']), CreatorController.updateProfile);
 router.get('/analytics', authMiddleware(['creator', 'admin']), CreatorController.getAnalytics);

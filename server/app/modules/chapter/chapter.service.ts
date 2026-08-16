@@ -144,8 +144,18 @@ const getChapterById = async (id: string, userId?: string) => {
   };
 };
 
-const createChapter = async (data: any) => {
+const createChapter = async (data: any, userId?: string, role?: string) => {
   const { images = [], ...chapterData } = data;
+
+  if (role === 'creator') {
+    const series = await prisma.series.findUnique({
+      where: { id: chapterData.seriesId },
+      select: { creatorId: true },
+    });
+    if (!series || series.creatorId !== userId) {
+      throw new AppError(httpStatus.FORBIDDEN, 'You can only add chapters to your own series');
+    }
+  }
 
   const result = await prisma.chapter.create({
     data: {
@@ -161,12 +171,19 @@ const createChapter = async (data: any) => {
   return result;
 };
 
-const updateChapter = async (id: string, data: any) => {
+const updateChapter = async (id: string, data: any, userId?: string, role?: string) => {
   const { images, ...chapterData } = data;
 
-  const existing = await prisma.chapter.findUnique({ where: { id } });
+  const existing = await prisma.chapter.findUnique({
+    where: { id },
+    include: { series: { select: { creatorId: true } } },
+  });
   if (!existing) {
     throw new AppError(httpStatus.NOT_FOUND, 'Chapter not found');
+  }
+
+  if (role === 'creator' && existing.series.creatorId !== userId) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You can only edit chapters of your own series');
   }
 
   const result = await prisma.chapter.update({
@@ -187,11 +204,19 @@ const updateChapter = async (id: string, data: any) => {
   return result;
 };
 
-const deleteChapter = async (id: string) => {
-  const existing = await prisma.chapter.findUnique({ where: { id } });
+const deleteChapter = async (id: string, userId?: string, role?: string) => {
+  const existing = await prisma.chapter.findUnique({
+    where: { id },
+    include: { series: { select: { creatorId: true } } },
+  });
   if (!existing) {
     throw new AppError(httpStatus.NOT_FOUND, 'Chapter not found');
   }
+
+  if (role === 'creator' && existing.series.creatorId !== userId) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You can only delete chapters of your own series');
+  }
+
   return await prisma.chapter.delete({
     where: { id },
   });

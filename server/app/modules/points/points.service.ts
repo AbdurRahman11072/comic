@@ -28,7 +28,20 @@ const getTransactions = async (userId: string) => {
 };
 
 /** Earn points by watching an ad — adds points and logs a transaction */
-const earnFromAd = async (userId: string, amount: number = 10) => {
+const earnFromAd = async (userId: string, requestedAmount: number = 10) => {
+  const userCheck = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { transactionsFrozen: true },
+  });
+
+  if (!userCheck) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  if (userCheck.transactionsFrozen) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Your account transactions are frozen');
+  }
+
+  // Strictly clamp amount between 5 and 150 (max reward for a full ad pack)
+  const amount = Math.min(Math.max(Number(requestedAmount) || 10, 5), 150);
+
   const [user, transaction] = await prisma.$transaction([
     prisma.user.update({
       where: { id: userId },
@@ -66,12 +79,15 @@ const buyChapter = async (userId: string, chapterId: string) => {
   });
   if (existing) throw new AppError(httpStatus.BAD_REQUEST, 'Chapter already purchased');
 
-  // 3. Verify user has enough points
+  // 3. Verify user has enough points and is not frozen
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { points: true },
+    select: { points: true, transactionsFrozen: true },
   });
   if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  if (user.transactionsFrozen) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Your account transactions are frozen. Please contact support.');
+  }
   if (user.points < chapter.coinCost)
     throw new AppError(httpStatus.BAD_REQUEST, 'Insufficient points');
 

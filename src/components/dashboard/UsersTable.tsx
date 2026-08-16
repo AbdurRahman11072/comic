@@ -1,9 +1,11 @@
 "use client";
 
-import { DataTable } from "@/components/dashboard/DataTable";
-import { Input } from "@/components/ui/input";
-import { Search, Trash2, Shield, User as UserIcon } from "lucide-react";
 import { useState } from "react";
+import {
+  Search, Trash2, Shield, ShieldAlert, User as UserIcon,
+  UserCog, Ban, Lock, VolumeX, CheckCircle2, AlertTriangle,
+  RefreshCw, Filter, Sparkles
+} from "lucide-react";
 import { DeleteUserAction, UpdateUserAction } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
@@ -15,191 +17,323 @@ interface UsersTableProps {
 }
 
 export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
+  const [users, setUsers] = useState<any[]>(initialUsers);
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("ALL");
-  const [filterBanned, setFilterBanned] = useState("ALL");
+  const [filterStatus, setFilterStatus] = useState("ALL");
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const router = useRouter();
 
-  const isAdmin = currentUserRole === "ADMIN";
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this user? This action is irreversible.")) return;
-    try {
-      const res = await DeleteUserAction(id);
-      if (res.success) {
-        router.refresh();
-      } else {
-        toast.error(res.message || "Failed to delete user.");
-      }
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-      toast.error("Failed to delete user.");
-    }
-  };
+  const isAdmin = currentUserRole?.toLowerCase() === "admin";
 
   const handleRoleChange = async (user: any, newRole: string) => {
     if (user.role === newRole) return;
-    if (!confirm(`Are you sure you want to change role to ${newRole}?`)) return;
+    setUpdatingId(user.id);
     try {
       const res = await UpdateUserAction(user.id, { role: newRole });
       if (res.success) {
-        toast.success("Role updated successfully.");
+        toast.success(`Role for ${user.name} updated to ${newRole.toUpperCase()}`);
+        setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, role: newRole } : u)));
         router.refresh();
       } else {
         toast.error(res.message || "Failed to update role.");
       }
     } catch (error) {
-      console.error("Failed to update user role:", error);
-      toast.error("Failed to update role.");
+      toast.error("Failed to update user role.");
+    } finally {
+      setUpdatingId(null);
     }
   };
 
   const handleBan = async (user: any) => {
-    if (!confirm(`Are you sure you want to ${user.banned ? 'unban' : 'ban'} this user?`)) return;
+    if (!confirm(`Are you sure you want to ${user.banned ? "unban" : "ban"} ${user.name}?`)) return;
+    setUpdatingId(user.id);
     try {
-      await api.post(`/moderator/users/${user.id}/ban`);
+      await api.post(`/api/v1/moderator/users/${user.id}/ban`);
+      toast.success(user.banned ? "User unbanned." : "User banned.");
+      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, banned: !u.banned } : u)));
       router.refresh();
     } catch (error) {
-      console.error("Failed to ban user:", error);
-      toast.error("Failed to ban user.");
+      toast.error("Failed to toggle ban status.");
+    } finally {
+      setUpdatingId(null);
     }
   };
 
   const handleFreeze = async (user: any) => {
-    if (!confirm(`Are you sure you want to ${user.transactionsFrozen ? 'unfreeze' : 'freeze'} transactions for this user?`)) return;
+    if (!confirm(`Are you sure you want to ${user.transactionsFrozen ? "unfreeze" : "freeze"} transactions for ${user.name}?`)) return;
+    setUpdatingId(user.id);
     try {
-      await api.post(`/moderator/users/${user.id}/freeze`);
+      await api.post(`/api/v1/moderator/users/${user.id}/freeze`);
+      toast.success(user.transactionsFrozen ? "Transactions unfrozen." : "Transactions frozen.");
+      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, transactionsFrozen: !u.transactionsFrozen } : u)));
       router.refresh();
     } catch (error) {
-      console.error("Failed to freeze user:", error);
-      toast.error("Failed to freeze user.");
+      toast.error("Failed to toggle transaction freeze.");
+    } finally {
+      setUpdatingId(null);
     }
   };
 
-  const filteredUsers = initialUsers.filter(u => {
-    const matchSearch = u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase());
-    const matchRole = filterRole === "ALL" || u.role === filterRole;
-    const matchBanned = filterBanned === "ALL" || 
-                        (filterBanned === "BANNED" && u.banned) || 
-                        (filterBanned === "ACTIVE" && !u.banned);
-    return matchSearch && matchRole && matchBanned;
+  const handleMute = async (user: any) => {
+    setUpdatingId(user.id);
+    try {
+      await api.post(`/api/v1/moderator/users/${user.id}/mute`, { hours: 24 });
+      toast.success("User muted for 24 hours.");
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to mute user.");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to permanently delete this user? This action is irreversible.")) return;
+    try {
+      const res = await DeleteUserAction(id);
+      if (res.success) {
+        toast.success("User account deleted.");
+        setUsers((prev) => prev.filter((u) => u.id !== id));
+        router.refresh();
+      } else {
+        toast.error(res.message || "Failed to delete user.");
+      }
+    } catch (error) {
+      toast.error("Failed to delete user.");
+    }
+  };
+
+  const filteredUsers = users.filter((u) => {
+    const matchSearch =
+      u.name?.toLowerCase().includes(search.toLowerCase()) ||
+      u.email?.toLowerCase().includes(search.toLowerCase()) ||
+      u.id?.toLowerCase().includes(search.toLowerCase());
+    const matchRole = filterRole === "ALL" || u.role?.toLowerCase() === filterRole.toLowerCase();
+    const matchStatus =
+      filterStatus === "ALL" ||
+      (filterStatus === "BANNED" && u.banned) ||
+      (filterStatus === "ACTIVE" && !u.banned) ||
+      (filterStatus === "FROZEN" && u.transactionsFrozen);
+    return matchSearch && matchRole && matchStatus;
   });
 
   return (
-    <div className="space-y-4">
-      <div className="glass p-4 rounded-2xl flex flex-col lg:flex-row gap-4 items-center border border-white/5">
-        <div className="relative flex-1 w-full">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input 
-            className="pl-10" 
-            placeholder="Search by name or email..." 
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <div className="flex gap-2 w-full lg:w-auto">
-          <select 
-            value={filterRole} 
-            onChange={(e) => setFilterRole(e.target.value)}
-            className="p-2 glass rounded-lg border border-white/10 text-sm outline-none bg-background/50"
-          >
-            <option value="ALL">All Roles</option>
-            <option value="USER">User</option>
-            <option value="CREATOR">Creator</option>
-            <option value="MODERATOR">Moderator</option>
-            <option value="ADMIN">Admin</option>
-          </select>
-          <select 
-            value={filterBanned} 
-            onChange={(e) => setFilterBanned(e.target.value)}
-            className="p-2 glass rounded-lg border border-white/10 text-sm outline-none bg-background/50"
-          >
-            <option value="ALL">All Status</option>
-            <option value="ACTIVE">Active</option>
-            <option value="BANNED">Banned</option>
-          </select>
+    <div className="space-y-6 max-w-7xl">
+      {/* Search & Filters */}
+      <div className="glass p-4 rounded-2xl border border-white/5 space-y-4">
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="relative flex-1 w-full">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search by user name, email, or ID..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-primary/50 outline-none"
+            />
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            {/* Role Filter */}
+            <select
+              value={filterRole}
+              onChange={(e) => setFilterRole(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs outline-none"
+            >
+              <option value="ALL" className="bg-neutral-900">All Roles</option>
+              <option value="admin" className="bg-neutral-900">Admins</option>
+              <option value="moderator" className="bg-neutral-900">Moderators</option>
+              <option value="creator" className="bg-neutral-900">Creators</option>
+              <option value="user" className="bg-neutral-900">Standard Users</option>
+            </select>
+
+            {/* Status Filter */}
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs outline-none"
+            >
+              <option value="ALL" className="bg-neutral-900">All Statuses</option>
+              <option value="ACTIVE" className="bg-neutral-900">Active</option>
+              <option value="BANNED" className="bg-neutral-900">Banned</option>
+              <option value="FROZEN" className="bg-neutral-900">Frozen Points</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      <DataTable 
-        data={filteredUsers}
-        columns={[
-          { 
-            header: "User", 
-            accessor: (item: any) => (
-              <div className="flex items-center gap-3">
-                {item.image ? (
-                  <img src={item.image} alt={item.name} className="w-8 h-8 rounded-full border border-white/10" />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-                    <UserIcon className="w-4 h-4 text-primary" />
-                  </div>
-                )}
-                <div>
-                  <div className="font-bold">{item.name}</div>
-                  <div className="text-xs text-muted-foreground">{item.email}</div>
-                </div>
-              </div>
-            )
-          },
-          { 
-            header: "Role", 
-            accessor: (item: any) => (
-              isAdmin ? (
-                <select
-                  value={item.role}
-                  onChange={(e) => handleRoleChange(item, e.target.value)}
-                  className={`p-1 rounded-md text-[10px] font-bold uppercase outline-none cursor-pointer ${
-                    item.role === "ADMIN" ? "text-purple-400 bg-purple-400/10 border border-purple-400/20" : "text-foreground bg-white/5"
-                  }`}
-                >
-                  <option value="USER">USER</option>
-                  <option value="CREATOR">CREATOR</option>
-                  <option value="MODERATOR">MODERATOR</option>
-                  <option value="ADMIN">ADMIN</option>
-                </select>
+      {/* Users & Roles Table */}
+      <div className="glass rounded-2xl border border-white/5 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-white/[0.03] text-muted-foreground uppercase text-[10px] tracking-wider border-b border-white/10">
+              <tr>
+                <th className="px-5 py-3.5">User</th>
+                <th className="px-4 py-3.5">Assigned Role</th>
+                <th className="px-4 py-3.5">Points Balance</th>
+                <th className="px-4 py-3.5">Status</th>
+                <th className="px-4 py-3.5">Joined Date</th>
+                <th className="px-5 py-3.5 text-right">Moderation & Role Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5">
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => (
+                  <tr key={user.id} className="hover:bg-white/[0.02] transition">
+                    {/* User Info */}
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-white/10 overflow-hidden shrink-0 flex items-center justify-center border border-white/10">
+                          {user.image ? (
+                            <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="font-bold text-xs text-white/80">{user.name?.[0]?.toUpperCase()}</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-white text-sm truncate">{user.name}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Role Selector */}
+                    <td className="px-4 py-3.5">
+                      {isAdmin ? (
+                        <select
+                          value={user.role?.toLowerCase()}
+                          disabled={updatingId === user.id}
+                          onChange={(e) => handleRoleChange(user, e.target.value)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition cursor-pointer ${
+                            user.role === "admin"
+                              ? "bg-red-500/20 text-red-400 border-red-500/30"
+                              : user.role === "moderator"
+                              ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                              : user.role === "creator"
+                              ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
+                              : "bg-white/5 text-white/70 border-white/10"
+                          }`}
+                        >
+                          <option value="user" className="bg-neutral-900 text-white">USER</option>
+                          <option value="creator" className="bg-neutral-900 text-emerald-400">CREATOR</option>
+                          <option value="moderator" className="bg-neutral-900 text-yellow-400">MODERATOR</option>
+                          <option value="admin" className="bg-neutral-900 text-red-400">ADMIN</option>
+                        </select>
+                      ) : (
+                        <span
+                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                            user.role === "admin"
+                              ? "bg-red-500/20 text-red-400 border border-red-500/30"
+                              : user.role === "moderator"
+                              ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                              : user.role === "creator"
+                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                              : "bg-white/10 text-white/70"
+                          }`}
+                        >
+                          {user.role}
+                        </span>
+                      )}
+                    </td>
+
+                    {/* Points Balance */}
+                    <td className="px-4 py-3.5">
+                      <span className="font-mono font-bold text-amber-400">
+                        {(user.points || 0).toLocaleString()} P
+                      </span>
+                    </td>
+
+                    {/* Status */}
+                    <td className="px-4 py-3.5">
+                      <div className="flex flex-wrap gap-1">
+                        {user.banned ? (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                            BANNED
+                          </span>
+                        ) : user.transactionsFrozen ? (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                            FROZEN
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            ACTIVE
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* Created Date */}
+                    <td className="px-4 py-3.5 text-muted-foreground">
+                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}
+                    </td>
+
+                    {/* Actions */}
+                    <td className="px-5 py-3.5 text-right">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {/* Mute 24h */}
+                        <button
+                          onClick={() => handleMute(user)}
+                          disabled={updatingId === user.id}
+                          className="p-2 rounded-lg glass glass-hover text-white/60 hover:text-amber-400 transition"
+                          title="Mute 24 Hours"
+                        >
+                          <VolumeX className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Freeze Transactions */}
+                        <button
+                          onClick={() => handleFreeze(user)}
+                          disabled={updatingId === user.id}
+                          className={`p-2 rounded-lg transition ${
+                            user.transactionsFrozen
+                              ? "bg-purple-500/20 text-purple-400"
+                              : "glass glass-hover text-white/60 hover:text-purple-400"
+                          }`}
+                          title={user.transactionsFrozen ? "Unfreeze Transactions" : "Freeze Transactions"}
+                        >
+                          <Lock className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Ban / Unban */}
+                        <button
+                          onClick={() => handleBan(user)}
+                          disabled={updatingId === user.id}
+                          className={`p-2 rounded-lg transition ${
+                            user.banned
+                              ? "bg-red-500/30 text-red-300"
+                              : "glass glass-hover text-white/60 hover:text-red-400"
+                          }`}
+                          title={user.banned ? "Unban User" : "Ban User"}
+                        >
+                          <Ban className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Delete User */}
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDelete(user.id)}
+                            className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition"
+                            title="Delete User Account"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
               ) : (
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                  item.role === "ADMIN" ? "text-purple-400 bg-purple-400/10 border border-purple-400/20" : "text-muted-foreground bg-white/5"
-                }`}>
-                  {item.role}
-                </span>
-              )
-            )
-          },
-          { header: "Points", accessor: (item: any) => item.points.toLocaleString(), className: "font-mono" },
-          { header: "Joined", accessor: (item: any) => new Date(item.createdAt).toLocaleDateString(), className: "text-muted-foreground" },
-          { 
-            header: "Actions", 
-            accessor: (item: any) => (
-              <div className="flex items-center justify-end gap-2">
-                <button 
-                  onClick={() => handleFreeze(item)}
-                  className={`p-2 rounded-lg transition-colors ${item.transactionsFrozen ? 'bg-orange-500/10 text-orange-500' : 'hover:bg-orange-500/10 hover:text-orange-500 text-muted-foreground'}`}
-                  title="Toggle Freeze Transactions"
-                >
-                  <span className="text-xs font-bold w-4 h-4 flex items-center justify-center">❄️</span>
-                </button>
-                <button 
-                  onClick={() => handleBan(item)}
-                  className={`p-2 rounded-lg transition-colors ${item.banned ? 'bg-red-500/10 text-red-500' : 'hover:bg-red-500/10 hover:text-red-500 text-muted-foreground'}`}
-                  title="Toggle Ban"
-                >
-                  <span className="text-xs font-bold w-4 h-4 flex items-center justify-center">🚫</span>
-                </button>
-                <button 
-                  onClick={() => handleDelete(item.id)}
-                  className="p-2 hover:bg-red-500/10 hover:text-red-500 rounded-lg transition-colors text-muted-foreground"
-                  title="Delete User"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ),
-            className: "text-right"
-          }
-        ]}
-      />
+                <tr>
+                  <td colSpan={6} className="py-20 text-center text-muted-foreground text-sm">
+                    No users matching your filters were found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

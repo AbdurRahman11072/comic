@@ -1,15 +1,25 @@
+import type { Metadata } from "next";
 import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
 import { userService } from "@/services/user.service";
 import { ProfileClient } from "@/components/dashboard/ProfileClient";
 import { redirect } from "next/navigation";
+import { constructMetadata } from "@/lib/metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return constructMetadata({
+    title: "My Profile & Account Settings",
+    description: "Manage your reader profile, points balance, transaction history, and account settings.",
+    noIndex: true,
+  });
+}
 
 export default async function ProfilePage() {
   const res = await userService.getProfile();
   const profile = res?.data;
 
   if (!profile) {
-    redirect("/"); // Or show a message
+    redirect("/");
   }
 
   return (

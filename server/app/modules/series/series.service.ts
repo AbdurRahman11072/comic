@@ -1,10 +1,20 @@
 import { prisma } from '../../../lib/prisma';
 
 const getAllSeries = async (query: any) => {
-  const { page = 1, limit = 10, type, status, genre, sort, isPinned, isDiscounted, creatorId } = query;
+  const { page = 1, limit = 10, type, status, genre, sort, isPinned, isDiscounted, creatorId, search, includeHidden } = query;
   const skip = (Number(page) - 1) * Number(limit);
 
   const where: any = {};
+  if (includeHidden !== 'true') {
+    where.isHidden = false;
+  }
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { altTitles: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } },
+    ];
+  }
   if (type) where.type = type.toUpperCase();
   if (status) where.status = status.toUpperCase();
   if (creatorId) where.creatorId = creatorId;
@@ -57,9 +67,73 @@ const getAllSeries = async (query: any) => {
   };
 };
 
+const getAdminSeriesList = async (query: any) => {
+  const { page = 1, limit = 20, search, status, type, isHidden, sort = 'latest' } = query;
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const where: any = {};
+  if (search) {
+    where.OR = [
+      { title: { contains: search, mode: 'insensitive' } },
+      { altTitles: { contains: search, mode: 'insensitive' } },
+      { creator: { name: { contains: search, mode: 'insensitive' } } },
+      { creator: { email: { contains: search, mode: 'insensitive' } } },
+    ];
+  }
+  if (status) where.status = status.toUpperCase();
+  if (type) where.type = type.toUpperCase();
+  if (isHidden !== undefined && isHidden !== 'all') {
+    where.isHidden = isHidden === 'true';
+  }
+
+  const orderBy: any = {};
+  if (sort === 'popular') orderBy.totalViews = 'desc';
+  else if (sort === 'rating') orderBy.rating = 'desc';
+  else if (sort === 'oldest') orderBy.createdAt = 'asc';
+  else orderBy.updatedAt = 'desc';
+
+  const [data, total] = await Promise.all([
+    prisma.series.findMany({
+      where,
+      skip,
+      take: Number(limit),
+      orderBy,
+      include: {
+        genres: true,
+        creator: {
+          select: { id: true, name: true, email: true, image: true },
+        },
+        _count: {
+          select: { chapters: true, reports: true, bookmarks: true },
+        },
+      },
+    }),
+    prisma.series.count({ where }),
+  ]);
+
+  return {
+    meta: {
+      total,
+      page: Number(page),
+      limit: Number(limit),
+    },
+    data,
+  };
+};
+
+const toggleHideSeries = async (id: string, isHidden: boolean, hiddenReason?: string) => {
+  return await prisma.series.update({
+    where: { id },
+    data: {
+      isHidden,
+      hiddenReason: isHidden ? (hiddenReason || 'Hidden by administration') : null,
+    },
+  });
+};
+
 const getPinnedSeries = async () => {
   return await prisma.series.findMany({
-    where: { isPinned: true },
+    where: { isPinned: true, isHidden: false },
     include: {
       genres: true,
       chapters: {
@@ -73,7 +147,7 @@ const getPinnedSeries = async () => {
 
 const getDiscountedSeries = async () => {
   return await prisma.series.findMany({
-    where: { discount: { not: null } },
+    where: { discount: { not: null }, isHidden: false },
     include: {
       genres: true,
     },
@@ -98,30 +172,26 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
   if (!result) return null;
 
   if (userId) {
-    const purchasedChapterIds = await prisma.chapterPurchase.findMany({
-      where: { userId, chapterId: { in: result.chapters.map(c => c.id) } },
-      select: { chapterId: true }
-    });
-    
-    const purchasedIds = new Set(purchasedChapterIds.map(p => p.chapterId));
-    
-    const bookmark = await prisma.bookmark.findUnique({
-      where: { userId_seriesId: { userId, seriesId: result.id } },
+    const isBookmarked = await prisma.bookmark.findUnique({
+      where: {
+        userId_seriesId: {
+          userId,
+          seriesId: result.id,
+        },
+      },
     });
 
-    const history = await prisma.history.findUnique({
-      where: { userId_seriesId: { userId, seriesId: result.id } },
-      include: { chapter: true }
+    const userRating = await prisma.review.findFirst({
+      where: {
+        userId,
+        seriesId: result.id,
+      },
     });
 
     return {
       ...result,
-      isBookmarked: !!bookmark,
-      lastReadChapterNumber: history?.chapter?.number || null,
-      chapters: result.chapters.map(c => ({
-        ...c,
-        isPurchased: purchasedIds.has(c.id)
-      }))
+      isBookmarked: !!isBookmarked,
+      userRating: userRating ? userRating.rating : null,
     };
   }
 
@@ -133,70 +203,51 @@ const getSeriesById = async (id: string) => {
     where: { id },
     include: {
       genres: true,
+      chapters: {
+        orderBy: { number: 'desc' },
+      },
+    },
+  });
+  return result;
+};
+
+const createSeries = async (data: any) => {
+  const { genres, ...seriesData } = data;
+  
+  const result = await prisma.series.create({
+    data: {
+      ...seriesData,
+      genres: {
+        connect: genres?.map((id: string) => ({ id })) || [],
+      },
+    },
+    include: {
+      genres: true,
     },
   });
 
   return result;
 };
 
-const createSeries = async (data: any) => {
-  const { genres = [], ...seriesData } = data;
-  
-  // Generate slug if not provided
-  if (!seriesData.slug && seriesData.title) {
-    seriesData.slug = seriesData.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '');
-  }
-
-  // Normalize enums
-  if (seriesData.type) seriesData.type = seriesData.type.toUpperCase();
-  if (seriesData.status) seriesData.status = seriesData.status.toUpperCase();
-  
-  console.log('Creating series with data:', JSON.stringify({ ...seriesData, genres }, null, 2));
-
-  try {
-    const result = await prisma.series.create({
-      data: {
-        ...seriesData,
-        genres: {
-          connectOrCreate: (genres || []).map((name: string) => ({
-            where: { name },
-            create: { name },
-          })),
-        },
-      },
-    });
-    return result;
-  } catch (error) {
-    console.error('Prisma Create Error:', error);
-    throw error;
-  }
-};
-
 const updateSeries = async (id: string, data: any) => {
   const { genres, ...seriesData } = data;
 
-  // Normalize enums
-  if (seriesData.type) seriesData.type = seriesData.type.toUpperCase();
-  if (seriesData.status) seriesData.status = seriesData.status.toUpperCase();
+  const updatePayload: any = { ...seriesData };
+
+  if (genres) {
+    updatePayload.genres = {
+      set: genres.map((id: string) => ({ id })),
+    };
+  }
 
   const result = await prisma.series.update({
     where: { id },
-    data: {
-      ...seriesData,
-      ...(genres && {
-        genres: {
-          set: [],
-          connectOrCreate: genres.map((name: string) => ({
-            where: { name },
-            create: { name },
-          })),
-        },
-      }),
+    data: updatePayload,
+    include: {
+      genres: true,
     },
   });
+
   return result;
 };
 
@@ -226,6 +277,7 @@ const toggleFeatured = async (seriesId: string) => {
 
 const getFeaturedSeries = async () => {
   return await prisma.featuredSeries.findMany({
+    where: { series: { isHidden: false } },
     include: {
       series: {
         include: {
@@ -239,6 +291,8 @@ const getFeaturedSeries = async () => {
 
 export const SeriesService = {
   getAllSeries,
+  getAdminSeriesList,
+  toggleHideSeries,
   getSeriesBySlug,
   getPinnedSeries,
   getDiscountedSeries,

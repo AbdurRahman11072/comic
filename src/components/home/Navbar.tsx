@@ -10,6 +10,9 @@ import { ChatDrawer } from "./ChatDrawer";
 import { BottomNav } from "./BottomNav";
 import { User as UserIcon, Settings, Bookmark, History, LayoutDashboard, MessageCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
+import { useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
+import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import { SITE_DEFAULTS } from "@/config/site";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -48,35 +51,24 @@ const TransactionIcon = () => (
 export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loginOpen, setLoginOpen] = useState(false);
-  const [points, setPoints] = useState<number | null>(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  const fetchPoints = useCallback(async () => {
-    if (!session?.user) return;
-    try {
-      const { data } = await api.get('/api/v1/points/balance');
-      setPoints(data.data.points);
-    } catch {
-      // silently fail
-    }
-  }, [session]);
+  const { data: configRes } = useGetSiteConfigQuery();
+  const config = configRes?.data;
+  const appName = config?.appName || SITE_DEFAULTS.appName;
+  const appLogoUrl = config?.appLogoUrl || SITE_DEFAULTS.appLogoUrl;
 
-  useEffect(() => {
-    fetchPoints();
-  }, [fetchPoints]);
-
-  // Expose refresh function globally so Rewards page can trigger it
-  useEffect(() => {
-    (window as any).__refreshNavPoints = fetchPoints;
-    return () => { delete (window as any).__refreshNavPoints; };
-  }, [fetchPoints]);
+  // RTK Query hook — automatically syncs with cache and tags across the entire application
+  const { data: pointsData, refetch: refetchPoints } = useGetPointsBalanceQuery(undefined, {
+    skip: !session?.user,
+  });
+  const points = pointsData?.data?.points ?? null;
 
   const handleSignOut = async () => {
     await signOut();
-    setPoints(null);
     setUserMenuOpen(false);
   };
 
@@ -93,14 +85,17 @@ export function Navbar() {
           <div className="flex items-center gap-5 flex-1">
             <Link
               href="/"
-              className="font-heading text-[1.6rem] tracking-[1px] whitespace-nowrap"
+              className="font-heading text-[1.6rem] tracking-[1px] whitespace-nowrap flex items-center gap-2"
               style={{
                 background: "linear-gradient(90deg, #fff 60%, #e11d48)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
             >
-              Genz Toon
+              {appLogoUrl ? (
+                <img src={appLogoUrl} alt="Logo" className="w-8 h-8 rounded-lg object-contain" />
+              ) : null}
+              {appName}
             </Link>
 
             {/* Search bar */}
@@ -172,13 +167,16 @@ export function Navbar() {
             )}
 
             {/* Community Chat — desktop only */}
-            <button
-              onClick={() => setChatOpen((v) => !v)}
-              className="hidden md:flex items-center justify-center w-[38px] h-[38px] rounded-full border glass glass-hover transition-all"
-              title="Community Chat"
-            >
-              <MessageCircle className="w-[18px] h-[18px]" />
-            </button>
+            {config?.enableGlobalChat !== false && (
+              <button
+                data-chat-trigger="true"
+                onClick={() => setChatOpen((v) => !v)}
+                className="hidden md:flex items-center justify-center w-[38px] h-[38px] rounded-full border glass glass-hover transition-all"
+                title="Community Chat"
+              >
+                <MessageCircle className="w-[18px] h-[18px]" />
+              </button>
+            )}
 
             {/* Auth button */}
             {isPending ? (
@@ -217,7 +215,7 @@ export function Navbar() {
                         <UserIcon className="w-4 h-4" />
                         My Profile
                       </Link>
-                      {userRole === 'user' && (
+                      {userRole === 'user' && config?.allowCreatorApplications !== false && (
                         <button
                           onClick={async () => {
                             setUserMenuOpen(false);
@@ -315,7 +313,7 @@ export function Navbar() {
       <LoginDialog
         open={loginOpen}
         onOpenChange={setLoginOpen}
-        onAuthSuccess={() => { setLoginOpen(false); fetchPoints(); }}
+        onAuthSuccess={() => { setLoginOpen(false); refetchPoints(); }}
       />
 
       {/* Mobile bottom navigation */}

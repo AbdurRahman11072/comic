@@ -16,6 +16,31 @@ const getAllSeries = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getAdminSeriesList = asyncHandler(async (req: Request, res: Response) => {
+  const result = await SeriesService.getAdminSeriesList(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Admin series list fetched successfully',
+    pagination: result.meta,
+    data: result.data,
+  });
+});
+
+const toggleHideSeries = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { isHidden, hiddenReason } = req.body;
+  const result = await SeriesService.toggleHideSeries(id as string, isHidden, hiddenReason);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: isHidden ? 'Series is now hidden from public view' : 'Series is now visible to public',
+    data: result,
+  });
+});
+
 const getPinnedSeries = asyncHandler(async (req: Request, res: Response) => {
   const result = await SeriesService.getPinnedSeries();
 
@@ -123,6 +148,8 @@ const getFeaturedSeries = asyncHandler(async (req: Request, res: Response) => {
 
 export const SeriesController = {
   getAllSeries,
+  getAdminSeriesList,
+  toggleHideSeries,
   getSeriesBySlug,
   getPinnedSeries,
   getDiscountedSeries,

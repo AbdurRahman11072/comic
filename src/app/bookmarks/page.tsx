@@ -1,9 +1,19 @@
+import type { Metadata } from "next";
 import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
 import { userService } from "@/services/user.service";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { constructMetadata } from "@/lib/metadata";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return constructMetadata({
+    title: "My Bookmarked Series",
+    description: "Manage and read your favorite saved webtoons, manga, and manhwa series.",
+    noIndex: true,
+  });
+}
 
 export default async function BookmarksPage() {
   const profileResponse = await userService.getProfile();
@@ -38,29 +48,34 @@ export default async function BookmarksPage() {
               <Link 
                 key={bookmark.id} 
                 href={`/series/${bookmark.series.slug}`}
-                className="group relative flex flex-col gap-3"
+                className="group relative flex flex-col rounded-2xl overflow-hidden glass border border-white/5 hover:border-primary/50 transition-all duration-300"
               >
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden glass border-white/5">
-                  {bookmark.series.coverUrl ? (
-                    <img
-                      src={bookmark.series.coverUrl}
-                      alt={bookmark.series.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                      <span className="text-muted-foreground text-xs">No Cover</span>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
+                  <Image
+                    src={bookmark.series.coverUrl || "/placeholder.jpg"}
+                    alt={bookmark.series.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-sm line-clamp-1 group-hover:text-primary transition-colors">
-                    {bookmark.series.title}
-                  </h3>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Bookmarked on {new Date(bookmark.createdAt).toLocaleDateString()}
-                  </p>
+                
+                <div className="p-4 flex flex-col flex-1 justify-between">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                      {bookmark.series.type}
+                    </span>
+                    <h3 className="font-bold text-sm leading-tight text-foreground line-clamp-1 mt-1 group-hover:text-primary transition-colors">
+                      {bookmark.series.title}
+                    </h3>
+                  </div>
+                  
+                  <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{bookmark.series._count?.chapters || 0} Chs</span>
+                    <span className="text-[10px] text-primary/80 uppercase font-semibold">
+                      {bookmark.series.status}
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}

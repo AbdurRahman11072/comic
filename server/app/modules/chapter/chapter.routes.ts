@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import { ChapterController } from './chapter.controller';
-import { optionalAuthMiddleware } from '../../middleware/authMiddleware';
+import authMiddleware, { optionalAuthMiddleware } from '../../middleware/authMiddleware';
 
 const router = Router();
 
 router.get('/', ChapterController.getAllChapters);
 router.get('/:id', optionalAuthMiddleware, ChapterController.getChapterById);
 router.get('/:slug/:number', optionalAuthMiddleware, ChapterController.getChapterByNumber);
-router.post('/', ChapterController.createChapter); // Add auth middleware later
-router.put('/:id', ChapterController.updateChapter);
-router.delete('/:id', ChapterController.deleteChapter);
+router.post('/', authMiddleware(['creator', 'moderator', 'admin']), ChapterController.createChapter);
+router.put('/:id', authMiddleware(['creator', 'moderator', 'admin']), ChapterController.updateChapter);
+router.delete('/:id', authMiddleware(['creator', 'moderator', 'admin']), ChapterController.deleteChapter);
 
 export const ChapterRoutes = router;

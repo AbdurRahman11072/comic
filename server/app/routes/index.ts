@@ -13,6 +13,9 @@ import { AdRoutes } from '../modules/ad/ad.route';
 import { WithdrawalRoutes } from '../modules/withdrawal/withdrawal.route';
 import { ModeratorRoutes } from '../modules/moderator/moderator.route';
 import { CommunityRoutes } from '../modules/community/community.route';
+import { PromoRoutes } from '../modules/promo/promo.routes';
+import { AuditRoutes } from '../modules/audit/audit.routes';
+import { BackupRoutes } from '../modules/admin/backup.routes';
 
 const router = Router();
 
@@ -28,6 +31,10 @@ const moduleRoutes = [
   {
     path: '/admin/stats',
     route: StatsRoutes,
+  },
+  {
+    path: '/admin/backup',
+    route: BackupRoutes,
   },
   {
     path: '/upload',
@@ -68,6 +75,14 @@ const moduleRoutes = [
   {
     path: '/community',
     route: CommunityRoutes,
+  },
+  {
+    path: '/promo',
+    route: PromoRoutes,
+  },
+  {
+    path: '/audit',
+    route: AuditRoutes,
   },
 ];
 

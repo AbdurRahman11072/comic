@@ -211,15 +211,41 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
                   onChange={handleInputChange}
                 />
               </div>
-              <div className="flex items-center gap-3 pt-2">
-                <input
-                  type="checkbox"
-                  id="isLocked"
-                  checked={formData.isLocked}
-                  onChange={handleInputChange as any}
-                  className="w-4 h-4 rounded border-white/10 bg-background/50 text-primary focus:ring-primary/50"
+              <div className="space-y-2">
+                <Label htmlFor="publishAt">Scheduled Release Date/Time (Optional)</Label>
+                <Input
+                  id="publishAt"
+                  type="datetime-local"
+                  value={(formData as any).publishAt || ""}
+                  onChange={handleInputChange}
                 />
-                <Label htmlFor="isLocked" className="cursor-pointer">Lock this chapter (Requires coins)</Label>
+                <p className="text-[11px] text-muted-foreground">
+                  Leave empty to publish immediately. If set, this chapter will unlock automatically at the chosen time.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2.5 pt-2">
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="isLocked"
+                    checked={formData.isLocked}
+                    onChange={handleInputChange as any}
+                    className="w-4 h-4 rounded border-white/10 bg-background/50 text-primary focus:ring-primary/50"
+                  />
+                  <Label htmlFor="isLocked" className="cursor-pointer">Lock this chapter (Requires coins)</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="isFastPass"
+                    checked={(formData as any).isFastPass || false}
+                    onChange={handleInputChange as any}
+                    className="w-4 h-4 rounded border-white/10 bg-background/50 text-amber-400 focus:ring-amber-400/50"
+                  />
+                  <Label htmlFor="isFastPass" className="cursor-pointer text-amber-300 font-medium">
+                    FastPass Early Access (Special coin tier)
+                  </Label>
+                </div>
               </div>
             </div>
           </div>

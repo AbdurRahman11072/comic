@@ -28,6 +28,18 @@ const freezeUser = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const muteUser = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await ModeratorService.muteUser(id as string, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: result.mutedUntil ? `User muted until ${result.mutedUntil}` : 'User unmuted successfully',
+    data: result,
+  });
+});
+
 const getSeriesApplications = asyncHandler(async (req: Request, res: Response) => {
   const result = await ModeratorService.getSeriesApplications(req.query);
 
@@ -103,6 +115,7 @@ const reviewFeaturedRequest = asyncHandler(async (req: Request, res: Response) =
 export const ModeratorController = {
   banUser,
   freezeUser,
+  muteUser,
   getSeriesApplications,
   reviewSeriesApplication,
   getWithdrawalRequests,

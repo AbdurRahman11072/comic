@@ -5,6 +5,8 @@ import authMiddleware, { optionalAuthMiddleware } from '../../middleware/authMid
 const router = Router();
 
 router.get('/', SeriesController.getAllSeries);
+router.get('/admin/all', authMiddleware(['moderator', 'admin']), SeriesController.getAdminSeriesList);
+router.put('/admin/:id/hide', authMiddleware(['moderator', 'admin']), SeriesController.toggleHideSeries);
 router.get('/pinned', SeriesController.getPinnedSeries);
 router.get('/featured', SeriesController.getFeaturedSeries);
 router.get('/discounted', SeriesController.getDiscountedSeries);

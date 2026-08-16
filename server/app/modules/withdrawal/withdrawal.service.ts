@@ -31,6 +31,11 @@ const requestWithdrawal = async (userId: string, payload: any) => {
     const config = await tx.siteConfig.findUnique({
       where: { id: 'global' }
     });
+
+    const minPoints = config?.minWithdrawalPoints || 1000;
+    if (pointsRequested < minPoints) {
+      throw new AppError(httpStatus.BAD_REQUEST, `Minimum withdrawal amount is ${minPoints.toLocaleString()} points`);
+    }
     
     const rate = config?.pointToFiatRate || 0.01;
     const fiatAmount = pointsRequested * rate;

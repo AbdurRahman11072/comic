@@ -8,8 +8,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { signIn, signUp } from "@/lib/auth-client";
+import { Clock, AlertTriangle } from "lucide-react";
 
 const COVERS = [
   "https://wsrv.nl/?url=cdn.meowing.org/uploads/H70SqQB-7tA&w=300",
@@ -51,20 +52,45 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
 
   const reset = () => {
-    setName(""); setEmail(""); setPassword(""); setError(null); setLoading(false);
+    setName(""); setEmail(""); setPassword(""); setError(null); setLoading(false); setRetryCountdown(null);
   };
+
+  useEffect(() => {
+    if (retryCountdown === null || retryCountdown <= 0) return;
+    const timer = setInterval(() => {
+      setRetryCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          setError(null);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [retryCountdown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (retryCountdown && retryCountdown > 0) return;
+
     setLoading(true);
     setError(null);
 
     try {
       if (tab === "login") {
         const res = await signIn.email({ email, password });
-        if (res.error) throw new Error(res.error.message || "Login failed");
+        if (res.error) {
+          const errMsg = res.error.message || "Login failed";
+          // Check for rate limit countdown
+          const match = errMsg.match(/(\d+)\s*s/);
+          if (match && match[1]) {
+            setRetryCountdown(parseInt(match[1]));
+          }
+          throw new Error(errMsg);
+        }
       } else {
         const res = await signUp.email({ email, password, name });
         if (res.error) throw new Error(res.error.message || "Sign up failed");
@@ -152,16 +178,26 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
             />
 
             {error && (
-              <p className="text-[12px] text-red-400 bg-red-400/10 rounded-lg px-3 py-2">{error}</p>
+              <div className="text-[12px] text-red-400 bg-red-400/10 border border-red-500/20 rounded-xl px-3.5 py-2.5 space-y-1">
+                <div className="flex items-center gap-1.5 font-semibold">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                  <span>{error}</span>
+                </div>
+                {retryCountdown !== null && retryCountdown > 0 && (
+                  <p className="text-[11px] text-amber-300 font-mono flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> Retry available in {Math.floor(retryCountdown / 60)}m {retryCountdown % 60}s
+                  </p>
+                )}
+              </div>
             )}
 
             <Button
               type="submit"
-              disabled={loading}
+              disabled={loading || (retryCountdown !== null && retryCountdown > 0)}
               className="h-11 rounded-full text-[14px] font-semibold mt-1"
               style={{ background: "var(--primary)" }}
             >
-              {loading ? "Please wait…" : tab === "login" ? "Sign In" : "Create Account"}
+              {loading ? "Please wait…" : retryCountdown && retryCountdown > 0 ? `Wait ${retryCountdown}s` : tab === "login" ? "Sign In" : "Create Account"}
             </Button>
           </form>
         </div>

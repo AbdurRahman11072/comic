@@ -37,12 +37,24 @@ app.post(
 
 app.use(express.json());
 
-// IP Address restriction for signup (1 account per IP)
+// Sign-up guard: Check if registration is open and check IP restriction
 app.post('/api/auth/sign-up/email', async (req, res, next) => {
-  const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-  const ipStr = String(ip);
-
   try {
+    const config = await prisma.siteConfig.findUnique({ where: { id: 'global' } });
+    if (config && config.allowNewRegistrations === false) {
+      return res.status(httpStatus.FORBIDDEN).json({
+        success: false,
+        message: 'New user registrations are currently paused by administration.',
+      });
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+      return next();
+    }
+
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const ipStr = String(ip);
+
     const existingSession = await prisma.session.findFirst({
       where: { ipAddress: ipStr }
     });

@@ -19,7 +19,7 @@ export function SeriesTable({ initialSeries, userRole }: SeriesTableProps) {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const router = useRouter();
-  const canModify = userRole?.toLowerCase() === "creator"; // Admin and Moderator can't create or edit per requirements
+  const canModify = ["creator", "admin", "moderator"].includes(userRole?.toLowerCase() || "");
 
   // Debounce search
   useEffect(() => {

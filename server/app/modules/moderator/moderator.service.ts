@@ -45,6 +45,27 @@ const freezeUser = async (userId: string, payload: any) => {
   return result;
 };
 
+const muteUser = async (userId: string, payload: { durationHours?: number; unmute?: boolean }) => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+
+  if (user.role === 'moderator' || user.role === 'admin') {
+    throw new AppError(httpStatus.FORBIDDEN, 'Cannot mute a moderator or admin');
+  }
+
+  let mutedUntil: Date | null = null;
+  if (!payload.unmute && payload.durationHours) {
+    mutedUntil = new Date(Date.now() + payload.durationHours * 60 * 60 * 1000);
+  }
+
+  const result = await prisma.user.update({
+    where: { id: userId },
+    data: { mutedUntil },
+  });
+
+  return result;
+};
+
 const getSeriesApplications = async (query: any) => {
   const { page = 1, limit = 10, status } = query;
   const skip = (Number(page) - 1) * Number(limit);
@@ -269,6 +290,7 @@ const reviewFeaturedRequest = async (id: string, payload: any) => {
 export const ModeratorService = {
   banUser,
   freezeUser,
+  muteUser,
   getSeriesApplications,
   reviewSeriesApplication,
   getWithdrawalRequests,

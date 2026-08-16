@@ -252,15 +252,28 @@ const getChatMessages = async () => {
   return result.reverse();
 };
 
-const createChatMessage = async (userId: string, content: string) => {
-  if (!content || !content.trim()) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Message content is required');
+const createChatMessage = async (userId: string, content?: string, imageUrl?: string) => {
+  if ((!content || !content.trim()) && !imageUrl) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Message content or image is required');
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { mutedUntil: true },
+  });
+
+  if (user?.mutedUntil && new Date(user.mutedUntil) > new Date()) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      `You are temporarily muted in chat until ${new Date(user.mutedUntil).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+    );
   }
 
   const result = await prisma.chatMessage.create({
     data: {
       userId,
-      content: content.trim()
+      content: content ? content.trim() : '',
+      imageUrl: imageUrl || null,
     },
     include: {
       user: {

@@ -8,6 +8,9 @@ declare global {
         name: string;
         email: string;
         role: 'user' | 'creator' | 'moderator' | 'admin';
+        banned?: boolean;
+        banReason?: string | null;
+        transactionsFrozen?: boolean;
       };
     }
   }

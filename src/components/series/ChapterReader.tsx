@@ -11,6 +11,10 @@ import { AdPlayer } from "@/components/ui/AdPlayer";
 import { CommentSection } from "@/components/series/CommentSection";
 import { toast } from "react-hot-toast";
 
+import { useBuyChapterMutation } from "@/redux/api/pointsApi";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { setReaderMode, setReaderTheme, setImageWidth } from "@/redux/slices/readerSlice";
+
 interface ChapterReaderProps {
   slug: string;
   initialChapter: any;
@@ -18,17 +22,18 @@ interface ChapterReaderProps {
 
 export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const { data: session } = useSession();
   const [chapter, setChapter] = useState(initialChapter);
-  const [buying, setBuying] = useState(false);
   const [adWatched, setAdWatched] = useState(false);
 
-  // Reader Settings States
-  const [readerMode, setReaderMode] = useState<"scroll" | "page">("scroll");
-  const [readerTheme, setReaderTheme] = useState<"dark" | "light" | "sepia" | "amoled">("dark");
-  const [imageWidth, setImageWidth] = useState<number>(100);
+  // Redux Reader Settings State
+  const { mode: readerMode, theme: readerTheme, imageWidth } = useAppSelector((state) => state.reader);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+
+  // RTK Query buy chapter mutation
+  const [buyChapterMutate, { isLoading: buying }] = useBuyChapterMutation();
   
   const isFreeChapter = !chapter.isLocked;
   const showAd = isFreeChapter && !adWatched;
@@ -38,30 +43,65 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
     setCurrentPage(0); // Reset page index on chapter change
   }, [initialChapter]);
 
-  // Load settings from localStorage
+  // Restore scroll position for this chapter
   useEffect(() => {
-    const savedMode = localStorage.getItem("reader_mode");
-    const savedTheme = localStorage.getItem("reader_theme");
-    const savedWidth = localStorage.getItem("reader_width");
+    if (chapter?.id && readerMode === "scroll") {
+      const savedScroll = localStorage.getItem(`chapter_scroll_${chapter.id}`);
+      if (savedScroll) {
+        setTimeout(() => {
+          window.scrollTo({ top: Number(savedScroll), behavior: "smooth" });
+        }, 150);
+      }
+    }
+  }, [chapter?.id, readerMode]);
 
-    if (savedMode) setReaderMode(savedMode as any);
-    if (savedTheme) setReaderTheme(savedTheme as any);
-    if (savedWidth) setImageWidth(Number(savedWidth));
-  }, []);
+  // Save scroll position on scroll (debounced)
+  useEffect(() => {
+    if (readerMode !== "scroll" || !chapter?.id) return;
+
+    let timeout: NodeJS.Timeout;
+    const handleScroll = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        if (window.scrollY > 100) {
+          localStorage.setItem(`chapter_scroll_${chapter.id}`, String(Math.round(window.scrollY)));
+        }
+      }, 500);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [chapter?.id, readerMode]);
+
+  // Keyboard navigation for page mode
+  useEffect(() => {
+    if (readerMode !== "page" || !chapter?.images?.length) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        setCurrentPage((p) => Math.max(0, p - 1));
+      } else if (e.key === "ArrowRight") {
+        setCurrentPage((p) => Math.min((chapter.images?.length || 1) - 1, p + 1));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [readerMode, chapter?.images?.length]);
 
   const handleSetReaderMode = (val: "scroll" | "page") => {
-    setReaderMode(val);
-    localStorage.setItem("reader_mode", val);
+    dispatch(setReaderMode(val));
   };
 
   const handleSetReaderTheme = (val: "dark" | "light" | "sepia" | "amoled") => {
-    setReaderTheme(val);
-    localStorage.setItem("reader_theme", val);
+    dispatch(setReaderTheme(val));
   };
 
   const handleSetImageWidth = (val: number) => {
-    setImageWidth(val);
-    localStorage.setItem("reader_width", String(val));
+    dispatch(setImageWidth(val));
   };
 
   useEffect(() => {
@@ -75,23 +115,17 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
       toast.error("Please sign in to unlock this chapter.");
       return;
     }
-    setBuying(true);
     try {
-      const res = await BuyChapterAction(chapter.id);
+      const res = await buyChapterMutate({ chapterId: chapter.id }).unwrap();
       if (res.success) {
-        if ((window as any).__refreshNavPoints) {
-          (window as any).__refreshNavPoints();
-        }
         toast.success("Chapter unlocked successfully!");
         router.refresh();
       } else {
         toast.error(res.message || "Failed to unlock chapter.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to buy chapter:", error);
-      toast.error("Failed to unlock chapter. Check your point balance.");
-    } finally {
-      setBuying(false);
+      toast.error(error.data?.message || "Failed to unlock chapter. Check your point balance.");
     }
   };
 

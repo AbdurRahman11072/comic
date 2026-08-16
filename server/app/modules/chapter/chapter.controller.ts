@@ -43,7 +43,9 @@ const getAllChapters = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const createChapter = asyncHandler(async (req: Request, res: Response) => {
-  const result = await ChapterService.createChapter(req.body);
+  const userId = req.user?.id;
+  const role = req.user?.role;
+  const result = await ChapterService.createChapter(req.body, userId, role);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -55,7 +57,9 @@ const createChapter = asyncHandler(async (req: Request, res: Response) => {
 
 const updateChapter = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await ChapterService.updateChapter(id as string, req.body);
+  const userId = req.user?.id;
+  const role = req.user?.role;
+  const result = await ChapterService.updateChapter(id as string, req.body, userId, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -67,7 +71,9 @@ const updateChapter = asyncHandler(async (req: Request, res: Response) => {
 
 const deleteChapter = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  await ChapterService.deleteChapter(id as string);
+  const userId = req.user?.id;
+  const role = req.user?.role;
+  await ChapterService.deleteChapter(id as string, userId, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

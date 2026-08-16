@@ -67,11 +67,12 @@ model User {
   banExpires    DateTime?
   points        Int       @default(0)
 
-  transactionsFrozen Boolean @default(false)
-  referralCode       String? @unique @default(uuid())
+  transactionsFrozen Boolean   @default(false)
+  mutedUntil         DateTime?
+  referralCode       String?   @unique @default(uuid())
   referredById       String?
-  referredBy         User?   @relation("Referrals", fields: [referredById], references: [id])
-  referrals          User[]  @relation("Referrals")
+  referredBy         User?     @relation("Referrals", fields: [referredById], references: [id])
+  referrals          User[]    @relation("Referrals")
 
   dailyAdViews        Int      @default(0)
   dailyAdPointsEarned Int      @default(0)
@@ -97,6 +98,10 @@ model User {
   reports            Report[]
   featuredRequests   FeaturedRequest[]
   chatMessages       ChatMessage[]
+  creatorPosts       CreatorPost[]
+  auditLogs          AuditLog[]
+  promoRedemptions   PromoCodeRedemption[]
+  createdPromoCodes  PromoCode[]
 
   @@map("user")
 }
@@ -164,24 +169,26 @@ model Verification {
 }
 
 model Series {
-  id          String       @id @default(uuid())
-  creatorId   String?
-  creator     User?        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  title       String
-  slug        String       @unique
-  altTitles   String?
-  description String?
-  coverUrl    String?
-  bgUrl       String?
-  type        SeriesType   @default(MANHWA)
-  status      SeriesStatus @default(ONGOING)
-  rating      Float        @default(0.0)
-  favorites   Int          @default(0)
-  totalViews  Int          @default(0)
-  isPinned    Boolean      @default(false)
-  discount    String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id           String       @id @default(uuid())
+  creatorId    String?
+  creator      User?        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  title        String
+  slug         String       @unique
+  altTitles    String?
+  description  String?
+  coverUrl     String?
+  bgUrl        String?
+  type         SeriesType   @default(MANHWA)
+  status       SeriesStatus @default(ONGOING)
+  rating       Float        @default(0.0)
+  favorites    Int          @default(0)
+  totalViews   Int          @default(0)
+  isPinned     Boolean      @default(false)
+  isHidden     Boolean      @default(false)
+  hiddenReason String?
+  discount     String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 
   genres           Genre[]
   chapters         Chapter[]
@@ -220,17 +227,45 @@ model FeaturedSeries {
 }
 
 model SiteConfig {
-  id                   String   @id @default("global")
-  announceText         String?
-  announceLink         String?
-  socialLinks          Json?
-  referralBonusPercent Int      @default(10)
-  referralActiveMonths Int      @default(3)
-  maxDailyAdPoints     Int      @default(1000)
-  pointToFiatRate      Float    @default(0.01) // 1 point = $0.01
-  featuredRequestFee   Int      @default(500)
-  customAdScript       String?
-  updatedAt            DateTime @updatedAt
+  id             String  @id @default("global")
+  appName        String  @default("Genz Toon")
+  appTagline     String?
+  appLogoUrl     String?
+  heroHeadline   String?
+  heroSubtitle   String?
+  playStoreUrl   String?
+  appStoreUrl    String?
+  announceText   String?
+  announceLink   String?
+  socialLinks    Json?
+  termsOfService String?
+  privacyPolicy  String?
+  aboutUs        String?
+
+  // 🛡️ System & Access Controls
+  isMaintenanceMode        Boolean @default(false)
+  maintenanceMessage       String?
+  allowNewRegistrations    Boolean @default(true)
+  allowCreatorApplications Boolean @default(true)
+  enableGlobalChat         Boolean @default(true)
+
+  // 🔍 SEO & Web Tracking
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String?
+  ogImageUrl     String?
+  gaTrackingId   String?
+
+  // 💰 Economy & Payout Rules
+  minWithdrawalPoints        Int      @default(1000)
+  creatorRevenueSharePercent Int      @default(70)
+  referralBonusPercent       Int      @default(10)
+  referralActiveMonths       Int      @default(3)
+  maxDailyAdPoints           Int      @default(1000)
+  pointToFiatRate            Float    @default(0.01) // 1 point = $0.01
+  featuredRequestFee         Int      @default(500)
+  customAdScript             String?
+  updatedAt                  DateTime @updatedAt
 
   @@map("site_config")
 }
@@ -244,15 +279,17 @@ model Genre {
 }
 
 model Chapter {
-  id        String   @id @default(uuid())
-  seriesId  String
-  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  number    Float
-  title     String?
-  isLocked  Boolean  @default(false)
-  coinCost  Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String    @id @default(uuid())
+  seriesId   String
+  series     Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  number     Float
+  title      String?
+  isLocked   Boolean   @default(false)
+  coinCost   Int       @default(0)
+  isFastPass Boolean   @default(false)
+  publishAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
   images    ChapterImage[]
   history   History[]
@@ -470,7 +507,66 @@ model ChatMessage {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   content   String
+  imageUrl  String?
   createdAt DateTime @default(now())
 
   @@map("chat_message")
+}
+
+model CreatorPost {
+  id        String   @id @default(uuid())
+  creatorId String
+  creator   User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  title     String
+  content   String
+  imageUrl  String?
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("creator_post")
+}
+
+model PromoCode {
+  id              String                @id @default(uuid())
+  code            String                @unique
+  creatorId       String?
+  creator         User?                 @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  seriesId        String?
+  pointsReward    Int                   @default(0)
+  discountPercent Int                   @default(0)
+  maxUses         Int                   @default(100)
+  usedCount       Int                   @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean               @default(true)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  redemptions     PromoCodeRedemption[]
+
+  @@map("promo_code")
+}
+
+model PromoCodeRedemption {
+  id          String    @id @default(uuid())
+  promoCodeId String
+  promoCode   PromoCode @relation(fields: [promoCodeId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@unique([promoCodeId, userId])
+  @@map("promo_code_redemption")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String
+  actor      User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  action     String
+  targetType String
+  targetId   String?
+  details    Json?
+  createdAt  DateTime @default(now())
+
+  @@map("audit_log")
 }
