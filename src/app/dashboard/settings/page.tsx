@@ -6,12 +6,7 @@ export default async function SiteSettingsPage() {
   const config = res?.data;
 
   return (
-    <div className="space-y-8 max-w-4xl">
-      <div>
-        <h1 className="text-2xl font-bold">Site Configuration</h1>
-        <p className="text-sm text-muted-foreground">Manage global announcements and social media links.</p>
-      </div>
-
+    <div className="w-full">
       <SettingsClient initialConfig={config} />
     </div>
   );

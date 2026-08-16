@@ -9,7 +9,7 @@ export default async function UsersManagementPage() {
   const users = res?.data || [];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 w-full">
       <div>
         <h1 className="text-2xl font-bold">User Management</h1>
         <p className="text-sm text-muted-foreground">Manage user accounts, roles, and permissions.</p>

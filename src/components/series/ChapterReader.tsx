@@ -11,7 +11,8 @@ import { AdPlayer } from "@/components/ui/AdPlayer";
 import { CommentSection } from "@/components/series/CommentSection";
 import { toast } from "react-hot-toast";
 
-import { useBuyChapterMutation } from "@/redux/api/pointsApi";
+import { useBuyChapterMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
+import { InsufficientPointsModal } from "@/components/ui/InsufficientPointsModal";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setReaderMode, setReaderTheme, setImageWidth } from "@/redux/slices/readerSlice";
 
@@ -110,11 +111,23 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
     }
   }, [session, chapter?.seriesId, chapter?.id]);
 
+  // Points balance & insufficient points modal
+  const { data: balanceData } = useGetPointsBalanceQuery(undefined, { skip: !session });
+  const userPoints = balanceData?.data?.points ?? 0;
+  const [insufficientPointsOpen, setInsufficientPointsOpen] = useState(false);
+
   const handleBuy = async () => {
     if (!session) {
       toast.error("Please sign in to unlock this chapter.");
       return;
     }
+
+    const cost = chapter.coinCost || 20;
+    if (userPoints < cost) {
+      setInsufficientPointsOpen(true);
+      return;
+    }
+
     try {
       const res = await buyChapterMutate({ chapterId: chapter.id }).unwrap();
       if (res.success) {
@@ -125,7 +138,12 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
       }
     } catch (error: any) {
       console.error("Failed to buy chapter:", error);
-      toast.error(error.data?.message || "Failed to unlock chapter. Check your point balance.");
+      const errMsg = error.data?.message || "";
+      if (errMsg.toLowerCase().includes("insufficient") || errMsg.toLowerCase().includes("point")) {
+        setInsufficientPointsOpen(true);
+      } else {
+        toast.error(errMsg || "Failed to unlock chapter.");
+      }
     }
   };
 
@@ -404,6 +422,15 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
           </div>
         </div>
       )}
+      {/* Insufficient Points Modal */}
+      <InsufficientPointsModal
+        open={insufficientPointsOpen}
+        onOpenChange={setInsufficientPointsOpen}
+        requiredPoints={chapter.coinCost || 20}
+        currentBalance={userPoints}
+        title={`Unlock Chapter #${chapter.number}`}
+        description={`You need ${chapter.coinCost || 20} points to unlock this chapter.`}
+      />
     </div>
   );
 }

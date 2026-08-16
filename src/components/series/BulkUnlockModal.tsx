@@ -8,6 +8,7 @@ import { useGetPointsBalanceQuery, useBuyBulkChaptersMutation } from "@/redux/ap
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { LoginDialog } from "@/components/home/LoginDialog";
+import { InsufficientPointsModal } from "@/components/ui/InsufficientPointsModal";
 
 interface Chapter {
   id?: string;
@@ -89,6 +90,8 @@ export function BulkUnlockModal({
       .reduce((acc, c) => acc + (c.coinCost || 20), 0);
   }, [lockedChapters, selectedIds]);
 
+  const [insufficientPointsOpen, setInsufficientPointsOpen] = useState(false);
+
   const handleBulkUnlock = async () => {
     if (!session) {
       setLoginOpen(true);
@@ -97,6 +100,11 @@ export function BulkUnlockModal({
 
     if (selectedIds.length === 0) {
       toast.error("Please select at least one chapter to unlock");
+      return;
+    }
+
+    if (userPoints < baseCost) {
+      setInsufficientPointsOpen(true);
       return;
     }
 
@@ -113,7 +121,12 @@ export function BulkUnlockModal({
         onOpenChange(false);
       }
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to unlock chapters");
+      const errMsg = err?.data?.message || err?.message || "";
+      if (errMsg.toLowerCase().includes("insufficient") || errMsg.toLowerCase().includes("point")) {
+        setInsufficientPointsOpen(true);
+      } else {
+        toast.error(errMsg || "Failed to unlock chapters");
+      }
     }
   };
 
@@ -295,6 +308,14 @@ export function BulkUnlockModal({
       </Dialog>
 
       <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
+      <InsufficientPointsModal
+        open={insufficientPointsOpen}
+        onOpenChange={setInsufficientPointsOpen}
+        requiredPoints={baseCost}
+        currentBalance={userPoints}
+        title="Need More Points to Bulk Unlock"
+        description={`You need ${baseCost} points to unlock these ${selectedIds.length} chapters, but currently have ${userPoints} points.`}
+      />
     </>
   );
 }

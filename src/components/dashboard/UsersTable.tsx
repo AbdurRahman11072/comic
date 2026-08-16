@@ -119,7 +119,7 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
   });
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-6 w-full">
       {/* Search & Filters */}
       <div className="glass p-4 rounded-2xl border border-white/5 space-y-4">
         <div className="flex flex-col sm:flex-row items-center gap-3">
