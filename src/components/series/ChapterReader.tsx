@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import { BuyChapterAction } from "@/actions/points";
 import { UpdateHistoryAction } from "@/actions/user";
-import { AdPlayer } from "@/components/ui/AdPlayer";
+import { AdBanner } from "@/components/ads/AdBanner";
 import { CommentSection } from "@/components/series/CommentSection";
 import { toast } from "react-hot-toast";
 
@@ -26,7 +26,6 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
   const [chapter, setChapter] = useState(initialChapter);
-  const [adWatched, setAdWatched] = useState(false);
 
   // Redux Reader Settings State
   const { mode: readerMode, theme: readerTheme, imageWidth } = useAppSelector((state) => state.reader);
@@ -35,9 +34,6 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
 
   // RTK Query buy chapter mutation
   const [buyChapterMutate, { isLoading: buying }] = useBuyChapterMutation();
-  
-  const isFreeChapter = !chapter.isLocked;
-  const showAd = isFreeChapter && !adWatched;
   
   useEffect(() => {
     setChapter(initialChapter);
@@ -213,11 +209,7 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
       {/* Chapter Images */}
       <main className="flex-1 flex flex-col items-center py-4 transition-colors duration-300">
         <div className="max-w-[900px] w-full flex flex-col items-center px-4">
-          {showAd ? (
-            <div className="w-full py-10">
-              <AdPlayer onAdComplete={() => setAdWatched(true)} />
-            </div>
-          ) : chapter.images && chapter.images.length > 0 ? (
+          {chapter.images && chapter.images.length > 0 ? (
             readerMode === "scroll" ? (
               chapter.images.map((img: any) => (
                 <img 
@@ -329,6 +321,11 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
                 <ChevronRight className="w-5 h-5" />
             </button>
           </div>
+        </div>
+
+        {/* Reader Bottom Ad Banner */}
+        <div className="w-full max-w-[800px] px-4">
+          <AdBanner placement="reader_bottom" />
         </div>
 
         {/* Comment Section */}

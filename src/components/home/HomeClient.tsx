@@ -11,6 +11,7 @@ import { Navbar } from "@/components/home/Navbar";
 import { PosterCard } from "@/components/home/PosterCard";
 import { SectionHeader } from "@/components/home/SectionHeader";
 import { SocialRow } from "@/components/home/SocialRow";
+import { AdBanner } from "@/components/ads/AdBanner";
 import { type Series } from "@/types";
 import { seriesService } from "@/services/series.service";
 
@@ -76,6 +77,7 @@ export function HomeClient() {
         <HeroSlider />
         <AnnounceBanner />
         <SocialRow />
+        <AdBanner placement="home_top" />
 
         {/* ── PINNED SERIES ── */}
         {pinned.length > 0 && (
@@ -168,6 +170,8 @@ export function HomeClient() {
             </div>
           </section>
         )}
+        {/* ── HOME BOTTOM AD BANNER ── */}
+        <AdBanner placement="home_bottom" />
       </main>
 
       <Footer />

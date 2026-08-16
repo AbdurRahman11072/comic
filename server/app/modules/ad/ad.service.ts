@@ -3,7 +3,7 @@ import AppError from '../../error/AppError';
 import httpStatus from 'http-status';
 import geoip from 'geoip-lite';
 
-const earnAdPoints = async (userId: string, ipAddress: string) => {
+const earnAdPoints = async (userId: string, ipAddress: string, adId?: string) => {
   // We wrap everything in a transaction to ensure atomic updates
   return await prisma.$transaction(async (tx) => {
     const user = await tx.user.findUnique({
@@ -35,8 +35,6 @@ const earnAdPoints = async (userId: string, ipAddress: string) => {
     }
 
     // 2. Geolocation check for point rewards
-    // By default, Asia gets 5, Europe gets 10, everyone else gets default 5.
-    // We will check AdRewardConfig to see if there are custom values set by admin
     const geo = geoip.lookup(ipAddress);
     const countryCode = geo ? geo.country : 'UNKNOWN';
 
@@ -45,20 +43,26 @@ const earnAdPoints = async (userId: string, ipAddress: string) => {
     let earnedPoints = 5; // Fallback default
 
     if (rewardConfigs.length > 0) {
-      // Find a config that includes the user's country
       const specificConfig = rewardConfigs.find(c => c.countryCode.includes(countryCode));
       if (specificConfig) {
         earnedPoints = specificConfig.points;
       }
     } else {
-      // Hardcoded fallback logic requested by user initially
-      const asianCountries = ['BD', 'IN', 'PK', 'CN', 'JP', 'KR', 'ID', 'PH', 'VN']; // Short list
-      const europeanCountries = ['GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'SE'];
+      const asianCountries = ['BD', 'IN', 'PK', 'CN', 'JP', 'KR', 'ID', 'PH', 'VN'];
+      const europeanCountries = ['GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'SE', 'US', 'CA', 'AU'];
       
       if (europeanCountries.includes(countryCode)) {
         earnedPoints = 10;
       } else if (asianCountries.includes(countryCode)) {
         earnedPoints = 5;
+      }
+    }
+
+    // If specific ad has custom point reward
+    if (adId) {
+      const ad = await tx.customAd.findUnique({ where: { id: adId } });
+      if (ad && ad.points > 0) {
+        earnedPoints = ad.points;
       }
     }
 
@@ -78,6 +82,16 @@ const earnAdPoints = async (userId: string, ipAddress: string) => {
       }
     });
 
+    // If adId provided, increment impressions and completed views
+    if (adId) {
+      await tx.customAd.update({
+        where: { id: adId },
+        data: {
+          impressions: { increment: 1 },
+        }
+      }).catch(() => null);
+    }
+
     // 4. Log Transaction
     await tx.pointTransaction.create({
       data: {
@@ -90,7 +104,6 @@ const earnAdPoints = async (userId: string, ipAddress: string) => {
 
     // 5. Calculate Referral Bonus
     if (user.referredById) {
-      // Check if the referral is still active
       const accountAgeMonths = (now.getTime() - new Date(user.createdAt).getTime()) / (1000 * 60 * 60 * 24 * 30);
       
       if (accountAgeMonths <= config.referralActiveMonths) {
@@ -123,41 +136,93 @@ const earnAdPoints = async (userId: string, ipAddress: string) => {
   });
 };
 
-const getCustomAds = async (query: any = {}) => {
-  const { page = 1, limit = 20 } = query;
-  const skip = (Number(page) - 1) * Number(limit);
-
-  const [data, total] = await Promise.all([
-    prisma.customAd.findMany({
-      skip,
-      take: Number(limit),
-      orderBy: { createdAt: 'desc' },
-    }),
-    prisma.customAd.count(),
-  ]);
-
-  return { meta: { total, page: Number(page), limit: Number(limit) }, data };
-};
-
-const getActiveCustomAd = async (countryCode?: string) => {
-  // Fetch active custom ads. If country code is provided, try to target by country.
-  const allActive = await prisma.customAd.findMany({
-    where: { isActive: true },
+const getAdByPlacement = async (placement: string, countryCode?: string) => {
+  const activeAds = await prisma.customAd.findMany({
+    where: {
+      placement,
+      isActive: true,
+      status: 'ACTIVE',
+    },
     orderBy: { createdAt: 'desc' },
   });
 
-  if (allActive.length === 0) return null;
+  if (activeAds.length === 0) {
+    // If no ad specifically matching placement, look for general active ad
+    const generalAd = await prisma.customAd.findFirst({
+      where: { isActive: true, status: 'ACTIVE' },
+      orderBy: { createdAt: 'desc' },
+    });
+    return generalAd;
+  }
 
-  // Try to find one targeted to the user's country
+  // Country targeting check
   if (countryCode) {
-    const targeted = allActive.find(ad => 
+    const targeted = activeAds.find(ad =>
       ad.targetCountries.length === 0 || ad.targetCountries.includes(countryCode)
     );
     if (targeted) return targeted;
   }
 
-  // Fallback: return the first active ad
-  return allActive[0];
+  // Return random or first active ad
+  const randomIndex = Math.floor(Math.random() * activeAds.length);
+  return activeAds[randomIndex];
+};
+
+const recordImpression = async (adId: string) => {
+  return await prisma.customAd.update({
+    where: { id: adId },
+    data: {
+      impressions: { increment: 1 },
+    },
+  });
+};
+
+const recordClick = async (adId: string) => {
+  return await prisma.customAd.update({
+    where: { id: adId },
+    data: {
+      clicks: { increment: 1 },
+    },
+  });
+};
+
+const getCustomAds = async (query: any = {}) => {
+  const { page = 1, limit = 50, placement, provider, status } = query;
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const whereClause: any = {};
+  if (placement) whereClause.placement = placement;
+  if (provider) whereClause.provider = provider;
+  if (status) whereClause.status = status;
+
+  const [data, total] = await Promise.all([
+    prisma.customAd.findMany({
+      where: whereClause,
+      skip,
+      take: Number(limit),
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.customAd.count({ where: whereClause }),
+  ]);
+
+  return { meta: { total, page: Number(page), limit: Number(limit) }, data };
+};
+
+const getAdStats = async () => {
+  const ads = await prisma.customAd.findMany();
+  const totalImpressions = ads.reduce((acc, ad) => acc + ad.impressions, 0);
+  const totalClicks = ads.reduce((acc, ad) => acc + ad.clicks, 0);
+  const totalRevenue = ads.reduce((acc, ad) => acc + ad.revenue, 0);
+  const avgCtr = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : '0.00';
+
+  return {
+    totalAds: ads.length,
+    activeAds: ads.filter(a => a.isActive && a.status === 'ACTIVE').length,
+    totalImpressions,
+    totalClicks,
+    totalRevenue,
+    avgCtr: `${avgCtr}%`,
+  };
 };
 
 const createCustomAd = async (payload: any) => {
@@ -174,8 +239,11 @@ const deleteCustomAd = async (id: string) => {
 
 export const AdService = {
   earnAdPoints,
+  getAdByPlacement,
+  recordImpression,
+  recordClick,
   getCustomAds,
-  getActiveCustomAd,
+  getAdStats,
   createCustomAd,
   updateCustomAd,
   deleteCustomAd,

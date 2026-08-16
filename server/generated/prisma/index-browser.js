@@ -362,14 +362,24 @@ exports.Prisma.AdRewardConfigScalarFieldEnum = {
 exports.Prisma.CustomAdScalarFieldEnum = {
   id: 'id',
   title: 'title',
+  provider: 'provider',
+  format: 'format',
+  placement: 'placement',
   imageUrl: 'imageUrl',
   linkUrl: 'linkUrl',
   videoUrl: 'videoUrl',
   adType: 'adType',
   socialPlatform: 'socialPlatform',
   socialActionUrl: 'socialActionUrl',
+  adClient: 'adClient',
+  adSlotId: 'adSlotId',
+  adUnitId: 'adUnitId',
   points: 'points',
+  impressions: 'impressions',
+  clicks: 'clicks',
+  revenue: 'revenue',
   isActive: 'isActive',
+  status: 'status',
   targetCountries: 'targetCountries',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -544,6 +554,25 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
   COMPLETED: 'COMPLETED',
   FAILED: 'FAILED',
   REFUNDED: 'REFUNDED'
+};
+
+exports.AdProvider = exports.$Enums.AdProvider = {
+  CUSTOM: 'CUSTOM',
+  ADSENSE: 'ADSENSE',
+  ADMOB: 'ADMOB'
+};
+
+exports.AdFormat = exports.$Enums.AdFormat = {
+  BANNER: 'BANNER',
+  INTERSTITIAL: 'INTERSTITIAL',
+  REWARDED: 'REWARDED',
+  NATIVE: 'NATIVE'
+};
+
+exports.AdStatus = exports.$Enums.AdStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  ARCHIVED: 'ARCHIVED'
 };
 
 exports.ReportStatus = exports.$Enums.ReportStatus = {

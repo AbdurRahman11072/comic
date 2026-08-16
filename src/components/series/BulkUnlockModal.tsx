@@ -24,7 +24,7 @@ interface BulkUnlockModalProps {
   onOpenChange: (open: boolean) => void;
   seriesTitle: string;
   chapters: Chapter[];
-  onSuccess?: () => void;
+  onSuccess?: (unlockedIds?: string[]) => void;
 }
 
 export function BulkUnlockModal({
@@ -115,9 +115,9 @@ export function BulkUnlockModal({
       }).unwrap();
 
       if (res.success) {
-        toast.success(`🎉 Unlocked ${res.data.unlockedCount} chapters successfully!`);
+        toast.success(`🎉 Unlocked ${res.data.unlockedCount || selectedIds.length} chapters successfully!`);
         refetchBalance();
-        onSuccess?.();
+        onSuccess?.(selectedIds);
         onOpenChange(false);
       }
     } catch (err: any) {

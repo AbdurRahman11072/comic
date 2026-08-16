@@ -164,38 +164,63 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
         orderBy: { number: 'desc' },
       },
       _count: {
-        select: { bookmarks: true }
-      }
+        select: { bookmarks: true },
+      },
     },
   });
 
   if (!result) return null;
 
+  let chaptersWithPurchaseStatus = result.chapters.map((c) => ({
+    ...c,
+    isPurchased: false,
+  }));
+
   if (userId) {
-    const isBookmarked = await prisma.bookmark.findUnique({
-      where: {
-        userId_seriesId: {
+    const isCreator = result.creatorId === userId;
+    const [isBookmarked, userRating, purchases] = await Promise.all([
+      prisma.bookmark.findUnique({
+        where: {
+          userId_seriesId: {
+            userId,
+            seriesId: result.id,
+          },
+        },
+      }),
+      prisma.review.findFirst({
+        where: {
           userId,
           seriesId: result.id,
         },
-      },
-    });
+      }),
+      prisma.chapterPurchase.findMany({
+        where: {
+          userId,
+          chapterId: { in: result.chapters.map((c) => c.id) },
+        },
+        select: { chapterId: true },
+      }),
+    ]);
 
-    const userRating = await prisma.review.findFirst({
-      where: {
-        userId,
-        seriesId: result.id,
-      },
-    });
+    const purchasedSet = new Set(purchases.map((p) => p.chapterId));
+
+    chaptersWithPurchaseStatus = result.chapters.map((c) => ({
+      ...c,
+      isPurchased: isCreator || !c.isLocked || purchasedSet.has(c.id),
+    }));
 
     return {
       ...result,
+      chapters: chaptersWithPurchaseStatus,
       isBookmarked: !!isBookmarked,
       userRating: userRating ? userRating.rating : null,
     };
   }
 
-  return result;
+  return {
+    ...result,
+    chapters: chaptersWithPurchaseStatus,
+  };
 };
 
 const getSeriesById = async (id: string) => {

@@ -54,22 +54,31 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
   const [reverseOrder, setReverseOrder] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
+  const [localPurchasedIds, setLocalPurchasedIds] = useState<Set<string>>(new Set());
   const itemsPerPage = 20;
 
+  // Enrich chapters with local purchased state
+  const enrichedChapters = useMemo(() => {
+    return (series.chapters || []).map((c) => ({
+      ...c,
+      isPurchased: c.isPurchased || (c.id ? localPurchasedIds.has(c.id) : false),
+    }));
+  }, [series.chapters, localPurchasedIds]);
+
   const lockedChaptersCount = useMemo(() => {
-    return series.chapters.filter((c) => c.isLocked && !c.isPurchased).length;
-  }, [series.chapters]);
+    return enrichedChapters.filter((c) => c.isLocked && !c.isPurchased).length;
+  }, [enrichedChapters]);
 
   const chaptersToDisplay = useMemo(() => {
-    let sorted = [...series.chapters];
+    let sorted = [...enrichedChapters];
     if (reverseOrder) {
       sorted = sorted.reverse();
     }
     const startIndex = (currentPage - 1) * itemsPerPage;
     return sorted.slice(startIndex, startIndex + itemsPerPage);
-  }, [series.chapters, reverseOrder, currentPage]);
+  }, [enrichedChapters, reverseOrder, currentPage]);
 
-  const totalPages = Math.ceil(series.chapters.length / itemsPerPage);
+  const totalPages = Math.ceil(enrichedChapters.length / itemsPerPage);
 
   const handleReverseToggle = () => {
     setReverseOrder((prev) => !prev);
@@ -243,8 +252,15 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
         open={bulkModalOpen}
         onOpenChange={setBulkModalOpen}
         seriesTitle={series.title}
-        chapters={series.chapters}
-        onSuccess={() => {
+        chapters={enrichedChapters}
+        onSuccess={(unlockedIds) => {
+          if (unlockedIds && unlockedIds.length > 0) {
+            setLocalPurchasedIds((prev) => {
+              const next = new Set(prev);
+              unlockedIds.forEach((id) => next.add(id));
+              return next;
+            });
+          }
           router.refresh();
         }}
       />

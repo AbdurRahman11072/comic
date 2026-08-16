@@ -90,11 +90,15 @@ export function Footer() {
           })}
         </div>
 
-        {/* Legal & App Links */}
+        {/* Navigation & Legal Links */}
         <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground flex-wrap">
           <Link href="/series" className="hover:text-white transition">All Series</Link>
           <Link href="/rewards" className="hover:text-white transition">Rewards</Link>
           <Link href="/shop" className="hover:text-white transition">Coin Shop</Link>
+          <Link href="/about" className="hover:text-white transition">About Us</Link>
+          <Link href="/privacy" className="hover:text-white transition text-white/70">Privacy Policy</Link>
+          <Link href="/terms" className="hover:text-white transition text-white/70">Terms of Service</Link>
+          <Link href="/dmca" className="hover:text-white transition text-white/70">DMCA Notice</Link>
           {config?.playStoreUrl && (
             <Link href={config.playStoreUrl} target="_blank" className="hover:text-primary transition font-semibold">
               Android App

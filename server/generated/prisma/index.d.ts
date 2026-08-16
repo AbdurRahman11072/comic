@@ -237,6 +237,34 @@ export const ReportStatus: {
 export type ReportStatus = (typeof ReportStatus)[keyof typeof ReportStatus]
 
 
+export const AdProvider: {
+  CUSTOM: 'CUSTOM',
+  ADSENSE: 'ADSENSE',
+  ADMOB: 'ADMOB'
+};
+
+export type AdProvider = (typeof AdProvider)[keyof typeof AdProvider]
+
+
+export const AdFormat: {
+  BANNER: 'BANNER',
+  INTERSTITIAL: 'INTERSTITIAL',
+  REWARDED: 'REWARDED',
+  NATIVE: 'NATIVE'
+};
+
+export type AdFormat = (typeof AdFormat)[keyof typeof AdFormat]
+
+
+export const AdStatus: {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  ARCHIVED: 'ARCHIVED'
+};
+
+export type AdStatus = (typeof AdStatus)[keyof typeof AdStatus]
+
+
 export const FeaturedRequestStatus: {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -274,6 +302,18 @@ export const ApplicationStatus: typeof $Enums.ApplicationStatus
 export type ReportStatus = $Enums.ReportStatus
 
 export const ReportStatus: typeof $Enums.ReportStatus
+
+export type AdProvider = $Enums.AdProvider
+
+export const AdProvider: typeof $Enums.AdProvider
+
+export type AdFormat = $Enums.AdFormat
+
+export const AdFormat: typeof $Enums.AdFormat
+
+export type AdStatus = $Enums.AdStatus
+
+export const AdStatus: typeof $Enums.AdStatus
 
 export type FeaturedRequestStatus = $Enums.FeaturedRequestStatus
 
@@ -26574,23 +26614,39 @@ export namespace Prisma {
 
   export type CustomAdAvgAggregateOutputType = {
     points: number | null
+    impressions: number | null
+    clicks: number | null
+    revenue: number | null
   }
 
   export type CustomAdSumAggregateOutputType = {
     points: number | null
+    impressions: number | null
+    clicks: number | null
+    revenue: number | null
   }
 
   export type CustomAdMinAggregateOutputType = {
     id: string | null
     title: string | null
+    provider: $Enums.AdProvider | null
+    format: $Enums.AdFormat | null
+    placement: string | null
     imageUrl: string | null
     linkUrl: string | null
     videoUrl: string | null
     adType: string | null
     socialPlatform: string | null
     socialActionUrl: string | null
+    adClient: string | null
+    adSlotId: string | null
+    adUnitId: string | null
     points: number | null
+    impressions: number | null
+    clicks: number | null
+    revenue: number | null
     isActive: boolean | null
+    status: $Enums.AdStatus | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -26598,14 +26654,24 @@ export namespace Prisma {
   export type CustomAdMaxAggregateOutputType = {
     id: string | null
     title: string | null
+    provider: $Enums.AdProvider | null
+    format: $Enums.AdFormat | null
+    placement: string | null
     imageUrl: string | null
     linkUrl: string | null
     videoUrl: string | null
     adType: string | null
     socialPlatform: string | null
     socialActionUrl: string | null
+    adClient: string | null
+    adSlotId: string | null
+    adUnitId: string | null
     points: number | null
+    impressions: number | null
+    clicks: number | null
+    revenue: number | null
     isActive: boolean | null
+    status: $Enums.AdStatus | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -26613,14 +26679,24 @@ export namespace Prisma {
   export type CustomAdCountAggregateOutputType = {
     id: number
     title: number
+    provider: number
+    format: number
+    placement: number
     imageUrl: number
     linkUrl: number
     videoUrl: number
     adType: number
     socialPlatform: number
     socialActionUrl: number
+    adClient: number
+    adSlotId: number
+    adUnitId: number
     points: number
+    impressions: number
+    clicks: number
+    revenue: number
     isActive: number
+    status: number
     targetCountries: number
     createdAt: number
     updatedAt: number
@@ -26630,23 +26706,39 @@ export namespace Prisma {
 
   export type CustomAdAvgAggregateInputType = {
     points?: true
+    impressions?: true
+    clicks?: true
+    revenue?: true
   }
 
   export type CustomAdSumAggregateInputType = {
     points?: true
+    impressions?: true
+    clicks?: true
+    revenue?: true
   }
 
   export type CustomAdMinAggregateInputType = {
     id?: true
     title?: true
+    provider?: true
+    format?: true
+    placement?: true
     imageUrl?: true
     linkUrl?: true
     videoUrl?: true
     adType?: true
     socialPlatform?: true
     socialActionUrl?: true
+    adClient?: true
+    adSlotId?: true
+    adUnitId?: true
     points?: true
+    impressions?: true
+    clicks?: true
+    revenue?: true
     isActive?: true
+    status?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -26654,14 +26746,24 @@ export namespace Prisma {
   export type CustomAdMaxAggregateInputType = {
     id?: true
     title?: true
+    provider?: true
+    format?: true
+    placement?: true
     imageUrl?: true
     linkUrl?: true
     videoUrl?: true
     adType?: true
     socialPlatform?: true
     socialActionUrl?: true
+    adClient?: true
+    adSlotId?: true
+    adUnitId?: true
     points?: true
+    impressions?: true
+    clicks?: true
+    revenue?: true
     isActive?: true
+    status?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -26669,14 +26771,24 @@ export namespace Prisma {
   export type CustomAdCountAggregateInputType = {
     id?: true
     title?: true
+    provider?: true
+    format?: true
+    placement?: true
     imageUrl?: true
     linkUrl?: true
     videoUrl?: true
     adType?: true
     socialPlatform?: true
     socialActionUrl?: true
+    adClient?: true
+    adSlotId?: true
+    adUnitId?: true
     points?: true
+    impressions?: true
+    clicks?: true
+    revenue?: true
     isActive?: true
+    status?: true
     targetCountries?: true
     createdAt?: true
     updatedAt?: true
@@ -26772,14 +26884,24 @@ export namespace Prisma {
   export type CustomAdGroupByOutputType = {
     id: string
     title: string
-    imageUrl: string
-    linkUrl: string
+    provider: $Enums.AdProvider
+    format: $Enums.AdFormat
+    placement: string
+    imageUrl: string | null
+    linkUrl: string | null
     videoUrl: string | null
     adType: string
     socialPlatform: string | null
     socialActionUrl: string | null
+    adClient: string | null
+    adSlotId: string | null
+    adUnitId: string | null
     points: number
+    impressions: number
+    clicks: number
+    revenue: number
     isActive: boolean
+    status: $Enums.AdStatus
     targetCountries: string[]
     createdAt: Date
     updatedAt: Date
@@ -26807,14 +26929,24 @@ export namespace Prisma {
   export type CustomAdSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    provider?: boolean
+    format?: boolean
+    placement?: boolean
     imageUrl?: boolean
     linkUrl?: boolean
     videoUrl?: boolean
     adType?: boolean
     socialPlatform?: boolean
     socialActionUrl?: boolean
+    adClient?: boolean
+    adSlotId?: boolean
+    adUnitId?: boolean
     points?: boolean
+    impressions?: boolean
+    clicks?: boolean
+    revenue?: boolean
     isActive?: boolean
+    status?: boolean
     targetCountries?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -26823,14 +26955,24 @@ export namespace Prisma {
   export type CustomAdSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    provider?: boolean
+    format?: boolean
+    placement?: boolean
     imageUrl?: boolean
     linkUrl?: boolean
     videoUrl?: boolean
     adType?: boolean
     socialPlatform?: boolean
     socialActionUrl?: boolean
+    adClient?: boolean
+    adSlotId?: boolean
+    adUnitId?: boolean
     points?: boolean
+    impressions?: boolean
+    clicks?: boolean
+    revenue?: boolean
     isActive?: boolean
+    status?: boolean
     targetCountries?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -26839,14 +26981,24 @@ export namespace Prisma {
   export type CustomAdSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     title?: boolean
+    provider?: boolean
+    format?: boolean
+    placement?: boolean
     imageUrl?: boolean
     linkUrl?: boolean
     videoUrl?: boolean
     adType?: boolean
     socialPlatform?: boolean
     socialActionUrl?: boolean
+    adClient?: boolean
+    adSlotId?: boolean
+    adUnitId?: boolean
     points?: boolean
+    impressions?: boolean
+    clicks?: boolean
+    revenue?: boolean
     isActive?: boolean
+    status?: boolean
     targetCountries?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -26855,20 +27007,30 @@ export namespace Prisma {
   export type CustomAdSelectScalar = {
     id?: boolean
     title?: boolean
+    provider?: boolean
+    format?: boolean
+    placement?: boolean
     imageUrl?: boolean
     linkUrl?: boolean
     videoUrl?: boolean
     adType?: boolean
     socialPlatform?: boolean
     socialActionUrl?: boolean
+    adClient?: boolean
+    adSlotId?: boolean
+    adUnitId?: boolean
     points?: boolean
+    impressions?: boolean
+    clicks?: boolean
+    revenue?: boolean
     isActive?: boolean
+    status?: boolean
     targetCountries?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CustomAdOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "imageUrl" | "linkUrl" | "videoUrl" | "adType" | "socialPlatform" | "socialActionUrl" | "points" | "isActive" | "targetCountries" | "createdAt" | "updatedAt", ExtArgs["result"]["customAd"]>
+  export type CustomAdOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "provider" | "format" | "placement" | "imageUrl" | "linkUrl" | "videoUrl" | "adType" | "socialPlatform" | "socialActionUrl" | "adClient" | "adSlotId" | "adUnitId" | "points" | "impressions" | "clicks" | "revenue" | "isActive" | "status" | "targetCountries" | "createdAt" | "updatedAt", ExtArgs["result"]["customAd"]>
 
   export type $CustomAdPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "CustomAd"
@@ -26876,14 +27038,24 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       title: string
-      imageUrl: string
-      linkUrl: string
+      provider: $Enums.AdProvider
+      format: $Enums.AdFormat
+      placement: string
+      imageUrl: string | null
+      linkUrl: string | null
       videoUrl: string | null
       adType: string
       socialPlatform: string | null
       socialActionUrl: string | null
+      adClient: string | null
+      adSlotId: string | null
+      adUnitId: string | null
       points: number
+      impressions: number
+      clicks: number
+      revenue: number
       isActive: boolean
+      status: $Enums.AdStatus
       targetCountries: string[]
       createdAt: Date
       updatedAt: Date
@@ -27312,14 +27484,24 @@ export namespace Prisma {
   interface CustomAdFieldRefs {
     readonly id: FieldRef<"CustomAd", 'String'>
     readonly title: FieldRef<"CustomAd", 'String'>
+    readonly provider: FieldRef<"CustomAd", 'AdProvider'>
+    readonly format: FieldRef<"CustomAd", 'AdFormat'>
+    readonly placement: FieldRef<"CustomAd", 'String'>
     readonly imageUrl: FieldRef<"CustomAd", 'String'>
     readonly linkUrl: FieldRef<"CustomAd", 'String'>
     readonly videoUrl: FieldRef<"CustomAd", 'String'>
     readonly adType: FieldRef<"CustomAd", 'String'>
     readonly socialPlatform: FieldRef<"CustomAd", 'String'>
     readonly socialActionUrl: FieldRef<"CustomAd", 'String'>
+    readonly adClient: FieldRef<"CustomAd", 'String'>
+    readonly adSlotId: FieldRef<"CustomAd", 'String'>
+    readonly adUnitId: FieldRef<"CustomAd", 'String'>
     readonly points: FieldRef<"CustomAd", 'Int'>
+    readonly impressions: FieldRef<"CustomAd", 'Int'>
+    readonly clicks: FieldRef<"CustomAd", 'Int'>
+    readonly revenue: FieldRef<"CustomAd", 'Float'>
     readonly isActive: FieldRef<"CustomAd", 'Boolean'>
+    readonly status: FieldRef<"CustomAd", 'AdStatus'>
     readonly targetCountries: FieldRef<"CustomAd", 'String[]'>
     readonly createdAt: FieldRef<"CustomAd", 'DateTime'>
     readonly updatedAt: FieldRef<"CustomAd", 'DateTime'>
@@ -39171,14 +39353,24 @@ export namespace Prisma {
   export const CustomAdScalarFieldEnum: {
     id: 'id',
     title: 'title',
+    provider: 'provider',
+    format: 'format',
+    placement: 'placement',
     imageUrl: 'imageUrl',
     linkUrl: 'linkUrl',
     videoUrl: 'videoUrl',
     adType: 'adType',
     socialPlatform: 'socialPlatform',
     socialActionUrl: 'socialActionUrl',
+    adClient: 'adClient',
+    adSlotId: 'adSlotId',
+    adUnitId: 'adUnitId',
     points: 'points',
+    impressions: 'impressions',
+    clicks: 'clicks',
+    revenue: 'revenue',
     isActive: 'isActive',
+    status: 'status',
     targetCountries: 'targetCountries',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -39525,6 +39717,48 @@ export namespace Prisma {
    * Reference to a field of type 'PaymentStatus[]'
    */
   export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AdProvider'
+   */
+  export type EnumAdProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdProvider'>
+    
+
+
+  /**
+   * Reference to a field of type 'AdProvider[]'
+   */
+  export type ListEnumAdProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdProvider[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AdFormat'
+   */
+  export type EnumAdFormatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdFormat'>
+    
+
+
+  /**
+   * Reference to a field of type 'AdFormat[]'
+   */
+  export type ListEnumAdFormatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdFormat[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AdStatus'
+   */
+  export type EnumAdStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'AdStatus[]'
+   */
+  export type ListEnumAdStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdStatus[]'>
     
 
 
@@ -41172,14 +41406,24 @@ export namespace Prisma {
     NOT?: CustomAdWhereInput | CustomAdWhereInput[]
     id?: StringFilter<"CustomAd"> | string
     title?: StringFilter<"CustomAd"> | string
-    imageUrl?: StringFilter<"CustomAd"> | string
-    linkUrl?: StringFilter<"CustomAd"> | string
+    provider?: EnumAdProviderFilter<"CustomAd"> | $Enums.AdProvider
+    format?: EnumAdFormatFilter<"CustomAd"> | $Enums.AdFormat
+    placement?: StringFilter<"CustomAd"> | string
+    imageUrl?: StringNullableFilter<"CustomAd"> | string | null
+    linkUrl?: StringNullableFilter<"CustomAd"> | string | null
     videoUrl?: StringNullableFilter<"CustomAd"> | string | null
     adType?: StringFilter<"CustomAd"> | string
     socialPlatform?: StringNullableFilter<"CustomAd"> | string | null
     socialActionUrl?: StringNullableFilter<"CustomAd"> | string | null
+    adClient?: StringNullableFilter<"CustomAd"> | string | null
+    adSlotId?: StringNullableFilter<"CustomAd"> | string | null
+    adUnitId?: StringNullableFilter<"CustomAd"> | string | null
     points?: IntFilter<"CustomAd"> | number
+    impressions?: IntFilter<"CustomAd"> | number
+    clicks?: IntFilter<"CustomAd"> | number
+    revenue?: FloatFilter<"CustomAd"> | number
     isActive?: BoolFilter<"CustomAd"> | boolean
+    status?: EnumAdStatusFilter<"CustomAd"> | $Enums.AdStatus
     targetCountries?: StringNullableListFilter<"CustomAd">
     createdAt?: DateTimeFilter<"CustomAd"> | Date | string
     updatedAt?: DateTimeFilter<"CustomAd"> | Date | string
@@ -41188,14 +41432,24 @@ export namespace Prisma {
   export type CustomAdOrderByWithRelationInput = {
     id?: SortOrder
     title?: SortOrder
-    imageUrl?: SortOrder
-    linkUrl?: SortOrder
+    provider?: SortOrder
+    format?: SortOrder
+    placement?: SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    linkUrl?: SortOrderInput | SortOrder
     videoUrl?: SortOrderInput | SortOrder
     adType?: SortOrder
     socialPlatform?: SortOrderInput | SortOrder
     socialActionUrl?: SortOrderInput | SortOrder
+    adClient?: SortOrderInput | SortOrder
+    adSlotId?: SortOrderInput | SortOrder
+    adUnitId?: SortOrderInput | SortOrder
     points?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    revenue?: SortOrder
     isActive?: SortOrder
+    status?: SortOrder
     targetCountries?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -41207,14 +41461,24 @@ export namespace Prisma {
     OR?: CustomAdWhereInput[]
     NOT?: CustomAdWhereInput | CustomAdWhereInput[]
     title?: StringFilter<"CustomAd"> | string
-    imageUrl?: StringFilter<"CustomAd"> | string
-    linkUrl?: StringFilter<"CustomAd"> | string
+    provider?: EnumAdProviderFilter<"CustomAd"> | $Enums.AdProvider
+    format?: EnumAdFormatFilter<"CustomAd"> | $Enums.AdFormat
+    placement?: StringFilter<"CustomAd"> | string
+    imageUrl?: StringNullableFilter<"CustomAd"> | string | null
+    linkUrl?: StringNullableFilter<"CustomAd"> | string | null
     videoUrl?: StringNullableFilter<"CustomAd"> | string | null
     adType?: StringFilter<"CustomAd"> | string
     socialPlatform?: StringNullableFilter<"CustomAd"> | string | null
     socialActionUrl?: StringNullableFilter<"CustomAd"> | string | null
+    adClient?: StringNullableFilter<"CustomAd"> | string | null
+    adSlotId?: StringNullableFilter<"CustomAd"> | string | null
+    adUnitId?: StringNullableFilter<"CustomAd"> | string | null
     points?: IntFilter<"CustomAd"> | number
+    impressions?: IntFilter<"CustomAd"> | number
+    clicks?: IntFilter<"CustomAd"> | number
+    revenue?: FloatFilter<"CustomAd"> | number
     isActive?: BoolFilter<"CustomAd"> | boolean
+    status?: EnumAdStatusFilter<"CustomAd"> | $Enums.AdStatus
     targetCountries?: StringNullableListFilter<"CustomAd">
     createdAt?: DateTimeFilter<"CustomAd"> | Date | string
     updatedAt?: DateTimeFilter<"CustomAd"> | Date | string
@@ -41223,14 +41487,24 @@ export namespace Prisma {
   export type CustomAdOrderByWithAggregationInput = {
     id?: SortOrder
     title?: SortOrder
-    imageUrl?: SortOrder
-    linkUrl?: SortOrder
+    provider?: SortOrder
+    format?: SortOrder
+    placement?: SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    linkUrl?: SortOrderInput | SortOrder
     videoUrl?: SortOrderInput | SortOrder
     adType?: SortOrder
     socialPlatform?: SortOrderInput | SortOrder
     socialActionUrl?: SortOrderInput | SortOrder
+    adClient?: SortOrderInput | SortOrder
+    adSlotId?: SortOrderInput | SortOrder
+    adUnitId?: SortOrderInput | SortOrder
     points?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    revenue?: SortOrder
     isActive?: SortOrder
+    status?: SortOrder
     targetCountries?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -41247,14 +41521,24 @@ export namespace Prisma {
     NOT?: CustomAdScalarWhereWithAggregatesInput | CustomAdScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"CustomAd"> | string
     title?: StringWithAggregatesFilter<"CustomAd"> | string
-    imageUrl?: StringWithAggregatesFilter<"CustomAd"> | string
-    linkUrl?: StringWithAggregatesFilter<"CustomAd"> | string
+    provider?: EnumAdProviderWithAggregatesFilter<"CustomAd"> | $Enums.AdProvider
+    format?: EnumAdFormatWithAggregatesFilter<"CustomAd"> | $Enums.AdFormat
+    placement?: StringWithAggregatesFilter<"CustomAd"> | string
+    imageUrl?: StringNullableWithAggregatesFilter<"CustomAd"> | string | null
+    linkUrl?: StringNullableWithAggregatesFilter<"CustomAd"> | string | null
     videoUrl?: StringNullableWithAggregatesFilter<"CustomAd"> | string | null
     adType?: StringWithAggregatesFilter<"CustomAd"> | string
     socialPlatform?: StringNullableWithAggregatesFilter<"CustomAd"> | string | null
     socialActionUrl?: StringNullableWithAggregatesFilter<"CustomAd"> | string | null
+    adClient?: StringNullableWithAggregatesFilter<"CustomAd"> | string | null
+    adSlotId?: StringNullableWithAggregatesFilter<"CustomAd"> | string | null
+    adUnitId?: StringNullableWithAggregatesFilter<"CustomAd"> | string | null
     points?: IntWithAggregatesFilter<"CustomAd"> | number
+    impressions?: IntWithAggregatesFilter<"CustomAd"> | number
+    clicks?: IntWithAggregatesFilter<"CustomAd"> | number
+    revenue?: FloatWithAggregatesFilter<"CustomAd"> | number
     isActive?: BoolWithAggregatesFilter<"CustomAd"> | boolean
+    status?: EnumAdStatusWithAggregatesFilter<"CustomAd"> | $Enums.AdStatus
     targetCountries?: StringNullableListFilter<"CustomAd">
     createdAt?: DateTimeWithAggregatesFilter<"CustomAd"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"CustomAd"> | Date | string
@@ -43749,14 +44033,24 @@ export namespace Prisma {
   export type CustomAdCreateInput = {
     id?: string
     title?: string
-    imageUrl: string
-    linkUrl: string
+    provider?: $Enums.AdProvider
+    format?: $Enums.AdFormat
+    placement?: string
+    imageUrl?: string | null
+    linkUrl?: string | null
     videoUrl?: string | null
     adType?: string
     socialPlatform?: string | null
     socialActionUrl?: string | null
-    points: number
+    adClient?: string | null
+    adSlotId?: string | null
+    adUnitId?: string | null
+    points?: number
+    impressions?: number
+    clicks?: number
+    revenue?: number
     isActive?: boolean
+    status?: $Enums.AdStatus
     targetCountries?: CustomAdCreatetargetCountriesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43765,14 +44059,24 @@ export namespace Prisma {
   export type CustomAdUncheckedCreateInput = {
     id?: string
     title?: string
-    imageUrl: string
-    linkUrl: string
+    provider?: $Enums.AdProvider
+    format?: $Enums.AdFormat
+    placement?: string
+    imageUrl?: string | null
+    linkUrl?: string | null
     videoUrl?: string | null
     adType?: string
     socialPlatform?: string | null
     socialActionUrl?: string | null
-    points: number
+    adClient?: string | null
+    adSlotId?: string | null
+    adUnitId?: string | null
+    points?: number
+    impressions?: number
+    clicks?: number
+    revenue?: number
     isActive?: boolean
+    status?: $Enums.AdStatus
     targetCountries?: CustomAdCreatetargetCountriesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43781,14 +44085,24 @@ export namespace Prisma {
   export type CustomAdUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    imageUrl?: StringFieldUpdateOperationsInput | string
-    linkUrl?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAdProviderFieldUpdateOperationsInput | $Enums.AdProvider
+    format?: EnumAdFormatFieldUpdateOperationsInput | $Enums.AdFormat
+    placement?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     adType?: StringFieldUpdateOperationsInput | string
     socialPlatform?: NullableStringFieldUpdateOperationsInput | string | null
     socialActionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    adClient?: NullableStringFieldUpdateOperationsInput | string | null
+    adSlotId?: NullableStringFieldUpdateOperationsInput | string | null
+    adUnitId?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
+    impressions?: IntFieldUpdateOperationsInput | number
+    clicks?: IntFieldUpdateOperationsInput | number
+    revenue?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumAdStatusFieldUpdateOperationsInput | $Enums.AdStatus
     targetCountries?: CustomAdUpdatetargetCountriesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43797,14 +44111,24 @@ export namespace Prisma {
   export type CustomAdUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    imageUrl?: StringFieldUpdateOperationsInput | string
-    linkUrl?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAdProviderFieldUpdateOperationsInput | $Enums.AdProvider
+    format?: EnumAdFormatFieldUpdateOperationsInput | $Enums.AdFormat
+    placement?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     adType?: StringFieldUpdateOperationsInput | string
     socialPlatform?: NullableStringFieldUpdateOperationsInput | string | null
     socialActionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    adClient?: NullableStringFieldUpdateOperationsInput | string | null
+    adSlotId?: NullableStringFieldUpdateOperationsInput | string | null
+    adUnitId?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
+    impressions?: IntFieldUpdateOperationsInput | number
+    clicks?: IntFieldUpdateOperationsInput | number
+    revenue?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumAdStatusFieldUpdateOperationsInput | $Enums.AdStatus
     targetCountries?: CustomAdUpdatetargetCountriesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43813,14 +44137,24 @@ export namespace Prisma {
   export type CustomAdCreateManyInput = {
     id?: string
     title?: string
-    imageUrl: string
-    linkUrl: string
+    provider?: $Enums.AdProvider
+    format?: $Enums.AdFormat
+    placement?: string
+    imageUrl?: string | null
+    linkUrl?: string | null
     videoUrl?: string | null
     adType?: string
     socialPlatform?: string | null
     socialActionUrl?: string | null
-    points: number
+    adClient?: string | null
+    adSlotId?: string | null
+    adUnitId?: string | null
+    points?: number
+    impressions?: number
+    clicks?: number
+    revenue?: number
     isActive?: boolean
+    status?: $Enums.AdStatus
     targetCountries?: CustomAdCreatetargetCountriesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43829,14 +44163,24 @@ export namespace Prisma {
   export type CustomAdUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    imageUrl?: StringFieldUpdateOperationsInput | string
-    linkUrl?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAdProviderFieldUpdateOperationsInput | $Enums.AdProvider
+    format?: EnumAdFormatFieldUpdateOperationsInput | $Enums.AdFormat
+    placement?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     adType?: StringFieldUpdateOperationsInput | string
     socialPlatform?: NullableStringFieldUpdateOperationsInput | string | null
     socialActionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    adClient?: NullableStringFieldUpdateOperationsInput | string | null
+    adSlotId?: NullableStringFieldUpdateOperationsInput | string | null
+    adUnitId?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
+    impressions?: IntFieldUpdateOperationsInput | number
+    clicks?: IntFieldUpdateOperationsInput | number
+    revenue?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumAdStatusFieldUpdateOperationsInput | $Enums.AdStatus
     targetCountries?: CustomAdUpdatetargetCountriesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43845,14 +44189,24 @@ export namespace Prisma {
   export type CustomAdUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
-    imageUrl?: StringFieldUpdateOperationsInput | string
-    linkUrl?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAdProviderFieldUpdateOperationsInput | $Enums.AdProvider
+    format?: EnumAdFormatFieldUpdateOperationsInput | $Enums.AdFormat
+    placement?: StringFieldUpdateOperationsInput | string
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    linkUrl?: NullableStringFieldUpdateOperationsInput | string | null
     videoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     adType?: StringFieldUpdateOperationsInput | string
     socialPlatform?: NullableStringFieldUpdateOperationsInput | string | null
     socialActionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    adClient?: NullableStringFieldUpdateOperationsInput | string | null
+    adSlotId?: NullableStringFieldUpdateOperationsInput | string | null
+    adUnitId?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
+    impressions?: IntFieldUpdateOperationsInput | number
+    clicks?: IntFieldUpdateOperationsInput | number
+    revenue?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    status?: EnumAdStatusFieldUpdateOperationsInput | $Enums.AdStatus
     targetCountries?: CustomAdUpdatetargetCountriesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -46039,17 +46393,48 @@ export namespace Prisma {
     points?: SortOrder
   }
 
+  export type EnumAdProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdProvider | EnumAdProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AdProvider[] | ListEnumAdProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdProvider[] | ListEnumAdProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdProviderFilter<$PrismaModel> | $Enums.AdProvider
+  }
+
+  export type EnumAdFormatFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdFormat | EnumAdFormatFieldRefInput<$PrismaModel>
+    in?: $Enums.AdFormat[] | ListEnumAdFormatFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdFormat[] | ListEnumAdFormatFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdFormatFilter<$PrismaModel> | $Enums.AdFormat
+  }
+
+  export type EnumAdStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdStatus | EnumAdStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AdStatus[] | ListEnumAdStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdStatus[] | ListEnumAdStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdStatusFilter<$PrismaModel> | $Enums.AdStatus
+  }
+
   export type CustomAdCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    provider?: SortOrder
+    format?: SortOrder
+    placement?: SortOrder
     imageUrl?: SortOrder
     linkUrl?: SortOrder
     videoUrl?: SortOrder
     adType?: SortOrder
     socialPlatform?: SortOrder
     socialActionUrl?: SortOrder
+    adClient?: SortOrder
+    adSlotId?: SortOrder
+    adUnitId?: SortOrder
     points?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    revenue?: SortOrder
     isActive?: SortOrder
+    status?: SortOrder
     targetCountries?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -46057,19 +46442,32 @@ export namespace Prisma {
 
   export type CustomAdAvgOrderByAggregateInput = {
     points?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    revenue?: SortOrder
   }
 
   export type CustomAdMaxOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    provider?: SortOrder
+    format?: SortOrder
+    placement?: SortOrder
     imageUrl?: SortOrder
     linkUrl?: SortOrder
     videoUrl?: SortOrder
     adType?: SortOrder
     socialPlatform?: SortOrder
     socialActionUrl?: SortOrder
+    adClient?: SortOrder
+    adSlotId?: SortOrder
+    adUnitId?: SortOrder
     points?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    revenue?: SortOrder
     isActive?: SortOrder
+    status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -46077,20 +46475,63 @@ export namespace Prisma {
   export type CustomAdMinOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
+    provider?: SortOrder
+    format?: SortOrder
+    placement?: SortOrder
     imageUrl?: SortOrder
     linkUrl?: SortOrder
     videoUrl?: SortOrder
     adType?: SortOrder
     socialPlatform?: SortOrder
     socialActionUrl?: SortOrder
+    adClient?: SortOrder
+    adSlotId?: SortOrder
+    adUnitId?: SortOrder
     points?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    revenue?: SortOrder
     isActive?: SortOrder
+    status?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type CustomAdSumOrderByAggregateInput = {
     points?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    revenue?: SortOrder
+  }
+
+  export type EnumAdProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdProvider | EnumAdProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AdProvider[] | ListEnumAdProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdProvider[] | ListEnumAdProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdProviderWithAggregatesFilter<$PrismaModel> | $Enums.AdProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAdProviderFilter<$PrismaModel>
+    _max?: NestedEnumAdProviderFilter<$PrismaModel>
+  }
+
+  export type EnumAdFormatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdFormat | EnumAdFormatFieldRefInput<$PrismaModel>
+    in?: $Enums.AdFormat[] | ListEnumAdFormatFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdFormat[] | ListEnumAdFormatFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdFormatWithAggregatesFilter<$PrismaModel> | $Enums.AdFormat
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAdFormatFilter<$PrismaModel>
+    _max?: NestedEnumAdFormatFilter<$PrismaModel>
+  }
+
+  export type EnumAdStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdStatus | EnumAdStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AdStatus[] | ListEnumAdStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdStatus[] | ListEnumAdStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdStatusWithAggregatesFilter<$PrismaModel> | $Enums.AdStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAdStatusFilter<$PrismaModel>
+    _max?: NestedEnumAdStatusFilter<$PrismaModel>
   }
 
   export type WithdrawalRequestCountOrderByAggregateInput = {
@@ -48213,6 +48654,18 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type EnumAdProviderFieldUpdateOperationsInput = {
+    set?: $Enums.AdProvider
+  }
+
+  export type EnumAdFormatFieldUpdateOperationsInput = {
+    set?: $Enums.AdFormat
+  }
+
+  export type EnumAdStatusFieldUpdateOperationsInput = {
+    set?: $Enums.AdStatus
+  }
+
   export type CustomAdUpdatetargetCountriesInput = {
     set?: string[]
     push?: string | string[]
@@ -48795,6 +49248,57 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPaymentStatusFilter<$PrismaModel>
     _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAdProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdProvider | EnumAdProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AdProvider[] | ListEnumAdProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdProvider[] | ListEnumAdProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdProviderFilter<$PrismaModel> | $Enums.AdProvider
+  }
+
+  export type NestedEnumAdFormatFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdFormat | EnumAdFormatFieldRefInput<$PrismaModel>
+    in?: $Enums.AdFormat[] | ListEnumAdFormatFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdFormat[] | ListEnumAdFormatFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdFormatFilter<$PrismaModel> | $Enums.AdFormat
+  }
+
+  export type NestedEnumAdStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdStatus | EnumAdStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AdStatus[] | ListEnumAdStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdStatus[] | ListEnumAdStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdStatusFilter<$PrismaModel> | $Enums.AdStatus
+  }
+
+  export type NestedEnumAdProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdProvider | EnumAdProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AdProvider[] | ListEnumAdProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdProvider[] | ListEnumAdProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdProviderWithAggregatesFilter<$PrismaModel> | $Enums.AdProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAdProviderFilter<$PrismaModel>
+    _max?: NestedEnumAdProviderFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAdFormatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdFormat | EnumAdFormatFieldRefInput<$PrismaModel>
+    in?: $Enums.AdFormat[] | ListEnumAdFormatFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdFormat[] | ListEnumAdFormatFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdFormatWithAggregatesFilter<$PrismaModel> | $Enums.AdFormat
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAdFormatFilter<$PrismaModel>
+    _max?: NestedEnumAdFormatFilter<$PrismaModel>
+  }
+
+  export type NestedEnumAdStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AdStatus | EnumAdStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.AdStatus[] | ListEnumAdStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AdStatus[] | ListEnumAdStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumAdStatusWithAggregatesFilter<$PrismaModel> | $Enums.AdStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAdStatusFilter<$PrismaModel>
+    _max?: NestedEnumAdStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumReportStatusFilter<$PrismaModel = never> = {

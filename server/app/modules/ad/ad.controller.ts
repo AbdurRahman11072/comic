@@ -7,12 +7,12 @@ import geoip from 'geoip-lite';
 
 const earnAdPoints = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
+  const { adId } = req.body;
   
-  // Basic IP detection (trust proxy must be enabled in express if behind proxy)
   const forwarded = req.headers['x-forwarded-for'];
   const ip = (Array.isArray(forwarded) ? forwarded[0] : (forwarded || req.socket.remoteAddress || '127.0.0.1')) as string;
   
-  const result = await AdService.earnAdPoints(userId as string, ip);
+  const result = await AdService.earnAdPoints(userId as string, ip, adId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -22,19 +22,44 @@ const earnAdPoints = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-const getActiveCustomAd = asyncHandler(async (req: Request, res: Response) => {
+const getAdByPlacement = asyncHandler(async (req: Request, res: Response) => {
+  const { placement } = req.params;
   const forwarded = req.headers['x-forwarded-for'];
   const ip = (Array.isArray(forwarded) ? forwarded[0] : (forwarded || req.socket.remoteAddress || '127.0.0.1')) as string;
   const geo = geoip.lookup(ip);
   const countryCode = geo ? geo.country : undefined;
 
-  const result = await AdService.getActiveCustomAd(countryCode);
+  const result = await AdService.getAdByPlacement(placement as string, countryCode);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Active custom ad fetched',
+    message: 'Ad placement fetched',
     data: result,
+  });
+});
+
+const recordImpression = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  await AdService.recordImpression(id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Impression recorded',
+    data: null,
+  });
+});
+
+const recordClick = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  await AdService.recordClick(id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Click recorded',
+    data: null,
   });
 });
 
@@ -50,13 +75,24 @@ const getCustomAds = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getAdStats = asyncHandler(async (req: Request, res: Response) => {
+  const result = await AdService.getAdStats();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Ad performance stats fetched',
+    data: result,
+  });
+});
+
 const createCustomAd = asyncHandler(async (req: Request, res: Response) => {
   const result = await AdService.createCustomAd(req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Custom ad created',
+    message: 'Ad configuration created',
     data: result,
   });
 });
@@ -68,7 +104,7 @@ const updateCustomAd = asyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Custom ad updated',
+    message: 'Ad configuration updated',
     data: result,
   });
 });
@@ -80,17 +116,19 @@ const deleteCustomAd = asyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Custom ad deleted',
+    message: 'Ad deleted',
     data: null,
   });
 });
 
 export const AdController = {
   earnAdPoints,
-  getActiveCustomAd,
+  getAdByPlacement,
+  recordImpression,
+  recordClick,
   getCustomAds,
+  getAdStats,
   createCustomAd,
   updateCustomAd,
   deleteCustomAd,
 };
-

@@ -44,6 +44,7 @@ export const seriesService = {
 
       const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/series/${slug}`, {
         headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+        cache: "no-store",
         next: { tags: [`Series-${slug}`] },
       });
       const data = await res.json();

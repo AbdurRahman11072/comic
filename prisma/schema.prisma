@@ -406,21 +406,58 @@ model AdRewardConfig {
   @@map("ad_reward_config")
 }
 
+enum AdProvider {
+  CUSTOM
+  ADSENSE
+  ADMOB
+}
+
+enum AdFormat {
+  BANNER
+  INTERSTITIAL
+  REWARDED
+  NATIVE
+}
+
+enum AdStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
 model CustomAd {
-  id              String   @id @default(uuid())
-  title           String   @default("")
-  imageUrl        String
-  linkUrl         String
+  id              String      @id @default(uuid())
+  title           String      @default("")
+  provider        AdProvider  @default(CUSTOM)
+  format          AdFormat    @default(BANNER)
+  placement       String      @default("home_banner") // "home_top" | "home_bottom" | "reader_bottom" | "reader_interstitial" | "rewarded_unlock"
+  
+  // Custom Direct Ads
+  imageUrl        String?
+  linkUrl         String?
   videoUrl        String?
-  adType          String   @default("BANNER")
+  adType          String      @default("BANNER")
   socialPlatform  String?
   socialActionUrl String?
-  points          Int
-  isActive        Boolean  @default(true)
+  
+  // Google AdSense (Web) & Google AdMob (Mobile)
+  adClient        String?     // e.g. "ca-pub-XXXXXXXXXXXXXXXX"
+  adSlotId        String?     // AdSense slot ID
+  adUnitId        String?     // AdMob unit ID
+  
+  // Rewards & Performance Tracking
+  points          Int         @default(10)
+  impressions     Int         @default(0)
+  clicks          Int         @default(0)
+  revenue         Float       @default(0.0)
+  isActive        Boolean     @default(true)
+  status          AdStatus    @default(ACTIVE)
   targetCountries String[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
+  @@index([placement, status])
   @@map("custom_ad")
 }
 
