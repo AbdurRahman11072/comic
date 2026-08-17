@@ -402,7 +402,10 @@ const reviewFeaturedRequest = async (id: string, payload: any) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'Status must be APPROVED or REJECTED');
   }
 
-  const request = await prisma.featuredRequest.findUnique({ where: { id } });
+  const request = await prisma.featuredRequest.findUnique({
+    where: { id },
+    include: { series: true },
+  });
   if (!request) throw new AppError(httpStatus.NOT_FOUND, 'Featured request not found');
 
   if (request.status !== 'PENDING') {
@@ -412,7 +415,10 @@ const reviewFeaturedRequest = async (id: string, payload: any) => {
   const result = await prisma.$transaction(async (tx) => {
     const updatedRequest = await tx.featuredRequest.update({
       where: { id },
-      data: { status, notes },
+      data: {
+        status,
+        notes: notes ? `${request.notes || ''} | Review: ${notes}` : request.notes,
+      },
     });
 
     if (status === 'APPROVED') {
@@ -436,6 +442,30 @@ const reviewFeaturedRequest = async (id: string, payload: any) => {
           },
         });
       }
+    } else if (status === 'REJECTED') {
+      // Parse points spent from request notes or siteConfig to refund creator
+      let refundAmount = 500;
+      const match = request.notes?.match(/Cost:\s*(\d+)\s*Points/i);
+      if (match && match[1]) {
+        refundAmount = parseInt(match[1], 10);
+      } else {
+        const config = await tx.siteConfig.findUnique({ where: { id: 'global' } });
+        refundAmount = config?.featuredRequestFee || 500;
+      }
+
+      await tx.user.update({
+        where: { id: request.creatorId },
+        data: { points: { increment: refundAmount } },
+      });
+
+      await tx.pointTransaction.create({
+        data: {
+          userId: request.creatorId,
+          type: 'BUY_POINTS',
+          amount: refundAmount,
+          description: `Refund for rejected featured request: ${request.series?.title || 'Series'}`,
+        },
+      });
     }
 
     return updatedRequest;

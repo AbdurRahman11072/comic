@@ -231,7 +231,7 @@ const getAnalytics = async (userId: string) => {
   };
 };
 
-const requestFeatureSeries = async (userId: string, seriesId: string, notes?: string) => {
+const requestFeatureSeries = async (userId: string, seriesId: string, durationDays: number = 7, notes?: string) => {
   const series = await prisma.series.findUnique({
     where: { id: seriesId },
   });
@@ -244,48 +244,78 @@ const requestFeatureSeries = async (userId: string, seriesId: string, notes?: st
     throw new AppError(httpStatus.FORBIDDEN, 'You do not own this series');
   }
 
-  let config = await prisma.siteConfig.findUnique({
+  // Check if series is already actively featured
+  const isAlreadyFeatured = await prisma.featuredSeries.findUnique({
+    where: { seriesId },
+  });
+  if (isAlreadyFeatured) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'This series is already featured on the homepage!');
+  }
+
+  // Check if there is already a PENDING request for this series
+  const existingPending = await prisma.featuredRequest.findFirst({
+    where: { seriesId, status: 'PENDING' },
+  });
+  if (existingPending) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'You already have a pending feature request for this series.');
+  }
+
+  const config = await prisma.siteConfig.findUnique({
     where: { id: 'global' },
   });
 
-  const fee = config ? config.featuredRequestFee : 500;
+  const baseFee = config ? config.featuredRequestFee : 500;
+  
+  // Calculate total fee based on duration time lap
+  const days = Number(durationDays) || 7;
+  let multiplier = 1;
+  if (days >= 28) multiplier = 4;
+  else if (days >= 14) multiplier = 2;
+  else multiplier = 1;
+
+  const totalFee = baseFee * multiplier;
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
 
-  if (!user || user.points < fee) {
-    throw new AppError(httpStatus.BAD_REQUEST, `Insufficient points. You need ${fee} points to request featured series.`);
+  if (!user || user.points < totalFee) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Insufficient points. You need ${totalFee} points to feature your series for ${days} days (Your balance: ${user?.points || 0} points).`
+    );
   }
 
   const result = await prisma.$transaction(async (tx) => {
     const updatedUser = await tx.user.update({
       where: { id: userId },
-      data: { points: { decrement: fee } },
+      data: { points: { decrement: totalFee } },
     });
 
     await tx.pointTransaction.create({
       data: {
         userId,
         type: 'BUY_POINTS',
-        amount: -fee,
-        description: `Fee for requesting featured status on series: ${series.title}`,
+        amount: -totalFee,
+        description: `Featured request fee (${days} days) for series: ${series.title}`,
       },
     });
+
+    const requestNotes = `[Duration: ${days} Days | Cost: ${totalFee} Points] ${notes ? `- ${notes}` : ''}`;
 
     const request = await tx.featuredRequest.create({
       data: {
         seriesId,
         creatorId: userId,
         status: 'PENDING',
-        notes: notes ?? null,
+        notes: requestNotes,
       },
       include: {
         series: true,
       }
     });
 
-    return { request, pointsLeft: updatedUser.points };
+    return { request, pointsLeft: updatedUser.points, totalFee, durationDays: days };
   });
 
   return result;

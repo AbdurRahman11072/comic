@@ -8,8 +8,15 @@ const api = axios.create({
   },
 });
 
+// Auto-route paths to /api/v1 if not specified
 api.interceptors.request.use((config) => {
-  if (config.url && !config.url.startsWith('/api/') && !config.url.startsWith('http')) {
+  if (
+    config.url &&
+    !config.url.startsWith('/api/v1') &&
+    !config.url.startsWith('/api/auth') &&
+    !config.url.startsWith('http://') &&
+    !config.url.startsWith('https://')
+  ) {
     config.url = `/api/v1${config.url.startsWith('/') ? config.url : `/${config.url}`}`;
   }
   return config;

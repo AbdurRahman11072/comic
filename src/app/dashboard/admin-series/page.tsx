@@ -30,6 +30,7 @@ interface SeriesItem {
     image: string | null;
   } | null;
   genres: { id: string; name: string }[];
+  featured?: { id: string } | null;
   _count: {
     chapters: number;
     reports: number;
@@ -128,6 +129,22 @@ export default function AdminSeriesManagementPage() {
       toast.error(err?.response?.data?.message || "Failed to update series visibility.");
     } finally {
       setUpdatingHide(false);
+    }
+  };
+
+  const handleToggleFeatured = async (id: string) => {
+    try {
+      const { data } = await api.post(`/series/${id}/toggle-featured`);
+      if (data.success) {
+        toast.success(data.data?.featured ? "Series added to featured homepage!" : "Series removed from featured.");
+        setSeriesList((prev) =>
+          prev.map((s) =>
+            s.id === id ? { ...s, featured: data.data?.featured ? { id: "featured" } : null } : s
+          )
+        );
+      }
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Failed to toggle featured status.");
     }
   };
 
@@ -257,6 +274,7 @@ export default function AdminSeriesManagementPage() {
                   <th className="px-4 py-3.5">Chapters</th>
                   <th className="px-4 py-3.5">Views / Rating</th>
                   <th className="px-4 py-3.5">Status</th>
+                  <th className="px-4 py-3.5">Featured</th>
                   <th className="px-4 py-3.5">Visibility</th>
                   <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
@@ -328,6 +346,22 @@ export default function AdminSeriesManagementPage() {
                       </span>
                     </td>
 
+                    {/* Featured Placement */}
+                    <td className="px-4 py-3.5">
+                      <button
+                        onClick={() => handleToggleFeatured(item.id)}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all ${
+                          item.featured
+                            ? "bg-yellow-400/20 text-yellow-400 border border-yellow-400/30 hover:bg-yellow-400/30 shadow-sm"
+                            : "bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-white border border-white/10"
+                        }`}
+                        title={item.featured ? "Featured on homepage. Click to unfeature" : "Click to directly feature on homepage"}
+                      >
+                        <Star className={`w-3.5 h-3.5 ${item.featured ? "fill-current text-yellow-400" : ""}`} />
+                        <span>{item.featured ? "Featured" : "Not Featured"}</span>
+                      </button>
+                    </td>
+
                     {/* Visibility */}
                     <td className="px-4 py-3.5">
                       {item.isHidden ? (
@@ -351,6 +385,18 @@ export default function AdminSeriesManagementPage() {
                     {/* Actions */}
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          onClick={() => handleToggleFeatured(item.id)}
+                          className={`p-2 rounded-lg transition ${
+                            item.featured
+                              ? "bg-yellow-400/20 hover:bg-yellow-400/30 text-yellow-400"
+                              : "glass glass-hover text-white/50 hover:text-yellow-400"
+                          }`}
+                          title={item.featured ? "Remove from Featured" : "Directly Feature Series"}
+                        >
+                          <Star className={`w-3.5 h-3.5 ${item.featured ? "fill-current" : ""}`} />
+                        </button>
+
                         <button
                           onClick={() => {
                             setSelectedSeries(item);

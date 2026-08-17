@@ -65,13 +65,13 @@ const getAnalytics = asyncHandler(async (req: Request, res: Response) => {
 
 const requestFeatureSeries = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  const { seriesId, notes } = req.body;
-  const result = await CreatorService.requestFeatureSeries(userId as string, seriesId, notes);
+  const { seriesId, durationDays, notes } = req.body;
+  const result = await CreatorService.requestFeatureSeries(userId as string, seriesId, durationDays, notes);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Featured request submitted successfully',
+    message: 'Featured placement request submitted to admin for review',
     data: result,
   });
 });

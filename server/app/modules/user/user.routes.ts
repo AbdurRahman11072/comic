@@ -4,10 +4,10 @@ import authMiddleware from '../../middleware/authMiddleware';
 
 const router = Router();
 
-router.get('/profile', authMiddleware(['user', 'admin']), UserController.getProfile);
-router.put('/profile', authMiddleware(['user', 'admin']), UserController.updateProfile);
-router.post('/bookmarks/toggle', authMiddleware(['user', 'admin']), UserController.toggleBookmark);
-router.post('/history', authMiddleware(['user', 'admin']), UserController.updateHistory);
+router.get('/profile', authMiddleware(['user', 'creator', 'moderator', 'admin']), UserController.getProfile);
+router.put('/profile', authMiddleware(['user', 'creator', 'moderator', 'admin']), UserController.updateProfile);
+router.post('/bookmarks/toggle', authMiddleware(['user', 'creator', 'moderator', 'admin']), UserController.toggleBookmark);
+router.post('/history', authMiddleware(['user', 'creator', 'moderator', 'admin']), UserController.updateHistory);
 
 // Admin routes
 router.get('/', authMiddleware(['admin']), UserController.getAllUsers);

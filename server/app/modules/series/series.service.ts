@@ -106,6 +106,7 @@ const getAdminSeriesList = async (query: any) => {
       orderBy,
       include: {
         genres: true,
+        featured: true,
         creator: {
           select: { id: true, name: true, email: true, image: true },
         },
