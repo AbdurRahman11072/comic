@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   Plus, X, Image as ImageIcon, Loader2, UploadCloud,
-  Sparkles, BookOpen, Layers, Check, ArrowLeft, Link as LinkIcon
+  Sparkles, BookOpen, Layers, Check, ArrowLeft, FileText, Trash2
 } from "lucide-react";
 import { type Series } from "@/types";
 import { CreateSeriesAction, UpdateSeriesAction } from "@/actions/series";
@@ -24,16 +24,21 @@ const PRESET_GENRES = [
 export function SeriesForm({ initialData }: SeriesFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [uploadingCover, setUploadingCover] = useState(false);
-  const [uploadingBg, setUploadingBg] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState("");
   const [genres, setGenres] = useState<string[]>(initialData?.genres.map((g) => g.name) || []);
   const [genreInput, setGenreInput] = useState("");
+
+  // Local file handles for deferred upload
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState<string>(initialData?.coverUrl || "");
+  const [bgFile, setBgFile] = useState<File | null>(null);
+  const [bgPreview, setBgPreview] = useState<string>(initialData?.bgUrl || "");
 
   const [formData, setFormData] = useState({
     title: initialData?.title || "",
     altTitles: initialData?.altTitles || "",
-    type: initialData?.type?.toLowerCase() || "manhwa",
-    status: initialData?.status || "ONGOING",
+    type: (initialData?.type || "MANHWA").toUpperCase(),
+    status: (initialData?.status || "ONGOING").toUpperCase(),
     description: initialData?.description || "",
     coverUrl: initialData?.coverUrl || "",
     bgUrl: initialData?.bgUrl || "",
@@ -62,54 +67,89 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleImageUpload = async (
+  // Instant local preview without uploading to Cloudinary
+  const handleFileSelect = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "coverUrl" | "bgUrl"
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (field === "coverUrl") setUploadingCover(true);
-    else setUploadingBg(true);
-
-    try {
-      const res = await uploadImage(file);
-      if (res.data?.url) {
-        setFormData((prev) => ({ ...prev, [field]: res.data.url }));
-        toast.success(`${field === "coverUrl" ? "Cover" : "Background"} image uploaded!`);
-      }
-    } catch (error) {
-      console.error("Upload failed", error);
-      toast.error("Failed to upload image.");
-    } finally {
-      if (field === "coverUrl") setUploadingCover(false);
-      else setUploadingBg(false);
+    const previewUrl = URL.createObjectURL(file);
+    if (field === "coverUrl") {
+      setCoverFile(file);
+      setCoverPreview(previewUrl);
+    } else {
+      setBgFile(file);
+      setBgPreview(previewUrl);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleRemoveCover = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCoverFile(null);
+    setCoverPreview("");
+    setFormData((prev) => ({ ...prev, coverUrl: "" }));
+  };
+
+  const handleRemoveBg = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setBgFile(null);
+    setBgPreview("");
+    setFormData((prev) => ({ ...prev, bgUrl: "" }));
+  };
+
+  const handleSave = async (isDraft: boolean = false) => {
     if (!formData.title.trim()) {
       toast.error("Series title is required.");
       return;
     }
 
     setLoading(true);
+    setUploadStatus("Preparing assets...");
+
     try {
+      let finalCoverUrl = formData.coverUrl;
+      let finalBgUrl = formData.bgUrl;
+
+      // Upload cover file only on publish/save
+      if (coverFile) {
+        setUploadStatus("Uploading cover poster to Cloudinary...");
+        const res = await uploadImage(coverFile);
+        if (res.data?.url) {
+          finalCoverUrl = res.data.url;
+        }
+      }
+
+      // Upload background file only on publish/save
+      if (bgFile) {
+        setUploadStatus("Uploading banner image to Cloudinary...");
+        const res = await uploadImage(bgFile);
+        if (res.data?.url) {
+          finalBgUrl = res.data.url;
+        }
+      }
+
+      setUploadStatus("Saving series publication details...");
+
+      const payload = {
+        ...formData,
+        coverUrl: finalCoverUrl,
+        bgUrl: finalBgUrl,
+        type: (formData.type || "MANHWA").toUpperCase(),
+        status: isDraft ? "HIATUS" : (formData.status || "ONGOING").toUpperCase(),
+        isHidden: isDraft ? true : ((initialData as any)?.isHidden || false),
+        genres: genres.length > 0 ? genres : ["Action"],
+      };
+
       if (initialData) {
-        const res = await UpdateSeriesAction(initialData.id, {
-          ...formData,
-          genres,
-        });
+        const res = await UpdateSeriesAction(initialData.id, payload);
         if (!res.success) throw new Error(res.message);
-        toast.success("Series updated successfully!");
+        toast.success(isDraft ? "Draft saved successfully!" : "Series updated successfully!");
       } else {
-        const res = await CreateSeriesAction({
-          ...formData,
-          genres,
-        });
+        const res = await CreateSeriesAction(payload);
         if (!res.success) throw new Error(res.message);
-        toast.success("Series created successfully!");
+        toast.success(isDraft ? "Draft saved successfully!" : "Series published successfully!");
       }
       router.push("/dashboard/series");
       router.refresh();
@@ -118,6 +158,7 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
       toast.error(error.message || "Failed to save series.");
     } finally {
       setLoading(false);
+      setUploadStatus("");
     }
   };
 
@@ -145,7 +186,7 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={(e) => { e.preventDefault(); handleSave(false); }} className="space-y-8">
         <div className="grid gap-6 md:grid-cols-12">
           {/* Left Column: Basic Information (7 cols) */}
           <div className="md:col-span-7 space-y-6 glass p-6 sm:p-8 rounded-3xl border border-white/5">
@@ -194,10 +235,10 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
                     onChange={handleInputChange as any}
                     className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white focus:border-primary/50 outline-none text-sm"
                   >
-                    <option value="manhwa" className="bg-neutral-900">Manhwa (Webtoon)</option>
-                    <option value="manga" className="bg-neutral-900">Manga (Japanese)</option>
-                    <option value="manhua" className="bg-neutral-900">Manhua (Chinese)</option>
-                    <option value="comic" className="bg-neutral-900">Comic (Western)</option>
+                    <option value="MANHWA" className="bg-neutral-900">Manhwa (Webtoon)</option>
+                    <option value="MANGA" className="bg-neutral-900">Manga (Japanese)</option>
+                    <option value="MANHUA" className="bg-neutral-900">Manhua (Chinese)</option>
+                    <option value="COMIC" className="bg-neutral-900">Comic (Western)</option>
                   </select>
                 </div>
 
@@ -213,7 +254,7 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
                   >
                     <option value="ONGOING" className="bg-neutral-900">Ongoing</option>
                     <option value="COMPLETED" className="bg-neutral-900">Completed</option>
-                    <option value="HIATUS" className="bg-neutral-900">Hiatus</option>
+                    <option value="HIATUS" className="bg-neutral-900">Hiatus / Draft</option>
                     <option value="DROPPED" className="bg-neutral-900">Dropped</option>
                   </select>
                 </div>
@@ -243,38 +284,45 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
 
             {/* Cover Upload Card */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-                Cover Poster Image (Vertical 3:4)
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
+                  Cover Poster (3:4)
+                </label>
+                {coverPreview && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveCover}
+                    className="text-[11px] text-rose-400 hover:text-rose-300 flex items-center gap-1"
+                  >
+                    <Trash2 className="w-3 h-3" /> Remove
+                  </button>
+                )}
+              </div>
 
               <div
-                onClick={() => !uploadingCover && document.getElementById("coverUpload")?.click()}
+                onClick={() => document.getElementById("coverUpload")?.click()}
                 className="relative w-full h-44 rounded-2xl overflow-hidden border-2 border-dashed border-white/15 bg-white/[0.02] hover:border-primary/50 hover:bg-white/[0.04] transition-all cursor-pointer flex flex-col items-center justify-center group"
               >
-                {formData.coverUrl ? (
+                {coverPreview ? (
                   <>
                     <img
-                      src={formData.coverUrl}
+                      src={coverPreview}
                       alt="Cover"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <div className="px-3 py-1.5 rounded-xl bg-black/80 backdrop-blur-sm text-white text-xs font-bold flex items-center gap-1.5">
-                        <UploadCloud className="w-3.5 h-3.5 text-primary" /> Replace Cover
+                        <UploadCloud className="w-3.5 h-3.5 text-primary" /> Replace Poster
                       </div>
                     </div>
                   </>
                 ) : (
                   <div className="flex flex-col items-center gap-2 text-muted-foreground group-hover:text-white transition-colors p-4 text-center">
-                    {uploadingCover ? (
-                      <Loader2 className="w-7 h-7 animate-spin text-primary" />
-                    ) : (
-                      <UploadCloud className="w-7 h-7 text-primary" />
-                    )}
+                    <UploadCloud className="w-7 h-7 text-primary" />
                     <span className="text-xs font-semibold">
-                      {uploadingCover ? "Uploading..." : "Click to upload Poster Cover"}
+                      Click to choose Poster Cover
                     </span>
-                    <span className="text-[10px] text-white/40">PNG, JPG, WEBP up to 10MB</span>
+                    <span className="text-[10px] text-white/40">Instant preview (Uploads on Publish)</span>
                   </div>
                 )}
                 <input
@@ -282,25 +330,36 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => handleImageUpload(e, "coverUrl")}
+                  onChange={(e) => handleFileSelect(e, "coverUrl")}
                 />
               </div>
             </div>
 
             {/* Background Banner Upload Card */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-                Header Banner Image (Horizontal 16:9)
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
+                  Header Banner (16:9)
+                </label>
+                {bgPreview && (
+                  <button
+                    type="button"
+                    onClick={handleRemoveBg}
+                    className="text-[11px] text-rose-400 hover:text-rose-300 flex items-center gap-1"
+                  >
+                    <Trash2 className="w-3 h-3" /> Remove
+                  </button>
+                )}
+              </div>
 
               <div
-                onClick={() => !uploadingBg && document.getElementById("bgUpload")?.click()}
+                onClick={() => document.getElementById("bgUpload")?.click()}
                 className="relative w-full h-28 rounded-2xl overflow-hidden border-2 border-dashed border-white/15 bg-white/[0.02] hover:border-primary/50 hover:bg-white/[0.04] transition-all cursor-pointer flex flex-col items-center justify-center group"
               >
-                {formData.bgUrl ? (
+                {bgPreview ? (
                   <>
                     <img
-                      src={formData.bgUrl}
+                      src={bgPreview}
                       alt="Banner"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -312,14 +371,11 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
                   </>
                 ) : (
                   <div className="flex flex-col items-center gap-1.5 text-muted-foreground group-hover:text-white transition-colors p-4 text-center">
-                    {uploadingBg ? (
-                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                    ) : (
-                      <UploadCloud className="w-6 h-6 text-primary" />
-                    )}
+                    <UploadCloud className="w-6 h-6 text-primary" />
                     <span className="text-xs font-semibold">
-                      {uploadingBg ? "Uploading..." : "Click to upload Wide Banner"}
+                      Click to choose Wide Banner
                     </span>
+                    <span className="text-[10px] text-white/40">Instant preview (Uploads on Publish)</span>
                   </div>
                 )}
                 <input
@@ -327,7 +383,7 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={(e) => handleImageUpload(e, "bgUrl")}
+                  onChange={(e) => handleFileSelect(e, "bgUrl")}
                 />
               </div>
             </div>
@@ -410,8 +466,16 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
           )}
         </div>
 
+        {/* Upload Progress Status Indicator */}
+        {uploadStatus && (
+          <div className="p-4 rounded-2xl bg-primary/10 border border-primary/30 flex items-center gap-3 text-primary text-sm font-medium animate-pulse">
+            <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+            <span>{uploadStatus}</span>
+          </div>
+        )}
+
         {/* Submit Actions */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-white/10">
           <button
             type="button"
             onClick={() => router.back()}
@@ -419,6 +483,14 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
             className="px-6 py-3 rounded-xl text-xs font-bold text-white/70 hover:text-white glass"
           >
             Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSave(true)}
+            disabled={loading}
+            className="px-6 py-3 rounded-xl text-xs font-bold text-amber-300 hover:text-amber-200 border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 transition flex items-center gap-2 disabled:opacity-50"
+          >
+            <FileText className="w-4 h-4" /> Save as Draft
           </button>
           <button
             type="submit"

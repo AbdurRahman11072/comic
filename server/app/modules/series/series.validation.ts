@@ -1,17 +1,22 @@
 import { z } from 'zod';
 
+const parseEnum = (values: readonly [string, ...string[]], defaultVal: string) =>
+  z
+    .preprocess((val) => (typeof val === 'string' ? val.toUpperCase() : val), z.enum(values))
+    .default(defaultVal as any);
+
 export const createSeriesSchema = z.object({
   body: z.object({
     title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
-    altTitles: z.string().optional(),
-    description: z.string().optional(),
-    coverUrl: z.string().url('Cover URL must be a valid URL').optional().or(z.literal('')),
-    bgUrl: z.string().url('Background URL must be a valid URL').optional().or(z.literal('')),
-    type: z.enum(['MANHWA', 'MANGA', 'MANHUA', 'COMIC']).default('MANHWA'),
-    status: z.enum(['ONGOING', 'COMPLETED', 'HIATUS', 'DROPPED']).default('ONGOING'),
-    genres: z.array(z.string()).min(1, 'Please select at least one genre'),
+    altTitles: z.string().optional().nullable().or(z.literal('')),
+    description: z.string().optional().nullable().or(z.literal('')),
+    coverUrl: z.string().optional().nullable().or(z.literal('')),
+    bgUrl: z.string().optional().nullable().or(z.literal('')),
+    type: parseEnum(['MANHWA', 'MANGA', 'MANHUA', 'COMIC'], 'MANHWA'),
+    status: parseEnum(['ONGOING', 'COMPLETED', 'HIATUS', 'DROPPED'], 'ONGOING'),
+    genres: z.array(z.string()).optional().default([]),
     isPinned: z.boolean().optional().default(false),
-    discount: z.number().min(0).max(100).optional().nullable(),
+    discount: z.union([z.string(), z.number()]).optional().nullable(),
   }),
 });
 
@@ -21,15 +26,19 @@ export const updateSeriesSchema = z.object({
   }),
   body: z.object({
     title: z.string().min(1).max(200).optional(),
-    altTitles: z.string().optional(),
-    description: z.string().optional(),
-    coverUrl: z.string().optional().or(z.literal('')),
-    bgUrl: z.string().optional().or(z.literal('')),
-    type: z.enum(['MANHWA', 'MANGA', 'MANHUA', 'COMIC']).optional(),
-    status: z.enum(['ONGOING', 'COMPLETED', 'HIATUS', 'DROPPED']).optional(),
+    altTitles: z.string().optional().nullable().or(z.literal('')),
+    description: z.string().optional().nullable().or(z.literal('')),
+    coverUrl: z.string().optional().nullable().or(z.literal('')),
+    bgUrl: z.string().optional().nullable().or(z.literal('')),
+    type: z
+      .preprocess((val) => (typeof val === 'string' ? val.toUpperCase() : val), z.enum(['MANHWA', 'MANGA', 'MANHUA', 'COMIC']))
+      .optional(),
+    status: z
+      .preprocess((val) => (typeof val === 'string' ? val.toUpperCase() : val), z.enum(['ONGOING', 'COMPLETED', 'HIATUS', 'DROPPED']))
+      .optional(),
     genres: z.array(z.string()).optional(),
     isPinned: z.boolean().optional(),
-    discount: z.number().min(0).max(100).optional().nullable(),
+    discount: z.union([z.string(), z.number()]).optional().nullable(),
   }),
 });
 

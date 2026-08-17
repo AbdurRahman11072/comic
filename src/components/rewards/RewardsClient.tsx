@@ -9,10 +9,10 @@ import { Suspense } from "react";
 import { toast } from "react-hot-toast";
 import {
   Loader2, Play, Gift, AlertCircle,
-  X, ExternalLink, CheckCircle2,
+  X, ExternalLink, CheckCircle2, Sparkles, Coins, Flame
 } from "lucide-react";
 import api from "@/lib/api";
-import { useEarnFromAdMutation } from "@/redux/api/pointsApi";
+import { useEarnFromAdMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
 import { useRedeemPromoCodeMutation } from "@/redux/api/promoApi";
 import { LoginDialog } from "@/components/home/LoginDialog";
 
@@ -64,7 +64,19 @@ function RewardsContent() {
   // Login Dialog state for rewards page
   const [loginOpen, setLoginOpen] = useState(false);
 
+  // Live Database Points & Daily Ad Stats
+  const { data: balanceData } = useGetPointsBalanceQuery(undefined, { skip: !session });
+  const totalDailyViews = balanceData?.data?.dailyAdViews ?? 0;
+  const totalDailyPoints = balanceData?.data?.dailyAdPointsEarned ?? 0;
+
+  // Storage key for persisting active ad pack across page refreshes
+  const storageKey = `comic_reward_pack_${session?.user?.id || "guest"}`;
+  const todayStr = typeof window !== "undefined" ? new Date().toISOString().split("T")[0] : "";
+
+  const generateTarget = useCallback(() => Math.floor(Math.random() * 11) + 5, []);
+
   // Ad Pack State
+  const [packId, setPackId] = useState(101);
   const [targetAds, setTargetAds] = useState(5);
   const [watchedAds, setWatchedAds] = useState(0);
   const [watching, setWatching] = useState(false);
@@ -81,11 +93,63 @@ function RewardsContent() {
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
 
-  const generateTarget = useCallback(() => Math.floor(Math.random() * 11) + 5, []);
+  // Helper to persist current pack progress in localStorage
+  const persistPack = useCallback(
+    (newWatched: number, newTarget: number = targetAds, newPackId: number = packId, isClaiming: boolean = claiming) => {
+      try {
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            targetAds: newTarget,
+            watchedAds: newWatched,
+            packId: newPackId,
+            date: todayStr,
+            claiming: isClaiming,
+          })
+        );
+      } catch (e) {
+        // Ignore storage quotas or restrictions
+      }
+    },
+    [storageKey, todayStr, targetAds, packId, claiming]
+  );
 
+  // Restore or initialize active ad pack from localStorage
   useEffect(() => {
-    setTargetAds(generateTarget());
-  }, [generateTarget]);
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.date === todayStr && typeof parsed.targetAds === "number") {
+          setTargetAds(parsed.targetAds);
+          setWatchedAds(parsed.watchedAds || 0);
+          if (parsed.packId) setPackId(parsed.packId);
+          if (parsed.claiming) setClaiming(true);
+          return;
+        }
+      }
+    } catch (e) {
+      // Fall through to initial generation
+    }
+
+    const initialTarget = generateTarget();
+    const initialPackId = Math.floor(Math.random() * 899) + 100;
+    setTargetAds(initialTarget);
+    setWatchedAds(0);
+    setPackId(initialPackId);
+    try {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({
+          targetAds: initialTarget,
+          watchedAds: 0,
+          packId: initialPackId,
+          date: todayStr,
+          claiming: false,
+        })
+      );
+    } catch (e) {}
+  }, [storageKey, todayStr, generateTarget]);
 
   useEffect(() => {
     if (searchParams.get("success") === "true") {
@@ -126,7 +190,11 @@ function RewardsContent() {
       if (currentStep >= steps) {
         clearInterval(timer);
         setWatching(false);
-        setWatchedAds((prev) => prev + 1);
+        setWatchedAds((prev) => {
+          const next = prev + 1;
+          persistPack(next, targetAds, packId, next >= targetAds);
+          return next;
+        });
         toast.success("Ad watched! Keep going!");
       }
     }, interval);
@@ -144,6 +212,7 @@ function RewardsContent() {
   }, [verifying, verificationTimeLeft]);
 
   const handleClaimClick = () => {
+    persistPack(watchedAds, targetAds, packId, true);
     if (customAd) {
       if (customAd.adType === "VIDEO" && customAd.videoUrl) {
         setVideoModalOpen(true);
@@ -187,11 +256,17 @@ function RewardsContent() {
     const totalPoints = Math.min(basePoints + adBonus, 150);
 
     try {
-      const res = await earnFromAdMutate({ amount: totalPoints }).unwrap();
+      const res = await earnFromAdMutate({ amount: totalPoints, adsCount: targetAds }).unwrap();
       if (!res.success) throw new Error(res.message);
 
       setPointsEarned(totalPoints);
       setDone(true);
+      
+      // Clear completed pack from local storage
+      try {
+        localStorage.removeItem(storageKey);
+      } catch (e) {}
+
       toast.success(`🎉 You earned ${totalPoints} points!`, { duration: 5000 });
     } catch (error: any) {
       console.error("Failed to earn points:", error);
@@ -201,13 +276,17 @@ function RewardsContent() {
   };
 
   const resetFlow = () => {
-    setTargetAds(generateTarget());
+    const newTarget = generateTarget();
+    const newPackId = Math.floor(Math.random() * 899) + 100;
+    setTargetAds(newTarget);
     setWatchedAds(0);
+    setPackId(newPackId);
     setProgress(0);
     setClaiming(false);
     setVerifying(false);
     setDone(false);
     setPointsEarned(0);
+    persistPack(0, newTarget, newPackId, false);
   };
 
   if (isPending) return null;
@@ -236,11 +315,26 @@ function RewardsContent() {
       <div className="fixed -bottom-40 -right-40 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
 
       <main className="flex-1 max-w-[48rem] w-full mx-auto px-4 py-12 relative z-10 flex flex-col items-center">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-heading tracking-tight mb-4">Rewards Center</h1>
-          <p className="text-muted-foreground text-lg">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-heading tracking-tight mb-3">Rewards Center</h1>
+          <p className="text-muted-foreground text-base max-w-lg mx-auto">
             Complete the Ad Pack to earn free points for your favorite series!
           </p>
+
+          {/* User Live Daily Stats from Database */}
+          {session && (
+            <div className="inline-flex items-center gap-3 px-4 py-2 mt-4 rounded-2xl glass border border-white/10 shadow-lg text-xs font-semibold text-white">
+              <span className="flex items-center gap-1.5 text-amber-400">
+                <Coins className="w-4 h-4" />
+                <span>{balanceData?.data?.points ?? (session?.user as any)?.points ?? 0} Points</span>
+              </span>
+              <span className="text-white/20">•</span>
+              <span className="flex items-center gap-1.5 text-emerald-400">
+                <Flame className="w-4 h-4" />
+                <span>Today: {totalDailyViews} Ads Watched ({totalDailyPoints} P earned)</span>
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Dynamic Ad Pack Card */}
@@ -274,7 +368,7 @@ function RewardsContent() {
               </div>
               <button
                 onClick={resetFlow}
-                className="px-8 py-3 bg-primary text-white rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-primary/20"
+                className="px-8 py-3 bg-primary text-white rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-primary/20 cursor-pointer"
               >
                 Watch Another Pack
               </button>
@@ -311,7 +405,7 @@ function RewardsContent() {
               ) : (
                 <button
                   onClick={handleFinalAdClick}
-                  className="w-full py-4 rounded-2xl border-2 border-primary/30 hover:border-primary text-primary font-bold flex items-center justify-center gap-2 transition-all hover:bg-primary/5"
+                  className="w-full py-4 rounded-2xl border-2 border-primary/30 hover:border-primary text-primary font-bold flex items-center justify-center gap-2 transition-all hover:bg-primary/5 cursor-pointer"
                 >
                   <ExternalLink className="w-5 h-5" /> Visit Sponsor & Claim
                 </button>
@@ -336,7 +430,7 @@ function RewardsContent() {
             <div className="flex flex-col items-center space-y-8">
               <div className="text-center">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-3">
-                  Ad Pack #{Math.floor(Math.random() * 899) + 100}
+                  Ad Pack #{packId}
                 </div>
                 <h3 className="text-2xl font-bold text-white">Watch {targetAds} Short Ads</h3>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -363,7 +457,7 @@ function RewardsContent() {
                 {isReadyToClaim ? (
                   <button
                     onClick={handleClaimClick}
-                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-base rounded-2xl transition-all shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 animate-bounce"
+                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-base rounded-2xl transition-all shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 animate-bounce cursor-pointer"
                   >
                     <Gift className="w-5 h-5" /> Claim Points Now!
                   </button>
@@ -371,7 +465,7 @@ function RewardsContent() {
                   <button
                     onClick={handleWatchAd}
                     disabled={watching}
-                    className="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold text-base rounded-2xl transition-all shadow-xl shadow-primary/25 flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold text-base rounded-2xl transition-all shadow-xl shadow-primary/25 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                   >
                     {watching ? (
                       <>
@@ -450,7 +544,7 @@ function PromoRedeemBox() {
         <button
           type="submit"
           disabled={isLoading || !code.trim()}
-          className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition disabled:opacity-50 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20"
+          className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition disabled:opacity-50 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 cursor-pointer"
         >
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Redeem"}
         </button>

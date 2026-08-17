@@ -6,6 +6,9 @@ export interface PointBalanceResponse {
   message: string;
   data: {
     points: number;
+    transactionsFrozen?: boolean;
+    dailyAdViews?: number;
+    dailyAdPointsEarned?: number;
   };
 }
 
@@ -15,6 +18,8 @@ export interface TransactionsResponse {
   message: string;
   data: {
     balance: number;
+    transactionsFrozen?: boolean;
+    enableCashOut?: boolean;
     transactions: Array<{
       id: string;
       userId: string;
@@ -38,7 +43,7 @@ export const pointsApi = baseApi.injectEndpoints({
       providesTags: ['Transactions', 'Points'],
     }),
 
-    earnFromAd: builder.mutation<any, { amount?: number }>({
+    earnFromAd: builder.mutation<any, { amount?: number; adsCount?: number }>({
       query: (body) => ({
         url: '/points/earn-ad',
         method: 'POST',
@@ -68,37 +73,28 @@ export const pointsApi = baseApi.injectEndpoints({
       invalidatesTags: ['Points', 'Transactions', 'Chapters', 'History', 'User'],
     }),
 
+    getMyWithdrawals: builder.query<{ statusCode: number; success: boolean; data: any[] }, void>({
+      query: () => '/points/my-withdrawals',
+      providesTags: ['Transactions', 'Points'],
+    }),
+
     requestCashOut: builder.mutation<
       any,
-      { pointsRequested: number; paymentMethod: string; accountNumber: string; notes?: string }
+      {
+        pointsRequested: number;
+        bankDetails?: string;
+        paymentMethod?: string;
+        accountNumber?: string;
+        accountName?: string;
+        notes?: string;
+      }
     >({
       query: (body) => ({
-        url: '/withdrawals',
+        url: '/points/withdraw',
         method: 'POST',
         body,
       }),
-      invalidatesTags: ['Points', 'Transactions', 'Withdrawals', 'User'],
-    }),
-
-    getMyWithdrawals: builder.query<
-      {
-        success: boolean;
-        data: Array<{
-          id: string;
-          pointsRequested: number;
-          fiatAmount: number;
-          paymentMethod: string;
-          accountNumber?: string;
-          bankDetails: string;
-          status: string;
-          notes?: string | null;
-          createdAt: string;
-        }>;
-      },
-      void
-    >({
-      query: () => '/withdrawals/my-requests',
-      providesTags: ['Withdrawals'],
+      invalidatesTags: ['Points', 'Transactions'],
     }),
   }),
 });
@@ -109,7 +105,6 @@ export const {
   useEarnFromAdMutation,
   useBuyChapterMutation,
   useBuyBulkChaptersMutation,
-  useRequestCashOutMutation,
   useGetMyWithdrawalsQuery,
+  useRequestCashOutMutation,
 } = pointsApi;
-

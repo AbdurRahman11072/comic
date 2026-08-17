@@ -1,5 +1,6 @@
 import { prisma } from '../../../lib/prisma';
 import { cacheService } from '../../utils/redis';
+import { deleteFromCloudinary } from '../../utils/cloudinary';
 
 const getAllSeries = async (query: any) => {
   const { page = 1, limit = 10, type, status, genre, sort, isPinned, isDiscounted, creatorId, search, includeHidden } = query;
@@ -217,9 +218,25 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
     });
   }
 
+  const isPremiumChaptersEnabled = async (): Promise<boolean> => {
+    try {
+      const config = await prisma.siteConfig.findUnique({
+        where: { id: 'global' },
+        select: { enablePremiumChapters: true },
+      });
+      return (config as any)?.enablePremiumChapters ?? true;
+    } catch (e) {
+      return true;
+    }
+  };
+
+  const premiumEnabled = await isPremiumChaptersEnabled();
+
   let chaptersWithPurchaseStatus = result.chapters.map((c) => ({
     ...c,
-    isPurchased: false,
+    isLocked: premiumEnabled ? c.isLocked : false,
+    coinCost: premiumEnabled ? c.coinCost : 0,
+    isPurchased: !premiumEnabled || !c.isLocked,
   }));
 
   if (userId) {
@@ -250,10 +267,15 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
 
     const purchasedSet = new Set(purchases.map((p) => p.chapterId));
 
-    chaptersWithPurchaseStatus = result.chapters.map((c) => ({
-      ...c,
-      isPurchased: isCreator || !c.isLocked || purchasedSet.has(c.id),
-    }));
+    chaptersWithPurchaseStatus = result.chapters.map((c) => {
+      const locked = premiumEnabled ? c.isLocked : false;
+      return {
+        ...c,
+        isLocked: locked,
+        coinCost: premiumEnabled ? c.coinCost : 0,
+        isPurchased: !locked || isCreator || purchasedSet.has(c.id),
+      };
+    });
 
     return {
       ...result,
@@ -284,14 +306,44 @@ const getSeriesById = async (id: string) => {
   return result;
 };
 
+const generateSlug = async (title: string): Promise<string> => {
+  const clean = (title || '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  const baseSlug = clean || `series-${Date.now().toString(36)}`;
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (await prisma.series.findUnique({ where: { slug } })) {
+    slug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  return slug;
+};
+
 const createSeries = async (data: any) => {
   const { genres, ...seriesData } = data;
   
+  const slug = await generateSlug(seriesData.title);
+
+  const genreNames: string[] = Array.isArray(genres)
+    ? genres.filter((g) => typeof g === 'string' && g.trim())
+    : [];
+
   const result = await prisma.series.create({
     data: {
       ...seriesData,
+      slug,
       genres: {
-        connect: genres?.map((id: string) => ({ id })) || [],
+        connectOrCreate: genreNames.map((name) => ({
+          where: { name: name.trim() },
+          create: { name: name.trim() },
+        })),
       },
     },
     include: {
@@ -307,11 +359,45 @@ const createSeries = async (data: any) => {
 const updateSeries = async (id: string, data: any) => {
   const { genres, ...seriesData } = data;
 
+  const existing = await prisma.series.findUnique({
+    where: { id },
+    select: { coverUrl: true, bgUrl: true },
+  });
+
+  if (existing) {
+    if (seriesData.coverUrl && existing.coverUrl && seriesData.coverUrl !== existing.coverUrl) {
+      deleteFromCloudinary(existing.coverUrl).catch(() => null);
+    }
+    if (seriesData.bgUrl && existing.bgUrl && seriesData.bgUrl !== existing.bgUrl) {
+      deleteFromCloudinary(existing.bgUrl).catch(() => null);
+    }
+  }
+
   const updatePayload: any = { ...seriesData };
 
-  if (genres) {
+  if (genres !== undefined && Array.isArray(genres)) {
+    const genreNames: string[] = genres
+      .filter((g) => typeof g === 'string' && g.trim())
+      .map((g) => g.trim());
+
+    // Ensure all genres exist in the database
+    await Promise.all(
+      genreNames.map((name) =>
+        prisma.genre.upsert({
+          where: { name },
+          create: { name },
+          update: {},
+        })
+      )
+    );
+
+    const dbGenres = await prisma.genre.findMany({
+      where: { name: { in: genreNames } },
+      select: { id: true },
+    });
+
     updatePayload.genres = {
-      set: genres.map((id: string) => ({ id })),
+      set: dbGenres.map((g) => ({ id: g.id })),
     };
   }
 
@@ -329,6 +415,25 @@ const updateSeries = async (id: string, data: any) => {
 };
 
 const deleteSeries = async (id: string) => {
+  const existing = await prisma.series.findUnique({
+    where: { id },
+    include: {
+      chapters: {
+        include: { images: true },
+      },
+    },
+  });
+
+  if (existing) {
+    if (existing.coverUrl) deleteFromCloudinary(existing.coverUrl).catch(() => null);
+    if (existing.bgUrl) deleteFromCloudinary(existing.bgUrl).catch(() => null);
+    for (const ch of existing.chapters) {
+      for (const img of ch.images) {
+        deleteFromCloudinary(img.url).catch(() => null);
+      }
+    }
+  }
+
   const result = await prisma.series.delete({
     where: { id },
   });

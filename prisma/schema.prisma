@@ -251,6 +251,7 @@ model SiteConfig {
   enableGlobalChat         Boolean @default(true)
   enableStripePayment      Boolean @default(true)
   enableCashOut            Boolean @default(true)
+  enablePremiumChapters    Boolean @default(true)
 
   // 🔍 SEO & Web Tracking
   seoTitle         String?
@@ -471,8 +472,6 @@ model WithdrawalRequest {
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   pointsRequested Int
   fiatAmount      Float
-  paymentMethod   String            @default("bKash")
-  accountNumber   String?
   bankDetails     String
   status          ApplicationStatus @default(PENDING)
   notes           String?

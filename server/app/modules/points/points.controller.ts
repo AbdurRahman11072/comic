@@ -36,9 +36,10 @@ const getTransactions = asyncHandler(async (req: Request, res: Response) => {
 const earnFromAd = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const amount = Number(req.body.amount) || 10;
+  const adsCount = Number(req.body.adsCount) || Math.max(Math.floor(amount / 10), 1);
   if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, 'User not authenticated');
 
-  const result = await PointsService.earnFromAd(userId, amount);
+  const result = await PointsService.earnFromAd(userId, amount, adsCount);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

@@ -4,14 +4,30 @@ import AppError from '../../error/AppError';
 
 const POINTS_PER_AD = 10;
 
-/** Return current point balance for a user */
+/** Return current point balance and daily ad stats for a user */
 const getBalance = async (userId: string) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { points: true },
+    select: {
+      points: true,
+      transactionsFrozen: true,
+      dailyAdViews: true,
+      dailyAdPointsEarned: true,
+      lastAdWatchDate: true,
+    },
   });
   if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
-  return { points: user.points };
+
+  const now = new Date();
+  const lastWatch = new Date(user.lastAdWatchDate);
+  const isToday = now.toDateString() === lastWatch.toDateString();
+
+  return {
+    points: user.points,
+    transactionsFrozen: user.transactionsFrozen,
+    dailyAdViews: isToday ? user.dailyAdViews : 0,
+    dailyAdPointsEarned: isToday ? user.dailyAdPointsEarned : 0,
+  };
 };
 
 /** Return all point transactions for a user, newest first */
@@ -37,11 +53,16 @@ const getTransactions = async (userId: string) => {
   };
 };
 
-/** Earn points by watching an ad — adds points and logs a transaction */
-const earnFromAd = async (userId: string, requestedAmount: number = 10) => {
+/** Earn points by watching an ad — adds points, increments dailyAdViews, and logs a transaction */
+const earnFromAd = async (userId: string, requestedAmount: number = 10, adsCount: number = 1) => {
   const userCheck = await prisma.user.findUnique({
     where: { id: userId },
-    select: { transactionsFrozen: true },
+    select: {
+      transactionsFrozen: true,
+      dailyAdViews: true,
+      dailyAdPointsEarned: true,
+      lastAdWatchDate: true,
+    },
   });
 
   if (!userCheck) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
@@ -49,26 +70,43 @@ const earnFromAd = async (userId: string, requestedAmount: number = 10) => {
     throw new AppError(httpStatus.FORBIDDEN, 'Your account transactions are frozen');
   }
 
+  // Check if day changed to reset daily counters
+  const now = new Date();
+  const lastWatch = new Date(userCheck.lastAdWatchDate);
+  let currentDailyPoints = userCheck.dailyAdPointsEarned;
+  let currentDailyViews = userCheck.dailyAdViews;
+
+  if (now.toDateString() !== lastWatch.toDateString()) {
+    currentDailyPoints = 0;
+    currentDailyViews = 0;
+  }
+
   // Strictly clamp amount between 5 and 150 (max reward for a full ad pack)
   const amount = Math.min(Math.max(Number(requestedAmount) || 10, 5), 150);
+  const adsWatched = Math.min(Math.max(Number(adsCount) || 1, 1), 50);
 
   const [user, transaction] = await prisma.$transaction([
     prisma.user.update({
       where: { id: userId },
-      data: { points: { increment: amount } },
-      select: { points: true },
+      data: {
+        points: { increment: amount },
+        dailyAdPointsEarned: currentDailyPoints + amount,
+        dailyAdViews: currentDailyViews + adsWatched,
+        lastAdWatchDate: now,
+      },
+      select: { points: true, dailyAdViews: true, dailyAdPointsEarned: true },
     }),
     prisma.pointTransaction.create({
       data: {
         userId,
         type: 'EARN_AD',
         amount: amount,
-        description: 'Earned by watching an ad',
+        description: `Earned from Ad Pack (${adsWatched} ads watched)`,
       },
     }),
   ]);
 
-  return { points: user.points, transaction };
+  return { points: user.points, dailyAdViews: user.dailyAdViews, transaction };
 };
 
 /** Spend points to unlock a single locked chapter */
@@ -90,13 +128,24 @@ const buyChapter = async (userId: string, chapterId: string) => {
   if (existing) throw new AppError(httpStatus.BAD_REQUEST, 'Chapter already purchased');
 
   // 3. Verify user has enough points and is not frozen
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { points: true, transactionsFrozen: true },
-  });
+  const [user, config] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { points: true, transactionsFrozen: true },
+    }),
+    prisma.siteConfig.findUnique({
+      where: { id: 'global' },
+      select: { enablePremiumChapters: true },
+    }),
+  ]);
   if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   if (user.transactionsFrozen) {
     throw new AppError(httpStatus.FORBIDDEN, 'Your account transactions are frozen. Please contact support.');
+  }
+
+  // If premium system disabled, chapter is automatically unlocked with zero cost
+  if (config && (config as any).enablePremiumChapters === false) {
+    return { points: user.points, message: 'All chapters are currently free!' };
   }
   if (user.points < chapter.coinCost)
     throw new AppError(httpStatus.BAD_REQUEST, 'Insufficient points');
@@ -167,14 +216,24 @@ const buyBulkChapters = async (userId: string, chapterIds: string[], promoCodeIn
     throw new AppError(httpStatus.BAD_REQUEST, 'Please select at least one chapter to unlock');
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { id: true, points: true, transactionsFrozen: true },
-  });
+  const [user, config] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, points: true, transactionsFrozen: true },
+    }),
+    prisma.siteConfig.findUnique({
+      where: { id: 'global' },
+      select: { enablePremiumChapters: true },
+    }),
+  ]);
 
   if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
   if (user.transactionsFrozen) {
     throw new AppError(httpStatus.FORBIDDEN, 'Your account transactions are frozen. Please contact support.');
+  }
+
+  if (config && (config as any).enablePremiumChapters === false) {
+    return { points: user.points, message: 'All chapters are currently free!' };
   }
 
   // 1. Fetch chapters

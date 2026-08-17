@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, X, Loader2, ListOrdered, UploadCloud, Link as LinkIcon } from "lucide-react";
+import { Plus, X, Loader2, ListOrdered, UploadCloud, Link as LinkIcon, FileText, Check, Trash2 } from "lucide-react";
 import { CreateChapterAction, UpdateChapterAction } from "@/actions/chapter";
 import { seriesService } from "@/services/series.service";
 import { useRouter } from "next/navigation";
@@ -15,15 +15,29 @@ interface ChapterFormProps {
   initialData?: any;
 }
 
+interface ChapterPageItem {
+  id: string;
+  file?: File;
+  previewUrl: string;
+  existingUrl?: string;
+  order: number;
+}
+
 export function ChapterForm({ initialData }: ChapterFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
   const [seriesList, setSeriesList] = useState<{ id: string; title: string }[]>([]);
 
-  const [images, setImages] = useState<{ url: string; order: number }[]>(
-    initialData?.images?.map((img: any) => ({ url: img.url, order: img.order })) || []
+  const [pages, setPages] = useState<ChapterPageItem[]>(
+    initialData?.images?.map((img: any, idx: number) => ({
+      id: `existing-${img.id || idx}`,
+      previewUrl: img.url,
+      existingUrl: img.url,
+      order: img.order || idx + 1,
+    })) || []
   );
+
   const [draggedItemIdx, setDraggedItemIdx] = useState<number | null>(null);
   const [imageUrlInput, setImageUrlInput] = useState("");
 
@@ -32,6 +46,8 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
     number: initialData?.number || 1,
     title: initialData?.title || "",
     isLocked: initialData?.isLocked ?? false,
+    isFastPass: initialData?.isFastPass ?? false,
+    publishAt: initialData?.publishAt ? new Date(initialData.publishAt).toISOString().slice(0, 16) : "",
     coinCost: initialData?.coinCost || 0
   });
 
@@ -50,16 +66,40 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
     fetchSeries();
   }, []);
 
-  const addImage = () => {
-    if (imageUrlInput) {
-      setImages([...images, { url: imageUrlInput, order: images.length + 1 }]);
+  const addImageUrl = () => {
+    const trimmed = imageUrlInput.trim();
+    if (trimmed) {
+      setPages(prev => [
+        ...prev,
+        {
+          id: `url-${Date.now()}-${prev.length}`,
+          previewUrl: trimmed,
+          existingUrl: trimmed,
+          order: prev.length + 1,
+        }
+      ]);
       setImageUrlInput("");
+      toast.success("Page URL added to chapter list");
     }
   };
 
-  const removeImage = (index: number) => {
-    const updated = images.filter((_, i) => i !== index).map((img, i) => ({ ...img, order: i + 1 }));
-    setImages(updated);
+  const removePage = (index: number) => {
+    setPages(prev => {
+      const removed = prev[index];
+      if (removed.file && removed.previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(removed.previewUrl);
+      }
+      return prev.filter((_, i) => i !== index).map((p, i) => ({ ...p, order: i + 1 }));
+    });
+  };
+
+  const clearAllPages = () => {
+    pages.forEach((p) => {
+      if (p.file && p.previewUrl.startsWith("blob:")) {
+        URL.revokeObjectURL(p.previewUrl);
+      }
+    });
+    setPages([]);
   };
 
   const handleDragStart = (idx: number) => {
@@ -73,41 +113,31 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
   const handleDrop = (idx: number) => {
     if (draggedItemIdx === null || draggedItemIdx === idx) return;
 
-    const newImages = [...images];
-    const draggedItem = newImages[draggedItemIdx];
-    newImages.splice(draggedItemIdx, 1);
-    newImages.splice(idx, 0, draggedItem);
+    const newPages = [...pages];
+    const draggedItem = newPages[draggedItemIdx];
+    newPages.splice(draggedItemIdx, 1);
+    newPages.splice(idx, 0, draggedItem);
 
-    const updated = newImages.map((img, i) => ({ ...img, order: i + 1 }));
-    setImages(updated);
+    const updated = newPages.map((p, i) => ({ ...p, order: i + 1 }));
+    setPages(updated);
     setDraggedItemIdx(null);
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Instant local preview without uploading to Cloudinary
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    setUploading(true);
-    try {
-      const newImages: string[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const res = await uploadImage(files[i]);
-        newImages.push(res.data.url);
-      }
+    const newItems: ChapterPageItem[] = Array.from(files).map((file, idx) => ({
+      id: `local-${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${idx}`,
+      file,
+      previewUrl: URL.createObjectURL(file),
+      order: pages.length + idx + 1,
+    }));
 
-      setImages(prev => {
-        const startIdx = prev.length;
-        return [
-          ...prev,
-          ...newImages.map((url, i) => ({ url, order: startIdx + i + 1 }))
-        ];
-      });
-    } catch (error) {
-      console.error("Upload failed", error);
-      toast.error("Failed to upload image(s)");
-    } finally {
-      setUploading(false);
-    }
+    setPages(prev => [...prev, ...newItems].map((p, i) => ({ ...p, order: i + 1 })));
+    toast.success(`${files.length} page(s) loaded into preview.`);
+    e.target.value = "";
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -116,33 +146,69 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
     setFormData((prev) => ({ ...prev, [id]: val }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (images.length === 0) {
-      toast.error("Please add at least one image to the chapter.");
+  const handleSave = async (isDraft: boolean = false) => {
+    if (pages.length === 0) {
+      toast.error("Please add at least one page image to the chapter.");
       return;
     }
+    if (!formData.seriesId) {
+      toast.error("Please select a series.");
+      return;
+    }
+
     setLoading(true);
+    setUploadProgress("Preparing chapter images...");
+
     try {
+      const finalImages: { url: string; order: number }[] = [];
+      const pendingFiles = pages.filter((p) => p.file);
+      let uploadedCounter = 0;
+
+      for (let i = 0; i < pages.length; i++) {
+        const page = pages[i];
+        if (page.existingUrl) {
+          finalImages.push({ url: page.existingUrl, order: i + 1 });
+        } else if (page.file) {
+          uploadedCounter++;
+          setUploadProgress(`Uploading page ${uploadedCounter} of ${pendingFiles.length} to Cloudinary...`);
+          const res = await uploadImage(page.file);
+          if (!res.data?.url) {
+            throw new Error(`Failed to upload page ${i + 1}`);
+          }
+          finalImages.push({ url: res.data.url, order: i + 1 });
+        }
+      }
+
+      setUploadProgress("Saving chapter details...");
+
       const payload = {
         ...formData,
         number: Number(formData.number),
-        coinCost: Number(formData.coinCost),
-        images
+        coinCost: isDraft ? 0 : Number(formData.coinCost),
+        isLocked: isDraft ? false : Boolean(formData.isLocked),
+        isFastPass: isDraft ? false : Boolean(formData.isFastPass),
+        publishAt: formData.publishAt ? new Date(formData.publishAt).toISOString() : null,
+        images: finalImages,
       };
 
       if (initialData && initialData.id) {
-        await UpdateChapterAction(initialData.id, payload);
+        const res = await UpdateChapterAction(initialData.id, payload);
+        if (!res.success) throw new Error(res.message);
+        toast.success(isDraft ? "Draft chapter saved!" : "Chapter updated successfully!");
       } else {
-        await CreateChapterAction(payload);
+        const res = await CreateChapterAction(payload);
+        if (!res.success) throw new Error(res.message);
+        toast.success(isDraft ? "Draft chapter saved!" : "Chapter published successfully!");
       }
+
       router.push("/dashboard/chapters");
       router.refresh();
     } catch (error: any) {
       console.error("Failed to save chapter:", error);
-      toast.error("Failed to save chapter. Check console for details.");
+      toast.error(error?.message || "Failed to save chapter.");
     } finally {
       setLoading(false);
+      setUploadProgress("");
     }
   };
 
@@ -154,18 +220,19 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
             {initialData ? "Edit Chapter" : "Upload New Chapter"}
           </h1>
           <p className="text-muted-foreground">
-            {initialData ? `Updating Chapter ${initialData.number}` : "Upload pages and set details for a new chapter."}
+            {initialData ? `Updating Chapter ${initialData.number}` : "Upload pages and configure release settings."}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid gap-8 md:grid-cols-2">
-          {/* Main Info */}
+        <form onSubmit={(e) => { e.preventDefault(); handleSave(false); }} className="grid gap-8 md:grid-cols-2">
+          {/* Chapter Details */}
           <div className="space-y-6 glass p-6 rounded-2xl border border-white/5">
             <div className="space-y-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <Plus className="w-5 h-5 text-primary" />
                 Chapter Details
               </h2>
+
               <div className="space-y-2">
                 <Label htmlFor="seriesId">Select Series</Label>
                 <select
@@ -180,6 +247,7 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
                   ))}
                 </select>
               </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="number">Chapter Number</Label>
@@ -202,6 +270,7 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
                   />
                 </div>
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="title">Chapter Title (Optional)</Label>
                 <Input
@@ -211,18 +280,20 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
                   onChange={handleInputChange}
                 />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="publishAt">Scheduled Release Date/Time (Optional)</Label>
                 <Input
                   id="publishAt"
                   type="datetime-local"
-                  value={(formData as any).publishAt || ""}
+                  value={formData.publishAt}
                   onChange={handleInputChange}
                 />
                 <p className="text-[11px] text-muted-foreground">
                   Leave empty to publish immediately. If set, this chapter will unlock automatically at the chosen time.
                 </p>
               </div>
+
               <div className="flex flex-col gap-2.5 pt-2">
                 <div className="flex items-center gap-3">
                   <input
@@ -238,7 +309,7 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
                   <input
                     type="checkbox"
                     id="isFastPass"
-                    checked={(formData as any).isFastPass || false}
+                    checked={formData.isFastPass}
                     onChange={handleInputChange as any}
                     className="w-4 h-4 rounded border-white/10 bg-background/50 text-amber-400 focus:ring-amber-400/50"
                   />
@@ -250,83 +321,139 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
             </div>
           </div>
 
-          {/* Images */}
+          {/* Chapter Pages Preview & Reorder */}
           <div className="space-y-6 glass p-6 rounded-2xl border border-white/5">
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <ListOrdered className="w-5 h-5 text-primary" />
-                Chapter Pages
-              </h2>
-              <div className="space-y-4">
-                <div
-                  onClick={() => !uploading && document.getElementById('pageUpload')?.click()}
-                  className="relative w-full h-32 rounded-xl overflow-hidden border-2 border-dashed border-white/20 bg-background/50 hover:bg-white/5 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center group"
-                >
-                  <div className="flex flex-col items-center gap-2 text-muted-foreground group-hover:text-primary transition-colors">
-                    {uploading ? <Loader2 className="w-8 h-8 animate-spin text-primary" /> : <UploadCloud className="w-8 h-8" />}
-                    <span className="text-sm font-medium">{uploading ? "Uploading pages..." : "Click to upload pages (Select multiple)"}</span>
-                  </div>
-                  <input
-                    id="pageUpload"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    onChange={handleImageUpload}
-                  />
-                </div>
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <ListOrdered className="w-5 h-5 text-primary" />
+                  Chapter Pages ({pages.length})
+                </h2>
+                {pages.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearAllPages}
+                    className="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 transition"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" /> Clear All
+                  </button>
+                )}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                {images.length === 0 ? (
-                  <div className="col-span-full text-center py-10 text-muted-foreground text-sm border-2 border-dashed border-white/5 rounded-xl">
-                    No pages added yet.
+              {/* Upload Dropzone */}
+              <div
+                onClick={() => !loading && document.getElementById('pageUpload')?.click()}
+                className="relative w-full h-28 rounded-xl overflow-hidden border-2 border-dashed border-white/20 bg-background/50 hover:bg-white/5 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center group"
+              >
+                <div className="flex flex-col items-center gap-1.5 text-muted-foreground group-hover:text-primary transition-colors">
+                  <UploadCloud className="w-7 h-7" />
+                  <span className="text-xs font-semibold">Click to choose pages (Select Multiple)</span>
+                  <span className="text-[10px] text-white/40">Instant local preview & drag-to-reorder</span>
+                </div>
+                <input
+                  id="pageUpload"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={handleImageSelect}
+                />
+              </div>
+
+              {/* URL Input Helper */}
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Or paste external image URL..."
+                  value={imageUrlInput}
+                  onChange={(e) => setImageUrlInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addImageUrl();
+                    }
+                  }}
+                  className="text-xs h-9"
+                />
+                <Button type="button" variant="outline" size="sm" onClick={addImageUrl} className="shrink-0 h-9">
+                  <LinkIcon className="w-3.5 h-3.5 mr-1" /> Add
+                </Button>
+              </div>
+
+              {/* Pages Grid */}
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[380px] overflow-y-auto pr-2 custom-scrollbar">
+                {pages.length === 0 ? (
+                  <div className="col-span-full text-center py-10 text-muted-foreground text-xs border-2 border-dashed border-white/5 rounded-xl">
+                    No pages added yet. Select image files above to build the chapter.
                   </div>
                 ) : (
-                  images.map((img, idx) => (
+                  pages.map((img, idx) => (
                     <div
-                      key={idx}
+                      key={img.id}
                       draggable
                       onDragStart={() => handleDragStart(idx)}
                       onDragOver={(e) => handleDragOver(e, idx)}
                       onDrop={() => handleDrop(idx)}
                       onDragEnd={() => setDraggedItemIdx(null)}
-                      className={`relative aspect-[2/3] rounded-lg overflow-hidden border border-white/10 group bg-black/20 cursor-grab active:cursor-grabbing transition-all duration-200 ${draggedItemIdx === idx ? 'opacity-50 scale-95 ring-2 ring-primary ring-offset-2 ring-offset-background' : 'opacity-100 hover:ring-2 hover:ring-white/20'}`}
+                      className={`relative aspect-[2/3] rounded-lg overflow-hidden border border-white/10 group bg-black/20 cursor-grab active:cursor-grabbing transition-all duration-200 ${
+                        draggedItemIdx === idx ? 'opacity-50 scale-95 ring-2 ring-primary ring-offset-2 ring-offset-background' : 'opacity-100 hover:ring-2 hover:ring-white/20'
+                      }`}
                     >
-                      <img src={img.url} alt={`Page ${img.order}`} className="object-cover w-full h-full" />
-                      <div className="absolute top-2 left-2 bg-black/70 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-md">
+                      <img src={img.previewUrl} alt={`Page ${img.order}`} className="object-cover w-full h-full" />
+                      <div className="absolute top-1.5 left-1.5 bg-black/80 backdrop-blur-sm text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">
                         {img.order}
                       </div>
                       <button
                         type="button"
-                        onClick={() => removeImage(idx)}
-                        className="absolute top-2 right-2 bg-red-500/80 hover:bg-red-500 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-lg"
+                        onClick={(e) => { e.stopPropagation(); removePage(idx); }}
+                        className="absolute top-1.5 right-1.5 bg-red-500/90 hover:bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-lg"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ))
                 )}
               </div>
-              {images.length > 0 && (
-                <div className="text-[10px] text-center text-muted-foreground">
-                  Total {images.length} pages. Images will be shown in the order listed above.
+              {pages.length > 0 && (
+                <div className="text-[11px] text-center text-muted-foreground">
+                  Total {pages.length} pages. Drag any page thumbnail to reorder reading sequence.
                 </div>
               )}
             </div>
           </div>
 
-          {/* Submit */}
-          <div className="md:col-span-2 flex justify-end gap-4 pt-4 border-t border-white/10">
-            <Button variant="secondary" type="button" onClick={() => router.back()}>Cancel</Button>
-            <Button type="submit" className="bg-primary hover:bg-primary/90 px-8" disabled={loading}>
+          {/* Upload Progress Status Indicator */}
+          {uploadProgress && (
+            <div className="md:col-span-2 p-4 rounded-2xl bg-primary/10 border border-primary/30 flex items-center gap-3 text-primary text-sm font-medium animate-pulse">
+              <Loader2 className="w-5 h-5 animate-spin shrink-0" />
+              <span>{uploadProgress}</span>
+            </div>
+          )}
+
+          {/* Submit Actions */}
+          <div className="md:col-span-2 flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-white/10">
+            <Button variant="secondary" type="button" onClick={() => router.back()} disabled={loading}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleSave(true)}
+              disabled={loading}
+              className="border-amber-500/30 text-amber-300 hover:bg-amber-500/10 hover:text-amber-200"
+            >
+              <FileText className="w-4 h-4 mr-2" /> Save as Draft
+            </Button>
+            <Button type="submit" className="bg-primary hover:bg-primary/90 px-8 font-bold" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Saving...
                 </>
               ) : (
-                "Save Chapter"
+                <>
+                  <Check className="w-4 h-4 mr-2" />
+                  {initialData ? "Save Changes" : "Publish Chapter"}
+                </>
               )}
             </Button>
           </div>

@@ -31,6 +31,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
     enableGlobalChat: configData.enableGlobalChat ?? true,
     enableStripePayment: configData.enableStripePayment ?? true,
     enableCashOut: configData.enableCashOut ?? true,
+    enablePremiumChapters: configData.enablePremiumChapters ?? true,
 
     // Branding & Copy
     appName: configData.appName ?? "Genz Toon",
@@ -94,6 +95,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
         enableGlobalChat: d.enableGlobalChat ?? true,
         enableStripePayment: d.enableStripePayment ?? true,
         enableCashOut: d.enableCashOut ?? true,
+        enablePremiumChapters: d.enablePremiumChapters ?? true,
         pointToFiatRate: d.pointToFiatRate ?? 0.01,
         minWithdrawalPoints: d.minWithdrawalPoints ?? 1000,
         creatorRevenueSharePercent: d.creatorRevenueSharePercent ?? 70,
@@ -302,6 +304,25 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Allow users to request CashOut via bKash, Nagad, Rocket, or Bank Transfer on their transactions page.
+                </p>
+              </div>
+
+              {/* Premium / Paid Chapters System */}
+              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-rose-400" />
+                    <span className="font-bold text-sm text-white">Premium Chapters / Paywall System</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={form.enablePremiumChapters}
+                    onChange={(e) => updateField("enablePremiumChapters", e.target.checked)}
+                    className="w-5 h-5 rounded text-primary border-white/10"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  When enabled, locked chapters require coins/points to read. When turned <strong>OFF</strong>, all chapters across the entire platform become <strong>100% FREE</strong> for all readers.
                 </p>
               </div>
             </div>

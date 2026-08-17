@@ -1,6 +1,19 @@
 import httpStatus from 'http-status';
 import { prisma } from '../../../lib/prisma';
 import AppError from '../../error/AppError';
+import { deleteFromCloudinary } from '../../utils/cloudinary';
+
+const isPremiumChaptersEnabled = async (): Promise<boolean> => {
+  try {
+    const config = await prisma.siteConfig.findUnique({
+      where: { id: 'global' },
+      select: { enablePremiumChapters: true },
+    });
+    return (config as any)?.enablePremiumChapters ?? true;
+  } catch (e) {
+    return true;
+  }
+};
 
 const getChapterByNumber = async (seriesSlug: string, number: number, userId?: string) => {
   const series = await prisma.series.findUnique({
@@ -10,45 +23,51 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
 
   if (!series) return null;
 
-  const result = await prisma.chapter.findFirst({
-    where: { 
-      seriesId: series.id,
-      number: Number(number)
-    },
-    include: {
-      images: {
-        orderBy: { order: 'asc' },
+  const [result, premiumEnabled] = await Promise.all([
+    prisma.chapter.findFirst({
+      where: { 
+        seriesId: series.id,
+        number: Number(number)
       },
-      series: {
-        select: {
-          title: true,
-          slug: true,
-          coverUrl: true,
-          creator: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-              creatorProfile: {
-                select: {
-                  id: true,
-                  channelName: true,
-                  profileImage: true,
-                  description: true,
+      include: {
+        images: {
+          orderBy: { order: 'asc' },
+        },
+        series: {
+          select: {
+            title: true,
+            slug: true,
+            coverUrl: true,
+            creator: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                creatorProfile: {
+                  select: {
+                    id: true,
+                    channelName: true,
+                    profileImage: true,
+                    description: true,
+                  },
                 },
               },
             },
           },
         },
       },
-    },
-  });
+    }),
+    isPremiumChaptersEnabled(),
+  ]);
   
   if (!result) return null;
 
+  // If premium chapters are disabled globally by admin, all chapters are unlocked & free
+  const effectivelyLocked = premiumEnabled ? result.isLocked : false;
+
   // Check if the authenticated user already purchased this chapter
-  let isPurchased = false;
-  if (userId && result.isLocked) {
+  let isPurchased = !effectivelyLocked;
+  if (userId && effectivelyLocked) {
     const purchase = await prisma.chapterPurchase.findUnique({
       where: { userId_chapterId: { userId, chapterId: result.id } },
     });
@@ -98,9 +117,11 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
 
   return {
     ...result,
+    isLocked: effectivelyLocked,
+    coinCost: effectivelyLocked ? result.coinCost : 0,
     series: chapterSeries,
-    images: (result.isLocked && !isPurchased) ? [] : result.images,
-    isPurchased,
+    images: (effectivelyLocked && !isPurchased) ? [] : result.images,
+    isPurchased: !effectivelyLocked || isPurchased,
     prevChapterNumber: prevChapter?.number || null,
     nextChapterNumber: nextChapter?.number || null,
   };
@@ -139,23 +160,28 @@ const getAllChapters = async (query: any) => {
 };
 
 const getChapterById = async (id: string, userId?: string) => {
-  const result = await prisma.chapter.findUnique({
-    where: { id },
-    include: {
-      images: {
-        orderBy: { order: 'asc' },
+  const [result, premiumEnabled] = await Promise.all([
+    prisma.chapter.findUnique({
+      where: { id },
+      include: {
+        images: {
+          orderBy: { order: 'asc' },
+        },
+        series: {
+          select: { title: true, slug: true },
+        },
       },
-      series: {
-        select: { title: true, slug: true },
-      },
-    },
-  });
+    }),
+    isPremiumChaptersEnabled(),
+  ]);
   
   if (!result) return null;
 
+  const effectivelyLocked = premiumEnabled ? result.isLocked : false;
+
   // Check if the authenticated user already purchased this chapter
-  let isPurchased = false;
-  if (userId && result.isLocked) {
+  let isPurchased = !effectivelyLocked;
+  if (userId && effectivelyLocked) {
     const purchase = await prisma.chapterPurchase.findUnique({
       where: { userId_chapterId: { userId, chapterId: id } },
     });
@@ -181,8 +207,10 @@ const getChapterById = async (id: string, userId?: string) => {
 
   return {
     ...result,
-    images: (result.isLocked && !isPurchased) ? [] : result.images,
-    isPurchased,
+    isLocked: effectivelyLocked,
+    coinCost: effectivelyLocked ? result.coinCost : 0,
+    images: (effectivelyLocked && !isPurchased) ? [] : result.images,
+    isPurchased: !effectivelyLocked || isPurchased,
     prevChapterNumber: prevChapter?.number || null,
     nextChapterNumber: nextChapter?.number || null,
   };
@@ -220,7 +248,10 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
 
   const existing = await prisma.chapter.findUnique({
     where: { id },
-    include: { series: { select: { creatorId: true } } },
+    include: {
+      series: { select: { creatorId: true } },
+      images: true,
+    },
   });
   if (!existing) {
     throw new AppError(httpStatus.NOT_FOUND, 'Chapter not found');
@@ -228,6 +259,15 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
 
   if (role === 'creator' && existing.series.creatorId !== userId) {
     throw new AppError(httpStatus.FORBIDDEN, 'You can only edit chapters of your own series');
+  }
+
+  // Delete replaced or removed images from Cloudinary
+  if (images && Array.isArray(images)) {
+    const newUrls = new Set(images.map((img: any) => img.url));
+    const oldImagesToDelete = existing.images.filter((img) => !newUrls.has(img.url));
+    for (const oldImg of oldImagesToDelete) {
+      deleteFromCloudinary(oldImg.url).catch(() => null);
+    }
   }
 
   const result = await prisma.chapter.update({
@@ -251,7 +291,10 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
 const deleteChapter = async (id: string, userId?: string, role?: string) => {
   const existing = await prisma.chapter.findUnique({
     where: { id },
-    include: { series: { select: { creatorId: true } } },
+    include: {
+      series: { select: { creatorId: true } },
+      images: true,
+    },
   });
   if (!existing) {
     throw new AppError(httpStatus.NOT_FOUND, 'Chapter not found');
@@ -259,6 +302,13 @@ const deleteChapter = async (id: string, userId?: string, role?: string) => {
 
   if (role === 'creator' && existing.series.creatorId !== userId) {
     throw new AppError(httpStatus.FORBIDDEN, 'You can only delete chapters of your own series');
+  }
+
+  // Delete all chapter images from Cloudinary
+  if (existing.images && existing.images.length > 0) {
+    for (const img of existing.images) {
+      deleteFromCloudinary(img.url).catch(() => null);
+    }
   }
 
   return await prisma.chapter.delete({

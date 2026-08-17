@@ -15,7 +15,8 @@ export const getRedisClient = (): Redis | null => {
 
   if (!redis) {
     try {
-      redis = new Redis(envConfig.REDIS_URL, {
+      const redisUrl = envConfig.REDIS_URL || 'redis://localhost:6379';
+      redis = new Redis(redisUrl, {
         maxRetriesPerRequest: 2,
         connectTimeout: 4000,
         retryStrategy: (times) => {

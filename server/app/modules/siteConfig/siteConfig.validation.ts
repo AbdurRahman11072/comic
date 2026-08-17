@@ -34,6 +34,7 @@ export const updateSiteConfigSchema = z.object({
       enableGlobalChat: optionalBool,
       enableStripePayment: optionalBool,
       enableCashOut: optionalBool,
+      enablePremiumChapters: optionalBool,
       seoTitle: optionalString,
       seoDescription: optionalString,
       seoKeywords: optionalString,
