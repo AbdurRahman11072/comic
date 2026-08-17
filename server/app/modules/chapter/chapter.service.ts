@@ -23,6 +23,12 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
 
   if (!series) return null;
 
+  // Increment series total views when reading a chapter
+  prisma.series.update({
+    where: { id: series.id },
+    data: { totalViews: { increment: 1 } },
+  }).catch(() => null);
+
   const [result, premiumEnabled] = await Promise.all([
     prisma.chapter.findFirst({
       where: { 

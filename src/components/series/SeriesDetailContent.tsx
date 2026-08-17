@@ -39,6 +39,7 @@ interface Series {
   lastUpdate: string;
   rating: number;
   favorites: number;
+  totalViews?: number;
   description: string;
   genres: string[];
   chapters: Chapter[];
@@ -115,7 +116,11 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
                 </div>
               </div>
               
-              <SeriesStats rating={series.rating} favorites={series.favorites} />
+              <SeriesStats
+                rating={series.rating}
+                favorites={series.favorites}
+                views={series.totalViews || (series as any).views || 0}
+              />
               
               <div className="p-4 rounded-xl glass">
                 <SeriesMeta

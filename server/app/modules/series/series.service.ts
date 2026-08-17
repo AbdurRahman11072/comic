@@ -198,6 +198,14 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
 
   if (!result) return null;
 
+  // Increment view count asynchronously
+  prisma.series.update({
+    where: { id: result.id },
+    data: { totalViews: { increment: 1 } },
+  }).catch(() => null);
+
+  result.totalViews = (result.totalViews || 0) + 1;
+
   let creator = result.creator;
   if (!creator) {
     creator = await prisma.user.findFirst({

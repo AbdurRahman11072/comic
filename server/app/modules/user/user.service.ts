@@ -44,13 +44,19 @@ const toggleBookmark = async (userId: string, seriesId: string) => {
 };
 
 const updateHistory = async (userId: string, seriesId: string, chapterId: string) => {
-  const result = await prisma.history.upsert({
-    where: {
-      userId_seriesId: { userId, seriesId },
-    },
-    update: { chapterId },
-    create: { userId, seriesId, chapterId },
-  });
+  const [result] = await Promise.all([
+    prisma.history.upsert({
+      where: {
+        userId_seriesId: { userId, seriesId },
+      },
+      update: { chapterId },
+      create: { userId, seriesId, chapterId },
+    }),
+    prisma.series.update({
+      where: { id: seriesId },
+      data: { totalViews: { increment: 1 } },
+    }).catch(() => null),
+  ]);
   return result;
 };
 

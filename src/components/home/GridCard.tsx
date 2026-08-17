@@ -1,6 +1,7 @@
 import type { Series } from "@/types";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Eye } from "lucide-react";
 
 interface GridCardProps {
   series: Series;
@@ -27,15 +28,23 @@ export function GridCard({ series, className }: GridCardProps) {
     >
       {/* Top badges */}
       <div className="absolute top-2 left-2 flex flex-wrap gap-1">
-        <span className="bg-black/55 border border-white/10 rounded px-1.5 py-px text-[10px] capitalize">
+        <span className="bg-black/55 backdrop-blur-sm border border-white/10 rounded px-1.5 py-px text-[10px] capitalize text-white/90">
           {series.type.toLowerCase()}
         </span>
         {series.status === 'COMPLETED' && (
-          <span className="bg-primary/80 border border-white/10 rounded px-1.5 py-px text-[10px] capitalize">
+          <span className="bg-primary/80 backdrop-blur-sm border border-white/10 rounded px-1.5 py-px text-[10px] capitalize text-white">
             Completed
           </span>
         )}
       </div>
+
+      {/* Top right views badge */}
+      {series.totalViews !== undefined && series.totalViews > 0 && (
+        <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 backdrop-blur-sm border border-white/10 rounded px-1.5 py-0.5 text-[10px] text-amber-300 font-mono">
+          <Eye className="w-2.5 h-2.5" />
+          <span>{series.totalViews.toLocaleString()}</span>
+        </div>
+      )}
 
       {/* Bottom overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent from-40% to-black/85 flex flex-col justify-end p-2.5">
