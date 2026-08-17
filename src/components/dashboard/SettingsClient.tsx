@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Globe, Share2, Save, Loader2, ShieldCheck, DollarSign,
   Sparkles, Smartphone, Megaphone, FileText, CheckCircle2,
-  AlertTriangle, Lock, Users, MessageCircle, BarChart3
+  AlertTriangle, Lock, Users, MessageCircle, BarChart3,
+  CreditCard, Banknote, Wallet
 } from "lucide-react";
 import { useGetSiteConfigQuery, useUpdateSiteConfigMutation } from "@/redux/api/siteConfigApi";
 import { toast } from "react-hot-toast";
@@ -28,6 +29,8 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
     allowNewRegistrations: configData.allowNewRegistrations ?? true,
     allowCreatorApplications: configData.allowCreatorApplications ?? true,
     enableGlobalChat: configData.enableGlobalChat ?? true,
+    enableStripePayment: configData.enableStripePayment ?? true,
+    enableCashOut: configData.enableCashOut ?? true,
 
     // Branding & Copy
     appName: configData.appName ?? "Genz Toon",
@@ -77,6 +80,30 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
     privacyPolicy: configData.privacyPolicy ?? "",
     dmcaEmail: configData.dmcaEmail ?? "",
   });
+
+  useEffect(() => {
+    if (configRes?.data) {
+      const d: any = configRes.data;
+      setForm((prev) => ({
+        ...prev,
+        ...d,
+        isMaintenanceMode: d.isMaintenanceMode ?? false,
+        maintenanceMessage: d.maintenanceMessage ?? "",
+        allowNewRegistrations: d.allowNewRegistrations ?? true,
+        allowCreatorApplications: d.allowCreatorApplications ?? true,
+        enableGlobalChat: d.enableGlobalChat ?? true,
+        enableStripePayment: d.enableStripePayment ?? true,
+        enableCashOut: d.enableCashOut ?? true,
+        pointToFiatRate: d.pointToFiatRate ?? 0.01,
+        minWithdrawalPoints: d.minWithdrawalPoints ?? 1000,
+        creatorRevenueSharePercent: d.creatorRevenueSharePercent ?? 70,
+        maxDailyAdPoints: d.maxDailyAdPoints ?? 1000,
+        featuredRequestFee: d.featuredRequestFee ?? 500,
+        referralBonusPercent: d.referralBonusPercent ?? 10,
+        referralActiveMonths: d.referralActiveMonths ?? 3,
+      }));
+    }
+  }, [configRes]);
 
   const updateField = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -237,6 +264,44 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Master switch to enable or pause public chat messages and reaction GIFs.
+                </p>
+              </div>
+
+              {/* Stripe Payment Gateway */}
+              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-blue-400" />
+                    <span className="font-bold text-sm text-white">Stripe Card Payments</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={form.enableStripePayment}
+                    onChange={(e) => updateField("enableStripePayment", e.target.checked)}
+                    className="w-5 h-5 rounded text-primary border-white/10"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Allow users to purchase point packages with credit/debit cards via Stripe. Disable to pause online purchases.
+                </p>
+              </div>
+
+              {/* CashOut & Manual Withdrawals */}
+              <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Wallet className="w-4 h-4 text-amber-400" />
+                    <span className="font-bold text-sm text-white">CashOut / Manual Payouts</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={form.enableCashOut}
+                    onChange={(e) => updateField("enableCashOut", e.target.checked)}
+                    className="w-5 h-5 rounded text-primary border-white/10"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Allow users to request CashOut via bKash, Nagad, Rocket, or Bank Transfer on their transactions page.
                 </p>
               </div>
             </div>

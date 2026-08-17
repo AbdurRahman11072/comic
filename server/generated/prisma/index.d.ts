@@ -14183,6 +14183,8 @@ export namespace Prisma {
     allowNewRegistrations: boolean | null
     allowCreatorApplications: boolean | null
     enableGlobalChat: boolean | null
+    enableStripePayment: boolean | null
+    enableCashOut: boolean | null
     seoTitle: string | null
     seoDescription: string | null
     seoKeywords: string | null
@@ -14220,6 +14222,8 @@ export namespace Prisma {
     allowNewRegistrations: boolean | null
     allowCreatorApplications: boolean | null
     enableGlobalChat: boolean | null
+    enableStripePayment: boolean | null
+    enableCashOut: boolean | null
     seoTitle: string | null
     seoDescription: string | null
     seoKeywords: string | null
@@ -14258,6 +14262,8 @@ export namespace Prisma {
     allowNewRegistrations: number
     allowCreatorApplications: number
     enableGlobalChat: number
+    enableStripePayment: number
+    enableCashOut: number
     seoTitle: number
     seoDescription: number
     seoKeywords: number
@@ -14317,6 +14323,8 @@ export namespace Prisma {
     allowNewRegistrations?: true
     allowCreatorApplications?: true
     enableGlobalChat?: true
+    enableStripePayment?: true
+    enableCashOut?: true
     seoTitle?: true
     seoDescription?: true
     seoKeywords?: true
@@ -14354,6 +14362,8 @@ export namespace Prisma {
     allowNewRegistrations?: true
     allowCreatorApplications?: true
     enableGlobalChat?: true
+    enableStripePayment?: true
+    enableCashOut?: true
     seoTitle?: true
     seoDescription?: true
     seoKeywords?: true
@@ -14392,6 +14402,8 @@ export namespace Prisma {
     allowNewRegistrations?: true
     allowCreatorApplications?: true
     enableGlobalChat?: true
+    enableStripePayment?: true
+    enableCashOut?: true
     seoTitle?: true
     seoDescription?: true
     seoKeywords?: true
@@ -14517,6 +14529,8 @@ export namespace Prisma {
     allowNewRegistrations: boolean
     allowCreatorApplications: boolean
     enableGlobalChat: boolean
+    enableStripePayment: boolean
+    enableCashOut: boolean
     seoTitle: string | null
     seoDescription: string | null
     seoKeywords: string | null
@@ -14574,6 +14588,8 @@ export namespace Prisma {
     allowNewRegistrations?: boolean
     allowCreatorApplications?: boolean
     enableGlobalChat?: boolean
+    enableStripePayment?: boolean
+    enableCashOut?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
     seoKeywords?: boolean
@@ -14612,6 +14628,8 @@ export namespace Prisma {
     allowNewRegistrations?: boolean
     allowCreatorApplications?: boolean
     enableGlobalChat?: boolean
+    enableStripePayment?: boolean
+    enableCashOut?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
     seoKeywords?: boolean
@@ -14650,6 +14668,8 @@ export namespace Prisma {
     allowNewRegistrations?: boolean
     allowCreatorApplications?: boolean
     enableGlobalChat?: boolean
+    enableStripePayment?: boolean
+    enableCashOut?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
     seoKeywords?: boolean
@@ -14688,6 +14708,8 @@ export namespace Prisma {
     allowNewRegistrations?: boolean
     allowCreatorApplications?: boolean
     enableGlobalChat?: boolean
+    enableStripePayment?: boolean
+    enableCashOut?: boolean
     seoTitle?: boolean
     seoDescription?: boolean
     seoKeywords?: boolean
@@ -14705,7 +14727,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
+  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "enableStripePayment" | "enableCashOut" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
 
   export type $SiteConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SiteConfig"
@@ -14731,6 +14753,8 @@ export namespace Prisma {
       allowNewRegistrations: boolean
       allowCreatorApplications: boolean
       enableGlobalChat: boolean
+      enableStripePayment: boolean
+      enableCashOut: boolean
       seoTitle: string | null
       seoDescription: string | null
       seoKeywords: string | null
@@ -15189,6 +15213,8 @@ export namespace Prisma {
     readonly allowNewRegistrations: FieldRef<"SiteConfig", 'Boolean'>
     readonly allowCreatorApplications: FieldRef<"SiteConfig", 'Boolean'>
     readonly enableGlobalChat: FieldRef<"SiteConfig", 'Boolean'>
+    readonly enableStripePayment: FieldRef<"SiteConfig", 'Boolean'>
+    readonly enableCashOut: FieldRef<"SiteConfig", 'Boolean'>
     readonly seoTitle: FieldRef<"SiteConfig", 'String'>
     readonly seoDescription: FieldRef<"SiteConfig", 'String'>
     readonly seoKeywords: FieldRef<"SiteConfig", 'String'>
@@ -27929,6 +27955,8 @@ export namespace Prisma {
     userId: string | null
     pointsRequested: number | null
     fiatAmount: number | null
+    paymentMethod: string | null
+    accountNumber: string | null
     bankDetails: string | null
     status: $Enums.ApplicationStatus | null
     notes: string | null
@@ -27941,6 +27969,8 @@ export namespace Prisma {
     userId: string | null
     pointsRequested: number | null
     fiatAmount: number | null
+    paymentMethod: string | null
+    accountNumber: string | null
     bankDetails: string | null
     status: $Enums.ApplicationStatus | null
     notes: string | null
@@ -27953,6 +27983,8 @@ export namespace Prisma {
     userId: number
     pointsRequested: number
     fiatAmount: number
+    paymentMethod: number
+    accountNumber: number
     bankDetails: number
     status: number
     notes: number
@@ -27977,6 +28009,8 @@ export namespace Prisma {
     userId?: true
     pointsRequested?: true
     fiatAmount?: true
+    paymentMethod?: true
+    accountNumber?: true
     bankDetails?: true
     status?: true
     notes?: true
@@ -27989,6 +28023,8 @@ export namespace Prisma {
     userId?: true
     pointsRequested?: true
     fiatAmount?: true
+    paymentMethod?: true
+    accountNumber?: true
     bankDetails?: true
     status?: true
     notes?: true
@@ -28001,6 +28037,8 @@ export namespace Prisma {
     userId?: true
     pointsRequested?: true
     fiatAmount?: true
+    paymentMethod?: true
+    accountNumber?: true
     bankDetails?: true
     status?: true
     notes?: true
@@ -28100,6 +28138,8 @@ export namespace Prisma {
     userId: string
     pointsRequested: number
     fiatAmount: number
+    paymentMethod: string
+    accountNumber: string | null
     bankDetails: string
     status: $Enums.ApplicationStatus
     notes: string | null
@@ -28131,6 +28171,8 @@ export namespace Prisma {
     userId?: boolean
     pointsRequested?: boolean
     fiatAmount?: boolean
+    paymentMethod?: boolean
+    accountNumber?: boolean
     bankDetails?: boolean
     status?: boolean
     notes?: boolean
@@ -28144,6 +28186,8 @@ export namespace Prisma {
     userId?: boolean
     pointsRequested?: boolean
     fiatAmount?: boolean
+    paymentMethod?: boolean
+    accountNumber?: boolean
     bankDetails?: boolean
     status?: boolean
     notes?: boolean
@@ -28157,6 +28201,8 @@ export namespace Prisma {
     userId?: boolean
     pointsRequested?: boolean
     fiatAmount?: boolean
+    paymentMethod?: boolean
+    accountNumber?: boolean
     bankDetails?: boolean
     status?: boolean
     notes?: boolean
@@ -28170,6 +28216,8 @@ export namespace Prisma {
     userId?: boolean
     pointsRequested?: boolean
     fiatAmount?: boolean
+    paymentMethod?: boolean
+    accountNumber?: boolean
     bankDetails?: boolean
     status?: boolean
     notes?: boolean
@@ -28177,7 +28225,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type WithdrawalRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "pointsRequested" | "fiatAmount" | "bankDetails" | "status" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["withdrawalRequest"]>
+  export type WithdrawalRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "pointsRequested" | "fiatAmount" | "paymentMethod" | "accountNumber" | "bankDetails" | "status" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["withdrawalRequest"]>
   export type WithdrawalRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -28198,6 +28246,8 @@ export namespace Prisma {
       userId: string
       pointsRequested: number
       fiatAmount: number
+      paymentMethod: string
+      accountNumber: string | null
       bankDetails: string
       status: $Enums.ApplicationStatus
       notes: string | null
@@ -28631,6 +28681,8 @@ export namespace Prisma {
     readonly userId: FieldRef<"WithdrawalRequest", 'String'>
     readonly pointsRequested: FieldRef<"WithdrawalRequest", 'Int'>
     readonly fiatAmount: FieldRef<"WithdrawalRequest", 'Float'>
+    readonly paymentMethod: FieldRef<"WithdrawalRequest", 'String'>
+    readonly accountNumber: FieldRef<"WithdrawalRequest", 'String'>
     readonly bankDetails: FieldRef<"WithdrawalRequest", 'String'>
     readonly status: FieldRef<"WithdrawalRequest", 'ApplicationStatus'>
     readonly notes: FieldRef<"WithdrawalRequest", 'String'>
@@ -39237,6 +39289,8 @@ export namespace Prisma {
     allowNewRegistrations: 'allowNewRegistrations',
     allowCreatorApplications: 'allowCreatorApplications',
     enableGlobalChat: 'enableGlobalChat',
+    enableStripePayment: 'enableStripePayment',
+    enableCashOut: 'enableCashOut',
     seoTitle: 'seoTitle',
     seoDescription: 'seoDescription',
     seoKeywords: 'seoKeywords',
@@ -39412,6 +39466,8 @@ export namespace Prisma {
     userId: 'userId',
     pointsRequested: 'pointsRequested',
     fiatAmount: 'fiatAmount',
+    paymentMethod: 'paymentMethod',
+    accountNumber: 'accountNumber',
     bankDetails: 'bankDetails',
     status: 'status',
     notes: 'notes',
@@ -40617,6 +40673,8 @@ export namespace Prisma {
     allowNewRegistrations?: BoolFilter<"SiteConfig"> | boolean
     allowCreatorApplications?: BoolFilter<"SiteConfig"> | boolean
     enableGlobalChat?: BoolFilter<"SiteConfig"> | boolean
+    enableStripePayment?: BoolFilter<"SiteConfig"> | boolean
+    enableCashOut?: BoolFilter<"SiteConfig"> | boolean
     seoTitle?: StringNullableFilter<"SiteConfig"> | string | null
     seoDescription?: StringNullableFilter<"SiteConfig"> | string | null
     seoKeywords?: StringNullableFilter<"SiteConfig"> | string | null
@@ -40655,6 +40713,8 @@ export namespace Prisma {
     allowNewRegistrations?: SortOrder
     allowCreatorApplications?: SortOrder
     enableGlobalChat?: SortOrder
+    enableStripePayment?: SortOrder
+    enableCashOut?: SortOrder
     seoTitle?: SortOrderInput | SortOrder
     seoDescription?: SortOrderInput | SortOrder
     seoKeywords?: SortOrderInput | SortOrder
@@ -40696,6 +40756,8 @@ export namespace Prisma {
     allowNewRegistrations?: BoolFilter<"SiteConfig"> | boolean
     allowCreatorApplications?: BoolFilter<"SiteConfig"> | boolean
     enableGlobalChat?: BoolFilter<"SiteConfig"> | boolean
+    enableStripePayment?: BoolFilter<"SiteConfig"> | boolean
+    enableCashOut?: BoolFilter<"SiteConfig"> | boolean
     seoTitle?: StringNullableFilter<"SiteConfig"> | string | null
     seoDescription?: StringNullableFilter<"SiteConfig"> | string | null
     seoKeywords?: StringNullableFilter<"SiteConfig"> | string | null
@@ -40734,6 +40796,8 @@ export namespace Prisma {
     allowNewRegistrations?: SortOrder
     allowCreatorApplications?: SortOrder
     enableGlobalChat?: SortOrder
+    enableStripePayment?: SortOrder
+    enableCashOut?: SortOrder
     seoTitle?: SortOrderInput | SortOrder
     seoDescription?: SortOrderInput | SortOrder
     seoKeywords?: SortOrderInput | SortOrder
@@ -40780,6 +40844,8 @@ export namespace Prisma {
     allowNewRegistrations?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
     allowCreatorApplications?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
     enableGlobalChat?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
+    enableStripePayment?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
+    enableCashOut?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
     seoTitle?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     seoDescription?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     seoKeywords?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
@@ -41590,6 +41656,8 @@ export namespace Prisma {
     userId?: StringFilter<"WithdrawalRequest"> | string
     pointsRequested?: IntFilter<"WithdrawalRequest"> | number
     fiatAmount?: FloatFilter<"WithdrawalRequest"> | number
+    paymentMethod?: StringFilter<"WithdrawalRequest"> | string
+    accountNumber?: StringNullableFilter<"WithdrawalRequest"> | string | null
     bankDetails?: StringFilter<"WithdrawalRequest"> | string
     status?: EnumApplicationStatusFilter<"WithdrawalRequest"> | $Enums.ApplicationStatus
     notes?: StringNullableFilter<"WithdrawalRequest"> | string | null
@@ -41603,6 +41671,8 @@ export namespace Prisma {
     userId?: SortOrder
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
+    paymentMethod?: SortOrder
+    accountNumber?: SortOrderInput | SortOrder
     bankDetails?: SortOrder
     status?: SortOrder
     notes?: SortOrderInput | SortOrder
@@ -41619,6 +41689,8 @@ export namespace Prisma {
     userId?: StringFilter<"WithdrawalRequest"> | string
     pointsRequested?: IntFilter<"WithdrawalRequest"> | number
     fiatAmount?: FloatFilter<"WithdrawalRequest"> | number
+    paymentMethod?: StringFilter<"WithdrawalRequest"> | string
+    accountNumber?: StringNullableFilter<"WithdrawalRequest"> | string | null
     bankDetails?: StringFilter<"WithdrawalRequest"> | string
     status?: EnumApplicationStatusFilter<"WithdrawalRequest"> | $Enums.ApplicationStatus
     notes?: StringNullableFilter<"WithdrawalRequest"> | string | null
@@ -41632,6 +41704,8 @@ export namespace Prisma {
     userId?: SortOrder
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
+    paymentMethod?: SortOrder
+    accountNumber?: SortOrderInput | SortOrder
     bankDetails?: SortOrder
     status?: SortOrder
     notes?: SortOrderInput | SortOrder
@@ -41652,6 +41726,8 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
     pointsRequested?: IntWithAggregatesFilter<"WithdrawalRequest"> | number
     fiatAmount?: FloatWithAggregatesFilter<"WithdrawalRequest"> | number
+    paymentMethod?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    accountNumber?: StringNullableWithAggregatesFilter<"WithdrawalRequest"> | string | null
     bankDetails?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
     status?: EnumApplicationStatusWithAggregatesFilter<"WithdrawalRequest"> | $Enums.ApplicationStatus
     notes?: StringNullableWithAggregatesFilter<"WithdrawalRequest"> | string | null
@@ -43191,6 +43267,8 @@ export namespace Prisma {
     allowNewRegistrations?: boolean
     allowCreatorApplications?: boolean
     enableGlobalChat?: boolean
+    enableStripePayment?: boolean
+    enableCashOut?: boolean
     seoTitle?: string | null
     seoDescription?: string | null
     seoKeywords?: string | null
@@ -43229,6 +43307,8 @@ export namespace Prisma {
     allowNewRegistrations?: boolean
     allowCreatorApplications?: boolean
     enableGlobalChat?: boolean
+    enableStripePayment?: boolean
+    enableCashOut?: boolean
     seoTitle?: string | null
     seoDescription?: string | null
     seoKeywords?: string | null
@@ -43267,6 +43347,8 @@ export namespace Prisma {
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
     allowCreatorApplications?: BoolFieldUpdateOperationsInput | boolean
     enableGlobalChat?: BoolFieldUpdateOperationsInput | boolean
+    enableStripePayment?: BoolFieldUpdateOperationsInput | boolean
+    enableCashOut?: BoolFieldUpdateOperationsInput | boolean
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoKeywords?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43305,6 +43387,8 @@ export namespace Prisma {
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
     allowCreatorApplications?: BoolFieldUpdateOperationsInput | boolean
     enableGlobalChat?: BoolFieldUpdateOperationsInput | boolean
+    enableStripePayment?: BoolFieldUpdateOperationsInput | boolean
+    enableCashOut?: BoolFieldUpdateOperationsInput | boolean
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoKeywords?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43343,6 +43427,8 @@ export namespace Prisma {
     allowNewRegistrations?: boolean
     allowCreatorApplications?: boolean
     enableGlobalChat?: boolean
+    enableStripePayment?: boolean
+    enableCashOut?: boolean
     seoTitle?: string | null
     seoDescription?: string | null
     seoKeywords?: string | null
@@ -43381,6 +43467,8 @@ export namespace Prisma {
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
     allowCreatorApplications?: BoolFieldUpdateOperationsInput | boolean
     enableGlobalChat?: BoolFieldUpdateOperationsInput | boolean
+    enableStripePayment?: BoolFieldUpdateOperationsInput | boolean
+    enableCashOut?: BoolFieldUpdateOperationsInput | boolean
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoKeywords?: NullableStringFieldUpdateOperationsInput | string | null
@@ -43419,6 +43507,8 @@ export namespace Prisma {
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
     allowCreatorApplications?: BoolFieldUpdateOperationsInput | boolean
     enableGlobalChat?: BoolFieldUpdateOperationsInput | boolean
+    enableStripePayment?: BoolFieldUpdateOperationsInput | boolean
+    enableCashOut?: BoolFieldUpdateOperationsInput | boolean
     seoTitle?: NullableStringFieldUpdateOperationsInput | string | null
     seoDescription?: NullableStringFieldUpdateOperationsInput | string | null
     seoKeywords?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44268,6 +44358,8 @@ export namespace Prisma {
     id?: string
     pointsRequested: number
     fiatAmount: number
+    paymentMethod?: string
+    accountNumber?: string | null
     bankDetails: string
     status?: $Enums.ApplicationStatus
     notes?: string | null
@@ -44281,6 +44373,8 @@ export namespace Prisma {
     userId: string
     pointsRequested: number
     fiatAmount: number
+    paymentMethod?: string
+    accountNumber?: string | null
     bankDetails: string
     status?: $Enums.ApplicationStatus
     notes?: string | null
@@ -44292,6 +44386,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     bankDetails?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44305,6 +44401,8 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     bankDetails?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44317,6 +44415,8 @@ export namespace Prisma {
     userId: string
     pointsRequested: number
     fiatAmount: number
+    paymentMethod?: string
+    accountNumber?: string | null
     bankDetails: string
     status?: $Enums.ApplicationStatus
     notes?: string | null
@@ -44328,6 +44428,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     bankDetails?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44340,6 +44442,8 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     bankDetails?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -45904,6 +46008,8 @@ export namespace Prisma {
     allowNewRegistrations?: SortOrder
     allowCreatorApplications?: SortOrder
     enableGlobalChat?: SortOrder
+    enableStripePayment?: SortOrder
+    enableCashOut?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
     seoKeywords?: SortOrder
@@ -45951,6 +46057,8 @@ export namespace Prisma {
     allowNewRegistrations?: SortOrder
     allowCreatorApplications?: SortOrder
     enableGlobalChat?: SortOrder
+    enableStripePayment?: SortOrder
+    enableCashOut?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
     seoKeywords?: SortOrder
@@ -45988,6 +46096,8 @@ export namespace Prisma {
     allowNewRegistrations?: SortOrder
     allowCreatorApplications?: SortOrder
     enableGlobalChat?: SortOrder
+    enableStripePayment?: SortOrder
+    enableCashOut?: SortOrder
     seoTitle?: SortOrder
     seoDescription?: SortOrder
     seoKeywords?: SortOrder
@@ -46597,6 +46707,8 @@ export namespace Prisma {
     userId?: SortOrder
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
+    paymentMethod?: SortOrder
+    accountNumber?: SortOrder
     bankDetails?: SortOrder
     status?: SortOrder
     notes?: SortOrder
@@ -46614,6 +46726,8 @@ export namespace Prisma {
     userId?: SortOrder
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
+    paymentMethod?: SortOrder
+    accountNumber?: SortOrder
     bankDetails?: SortOrder
     status?: SortOrder
     notes?: SortOrder
@@ -46626,6 +46740,8 @@ export namespace Prisma {
     userId?: SortOrder
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
+    paymentMethod?: SortOrder
+    accountNumber?: SortOrder
     bankDetails?: SortOrder
     status?: SortOrder
     notes?: SortOrder
@@ -49911,6 +50027,8 @@ export namespace Prisma {
     id?: string
     pointsRequested: number
     fiatAmount: number
+    paymentMethod?: string
+    accountNumber?: string | null
     bankDetails: string
     status?: $Enums.ApplicationStatus
     notes?: string | null
@@ -49922,6 +50040,8 @@ export namespace Prisma {
     id?: string
     pointsRequested: number
     fiatAmount: number
+    paymentMethod?: string
+    accountNumber?: string | null
     bankDetails: string
     status?: $Enums.ApplicationStatus
     notes?: string | null
@@ -50670,6 +50790,8 @@ export namespace Prisma {
     userId?: StringFilter<"WithdrawalRequest"> | string
     pointsRequested?: IntFilter<"WithdrawalRequest"> | number
     fiatAmount?: FloatFilter<"WithdrawalRequest"> | number
+    paymentMethod?: StringFilter<"WithdrawalRequest"> | string
+    accountNumber?: StringNullableFilter<"WithdrawalRequest"> | string | null
     bankDetails?: StringFilter<"WithdrawalRequest"> | string
     status?: EnumApplicationStatusFilter<"WithdrawalRequest"> | $Enums.ApplicationStatus
     notes?: StringNullableFilter<"WithdrawalRequest"> | string | null
@@ -56717,6 +56839,8 @@ export namespace Prisma {
     id?: string
     pointsRequested: number
     fiatAmount: number
+    paymentMethod?: string
+    accountNumber?: string | null
     bankDetails: string
     status?: $Enums.ApplicationStatus
     notes?: string | null
@@ -57226,6 +57350,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     bankDetails?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57237,6 +57363,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     bankDetails?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57248,6 +57376,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
+    paymentMethod?: StringFieldUpdateOperationsInput | string
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     bankDetails?: StringFieldUpdateOperationsInput | string
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null

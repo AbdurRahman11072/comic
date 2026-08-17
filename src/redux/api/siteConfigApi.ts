@@ -21,6 +21,8 @@ export interface SiteConfigData {
   allowNewRegistrations: boolean;
   allowCreatorApplications: boolean;
   enableGlobalChat: boolean;
+  enableStripePayment?: boolean;
+  enableCashOut?: boolean;
 
   // SEO & Tracking
   seoTitle?: string | null;

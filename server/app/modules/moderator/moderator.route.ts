@@ -19,6 +19,7 @@ router.post('/series-applications/:id/review', modAuth, ModeratorController.revi
 // Withdrawal Requests
 router.get('/withdrawals', modAuth, ModeratorController.getWithdrawalRequests);
 router.post('/withdrawals/:id/review', modAuth, ModeratorController.reviewWithdrawalRequest);
+router.get('/users/:userId/financial-history', modAuth, ModeratorController.getUserFinancialHistory);
 
 // Featured Requests
 router.get('/featured-requests', modAuth, ModeratorController.getFeaturedRequests);

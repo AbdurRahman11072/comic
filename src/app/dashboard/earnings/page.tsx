@@ -12,11 +12,13 @@ interface UserProfile {
   dailyAdViews: number;
   dailyAdPointsEarned: number;
   referralCode: string;
+  transactionsFrozen?: boolean;
 }
 
 export default function EarningsPage() {
   const { data: session } = authClient.useSession();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [siteConfig, setSiteConfig] = useState<{ enableCashOut?: boolean; minWithdrawalPoints?: number; pointToFiatRate?: number } | null>(null);
   const [loading, setLoading] = useState(true);
   
   // Withdrawal Form State
@@ -26,18 +28,21 @@ export default function EarningsPage() {
   const [message, setMessage] = useState<{type: 'success'|'error', text: string} | null>(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      if (!session?.user?.id) return;
+    const fetchData = async () => {
       try {
-        const res = await api.get(`/user/profile`);
-        setProfile(res.data.data);
+        const [profileRes, configRes] = await Promise.all([
+          session?.user?.id ? api.get(`/user/profile`) : Promise.resolve(null),
+          api.get(`/site-config`),
+        ]);
+        if (profileRes) setProfile(profileRes.data?.data);
+        if (configRes) setSiteConfig(configRes.data?.data);
       } catch (err) {
-        console.error("Failed to fetch profile", err);
+        console.error("Failed to fetch profile or config", err);
       } finally {
         setLoading(false);
       }
     };
-    fetchProfile();
+    fetchData();
   }, [session]);
 
   const handleWithdraw = async (e: React.FormEvent) => {
@@ -138,36 +143,62 @@ export default function EarningsPage() {
         <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
           Request Withdrawal
         </h3>
+
+        {profile?.transactionsFrozen ? (
+          <div className="mb-6 p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-3 text-rose-400">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <div>
+              <p className="font-bold text-sm">Account Transactions Frozen</p>
+              <p className="text-xs text-rose-400/80">
+                Your account transactions have been frozen by moderation. Cashout is temporarily disabled. Please contact support.
+              </p>
+            </div>
+          </div>
+        ) : siteConfig?.enableCashOut === false ? (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 text-amber-400">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <div>
+              <p className="font-bold text-sm">Cashout / Manual Payouts Turned Off</p>
+              <p className="text-xs text-amber-400/80">
+                Manual cashout and payouts are currently paused by administration. Please check back later.
+              </p>
+            </div>
+          </div>
+        ) : null}
         
         <form onSubmit={handleWithdraw} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium mb-2">Points to Withdraw (Min. 5000)</label>
+            <label className="block text-sm font-medium mb-2">
+              Points to Withdraw (Min. {siteConfig?.minWithdrawalPoints?.toLocaleString() || "1,000"})
+            </label>
             <input
               type="number"
-              min="5000"
+              min={siteConfig?.minWithdrawalPoints || 1000}
               max={profile?.points || 0}
               value={withdrawAmount}
+              disabled={profile?.transactionsFrozen || siteConfig?.enableCashOut === false}
               onChange={(e) => setWithdrawAmount(e.target.value)}
-              placeholder="e.g. 10000"
+              placeholder={`e.g. ${siteConfig?.minWithdrawalPoints || 1000}`}
               required
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition"
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition disabled:opacity-50"
             />
             {Number(withdrawAmount) > 0 && (
               <p className="text-xs text-emerald-400 mt-2">
-                You will receive approximately ${(Number(withdrawAmount) * 0.01).toFixed(2)} USD
+                You will receive approximately ${(Number(withdrawAmount) * (siteConfig?.pointToFiatRate || 0.01)).toFixed(2)} USD
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Bank Details / PayPal Address</label>
+            <label className="block text-sm font-medium mb-2">Bank Details / Payout Destination</label>
             <textarea
               value={bankDetails}
+              disabled={profile?.transactionsFrozen || siteConfig?.enableCashOut === false}
               onChange={(e) => setBankDetails(e.target.value)}
-              placeholder="Provide your payout destination details..."
+              placeholder="Provide your payment details (e.g., bKash / Nagad number or Bank info)..."
               required
               rows={3}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition resize-none"
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition resize-none disabled:opacity-50"
             />
           </div>
 
@@ -182,11 +213,27 @@ export default function EarningsPage() {
 
           <button
             type="submit"
-            disabled={withdrawLoading || !withdrawAmount || Number(withdrawAmount) < 5000 || Number(withdrawAmount) > (profile?.points || 0)}
+            disabled={
+              profile?.transactionsFrozen ||
+              siteConfig?.enableCashOut === false ||
+              withdrawLoading ||
+              !withdrawAmount ||
+              Number(withdrawAmount) < (siteConfig?.minWithdrawalPoints || 1000) ||
+              Number(withdrawAmount) > (profile?.points || 0)
+            }
             className="px-6 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary/90 transition disabled:opacity-50 flex items-center justify-center gap-2 w-full md:w-auto"
           >
-            {withdrawLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ArrowRight className="w-4 h-4" />}
-            Submit Request
+            {withdrawLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : profile?.transactionsFrozen ? (
+              "Account Has Been Frozen"
+            ) : siteConfig?.enableCashOut === false ? (
+              "Cashout Is Turned Off"
+            ) : (
+              <>
+                <ArrowRight className="w-4 h-4" /> Submit Request
+              </>
+            )}
           </button>
         </form>
       </div>

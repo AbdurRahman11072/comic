@@ -57,6 +57,7 @@ export default async function proxy(request: NextRequest) {
       path.startsWith('/dashboard/users') ||
       path.startsWith('/dashboard/applications') ||
       path.startsWith('/dashboard/withdrawals') ||
+      path.startsWith('/dashboard/cashout') ||
       path.startsWith('/dashboard/reports') ||
       path.startsWith('/dashboard/comments') ||
       path.startsWith('/dashboard/ads')

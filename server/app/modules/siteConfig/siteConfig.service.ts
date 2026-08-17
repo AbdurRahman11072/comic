@@ -75,6 +75,8 @@ const updateConfig = async (data: any) => {
   if (configData.allowNewRegistrations !== undefined) configData.allowNewRegistrations = Boolean(configData.allowNewRegistrations);
   if (configData.allowCreatorApplications !== undefined) configData.allowCreatorApplications = Boolean(configData.allowCreatorApplications);
   if (configData.enableGlobalChat !== undefined) configData.enableGlobalChat = Boolean(configData.enableGlobalChat);
+  if (configData.enableStripePayment !== undefined) configData.enableStripePayment = Boolean(configData.enableStripePayment);
+  if (configData.enableCashOut !== undefined) configData.enableCashOut = Boolean(configData.enableCashOut);
 
   const updated = await prisma.siteConfig.upsert({
     where: { id: 'global' },

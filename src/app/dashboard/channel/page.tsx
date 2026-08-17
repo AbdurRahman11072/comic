@@ -1,20 +1,22 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { authClient } from "@/lib/auth-client";
 import api from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
 import {
-  Palette,
   Camera,
-  Save,
-  Loader2,
-  User as UserIcon,
-  Image as ImageIcon,
-  Type,
   FileText,
+  Image as ImageIcon,
+  Loader2,
   MessageSquare,
+  Palette,
+  Save,
   Trash2,
+  TrendingUp,
+  Type,
+  User as UserIcon,
+  ExternalLink,
 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 
 interface CreatorProfile {
@@ -140,221 +142,235 @@ export default function ChannelSettingsPage() {
   }
 
   return (
-    <div className="space-y-8 max-w-3xl">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold flex items-center gap-2">
-          <Palette className="w-6 h-6 text-primary" /> Channel Settings
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Customize your creator channel's appearance and details.
-        </p>
+    <div className="space-y-8 w-full">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Palette className="w-6 h-6 text-primary" /> Channel Settings
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Customize your creator channel's appearance, publish announcements, and review stats.
+          </p>
+        </div>
+
+        {profile && (
+          <a
+            href={`/channel/${session?.user?.id}`}
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2.5 rounded-xl glass glass-hover text-xs font-semibold text-primary flex items-center gap-2 transition self-start sm:self-auto"
+          >
+            <span>View Public Channel</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+        )}
       </div>
 
-      <form onSubmit={handleSave} className="space-y-8">
-        {/* Banner */}
-        <div className="glass rounded-2xl border border-white/5 overflow-hidden">
-          <div
-            className="relative h-48 bg-gradient-to-br from-primary/20 via-purple-500/10 to-cyan-500/10 group cursor-pointer"
-            onClick={() => bannerInputRef.current?.click()}
-            style={
-              bannerUrl
-                ? {
-                    backgroundImage: `url(${bannerUrl})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }
-                : undefined
-            }
-          >
-            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              {uploadingBanner ? (
-                <Loader2 className="w-6 h-6 animate-spin text-white" />
-              ) : (
-                <>
-                  <ImageIcon className="w-6 h-6 text-white" />
-                  <span className="text-white font-medium text-sm">
-                    {bannerUrl ? "Change Banner" : "Upload Banner"}
-                  </span>
-                </>
-              )}
-            </div>
-            <input
-              ref={bannerInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleImageUpload(file, setBannerUrl, setUploadingBanner);
-              }}
-            />
-          </div>
-
-          {/* Profile Image + Channel Name Preview */}
-          <div className="relative px-6 pb-6">
-            <div className="flex items-end gap-5 -mt-12">
+      {/* 2-Column Responsive Layout: Form on Left, Stats & Announcements on Right */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* LEFT COLUMN: Channel Customization Form (7 Cols) */}
+        <div className="lg:col-span-7 space-y-6">
+          <form onSubmit={handleSave} className="space-y-6">
+            {/* Banner & Profile Preview Card */}
+            <div className="glass rounded-2xl border border-white/5 overflow-hidden">
               <div
-                className="relative w-24 h-24 rounded-2xl border-4 border-background bg-white/5 overflow-hidden group cursor-pointer shrink-0"
-                onClick={() => profileInputRef.current?.click()}
+                className="relative h-48 bg-gradient-to-br from-primary/20 via-purple-500/10 to-cyan-500/10 group cursor-pointer"
+                onClick={() => bannerInputRef.current?.click()}
+                style={
+                  bannerUrl
+                    ? {
+                        backgroundImage: `url(${bannerUrl})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }
+                    : undefined
+                }
               >
-                {profileImage ? (
-                  <img
-                    src={profileImage}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <UserIcon className="w-10 h-10 text-muted-foreground" />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  {uploadingProfile ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-white" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[2px]">
+                  {uploadingBanner ? (
+                    <Loader2 className="w-6 h-6 animate-spin text-white" />
                   ) : (
-                    <Camera className="w-5 h-5 text-white" />
+                    <>
+                      <ImageIcon className="w-5 h-5 text-white" />
+                      <span className="text-white font-medium text-xs">
+                        {bannerUrl ? "Change Channel Banner" : "Upload Channel Banner"}
+                      </span>
+                    </>
                   )}
                 </div>
                 <input
-                  ref={profileInputRef}
+                  ref={bannerInputRef}
                   type="file"
                   accept="image/*"
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (file) handleImageUpload(file, setProfileImage, setUploadingProfile);
+                    if (file) handleImageUpload(file, setBannerUrl, setUploadingBanner);
                   }}
                 />
               </div>
-              <div className="pb-1 min-w-0">
-                <h2 className="text-xl font-bold truncate">
-                  {channelName || "Your Channel"}
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                  {notFound
-                    ? "No profile yet — fill out the details below to create one."
-                    : "Creator since " +
-                      (profile?.id
-                        ? new Date().toLocaleDateString()
-                        : "—")}
+
+              {/* Profile Image + Channel Info Bar */}
+              <div className="relative px-6 pb-6">
+                <div className="flex items-end gap-5 -mt-12">
+                  <div
+                    className="relative w-24 h-24 rounded-2xl border-4 border-[#0d0f17] bg-white/5 overflow-hidden group cursor-pointer shrink-0 shadow-xl"
+                    onClick={() => profileInputRef.current?.click()}
+                  >
+                    {profileImage ? (
+                      <img
+                        src={profileImage}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <UserIcon className="w-10 h-10 text-muted-foreground" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[1px]">
+                      {uploadingProfile ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-white" />
+                      ) : (
+                        <Camera className="w-5 h-5 text-white" />
+                      )}
+                    </div>
+                    <input
+                      ref={profileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(file, setProfileImage, setUploadingProfile);
+                      }}
+                    />
+                  </div>
+                  <div className="pb-1 min-w-0">
+                    <h2 className="text-xl font-bold truncate text-white">
+                      {channelName || "Your Channel"}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
+                      {notFound
+                        ? "No profile yet — fill out the details below to create one."
+                        : "Creator Profile"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Form Fields Card */}
+            <div className="glass rounded-2xl p-6 border border-white/5 space-y-6">
+              {/* Channel Name */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                  <Type className="w-4 h-4 text-muted-foreground" /> Channel Name
+                </label>
+                <input
+                  type="text"
+                  value={channelName}
+                  onChange={(e) => setChannelName(e.target.value)}
+                  placeholder="My Awesome Channel"
+                  required
+                  maxLength={60}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition text-white placeholder:text-muted-foreground text-sm"
+                />
+                <p className="text-[11px] text-muted-foreground mt-1.5 flex justify-between">
+                  <span>This is the public name displayed on your creator profile.</span>
+                  <span>{channelName.length}/60</span>
+                </p>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                  <FileText className="w-4 h-4 text-muted-foreground" /> Channel Description
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Tell readers about your channel, your style, and what series you publish..."
+                  rows={5}
+                  maxLength={500}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition text-white placeholder:text-muted-foreground resize-none text-sm"
+                />
+                <p className="text-[11px] text-muted-foreground mt-1.5 text-right">
+                  {description.length}/500 characters
                 </p>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Form Fields */}
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-6">
-          {/* Channel Name */}
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium mb-2">
-              <Type className="w-4 h-4 text-muted-foreground" /> Channel Name
-            </label>
-            <input
-              type="text"
-              value={channelName}
-              onChange={(e) => setChannelName(e.target.value)}
-              placeholder="My Awesome Channel"
-              required
-              maxLength={60}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition text-white placeholder:text-muted-foreground"
-            />
-            <p className="text-[11px] text-muted-foreground mt-1.5">
-              This is the public name displayed on your creator profile.{" "}
-              {channelName.length}/60
-            </p>
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium mb-2">
-              <FileText className="w-4 h-4 text-muted-foreground" /> Channel
-              Description
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Tell readers about your channel, your style, and what series you publish..."
-              rows={5}
-              maxLength={500}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none transition text-white placeholder:text-muted-foreground resize-none"
-            />
-            <p className="text-[11px] text-muted-foreground mt-1.5">
-              {description.length}/500 characters
-            </p>
-          </div>
-        </div>
-
-        {/* Stats Preview (read-only) */}
-        {profile && (
-          <div className="glass rounded-2xl p-6 border border-white/5">
-            <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-4">
-              Channel Stats
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                <p className="text-2xl font-bold text-emerald-400">
-                  {profile.totalEarnings.toLocaleString()}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Total Earnings (P)
-                </p>
-              </div>
-              <div className="p-4 rounded-xl bg-white/5 border border-white/5">
-                <p className="text-2xl font-bold text-amber-400">
-                  {profile.withdrawnAmount.toLocaleString()}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Withdrawn (P)
-                </p>
-              </div>
+            {/* Save Button */}
+            <div className="flex items-center justify-end pt-2">
+              <button
+                type="submit"
+                disabled={saving || !channelName.trim()}
+                className="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20"
+              >
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                {saving ? "Saving..." : "Save Settings"}
+              </button>
             </div>
-          </div>
-        )}
+          </form>
+        </div>
 
-        {/* Save Button */}
-        <div className="flex items-center justify-between pt-4">
+        {/* RIGHT COLUMN: Channel Stats & Announcements (5 Cols) */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* Stats Preview Card */}
           {profile && (
-            <a
-              href={`/channel/${session?.user?.id}`}
-              target="_blank"
-              rel="noreferrer"
-              className="text-xs text-primary hover:underline font-semibold flex items-center gap-1.5"
-            >
-              View My Public Channel →
-            </a>
+            <div className="glass rounded-2xl p-6 border border-white/5 space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-emerald-400" /> Channel Stats
+                </h3>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">
+                  Active Creator
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                  <p className="text-2xl font-extrabold text-emerald-400">
+                    {profile.totalEarnings.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">
+                    Total Earnings (P)
+                  </p>
+                </div>
+                <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                  <p className="text-2xl font-extrabold text-amber-400">
+                    {profile.withdrawnAmount.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1 font-medium">
+                    Withdrawn (P)
+                  </p>
+                </div>
+              </div>
+            </div>
           )}
-          <button
-            type="submit"
-            disabled={saving || !channelName.trim()}
-            className="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20 ml-auto"
-          >
-            {saving ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4" />
-            )}
-            {saving ? "Saving..." : "Save Settings"}
-          </button>
-        </div>
-      </form>
 
-      {/* Creator Announcements Manager */}
-      {profile && (
-        <div className="glass rounded-2xl p-6 border border-white/5 space-y-6 mt-12">
-          <div>
-            <h2 className="text-xl font-bold flex items-center gap-2 text-white">
-              <MessageSquare className="w-5 h-5 text-primary" /> Channel Announcements
-            </h2>
-            <p className="text-xs text-muted-foreground mt-1">
-              Post updates, hiatus notices, and announcements visible to everyone on your channel.
-            </p>
-          </div>
+          {/* Creator Announcements Manager */}
+          {profile && (
+            <div className="glass rounded-2xl p-6 border border-white/5 space-y-5">
+              <div>
+                <h2 className="text-lg font-bold flex items-center gap-2 text-white">
+                  <MessageSquare className="w-5 h-5 text-primary" /> Channel Announcements
+                </h2>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Post updates, hiatus notices, and announcements visible on your channel.
+                </p>
+              </div>
 
-          <ChannelAnnouncementComposer creatorId={session?.user?.id as string} />
+              <ChannelAnnouncementComposer creatorId={session?.user?.id as string} />
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -421,16 +437,16 @@ function ChannelAnnouncementComposer({ creatorId }: { creatorId: string }) {
   };
 
   return (
-    <div className="space-y-6">
-      <form onSubmit={handlePost} className="space-y-4 p-4 rounded-xl bg-white/[0.02] border border-white/5">
+    <div className="space-y-5">
+      <form onSubmit={handlePost} className="space-y-3.5 p-4 rounded-xl bg-white/[0.02] border border-white/5">
         <div>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Announcement Title (e.g. Next Chapter Delayed to Friday)"
+            placeholder="Announcement Title (e.g. Next Chapter Delayed)"
             required
-            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-xs"
           />
         </div>
         <div>
@@ -440,33 +456,33 @@ function ChannelAnnouncementComposer({ creatorId }: { creatorId: string }) {
             placeholder="Write your announcement content..."
             rows={3}
             required
-            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm resize-none"
+            className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-xs resize-none"
           />
         </div>
-        <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+        <div className="flex items-center justify-between gap-2 flex-wrap pt-1">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
             <input
               type="checkbox"
               checked={isPinned}
               onChange={(e) => setIsPinned(e.target.checked)}
               className="w-4 h-4 rounded text-primary border-white/10"
             />
-            Pin to top of channel
+            Pin to top
           </label>
           <button
             type="submit"
             disabled={posting || !title.trim() || !content.trim()}
-            className="px-5 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary/90 transition disabled:opacity-50 flex items-center gap-2"
+            className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary/90 transition disabled:opacity-50 flex items-center gap-1.5 shrink-0"
           >
             {posting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-            Publish Announcement
+            Publish
           </button>
         </div>
       </form>
 
       {/* Published Announcements List */}
       <div className="space-y-3">
-        <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+        <h3 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
           Published Announcements ({posts.length})
         </h3>
         {loadingPosts ? (
@@ -474,36 +490,39 @@ function ChannelAnnouncementComposer({ creatorId }: { creatorId: string }) {
             <Loader2 className="w-5 h-5 animate-spin text-primary" />
           </div>
         ) : posts.length > 0 ? (
-          posts.map((p) => (
-            <div
-              key={p.id}
-              className="p-4 rounded-xl glass border border-white/5 flex items-start justify-between gap-4"
-            >
-              <div>
-                <div className="flex items-center gap-2">
-                  {p.isPinned && (
-                    <span className="px-1.5 py-0.5 rounded bg-primary/20 text-primary text-[10px] font-bold">
-                      PINNED
-                    </span>
-                  )}
-                  <h4 className="font-bold text-sm text-white">{p.title}</h4>
-                </div>
-                <p className="text-xs text-white/70 mt-1 line-clamp-2">{p.content}</p>
-                <span className="text-[10px] text-white/40 mt-2 block">
-                  {new Date(p.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => handleDelete(p.id)}
-                className="p-2 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition shrink-0"
+          <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+            {posts.map((p) => (
+              <div
+                key={p.id}
+                className="p-3.5 rounded-xl glass border border-white/5 flex items-start justify-between gap-3"
               >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          ))
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    {p.isPinned && (
+                      <span className="px-1.5 py-0.5 rounded bg-primary/20 text-primary text-[9px] font-bold">
+                        PINNED
+                      </span>
+                    )}
+                    <h4 className="font-bold text-xs text-white truncate">{p.title}</h4>
+                  </div>
+                  <p className="text-xs text-white/70 mt-1 line-clamp-2">{p.content}</p>
+                  <span className="text-[10px] text-white/40 mt-1.5 block">
+                    {new Date(p.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(p.id)}
+                  className="p-1.5 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition shrink-0"
+                  title="Delete Announcement"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
         ) : (
-          <p className="text-xs text-muted-foreground">No announcements posted yet.</p>
+          <p className="text-xs text-muted-foreground py-2">No announcements posted yet.</p>
         )}
       </div>
     </div>

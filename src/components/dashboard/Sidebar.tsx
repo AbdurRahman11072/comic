@@ -23,7 +23,8 @@ import {
   Sparkles,
   Database,
   Globe,
-  ArrowLeft
+  ArrowLeft,
+  Wallet
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -56,7 +57,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { label: "Creators & Studios", href: "/dashboard/creators", icon: Palette, roles: ["moderator", "admin"] },
   { label: "Users & Roles", href: "/dashboard/users", icon: Users, roles: ["moderator", "admin"] },
   { label: "Series Applications", href: "/dashboard/applications", icon: FileText, roles: ["moderator", "admin"] },
-  { label: "Withdrawals", href: "/dashboard/withdrawals", icon: CreditCard, roles: ["moderator", "admin"] },
+  { label: "CashOut & Payouts", href: "/dashboard/withdrawals", icon: Wallet, roles: ["moderator", "admin"] },
   { label: "Reports", href: "/dashboard/reports", icon: AlertCircle, roles: ["moderator", "admin"] },
   { label: "Custom Ads", href: "/dashboard/ads", icon: Megaphone, roles: ["moderator", "admin"] },
 

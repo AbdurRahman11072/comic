@@ -249,6 +249,8 @@ model SiteConfig {
   allowNewRegistrations    Boolean @default(true)
   allowCreatorApplications Boolean @default(true)
   enableGlobalChat         Boolean @default(true)
+  enableStripePayment      Boolean @default(true)
+  enableCashOut            Boolean @default(true)
 
   // 🔍 SEO & Web Tracking
   seoTitle       String?
@@ -469,6 +471,8 @@ model WithdrawalRequest {
   user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   pointsRequested Int
   fiatAmount      Float
+  paymentMethod   String            @default("bKash")
+  accountNumber   String?
   bankDetails     String
   status          ApplicationStatus @default(PENDING)
   notes           String?

@@ -14,6 +14,17 @@ export const POINT_PACKAGES = [
 ];
 
 const createCheckoutSession = async (userId: string, packageId: string, userEmail: string) => {
+  const config = await prisma.siteConfig.findUnique({
+    where: { id: 'global' },
+  });
+
+  if (config && config.enableStripePayment === false) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      'Online point purchases via Stripe are temporarily paused by administration.'
+    );
+  }
+
   const pkg = POINT_PACKAGES.find((p) => p.id === packageId);
   if (!pkg) {
     throw new AppError(httpStatus.NOT_FOUND, 'Package not found');

@@ -5,10 +5,11 @@ import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
 import { Button } from "@/components/ui/button";
 import { CreateCheckoutSessionAction } from "@/actions/payment";
-import { Loader2, Zap, Shield, Rocket, Sparkles } from "lucide-react";
+import { Loader2, Zap, Shield, Rocket, Sparkles, AlertTriangle } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
 import { LoginDialog } from "@/components/home/LoginDialog";
 import { toast } from "react-hot-toast";
+import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
 
 const POINT_PACKAGES = [
   { id: "pkg_1", points: 100, price: 1.0, name: "100 Points Starter", icon: Zap, color: "blue", popular: false },
@@ -29,8 +30,15 @@ function ShopContent() {
   const [loading, setLoading] = useState<string | null>(null);
   const [loginOpen, setLoginOpen] = useState(false);
   const { data: session } = useSession();
+  const { data: configRes } = useGetSiteConfigQuery();
+  const isStripeEnabled = configRes?.data?.enableStripePayment ?? true;
 
   const handlePurchase = async (packageId: string) => {
+    if (!isStripeEnabled) {
+      toast.error("Online point purchases via Stripe are temporarily paused by administration.");
+      return;
+    }
+
     if (!session) {
       setLoginOpen(true);
       return;
@@ -56,13 +64,22 @@ function ShopContent() {
       <Navbar />
 
       <main className="flex-1 max-w-[72rem] w-full mx-auto px-4 py-16">
-        <div className="text-center space-y-4 mb-16">
+        <div className="text-center space-y-4 mb-12">
           <h1 className="text-4xl md:text-5xl font-heading tracking-tight">Point Shop</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
             Get points to unlock premium chapters and support your favorite creators.
             Points never expire and can be used across all series.
           </p>
         </div>
+
+        {!isStripeEnabled && (
+          <div className="mb-10 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-3 text-amber-300 max-w-2xl mx-auto">
+            <AlertTriangle className="w-5 h-5 shrink-0" />
+            <p className="text-sm font-medium">
+              Card payments via Stripe are temporarily paused for maintenance. Please check back soon or earn free points in the Rewards Center!
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {POINT_PACKAGES.map((pkg) => {
@@ -110,13 +127,19 @@ function ShopContent() {
 
                 <Button
                   onClick={() => handlePurchase(pkg.id)}
-                  disabled={loading !== null}
+                  disabled={loading !== null || !isStripeEnabled}
                   className={`w-full py-6 rounded-2xl font-bold text-sm ${
-                    pkg.popular ? "bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20" : "bg-white/5 hover:bg-white/10"
+                    !isStripeEnabled
+                      ? "bg-white/5 text-muted-foreground cursor-not-allowed opacity-60"
+                      : pkg.popular
+                      ? "bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
+                      : "bg-white/5 hover:bg-white/10"
                   }`}
                 >
                   {loading === pkg.id ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : !isStripeEnabled ? (
+                    "Purchases Paused"
                   ) : (
                     "Purchase Points"
                   )}

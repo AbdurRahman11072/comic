@@ -21,6 +21,7 @@ export const baseApi = createApi({
     'User',
     'SiteConfig',
     'Ad',
+    'Withdrawals',
   ],
   endpoints: () => ({}),
 });

@@ -8,6 +8,13 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use((config) => {
+  if (config.url && !config.url.startsWith('/api/') && !config.url.startsWith('http')) {
+    config.url = `/api/v1${config.url.startsWith('/') ? config.url : `/${config.url}`}`;
+  }
+  return config;
+});
+
 export const uploadImage = async (file: File): Promise<{ data: { url: string } }> => {
   const formData = new FormData();
   formData.append('image', file);

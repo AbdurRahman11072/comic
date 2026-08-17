@@ -28,9 +28,13 @@ const requestWithdrawal = async (userId: string, payload: any) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Insufficient points balance');
     }
 
-    const config = await tx.siteConfig.findUnique({
+    const config: any = await tx.siteConfig.findUnique({
       where: { id: 'global' }
     });
+
+    if (config && config.enableCashOut === false) {
+      throw new AppError(httpStatus.FORBIDDEN, 'Cashout and manual payouts are currently disabled by administration.');
+    }
 
     const minPoints = config?.minWithdrawalPoints || 1000;
     if (pointsRequested < minPoints) {

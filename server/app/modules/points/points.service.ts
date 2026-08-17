@@ -20,11 +20,21 @@ const getTransactions = async (userId: string) => {
     where: { userId },
     orderBy: { createdAt: 'desc' },
   });
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { points: true },
-  });
-  return { balance: user?.points ?? 0, transactions };
+  const [user, config] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { points: true, transactionsFrozen: true },
+    }),
+    prisma.siteConfig.findUnique({
+      where: { id: 'global' },
+    }),
+  ]);
+  return {
+    balance: user?.points ?? 0,
+    transactionsFrozen: user?.transactionsFrozen ?? false,
+    enableCashOut: (config as any)?.enableCashOut ?? true,
+    transactions,
+  };
 };
 
 /** Earn points by watching an ad — adds points and logs a transaction */

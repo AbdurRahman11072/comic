@@ -112,6 +112,18 @@ const reviewFeaturedRequest = asyncHandler(async (req: Request, res: Response) =
   });
 });
 
+const getUserFinancialHistory = asyncHandler(async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const result = await ModeratorService.getUserFinancialHistory(userId as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User financial history fetched successfully',
+    data: result,
+  });
+});
+
 export const ModeratorController = {
   banUser,
   freezeUser,
@@ -119,6 +131,7 @@ export const ModeratorController = {
   getSeriesApplications,
   reviewSeriesApplication,
   getWithdrawalRequests,
+  getUserFinancialHistory,
   reviewWithdrawalRequest,
   getFeaturedRequests,
   reviewFeaturedRequest,

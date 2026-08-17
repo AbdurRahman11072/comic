@@ -67,6 +67,39 @@ export const pointsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Points', 'Transactions', 'Chapters', 'History', 'User'],
     }),
+
+    requestCashOut: builder.mutation<
+      any,
+      { pointsRequested: number; paymentMethod: string; accountNumber: string; notes?: string }
+    >({
+      query: (body) => ({
+        url: '/withdrawals',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Points', 'Transactions', 'Withdrawals', 'User'],
+    }),
+
+    getMyWithdrawals: builder.query<
+      {
+        success: boolean;
+        data: Array<{
+          id: string;
+          pointsRequested: number;
+          fiatAmount: number;
+          paymentMethod: string;
+          accountNumber?: string;
+          bankDetails: string;
+          status: string;
+          notes?: string | null;
+          createdAt: string;
+        }>;
+      },
+      void
+    >({
+      query: () => '/withdrawals/my-requests',
+      providesTags: ['Withdrawals'],
+    }),
   }),
 });
 
@@ -76,4 +109,7 @@ export const {
   useEarnFromAdMutation,
   useBuyChapterMutation,
   useBuyBulkChaptersMutation,
+  useRequestCashOutMutation,
+  useGetMyWithdrawalsQuery,
 } = pointsApi;
+

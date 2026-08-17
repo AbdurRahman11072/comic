@@ -141,30 +141,187 @@ const reviewSeriesApplication = async (id: string, payload: any) => {
 };
 
 const getWithdrawalRequests = async (query: any) => {
-  const { page = 1, limit = 10, status } = query;
-  const skip = (Number(page) - 1) * Number(limit);
+  const {
+    page = 1,
+    limit = 20,
+    status,
+    search,
+    rangeFrom,
+    rangeTo,
+    batchIndex,
+    batchSize = 20,
+  } = query;
 
   const where: any = {};
-  if (status) where.status = status.toUpperCase();
+  if (status && status !== 'ALL') {
+    where.status = status.toUpperCase();
+  }
 
-  const [data, total] = await Promise.all([
-    prisma.withdrawalRequest.findMany({
-      where,
-      skip,
-      take: Number(limit),
-      orderBy: { createdAt: 'desc' },
-      include: {
-        user: {
-          select: { id: true, name: true, email: true, points: true, dailyAdViews: true, dailyAdPointsEarned: true },
+  if (search && search.trim()) {
+    const q = search.trim();
+    where.OR = [
+      { user: { name: { contains: q, mode: 'insensitive' } } },
+      { user: { email: { contains: q, mode: 'insensitive' } } },
+      { bankDetails: { contains: q, mode: 'insensitive' } },
+      { id: { contains: q, mode: 'insensitive' } },
+    ];
+  }
+
+  const [total, pendingCount, approvedCount, rejectedCount] = await Promise.all([
+    prisma.withdrawalRequest.count({ where }),
+    prisma.withdrawalRequest.count({ where: { status: 'PENDING' } }),
+    prisma.withdrawalRequest.count({ where: { status: 'APPROVED' } }),
+    prisma.withdrawalRequest.count({ where: { status: 'REJECTED' } }),
+  ]);
+
+  let skip = (Number(page) - 1) * Number(limit);
+  let take = Number(limit);
+
+  if (rangeFrom !== undefined && rangeTo !== undefined) {
+    const from = Math.max(1, Number(rangeFrom));
+    const to = Math.max(from, Number(rangeTo));
+    skip = from - 1;
+    take = to - from + 1;
+  } else if (batchIndex !== undefined) {
+    const bIndex = Math.max(1, Number(batchIndex));
+    const bSize = Math.max(1, Number(batchSize));
+    skip = (bIndex - 1) * bSize;
+    take = bSize;
+  }
+
+  const orderBy: any = where.status === 'PENDING' ? { createdAt: 'asc' } : { createdAt: 'desc' };
+
+  const rawData = await prisma.withdrawalRequest.findMany({
+    where,
+    skip,
+    take,
+    orderBy,
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
+          points: true,
+          dailyAdViews: true,
+          dailyAdPointsEarned: true,
+          transactionsFrozen: true,
+          banned: true,
+          createdAt: true,
         },
       },
+    },
+  });
+
+  const userIds = Array.from(new Set(rawData.map((r) => r.user.id)));
+  const adAggregates = await prisma.pointTransaction.groupBy({
+    by: ['userId'],
+    where: {
+      userId: { in: userIds },
+      type: 'EARN_AD',
+    },
+    _count: { id: true },
+    _sum: { amount: true },
+  });
+
+  const adStatsMap = new Map<string, { totalAdViews: number; totalAdPoints: number }>();
+  for (const agg of adAggregates) {
+    adStatsMap.set(agg.userId, {
+      totalAdViews: agg._count.id || 0,
+      totalAdPoints: agg._sum.amount || 0,
+    });
+  }
+
+  const data = rawData.map((req, idx) => {
+    const stats = adStatsMap.get(req.user.id) || { totalAdViews: 0, totalAdPoints: 0 };
+    return {
+      ...req,
+      queueIndex: skip + idx + 1,
+      user: {
+        ...req.user,
+        totalAdViews: stats.totalAdViews,
+        totalAdPoints: stats.totalAdPoints,
+      },
+    };
+  });
+
+  const totalBatches = Math.ceil(pendingCount / Number(batchSize || 20)) || 1;
+
+  return {
+    meta: {
+      total,
+      totalPending: pendingCount,
+      totalApproved: approvedCount,
+      totalRejected: rejectedCount,
+      page: Number(page),
+      limit: take,
+      rangeFrom: skip + 1,
+      rangeTo: skip + data.length,
+      totalBatches,
+    },
+    data,
+  };
+};
+
+const getUserFinancialHistory = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      image: true,
+      role: true,
+      points: true,
+      dailyAdViews: true,
+      dailyAdPointsEarned: true,
+      transactionsFrozen: true,
+      banned: true,
+      banReason: true,
+      createdAt: true,
+    },
+  });
+
+  if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+
+  const [transactions, withdrawals, adAgg, purchaseAgg, approvedWithdrawalAgg] = await Promise.all([
+    prisma.pointTransaction.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
     }),
-    prisma.withdrawalRequest.count({ where }),
+    prisma.withdrawalRequest.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    }),
+    prisma.pointTransaction.aggregate({
+      where: { userId, type: 'EARN_AD' },
+      _count: { id: true },
+      _sum: { amount: true },
+    }),
+    prisma.chapterPurchase.count({
+      where: { userId },
+    }),
+    prisma.withdrawalRequest.aggregate({
+      where: { userId, status: 'APPROVED' },
+      _sum: { fiatAmount: true, pointsRequested: true },
+    }),
   ]);
 
   return {
-    meta: { total, page: Number(page), limit: Number(limit) },
-    data,
+    user,
+    stats: {
+      totalAdViews: adAgg._count.id || 0,
+      totalAdPointsEarned: adAgg._sum.amount || 0,
+      totalChaptersPurchased: purchaseAgg || 0,
+      totalFiatWithdrawn: approvedWithdrawalAgg._sum?.fiatAmount || 0,
+      totalPointsWithdrawn: approvedWithdrawalAgg._sum?.pointsRequested || 0,
+      previousWithdrawalsCount: withdrawals.length,
+    },
+    transactions,
+    withdrawals,
   };
 };
 
@@ -294,6 +451,7 @@ export const ModeratorService = {
   getSeriesApplications,
   reviewSeriesApplication,
   getWithdrawalRequests,
+  getUserFinancialHistory,
   reviewWithdrawalRequest,
   getFeaturedRequests,
   reviewFeaturedRequest,
