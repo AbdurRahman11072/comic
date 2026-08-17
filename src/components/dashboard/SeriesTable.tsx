@@ -123,7 +123,7 @@ export function SeriesTable({ initialSeries, userRole }: SeriesTableProps) {
 
     setSubmittingRequest(true);
     try {
-      const res = await api.post("/creators/feature-request", {
+      const res = await api.post("/api/v1/creators/feature-request", {
         seriesId: requestModalSeries.id,
         durationDays,
         notes: pitchNotes.trim() || undefined,

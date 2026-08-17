@@ -473,6 +473,8 @@ model WithdrawalRequest {
   pointsRequested Int
   fiatAmount      Float
   bankDetails     String
+  paymentMethod   String?
+  accountNumber   String?
   status          ApplicationStatus @default(PENDING)
   notes           String?
   createdAt       DateTime          @default(now())
