@@ -1,20 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, List, Settings, Lock, Loader2, X } from "lucide-react";
-import Link from "next/link";
-import { useSession } from "@/lib/auth-client";
-import { BuyChapterAction } from "@/actions/points";
 import { UpdateHistoryAction } from "@/actions/user";
 import { AdBanner } from "@/components/ads/AdBanner";
 import { CommentSection } from "@/components/series/CommentSection";
+import { useSession } from "@/lib/auth-client";
+import { ChevronLeft, ChevronRight, ExternalLink, List, Loader2, Lock, Settings, X } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { useBuyChapterMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
 import { InsufficientPointsModal } from "@/components/ui/InsufficientPointsModal";
+import { useBuyChapterMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setReaderMode, setReaderTheme, setImageWidth } from "@/redux/slices/readerSlice";
+import { setImageWidth, setReaderMode, setReaderTheme } from "@/redux/slices/readerSlice";
 
 interface ChapterReaderProps {
   slug: string;
@@ -31,6 +30,32 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
   const { mode: readerMode, theme: readerTheme, imageWidth } = useAppSelector((state) => state.reader);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [showHeader, setShowHeader] = useState<boolean>(true);
+
+  // Auto-hide header when scrolling down, show when scrolling up
+  useEffect(() => {
+    let lastY = typeof window !== "undefined" ? window.scrollY : 0;
+
+    const handleScrollDirection = () => {
+      const currentY = window.scrollY;
+
+      // Always keep header visible near the top
+      if (currentY <= 50) {
+        setShowHeader(true);
+      } else if (currentY > lastY + 8) {
+        // Scrolling Down -> Hide Header
+        setShowHeader(false);
+      } else if (currentY < lastY - 8) {
+        // Scrolling Up -> Show Header
+        setShowHeader(true);
+      }
+
+      lastY = currentY;
+    };
+
+    window.addEventListener("scroll", handleScrollDirection, { passive: true });
+    return () => window.removeEventListener("scroll", handleScrollDirection);
+  }, []);
 
   // RTK Query buy chapter mutation
   const [buyChapterMutate, { isLoading: buying }] = useBuyChapterMutation();
@@ -160,18 +185,50 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${themeClasses[readerTheme]}`}>
       {/* Chapter Header/Navigation */}
-      <div className={`sticky top-16 z-30 backdrop-blur-md border-b px-4 py-3 transition-colors duration-300 ${headerThemeClasses[readerTheme]}`}>
+      <div
+        className={`sticky top-0 z-[100] backdrop-blur-md border-b px-4 py-3 transition-all duration-300 ease-in-out transform ${
+          showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
+        } ${headerThemeClasses[readerTheme]}`}
+      >
         <div className="max-w-[800px] mx-auto flex items-center justify-between">
-          <div className="flex flex-col">
-            <Link href={`/series/${slug}`} className="text-[10px] text-primary font-bold uppercase tracking-wider hover:underline">
-              {chapter.series.title}
-            </Link>
-            <h1 className="text-sm font-bold truncate max-w-[200px] sm:max-w-none">
-              Chapter {chapter.number} {chapter.title && `- ${chapter.title}`}
-            </h1>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex flex-col min-w-0">
+              <Link href={`/series/${slug}`} className="text-[10px] text-primary font-bold uppercase tracking-wider hover:underline truncate">
+                {chapter.series.title}
+              </Link>
+              <h1 className="text-sm font-bold truncate max-w-[160px] sm:max-w-[240px]">
+                Chapter {chapter.number} {chapter.title && `- ${chapter.title}`}
+              </h1>
+            </div>
+
+            {/* Channel Logo & Pill Link */}
+            {chapter.series?.creator && (
+              <Link
+                href={`/channel/${chapter.series.creator.creatorProfile?.id || chapter.series.creator.id}`}
+                className="flex items-center gap-2 px-2 py-1 sm:px-2.5 sm:py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group shrink-0"
+                title={`Visit ${chapter.series.creator.creatorProfile?.channelName || chapter.series.creator.name}'s Creator Channel`}
+              >
+                <div className="w-5 h-5 rounded-full overflow-hidden bg-primary/20 border border-white/10 shrink-0 flex items-center justify-center">
+                  {chapter.series.creator.creatorProfile?.profileImage || chapter.series.creator.image ? (
+                    <img
+                      src={(chapter.series.creator.creatorProfile?.profileImage || chapter.series.creator.image) as string}
+                      alt="Channel"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-[9px] font-bold text-primary">
+                      {(chapter.series.creator.creatorProfile?.channelName || chapter.series.creator.name || "C").charAt(0)}
+                    </span>
+                  )}
+                </div>
+                <span className="hidden sm:inline text-[11px] font-bold text-white group-hover:text-primary transition truncate max-w-[100px]">
+                  {chapter.series.creator.creatorProfile?.channelName || chapter.series.creator.name}
+                </span>
+              </Link>
+            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <button 
               onClick={() => setSettingsOpen(true)}
               className="p-2 glass glass-hover rounded-lg hover:opacity-80 transition-all"
@@ -323,6 +380,50 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
           </div>
         </div>
 
+        {/* Creator Channel Spotlight Box */}
+        {chapter.series?.creator && (
+          <div className="w-full max-w-[800px] mb-8 px-4">
+            <div className="p-5 glass rounded-2xl border border-white/10 bg-gradient-to-r from-primary/10 via-purple-500/5 to-transparent flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-tr from-primary/30 to-purple-500/30 border border-white/10 flex items-center justify-center shrink-0 shadow-lg">
+                  {chapter.series.creator.creatorProfile?.profileImage || chapter.series.creator.image ? (
+                    <img
+                      src={(chapter.series.creator.creatorProfile?.profileImage || chapter.series.creator.image) as string}
+                      alt="Channel"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-lg font-bold text-primary">
+                      {(chapter.series.creator.creatorProfile?.channelName || chapter.series.creator.name || "C").charAt(0)}
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-bold text-sm text-white truncate">
+                      {chapter.series.creator.creatorProfile?.channelName || chapter.series.creator.name}
+                    </h4>
+                    <span className="text-[9px] font-bold px-1.5 py-0.2 bg-primary/20 text-primary rounded-full border border-primary/30 shrink-0">
+                      CREATOR
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground truncate mt-0.5">
+                    {chapter.series.creator.creatorProfile?.description || "Read more series and creator announcements on this channel."}
+                  </p>
+                </div>
+              </div>
+
+              <Link
+                href={`/channel/${chapter.series.creator.creatorProfile?.id || chapter.series.creator.id}`}
+                className="px-4 py-2.5 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary/90 transition shadow-md shadow-primary/20 flex items-center justify-center gap-1.5 shrink-0 self-start sm:self-auto"
+              >
+                <span>Visit Channel</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Reader Bottom Ad Banner */}
         <div className="w-full max-w-[800px] px-4">
           <AdBanner placement="reader_bottom" />
@@ -334,7 +435,7 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
 
       {/* Settings Modal */}
       {settingsOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[30] flex items-center justify-center p-4">
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setSettingsOpen(false)} />
           <div className="relative glass border border-white/10 rounded-3xl w-full max-w-sm p-6 shadow-2xl space-y-6">
             <div className="flex items-center justify-between">

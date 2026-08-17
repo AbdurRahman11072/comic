@@ -8,7 +8,7 @@ import { cacheResponse } from '../../middleware/cacheMiddleware';
 
 const router = Router();
 
-router.get('/', SeriesController.getAllSeries);
+router.get('/', cacheResponse(300, 'series'), SeriesController.getAllSeries);
 router.get('/admin/all', authMiddleware(['moderator', 'admin']), SeriesController.getAdminSeriesList);
 router.put(
   '/admin/:id/hide',

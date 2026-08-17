@@ -41,6 +41,18 @@ export interface Series {
   discount?: string;
   genres: Genre[];
   chapters?: Chapter[];
+  creator?: {
+    id: string;
+    name: string;
+    image?: string | null;
+    creatorProfile?: {
+      id: string;
+      channelName: string;
+      profileImage?: string | null;
+      bannerUrl?: string | null;
+      description?: string | null;
+    } | null;
+  } | null;
   _count?: {
     chapters: number;
   };

@@ -20,7 +20,26 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
         orderBy: { order: 'asc' },
       },
       series: {
-        select: { title: true, slug: true },
+        select: {
+          title: true,
+          slug: true,
+          coverUrl: true,
+          creator: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              creatorProfile: {
+                select: {
+                  id: true,
+                  channelName: true,
+                  profileImage: true,
+                  description: true,
+                },
+              },
+            },
+          },
+        },
       },
     },
   });
@@ -53,8 +72,33 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
     orderBy: { number: 'asc' },
   });
 
+  let chapterSeries = result.series;
+  if (chapterSeries && !(chapterSeries as any).creator) {
+    const defaultCreator = await prisma.user.findFirst({
+      where: { role: { in: ['creator', 'admin'] } },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        creatorProfile: {
+          select: {
+            id: true,
+            channelName: true,
+            profileImage: true,
+            description: true,
+          },
+        },
+      },
+    });
+    chapterSeries = {
+      ...chapterSeries,
+      creator: defaultCreator,
+    } as any;
+  }
+
   return {
     ...result,
+    series: chapterSeries,
     images: (result.isLocked && !isPurchased) ? [] : result.images,
     isPurchased,
     prevChapterNumber: prevChapter?.number || null,

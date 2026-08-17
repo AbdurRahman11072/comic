@@ -169,6 +169,22 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
     where: { slug },
     include: {
       genres: true,
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          creatorProfile: {
+            select: {
+              id: true,
+              channelName: true,
+              profileImage: true,
+              bannerUrl: true,
+              description: true,
+            },
+          },
+        },
+      },
       chapters: {
         orderBy: { number: 'desc' },
       },
@@ -179,6 +195,27 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
   });
 
   if (!result) return null;
+
+  let creator = result.creator;
+  if (!creator) {
+    creator = await prisma.user.findFirst({
+      where: { role: { in: ['creator', 'admin'] } },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        creatorProfile: {
+          select: {
+            id: true,
+            channelName: true,
+            profileImage: true,
+            bannerUrl: true,
+            description: true,
+          },
+        },
+      },
+    });
+  }
 
   let chaptersWithPurchaseStatus = result.chapters.map((c) => ({
     ...c,
@@ -220,6 +257,7 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
 
     return {
       ...result,
+      creator,
       chapters: chaptersWithPurchaseStatus,
       isBookmarked: !!isBookmarked,
       userRating: userRating ? userRating.rating : null,
@@ -228,6 +266,7 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
 
   return {
     ...result,
+    creator,
     chapters: chaptersWithPurchaseStatus,
   };
 };

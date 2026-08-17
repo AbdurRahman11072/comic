@@ -4,6 +4,7 @@ import api from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import {
   Camera,
+  ExternalLink,
   FileText,
   Image as ImageIcon,
   Loader2,
@@ -14,7 +15,6 @@ import {
   TrendingUp,
   Type,
   User as UserIcon,
-  ExternalLink,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -300,10 +300,8 @@ export default function ChannelSettingsPage() {
                   {description.length}/500 characters
                 </p>
               </div>
-            </div>
-
-            {/* Save Button */}
-            <div className="flex items-center justify-end pt-2">
+                  {/* Save Button */}
+            <div className="flex items-center justify-end -mt-4">
               <button
                 type="submit"
                 disabled={saving || !channelName.trim()}
@@ -317,6 +315,9 @@ export default function ChannelSettingsPage() {
                 {saving ? "Saving..." : "Save Settings"}
               </button>
             </div>
+            </div>
+
+        
           </form>
         </div>
 

@@ -11,7 +11,8 @@ import { ChapterRow } from "./ChapterRow";
 import { ReviewSection } from "./ReviewSection";
 import { BulkUnlockModal } from "./BulkUnlockModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageSquare, Star, BookOpen, ArrowUpDown, ChevronLeft, ChevronRight, Unlock } from "lucide-react";
+import { MessageSquare, Star, BookOpen, ArrowUpDown, ChevronLeft, ChevronRight, Unlock, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 interface Chapter {
@@ -43,6 +44,18 @@ interface Series {
   chapters: Chapter[];
   isBookmarked?: boolean;
   lastReadChapterNumber?: number | null;
+  creator?: {
+    id: string;
+    name: string;
+    image?: string | null;
+    creatorProfile?: {
+      id: string;
+      channelName: string;
+      profileImage?: string | null;
+      bannerUrl?: string | null;
+      description?: string | null;
+    } | null;
+  } | null;
 }
 
 interface SeriesDetailContentProps {
@@ -110,6 +123,7 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
                   type={series.type}
                   chapterCount={series.chapterCount}
                   lastUpdate={series.lastUpdate}
+                  creator={series.creator}
                 />
               </div>
 
@@ -125,13 +139,49 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
           {/* Right Column: Content */}
           <div className="flex-1 min-w-0 space-y-8">
             {/* Title Section */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <p className="text-sm text-foreground/50 font-medium line-clamp-1">
                 {series.altTitles}
               </p>
               <h1 className="text-3xl md:text-4xl font-bold text-foreground leading-tight">
                 {series.title}
               </h1>
+
+              {/* Creator Channel Badge */}
+              {series.creator && (
+                <Link
+                  href={`/channel/${series.creator.creatorProfile?.id || series.creator.id}`}
+                  className="inline-flex items-center gap-3 p-2.5 pr-4 rounded-2xl glass glass-hover border border-white/10 hover:border-primary/40 transition group"
+                  title={`Visit ${series.creator.creatorProfile?.channelName || series.creator.name}'s Creator Channel`}
+                >
+                  <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-tr from-primary/30 to-purple-500/30 border border-white/10 flex items-center justify-center shrink-0 shadow-sm">
+                    {series.creator.creatorProfile?.profileImage || series.creator.image ? (
+                      <img
+                        src={(series.creator.creatorProfile?.profileImage || series.creator.image) as string}
+                        alt={series.creator.creatorProfile?.channelName || series.creator.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      />
+                    ) : (
+                      <span className="font-bold text-sm text-primary">
+                        {(series.creator.creatorProfile?.channelName || series.creator.name || "C").charAt(0)}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-col text-left min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-white group-hover:text-primary transition truncate">
+                        {series.creator.creatorProfile?.channelName || series.creator.name}
+                      </span>
+                      <span className="text-[9px] font-bold px-1.5 py-0.2 bg-primary/20 text-primary rounded-full border border-primary/30">
+                        CREATOR CHANNEL
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-muted-foreground group-hover:text-foreground/80 transition flex items-center gap-1">
+                      Visit Channel & Announcements <ExternalLink className="w-2.5 h-2.5 inline text-primary" />
+                    </span>
+                  </div>
+                </Link>
+              )}
             </div>
 
             {/* Tabs Section */}

@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
-import { chapterService } from "@/services/chapter.service";
+import { Navbar } from "@/components/home/Navbar";
 import { ChapterReader } from "@/components/series/ChapterReader";
-import Link from "next/link";
 import { constructMetadata } from "@/lib/metadata";
+import { chapterService } from "@/services/chapter.service";
+import type { Metadata } from "next";
+import Link from "next/link";
 
 interface Props {
   params: Promise<{ slug: string; chapterNumber: string }>;
@@ -65,7 +65,7 @@ export default async function ChapterReadingPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
-      <Navbar />
+      
       <ChapterReader slug={slug} initialChapter={chapter} />
       <Footer />
     </div>
