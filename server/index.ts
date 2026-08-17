@@ -20,6 +20,7 @@ import pinoHttp from "pino-http";
 import { logger } from "./app/utils/logger";
 import { apiVersionMiddleware } from "./app/middleware/apiVersion";
 import { HealthRoutes } from "./app/routes/health.routes";
+import { startKeepAlive, stopKeepAlive } from "./app/utils/keepAlive";
 
 const dev = process.env.NODE_ENV !== "production";
 const server = next({ dev });
@@ -97,11 +98,14 @@ server
 
     const httpServer = app.listen(port, () => {
       console.log(`> Server is running on: http://localhost:${port}`);
+      // Start keep-alive background pinger to prevent Render sleep
+      startKeepAlive();
     });
 
     // Graceful shutdown
     const gracefulShutdown = async (signal: string) => {
       console.log(`\n${signal} received. Shutting down gracefully...`);
+      stopKeepAlive();
       httpServer.close(async () => {
         await prisma.$disconnect();
         console.log("Database connection closed.");

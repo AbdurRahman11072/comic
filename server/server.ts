@@ -1,6 +1,7 @@
 import app from './app';
 import { prisma } from './lib/prisma';
 import { envConfig } from './app/config/envConfig';
+import { startKeepAlive, stopKeepAlive } from './app/utils/keepAlive';
 
 const PORT = envConfig.PORT || 5000;
 
@@ -11,10 +12,13 @@ export async function server() {
 
     const httpServer = app.listen(PORT, () => {
       console.log(`server is running on : http://localhost:${PORT}/`);
+      // Start keep-alive background pinger to prevent Render sleep
+      startKeepAlive();
     });
 
     const gracefulShutdown = async (signal: string) => {
       console.log(`\n${signal} received. Shutting down gracefully...`);
+      stopKeepAlive();
       httpServer.close(async () => {
         await prisma.$disconnect();
         console.log('Database connection closed.');

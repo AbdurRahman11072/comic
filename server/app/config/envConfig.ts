@@ -29,4 +29,10 @@ export const envConfig = {
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   REDIS_URL: process.env.REDIS_URL,
+
+  RENDER_EXTERNAL_URL: process.env.RENDER_EXTERNAL_URL,
+  KEEP_ALIVE_URL: process.env.KEEP_ALIVE_URL,
+  KEEP_ALIVE_INTERVAL_MINUTES: Number(process.env.KEEP_ALIVE_INTERVAL_MINUTES) || 10,
+  AUTO_PING_ENABLED: process.env.AUTO_PING_ENABLED === 'true' || process.env.NODE_ENV === 'production' || !!process.env.RENDER || !!process.env.RENDER_EXTERNAL_URL,
 };
+
