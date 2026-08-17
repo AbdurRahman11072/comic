@@ -8,18 +8,36 @@ let keepAliveIntervalId: NodeJS.Timeout | null = null;
  * Render automatically provides RENDER_EXTERNAL_URL (e.g. https://my-service.onrender.com).
  */
 export function getKeepAliveTargetUrl(): string | null {
-  if (envConfig.KEEP_ALIVE_URL) {
-    return envConfig.KEEP_ALIVE_URL.replace(/\/$/, '');
+  if (process.env.AUTO_PING_ENABLED === 'false' || process.env.ENABLE_KEEP_ALIVE === 'false') {
+    return null;
   }
 
-  if (envConfig.RENDER_EXTERNAL_URL) {
-    return envConfig.RENDER_EXTERNAL_URL.replace(/\/$/, '');
+  const isPlaceholder = (url: string) =>
+    !url ||
+    url.includes('your-service-name') ||
+    url.includes('example.com') ||
+    url.includes('localhost') ||
+    url.includes('127.0.0.1');
+
+  const customUrl = process.env.KEEP_ALIVE_URL || (envConfig as any)?.KEEP_ALIVE_URL;
+  if (customUrl && !isPlaceholder(customUrl)) {
+    return customUrl.replace(/\/$/, '');
   }
 
-  // Fallback to APP_URL or BACKEND_URL if it is not localhost
-  const potentialUrls = [envConfig.APP_URL, envConfig.BACKEND_URL, envConfig.FRONTEND_URL];
+  const renderUrl = process.env.RENDER_EXTERNAL_URL || (envConfig as any)?.RENDER_EXTERNAL_URL;
+  if (renderUrl && !isPlaceholder(renderUrl)) {
+    return renderUrl.replace(/\/$/, '');
+  }
+
+  const potentialUrls = [
+    process.env.APP_URL,
+    (envConfig as any)?.APP_URL,
+    (envConfig as any)?.BACKEND_URL,
+    (envConfig as any)?.FRONTEND_URL,
+  ];
+
   for (const candidate of potentialUrls) {
-    if (candidate && !candidate.includes('localhost') && !candidate.includes('127.0.0.1')) {
+    if (candidate && !isPlaceholder(candidate)) {
       return candidate.replace(/\/$/, '');
     }
   }
@@ -28,7 +46,7 @@ export function getKeepAliveTargetUrl(): string | null {
 }
 
 /**
- * Pings the target server endpoint to prevent Render from idling/sleeping.
+ * Pings the target server endpoint to prevent cloud hosts (like Render) from sleeping.
  */
 export async function pingServer(targetUrl: string): Promise<boolean> {
   const healthEndpoint = `${targetUrl}/health`;
@@ -36,12 +54,12 @@ export async function pingServer(targetUrl: string): Promise<boolean> {
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20s timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
 
     const res = await fetch(healthEndpoint, {
       method: 'GET',
       headers: {
-        'User-Agent': 'Render-KeepAlive-Bot/1.0',
+        'User-Agent': 'ComicBD-KeepAlive/1.0',
         'Cache-Control': 'no-cache',
       },
       signal: controller.signal,
@@ -51,91 +69,86 @@ export async function pingServer(targetUrl: string): Promise<boolean> {
     const durationMs = Date.now() - startTime;
 
     if (res.ok) {
-      logger.info({
-        msg: `[KeepAlive] 🟢 Heartbeat ping successful`,
-        url: healthEndpoint,
-        status: res.status,
-        durationMs,
-      });
+      logger.info(
+        { url: healthEndpoint, status: res.status, durationMs },
+        `[KeepAlive] Heartbeat ping successful (${durationMs}ms)`
+      );
       return true;
     } else {
-      logger.warn({
-        msg: `[KeepAlive] ⚠️ Heartbeat ping returned non-200 status`,
-        url: healthEndpoint,
-        status: res.status,
-        durationMs,
-      });
+      logger.warn(
+        { url: healthEndpoint, status: res.status, durationMs },
+        `[KeepAlive] Heartbeat ping returned status ${res.status}`
+      );
       return false;
     }
   } catch (error: any) {
     const durationMs = Date.now() - startTime;
-    if (error.name === 'AbortError') {
-      logger.warn(`[KeepAlive] ⏱️ Heartbeat ping timed out after 20s (${healthEndpoint})`);
-    } else {
-      logger.warn({
-        msg: `[KeepAlive] ⚠️ Heartbeat ping failed (${healthEndpoint})`,
-        error: error.message,
-        durationMs,
-      });
-    }
+    logger.warn(
+      { error: error?.message || error, durationMs },
+      `[KeepAlive] Heartbeat ping failed (${healthEndpoint})`
+    );
     return false;
   }
 }
 
 /**
- * Starts the automatic Keep-Alive cron/interval.
- * Prevents Render free tier from going into sleep mode after 15 minutes of inactivity.
+ * Starts the automated keep-alive worker.
  */
 export function startKeepAlive(): void {
-  // If already running, do nothing
   if (keepAliveIntervalId) {
     return;
   }
 
+  if (process.env.AUTO_PING_ENABLED === 'false' || process.env.ENABLE_KEEP_ALIVE === 'false') {
+    logger.info('[KeepAlive] Disabled via AUTO_PING_ENABLED=false');
+    return;
+  }
+
   const targetUrl = getKeepAliveTargetUrl();
-  const intervalMinutes = envConfig.KEEP_ALIVE_INTERVAL_MINUTES || 10;
+  const intervalMinutes = Number(process.env.KEEP_ALIVE_INTERVAL_MINUTES) || (envConfig as any)?.KEEP_ALIVE_INTERVAL_MINUTES || 10;
   const intervalMs = Math.max(intervalMinutes, 1) * 60 * 1000;
 
   if (!targetUrl) {
-    if (envConfig.NODE_ENV === 'production' || process.env.RENDER) {
-      logger.warn(
-        '[KeepAlive] ⚠️ No external URL detected for keep-alive. Set RENDER_EXTERNAL_URL or KEEP_ALIVE_URL in environment variables to prevent Render sleep mode.'
+    if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+      logger.info(
+        '[KeepAlive] Standby mode: Set KEEP_ALIVE_URL or deploy on Render to automatically enable 24/7 keep-alive.'
       );
     } else {
       logger.info(
-        '[KeepAlive] ℹ️ Local environment detected. Keep-alive self-ping is in standby. It will activate automatically when deployed with RENDER_EXTERNAL_URL or KEEP_ALIVE_URL.'
+        '[KeepAlive] Local development detected. Standby mode active (no external pings sent).'
       );
     }
     return;
   }
 
   logger.info(
-    `[KeepAlive] 🚀 Active: Pinging ${targetUrl}/health every ${intervalMinutes} minutes to keep the server awake 24/7.`
+    `[KeepAlive] Active: Pinging ${targetUrl}/health every ${intervalMinutes} minutes to keep server awake.`
   );
 
-  // Initial delayed ping 30 seconds after boot to verify connectivity
+  // Initial delayed ping 20 seconds after boot
   setTimeout(() => {
     pingServer(targetUrl).catch(() => {});
-  }, 30000);
+  }, 20000);
 
-  // Recurring ping
+  // Recurring interval
   keepAliveIntervalId = setInterval(() => {
     pingServer(targetUrl).catch(() => {});
   }, intervalMs);
 
-  // Unref so it won't prevent graceful exit
   if (keepAliveIntervalId.unref) {
     keepAliveIntervalId.unref();
   }
 }
 
-/**
- * Stops the keep-alive interval.
- */
 export function stopKeepAlive(): void {
   if (keepAliveIntervalId) {
     clearInterval(keepAliveIntervalId);
     keepAliveIntervalId = null;
-    logger.info('[KeepAlive] 🛑 Keep-alive service stopped.');
+    logger.info('[KeepAlive] Stopped.');
   }
 }
+
+// Aliases for compatibility
+export const initKeepAliveCron = startKeepAlive;
+export const stopKeepAliveCron = stopKeepAlive;
+export const pingHealthApi = (url?: string) => pingServer(url || getKeepAliveTargetUrl() || 'http://localhost:5000');

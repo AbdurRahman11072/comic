@@ -8,10 +8,10 @@ let isRedisAvailable = false;
 // Fallback in-memory cache for development or when Redis is offline
 const memoryCache = new Map<string, { value: string; expiresAt: number }>();
 
+let hasLoggedRedisWarning = false;
+
 export const getRedisClient = (): Redis | null => {
-  if (!envConfig.REDIS_URL) {
-    return null;
-  }
+  if (isRedisAvailable && redis) return redis;
 
   if (!redis) {
     try {
@@ -19,7 +19,7 @@ export const getRedisClient = (): Redis | null => {
         maxRetriesPerRequest: 2,
         connectTimeout: 4000,
         retryStrategy: (times) => {
-          if (times > 3) {
+          if (times > 2) {
             isRedisAvailable = false;
             return null; // Stop retrying and fallback to in-memory
           }
@@ -29,16 +29,22 @@ export const getRedisClient = (): Redis | null => {
 
       redis.on('connect', () => {
         isRedisAvailable = true;
-        logger.info('🚀 Redis connected successfully');
+        logger.info('[Cache] Redis connected successfully.');
       });
 
       redis.on('error', (err) => {
         isRedisAvailable = false;
-        logger.warn({ err: err.message }, 'Redis offline, using in-memory cache fallback');
+        if (!hasLoggedRedisWarning) {
+          hasLoggedRedisWarning = true;
+          logger.info('[Cache] Redis offline: Running with fast in-memory cache.');
+        }
       });
     } catch (e: any) {
       isRedisAvailable = false;
-      logger.warn({ err: e.message }, 'Failed to initialize Redis client');
+      if (!hasLoggedRedisWarning) {
+        hasLoggedRedisWarning = true;
+        logger.info('[Cache] Redis offline: Running with fast in-memory cache.');
+      }
     }
   }
 
