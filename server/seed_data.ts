@@ -13,8 +13,8 @@ const SERIES_SAMPLES = [
     description: "The House of Cardenas, the legendary swordsmen sworn to protect the Arcadia Empire, is renowned as a formidable military powerhouse.",
     type: "MANHWA" as const,
     status: "ONGOING" as const,
-    coverUrl: "https://wsrv.nl/?url=https%3A%2F%2Fstorage.vortexscans.org%2Fupload%2Fseries%2Ffeatured%2F751%2F32f834a2-2c1c-4358-b13a-555b87890bd9.png&w=640&q=90",
-    bgUrl: "https://wsrv.nl/?url=https%3A%2F%2Fstorage.vortexscans.org%2Fupload%2Fseries%2Ffeatured%2F751%2F32f834a2-2c1c-4358-b13a-555b87890bd9.png&w=1920&q=70",
+    coverUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=640&q=90",
+    bgUrl: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1920&q=80",
     genres: ["Action", "Fantasy", "Martial Arts"],
     isPinned: true
   },
@@ -23,8 +23,8 @@ const SERIES_SAMPLES = [
     description: "The successor to the world-renowned Solo Leveling. Sung Su-ho's journey begins now.",
     type: "MANHWA" as const,
     status: "ONGOING" as const,
-    coverUrl: "https://wsrv.nl/?url=cdn.meowing.org/uploads/WmGZLGSLSPd&w=640",
-    bgUrl: "https://wsrv.nl/?url=cdn.meowing.org/uploads/WmGZLGSLSPd&w=1920",
+    coverUrl: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=640&q=90",
+    bgUrl: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1920&q=80",
     genres: ["Action", "Adventure", "Fantasy"],
     isPinned: true
   },
@@ -33,8 +33,8 @@ const SERIES_SAMPLES = [
     description: "I was the strongest. Then I was betrayed. Now I am back for revenge.",
     type: "MANHWA" as const,
     status: "ONGOING" as const,
-    coverUrl: "https://wsrv.nl/?url=cdn.meowing.org/uploads/4Ku3Rzm_1MJ&w=640",
-    bgUrl: "https://wsrv.nl/?url=cdn.meowing.org/uploads/4Ku3Rzm_1MJ&w=1920",
+    coverUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=640&q=90",
+    bgUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1920&q=80",
     genres: ["Action", "Fantasy"],
     isPinned: false
   },
@@ -43,8 +43,8 @@ const SERIES_SAMPLES = [
     description: "What happens when a normal man gets married in a world of magic?",
     type: "MANHWA" as const,
     status: "ONGOING" as const,
-    coverUrl: "https://wsrv.nl/?url=cdn.meowing.org/uploads/F7TQ0vd9Fj2&w=640",
-    bgUrl: "https://wsrv.nl/?url=cdn.meowing.org/uploads/F7TQ0vd9Fj2&w=1920",
+    coverUrl: "https://images.unsplash.com/photo-1563089145-599997674d42?w=640&q=90",
+    bgUrl: "https://images.unsplash.com/photo-1563089145-599997674d42?w=1920&q=80",
     genres: ["Comedy", "Romance", "Fantasy"],
     isPinned: false
   }

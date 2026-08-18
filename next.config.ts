@@ -20,14 +20,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "wsrv.nl",
-      },
-      {
-        protocol: "https",
-        hostname: "storage.vortexscans.org",
-      },
-      {
-        protocol: "https",
         hostname: "res.cloudinary.com",
       },
       {

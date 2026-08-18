@@ -1,17 +1,17 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { signIn, signUp } from "@/lib/auth-client";
-import { Clock, AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { SITE_DEFAULTS } from "@/config/site";
+import { signIn, signUp } from "@/lib/auth-client";
+import { AlertTriangle, Clock, Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const COVERS = [
   "https://wsrv.nl/?url=cdn.meowing.org/uploads/H70SqQB-7tA&w=300",
