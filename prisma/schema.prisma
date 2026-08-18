@@ -263,13 +263,14 @@ model SiteConfig {
   adClient         String?
 
   // 💰 Economy & Payout Rules
-  minWithdrawalPoints        Int   @default(1000)
-  creatorRevenueSharePercent Int   @default(70)
-  referralBonusPercent       Int   @default(10)
-  referralActiveMonths       Int   @default(3)
-  maxDailyAdPoints           Int   @default(1000)
-  pointToFiatRate            Float @default(0.01) // 1 point = $0.01
-  featuredRequestFee         Int   @default(500)
+  minWithdrawalPoints        Int      @default(1000)
+  creatorRevenueSharePercent Int      @default(70)
+  referralBonusPercent       Int      @default(10)
+  referralActiveMonths       Int      @default(3)
+  maxDailyAdPoints           Int      @default(1000)
+  pointToFiatRate            Float    @default(0.01) // 1 point = $0.01
+  featuredRequestFee         Int      @default(500)
+  payoutMethods              String[] @default(["bKash", "Nagad", "Rocket", "Bank Transfer"])
   customAdScript             String?
   updatedAt                  DateTime @updatedAt
 

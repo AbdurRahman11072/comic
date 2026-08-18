@@ -5,7 +5,7 @@ import {
   Globe, Share2, Save, Loader2, ShieldCheck, DollarSign,
   Sparkles, Smartphone, Megaphone, FileText, CheckCircle2,
   AlertTriangle, Lock, Users, MessageCircle, BarChart3,
-  CreditCard, Banknote, Wallet
+  CreditCard, Banknote, Wallet, X, Plus
 } from "lucide-react";
 import { useGetSiteConfigQuery, useUpdateSiteConfigMutation } from "@/redux/api/siteConfigApi";
 import { toast } from "react-hot-toast";
@@ -61,6 +61,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
     featuredRequestFee: configData.featuredRequestFee ?? 500,
     referralBonusPercent: configData.referralBonusPercent ?? 10,
     referralActiveMonths: configData.referralActiveMonths ?? 3,
+    payoutMethods: configData.payoutMethods ?? ["bKash", "Nagad", "Rocket", "Bank Transfer"],
     customAdScript: configData.customAdScript ?? "",
 
     // SEO & Tracking
@@ -75,11 +76,12 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
     playStoreUrl: configData.playStoreUrl ?? "",
     appStoreUrl: configData.appStoreUrl ?? "",
 
-    // Legal
+    // Legal & Contact
     aboutUs: configData.aboutUs ?? "",
     termsOfService: configData.termsOfService ?? "",
     privacyPolicy: configData.privacyPolicy ?? "",
     dmcaEmail: configData.dmcaEmail ?? "",
+    contactEmail: configData.contactEmail ?? "support@comicbd.com",
   });
 
   useEffect(() => {
@@ -103,6 +105,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
         featuredRequestFee: d.featuredRequestFee ?? 500,
         referralBonusPercent: d.referralBonusPercent ?? 10,
         referralActiveMonths: d.referralActiveMonths ?? 3,
+        payoutMethods: d.payoutMethods && Array.isArray(d.payoutMethods) && d.payoutMethods.length > 0 ? d.payoutMethods : ["bKash", "Nagad", "Rocket", "Bank Transfer"],
       }));
     }
   }, [configRes]);
@@ -555,6 +558,98 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
                 />
               </div>
             </div>
+
+            {/* Supported Cashout Platforms */}
+            <div className="pt-6 border-t border-white/10 space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">
+                  Supported Cashout & Payout Platforms (bKash, Nagad, Rocket, etc.)
+                </label>
+                <p className="text-xs text-muted-foreground">
+                  Users and creators can select from these configured platforms when requesting a point cashout.
+                </p>
+              </div>
+
+              {/* Active Platform Chips */}
+              <div className="flex flex-wrap gap-2 items-center">
+                {(form.payoutMethods || []).map((method: string, index: number) => (
+                  <span
+                    key={`${method}-${index}`}
+                    className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-primary/10 border border-primary/30 text-white font-semibold text-xs shadow-sm"
+                  >
+                    <span>{method}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = (form.payoutMethods || []).filter((_: any, i: number) => i !== index);
+                        updateField("payoutMethods", updated);
+                      }}
+                      className="text-white/60 hover:text-rose-400 p-0.5 rounded transition cursor-pointer"
+                      title="Remove method"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+
+              {/* Add Custom Method Input & Quick Suggestions */}
+              <div className="space-y-2 pt-1">
+                <div className="flex items-center gap-2 max-w-md">
+                  <input
+                    type="text"
+                    id="new-payout-method-input"
+                    placeholder="Enter platform (e.g. bKash, Nagad, Rocket, Upay)"
+                    className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-muted-foreground text-xs outline-none focus:border-primary/50 transition"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        const val = (e.currentTarget.value || "").trim();
+                        if (val && !(form.payoutMethods || []).includes(val)) {
+                          updateField("payoutMethods", [...(form.payoutMethods || []), val]);
+                          e.currentTarget.value = "";
+                        }
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const input = document.getElementById("new-payout-method-input") as HTMLInputElement;
+                      if (input) {
+                        const val = input.value.trim();
+                        if (val && !(form.payoutMethods || []).includes(val)) {
+                          updateField("payoutMethods", [...(form.payoutMethods || []), val]);
+                          input.value = "";
+                        }
+                      }
+                    }}
+                    className="px-4 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-primary/90 transition shadow-sm flex items-center gap-1 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> Add
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="text-[11px] text-muted-foreground mr-1">Quick presets:</span>
+                  {["bKash", "Nagad", "Rocket", "Upay", "Bank Transfer", "PayPal", "Binance Pay / USDT"].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => {
+                        if (!(form.payoutMethods || []).includes(preset)) {
+                          updateField("payoutMethods", [...(form.payoutMethods || []), preset]);
+                        }
+                      }}
+                      disabled={form.payoutMethods?.includes(preset)}
+                      className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-muted-foreground hover:text-white disabled:opacity-30 disabled:pointer-events-none transition cursor-pointer"
+                    >
+                      + {preset}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -696,6 +791,19 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
                   value={form.termsOfService}
                   onChange={(e) => updateField("termsOfService", e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white font-mono text-xs outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
+                  Official Public Support & Contact Email (Shown on /contact)
+                </label>
+                <input
+                  type="email"
+                  value={form.contactEmail}
+                  onChange={(e) => updateField("contactEmail", e.target.value)}
+                  placeholder="support@comicbd.com"
+                  className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-primary"
                 />
               </div>
 

@@ -49,6 +49,9 @@ const getTransactions = async (userId: string) => {
     balance: user?.points ?? 0,
     transactionsFrozen: user?.transactionsFrozen ?? false,
     enableCashOut: (config as any)?.enableCashOut ?? true,
+    pointToFiatRate: (config as any)?.pointToFiatRate ?? 0.01,
+    minWithdrawalPoints: (config as any)?.minWithdrawalPoints ?? 1000,
+    payoutMethods: (config as any)?.payoutMethods ?? ["bKash", "Nagad", "Rocket", "Bank Transfer"],
     transactions,
   };
 };

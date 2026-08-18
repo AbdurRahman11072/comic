@@ -52,6 +52,7 @@ export const updateSiteConfigSchema = z.object({
       referralBonusPercent: optionalNumber,
       referralActiveMonths: optionalNumber,
       customAdScript: optionalString,
+      payoutMethods: z.array(z.string()).optional(),
       discord: optionalString,
       twitter: optionalString,
       telegram: optionalString,
