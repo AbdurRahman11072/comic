@@ -270,6 +270,7 @@ exports.Prisma.SiteConfigScalarFieldEnum = {
   maxDailyAdPoints: 'maxDailyAdPoints',
   pointToFiatRate: 'pointToFiatRate',
   featuredRequestFee: 'featuredRequestFee',
+  payoutMethods: 'payoutMethods',
   customAdScript: 'customAdScript',
   updatedAt: 'updatedAt'
 };

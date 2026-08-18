@@ -2,6 +2,29 @@ import { prisma } from '../../../lib/prisma';
 import { cacheService } from '../../utils/redis';
 import { deleteFromCloudinary } from '../../utils/cloudinary';
 
+const formatCreator = (c: any) => {
+  if (!c) return null;
+  return {
+    id: c.user?.id || c.userId || c.id,
+    name: c.channelName || c.user?.name || 'Creator Studio',
+    email: c.user?.email || null,
+    image: c.profileImage || c.user?.image || null,
+    channelId: c.id,
+    channelName: c.channelName,
+    profileImage: c.profileImage,
+    bannerUrl: c.bannerUrl,
+    description: c.description,
+    creatorProfile: {
+      id: c.id,
+      channelName: c.channelName,
+      profileImage: c.profileImage,
+      bannerUrl: c.bannerUrl,
+      description: c.description,
+    },
+    user: c.user || null,
+  };
+};
+
 const getAllSeries = async (query: any) => {
   const { page = 1, limit = 10, type, status, genre, sort, isPinned, isDiscounted, creatorId, search, includeHidden } = query;
   const skip = (Number(page) - 1) * Number(limit);
@@ -19,7 +42,12 @@ const getAllSeries = async (query: any) => {
   }
   if (type) where.type = type.toUpperCase();
   if (status) where.status = status.toUpperCase();
-  if (creatorId) where.creatorId = creatorId;
+  if (creatorId) {
+    where.OR = [
+      { creatorId },
+      { creator: { userId: creatorId } },
+    ];
+  }
   if (isPinned !== undefined) where.isPinned = isPinned === 'true';
   if (isDiscounted === 'true') {
     where.discount = { not: null };
@@ -53,9 +81,19 @@ const getAllSeries = async (query: any) => {
       creator: {
         select: {
           id: true,
-          name: true,
-          email: true,
-          image: true,
+          channelName: true,
+          profileImage: true,
+          bannerUrl: true,
+          description: true,
+          userId: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
         },
       },
     },
@@ -63,13 +101,18 @@ const getAllSeries = async (query: any) => {
 
   const total = await prisma.series.count({ where });
 
+  const formattedData = result.map((item) => ({
+    ...item,
+    creator: formatCreator(item.creator),
+  }));
+
   return {
     meta: {
       total,
       page: Number(page),
       limit: Number(limit),
     },
-    data: result,
+    data: formattedData,
   };
 };
 
@@ -82,8 +125,9 @@ const getAdminSeriesList = async (query: any) => {
     where.OR = [
       { title: { contains: search, mode: 'insensitive' } },
       { altTitles: { contains: search, mode: 'insensitive' } },
-      { creator: { name: { contains: search, mode: 'insensitive' } } },
-      { creator: { email: { contains: search, mode: 'insensitive' } } },
+      { creator: { channelName: { contains: search, mode: 'insensitive' } } },
+      { creator: { user: { name: { contains: search, mode: 'insensitive' } } } },
+      { creator: { user: { email: { contains: search, mode: 'insensitive' } } } },
     ];
   }
   if (status) where.status = status.toUpperCase();
@@ -108,7 +152,17 @@ const getAdminSeriesList = async (query: any) => {
         genres: true,
         featured: true,
         creator: {
-          select: { id: true, name: true, email: true, image: true },
+          select: {
+            id: true,
+            channelName: true,
+            profileImage: true,
+            bannerUrl: true,
+            description: true,
+            userId: true,
+            user: {
+              select: { id: true, name: true, email: true, image: true },
+            },
+          },
         },
         _count: {
           select: { chapters: true, reports: true, bookmarks: true },
@@ -118,13 +172,18 @@ const getAdminSeriesList = async (query: any) => {
     prisma.series.count({ where }),
   ]);
 
+  const formattedData = data.map((item) => ({
+    ...item,
+    creator: formatCreator(item.creator),
+  }));
+
   return {
     meta: {
       total,
       page: Number(page),
       limit: Number(limit),
     },
-    data,
+    data: formattedData,
   };
 };
 
@@ -143,7 +202,7 @@ const toggleHideSeries = async (id: string, isHidden: boolean, hiddenReason?: st
 };
 
 const getPinnedSeries = async () => {
-  return await prisma.series.findMany({
+  const list = await prisma.series.findMany({
     where: { isPinned: true, isHidden: false },
     include: {
       genres: true,
@@ -151,19 +210,51 @@ const getPinnedSeries = async () => {
         take: 4,
         orderBy: { number: 'desc' },
       },
+      creator: {
+        select: {
+          id: true,
+          channelName: true,
+          profileImage: true,
+          userId: true,
+          user: {
+            select: { id: true, name: true, image: true },
+          },
+        },
+      },
     },
     orderBy: { updatedAt: 'desc' },
   });
+
+  return list.map((s) => ({
+    ...s,
+    creator: formatCreator(s.creator),
+  }));
 };
 
 const getDiscountedSeries = async () => {
-  return await prisma.series.findMany({
+  const list = await prisma.series.findMany({
     where: { discount: { not: null }, isHidden: false },
     include: {
       genres: true,
+      creator: {
+        select: {
+          id: true,
+          channelName: true,
+          profileImage: true,
+          userId: true,
+          user: {
+            select: { id: true, name: true, image: true },
+          },
+        },
+      },
     },
     orderBy: { updatedAt: 'desc' },
   });
+
+  return list.map((s) => ({
+    ...s,
+    creator: formatCreator(s.creator),
+  }));
 };
 
 const getSeriesBySlug = async (slug: string, userId?: string) => {
@@ -174,15 +265,17 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
       creator: {
         select: {
           id: true,
-          name: true,
-          image: true,
-          creatorProfile: {
+          channelName: true,
+          profileImage: true,
+          bannerUrl: true,
+          description: true,
+          userId: true,
+          user: {
             select: {
               id: true,
-              channelName: true,
-              profileImage: true,
-              bannerUrl: true,
-              description: true,
+              name: true,
+              email: true,
+              image: true,
             },
           },
         },
@@ -206,25 +299,29 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
 
   result.totalViews = (result.totalViews || 0) + 1;
 
-  let creator = result.creator;
+  let creator = formatCreator(result.creator);
   if (!creator) {
-    creator = await prisma.user.findFirst({
-      where: { role: { in: ['creator', 'admin'] } },
+    const defaultProfile = await prisma.creatorProfile.findFirst({
       select: {
         id: true,
-        name: true,
-        image: true,
-        creatorProfile: {
+        channelName: true,
+        profileImage: true,
+        bannerUrl: true,
+        description: true,
+        userId: true,
+        user: {
           select: {
             id: true,
-            channelName: true,
-            profileImage: true,
-            bannerUrl: true,
-            description: true,
+            name: true,
+            email: true,
+            image: true,
           },
         },
       },
     });
+    if (defaultProfile) {
+      creator = formatCreator(defaultProfile);
+    }
   }
 
   const isPremiumChaptersEnabled = async (): Promise<boolean> => {
@@ -249,7 +346,7 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
   }));
 
   if (userId) {
-    const isCreator = result.creatorId === userId;
+    const isCreator = result.creator?.userId === userId;
     const [isBookmarked, userRating, purchases] = await Promise.all([
       prisma.bookmark.findUnique({
         where: {
@@ -307,12 +404,29 @@ const getSeriesById = async (id: string) => {
     where: { id },
     include: {
       genres: true,
+      creator: {
+        select: {
+          id: true,
+          channelName: true,
+          profileImage: true,
+          bannerUrl: true,
+          description: true,
+          userId: true,
+          user: {
+            select: { id: true, name: true, email: true, image: true },
+          },
+        },
+      },
       chapters: {
         orderBy: { number: 'desc' },
       },
     },
   });
-  return result;
+  if (!result) return null;
+  return {
+    ...result,
+    creator: formatCreator(result.creator),
+  };
 };
 
 const generateSlug = async (title: string): Promise<string> => {
@@ -336,8 +450,41 @@ const generateSlug = async (title: string): Promise<string> => {
 };
 
 const createSeries = async (data: any) => {
-  const { genres, ...seriesData } = data;
+  const { genres, creatorId, userId, ...seriesData } = data;
   
+  let targetCreatorId = creatorId;
+  const userIdentifier = userId || creatorId;
+
+  if (userIdentifier) {
+    // Check if it's already a CreatorProfile id
+    const profileById = await prisma.creatorProfile.findUnique({
+      where: { id: userIdentifier },
+    });
+
+    if (profileById) {
+      targetCreatorId = profileById.id;
+    } else {
+      // Find or create CreatorProfile by userId
+      let profile = await prisma.creatorProfile.findUnique({
+        where: { userId: userIdentifier },
+      });
+      if (!profile) {
+        const user = await prisma.user.findUnique({
+          where: { id: userIdentifier },
+          select: { name: true, image: true },
+        });
+        profile = await prisma.creatorProfile.create({
+          data: {
+            userId: userIdentifier,
+            channelName: user?.name || 'Creator Studio',
+            profileImage: user?.image || null,
+          },
+        });
+      }
+      targetCreatorId = profile.id;
+    }
+  }
+
   const slug = await generateSlug(seriesData.title);
 
   const genreNames: string[] = Array.isArray(genres)
@@ -347,6 +494,7 @@ const createSeries = async (data: any) => {
   const result = await prisma.series.create({
     data: {
       ...seriesData,
+      creatorId: targetCreatorId,
       slug,
       genres: {
         connectOrCreate: genreNames.map((name) => ({
@@ -357,12 +505,25 @@ const createSeries = async (data: any) => {
     },
     include: {
       genres: true,
+      creator: {
+        select: {
+          id: true,
+          channelName: true,
+          profileImage: true,
+          user: {
+            select: { id: true, name: true, image: true },
+          },
+        },
+      },
     },
   });
 
   cacheService.delByPattern('cache:series:*').catch(() => null);
 
-  return result;
+  return {
+    ...result,
+    creator: formatCreator(result.creator),
+  };
 };
 
 const updateSeries = async (id: string, data: any) => {
@@ -415,12 +576,25 @@ const updateSeries = async (id: string, data: any) => {
     data: updatePayload,
     include: {
       genres: true,
+      creator: {
+        select: {
+          id: true,
+          channelName: true,
+          profileImage: true,
+          user: {
+            select: { id: true, name: true, image: true },
+          },
+        },
+      },
     },
   });
 
   cacheService.delByPattern('cache:series:*').catch(() => null);
 
-  return result;
+  return {
+    ...result,
+    creator: formatCreator(result.creator),
+  };
 };
 
 const deleteSeries = async (id: string) => {

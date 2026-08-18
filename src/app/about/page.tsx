@@ -107,7 +107,7 @@ export default async function AboutUsPage() {
                   Earn Free Points
                 </Link>
                 <Link
-                  href="/become-creator"
+                  href="/dashboard/channel"
                   className="px-5 py-2.5 glass text-white font-bold text-xs rounded-xl border border-white/10 hover:border-white/20 transition"
                 >
                   Join as a Creator

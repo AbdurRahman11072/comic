@@ -3759,7 +3759,6 @@ export namespace Prisma {
     pointTransactions: number
     chapterPurchases: number
     payments: number
-    series: number
     seriesApplications: number
     withdrawals: number
     comments: number
@@ -3782,7 +3781,6 @@ export namespace Prisma {
     pointTransactions?: boolean | UserCountOutputTypeCountPointTransactionsArgs
     chapterPurchases?: boolean | UserCountOutputTypeCountChapterPurchasesArgs
     payments?: boolean | UserCountOutputTypeCountPaymentsArgs
-    series?: boolean | UserCountOutputTypeCountSeriesArgs
     seriesApplications?: boolean | UserCountOutputTypeCountSeriesApplicationsArgs
     withdrawals?: boolean | UserCountOutputTypeCountWithdrawalsArgs
     comments?: boolean | UserCountOutputTypeCountCommentsArgs
@@ -3866,13 +3864,6 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountSeriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SeriesWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
   export type UserCountOutputTypeCountSeriesApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SeriesApplicationWhereInput
   }
@@ -3945,6 +3936,37 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountCreatedPromoCodesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PromoCodeWhereInput
+  }
+
+
+  /**
+   * Count Type CreatorProfileCountOutputType
+   */
+
+  export type CreatorProfileCountOutputType = {
+    series: number
+  }
+
+  export type CreatorProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    series?: boolean | CreatorProfileCountOutputTypeCountSeriesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * CreatorProfileCountOutputType without action
+   */
+  export type CreatorProfileCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorProfileCountOutputType
+     */
+    select?: CreatorProfileCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * CreatorProfileCountOutputType without action
+   */
+  export type CreatorProfileCountOutputTypeCountSeriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SeriesWhereInput
   }
 
 
@@ -4485,7 +4507,6 @@ export namespace Prisma {
     chapterPurchases?: boolean | User$chapterPurchasesArgs<ExtArgs>
     payments?: boolean | User$paymentsArgs<ExtArgs>
     creatorProfile?: boolean | User$creatorProfileArgs<ExtArgs>
-    series?: boolean | User$seriesArgs<ExtArgs>
     seriesApplications?: boolean | User$seriesApplicationsArgs<ExtArgs>
     withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
@@ -4580,7 +4601,6 @@ export namespace Prisma {
     chapterPurchases?: boolean | User$chapterPurchasesArgs<ExtArgs>
     payments?: boolean | User$paymentsArgs<ExtArgs>
     creatorProfile?: boolean | User$creatorProfileArgs<ExtArgs>
-    series?: boolean | User$seriesArgs<ExtArgs>
     seriesApplications?: boolean | User$seriesApplicationsArgs<ExtArgs>
     withdrawals?: boolean | User$withdrawalsArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
@@ -4614,7 +4634,6 @@ export namespace Prisma {
       chapterPurchases: Prisma.$ChapterPurchasePayload<ExtArgs>[]
       payments: Prisma.$PaymentPayload<ExtArgs>[]
       creatorProfile: Prisma.$CreatorProfilePayload<ExtArgs> | null
-      series: Prisma.$SeriesPayload<ExtArgs>[]
       seriesApplications: Prisma.$SeriesApplicationPayload<ExtArgs>[]
       withdrawals: Prisma.$WithdrawalRequestPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
@@ -5051,7 +5070,6 @@ export namespace Prisma {
     chapterPurchases<T extends User$chapterPurchasesArgs<ExtArgs> = {}>(args?: Subset<T, User$chapterPurchasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     payments<T extends User$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     creatorProfile<T extends User$creatorProfileArgs<ExtArgs> = {}>(args?: Subset<T, User$creatorProfileArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    series<T extends User$seriesArgs<ExtArgs> = {}>(args?: Subset<T, User$seriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SeriesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     seriesApplications<T extends User$seriesApplicationsArgs<ExtArgs> = {}>(args?: Subset<T, User$seriesApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SeriesApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     withdrawals<T extends User$withdrawalsArgs<ExtArgs> = {}>(args?: Subset<T, User$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WithdrawalRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5742,30 +5760,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.series
-   */
-  export type User$seriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Series
-     */
-    select?: SeriesSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Series
-     */
-    omit?: SeriesOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SeriesInclude<ExtArgs> | null
-    where?: SeriesWhereInput
-    orderBy?: SeriesOrderByWithRelationInput | SeriesOrderByWithRelationInput[]
-    cursor?: SeriesWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SeriesScalarFieldEnum | SeriesScalarFieldEnum[]
-  }
-
-  /**
    * User.seriesApplications
    */
   export type User$seriesApplicationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6291,6 +6285,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    series?: boolean | CreatorProfile$seriesArgs<ExtArgs>
+    _count?: boolean | CreatorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["creatorProfile"]>
 
   export type CreatorProfileSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6337,6 +6333,8 @@ export namespace Prisma {
   export type CreatorProfileOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "channelName" | "description" | "bannerUrl" | "profileImage" | "totalEarnings" | "withdrawnAmount" | "createdAt" | "updatedAt", ExtArgs["result"]["creatorProfile"]>
   export type CreatorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    series?: boolean | CreatorProfile$seriesArgs<ExtArgs>
+    _count?: boolean | CreatorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CreatorProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -6349,6 +6347,7 @@ export namespace Prisma {
     name: "CreatorProfile"
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
+      series: Prisma.$SeriesPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6756,6 +6755,7 @@ export namespace Prisma {
   export interface Prisma__CreatorProfileClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    series<T extends CreatorProfile$seriesArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$seriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SeriesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7193,6 +7193,30 @@ export namespace Prisma {
      * Limit how many CreatorProfiles to delete.
      */
     limit?: number
+  }
+
+  /**
+   * CreatorProfile.series
+   */
+  export type CreatorProfile$seriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Series
+     */
+    select?: SeriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Series
+     */
+    omit?: SeriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SeriesInclude<ExtArgs> | null
+    where?: SeriesWhereInput
+    orderBy?: SeriesOrderByWithRelationInput | SeriesOrderByWithRelationInput[]
+    cursor?: SeriesWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SeriesScalarFieldEnum | SeriesScalarFieldEnum[]
   }
 
   /**
@@ -10930,7 +10954,7 @@ export namespace Prisma {
   export type $SeriesPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Series"
     objects: {
-      creator: Prisma.$UserPayload<ExtArgs> | null
+      creator: Prisma.$CreatorProfilePayload<ExtArgs> | null
       genres: Prisma.$GenrePayload<ExtArgs>[]
       chapters: Prisma.$ChapterPayload<ExtArgs>[]
       bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
@@ -11354,7 +11378,7 @@ export namespace Prisma {
    */
   export interface Prisma__SeriesClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    creator<T extends Series$creatorArgs<ExtArgs> = {}>(args?: Subset<T, Series$creatorArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    creator<T extends Series$creatorArgs<ExtArgs> = {}>(args?: Subset<T, Series$creatorArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     genres<T extends Series$genresArgs<ExtArgs> = {}>(args?: Subset<T, Series$genresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GenrePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     chapters<T extends Series$chaptersArgs<ExtArgs> = {}>(args?: Subset<T, Series$chaptersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     bookmarks<T extends Series$bookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Series$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -11816,18 +11840,18 @@ export namespace Prisma {
    */
   export type Series$creatorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the User
+     * Select specific fields to fetch from the CreatorProfile
      */
-    select?: UserSelect<ExtArgs> | null
+    select?: CreatorProfileSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the User
+     * Omit specific fields from the CreatorProfile
      */
-    omit?: UserOmit<ExtArgs> | null
+    omit?: CreatorProfileOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: UserInclude<ExtArgs> | null
-    where?: UserWhereInput
+    include?: CreatorProfileInclude<ExtArgs> | null
+    where?: CreatorProfileWhereInput
   }
 
   /**
@@ -14374,6 +14398,7 @@ export namespace Prisma {
     maxDailyAdPoints: number
     pointToFiatRate: number
     featuredRequestFee: number
+    payoutMethods: number
     customAdScript: number
     updatedAt: number
     _all: number
@@ -14520,6 +14545,7 @@ export namespace Prisma {
     maxDailyAdPoints?: true
     pointToFiatRate?: true
     featuredRequestFee?: true
+    payoutMethods?: true
     customAdScript?: true
     updatedAt?: true
     _all?: true
@@ -14649,6 +14675,7 @@ export namespace Prisma {
     maxDailyAdPoints: number
     pointToFiatRate: number
     featuredRequestFee: number
+    payoutMethods: string[]
     customAdScript: string | null
     updatedAt: Date
     _count: SiteConfigCountAggregateOutputType | null
@@ -14710,6 +14737,7 @@ export namespace Prisma {
     maxDailyAdPoints?: boolean
     pointToFiatRate?: boolean
     featuredRequestFee?: boolean
+    payoutMethods?: boolean
     customAdScript?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["siteConfig"]>
@@ -14752,6 +14780,7 @@ export namespace Prisma {
     maxDailyAdPoints?: boolean
     pointToFiatRate?: boolean
     featuredRequestFee?: boolean
+    payoutMethods?: boolean
     customAdScript?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["siteConfig"]>
@@ -14794,6 +14823,7 @@ export namespace Prisma {
     maxDailyAdPoints?: boolean
     pointToFiatRate?: boolean
     featuredRequestFee?: boolean
+    payoutMethods?: boolean
     customAdScript?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["siteConfig"]>
@@ -14836,11 +14866,12 @@ export namespace Prisma {
     maxDailyAdPoints?: boolean
     pointToFiatRate?: boolean
     featuredRequestFee?: boolean
+    payoutMethods?: boolean
     customAdScript?: boolean
     updatedAt?: boolean
   }
 
-  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "contactEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "enableStripePayment" | "enableCashOut" | "enablePremiumChapters" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
+  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "contactEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "enableStripePayment" | "enableCashOut" | "enablePremiumChapters" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "payoutMethods" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
 
   export type $SiteConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SiteConfig"
@@ -14883,6 +14914,7 @@ export namespace Prisma {
       maxDailyAdPoints: number
       pointToFiatRate: number
       featuredRequestFee: number
+      payoutMethods: string[]
       customAdScript: string | null
       updatedAt: Date
     }, ExtArgs["result"]["siteConfig"]>
@@ -15345,6 +15377,7 @@ export namespace Prisma {
     readonly maxDailyAdPoints: FieldRef<"SiteConfig", 'Int'>
     readonly pointToFiatRate: FieldRef<"SiteConfig", 'Float'>
     readonly featuredRequestFee: FieldRef<"SiteConfig", 'Int'>
+    readonly payoutMethods: FieldRef<"SiteConfig", 'String[]'>
     readonly customAdScript: FieldRef<"SiteConfig", 'String'>
     readonly updatedAt: FieldRef<"SiteConfig", 'DateTime'>
   }
@@ -40462,6 +40495,7 @@ export namespace Prisma {
     maxDailyAdPoints: 'maxDailyAdPoints',
     pointToFiatRate: 'pointToFiatRate',
     featuredRequestFee: 'featuredRequestFee',
+    payoutMethods: 'payoutMethods',
     customAdScript: 'customAdScript',
     updatedAt: 'updatedAt'
   };
@@ -41082,7 +41116,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseListRelationFilter
     payments?: PaymentListRelationFilter
     creatorProfile?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
-    series?: SeriesListRelationFilter
     seriesApplications?: SeriesApplicationListRelationFilter
     withdrawals?: WithdrawalRequestListRelationFilter
     comments?: CommentListRelationFilter
@@ -41126,7 +41159,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseOrderByRelationAggregateInput
     payments?: PaymentOrderByRelationAggregateInput
     creatorProfile?: CreatorProfileOrderByWithRelationInput
-    series?: SeriesOrderByRelationAggregateInput
     seriesApplications?: SeriesApplicationOrderByRelationAggregateInput
     withdrawals?: WithdrawalRequestOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
@@ -41173,7 +41205,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseListRelationFilter
     payments?: PaymentListRelationFilter
     creatorProfile?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
-    series?: SeriesListRelationFilter
     seriesApplications?: SeriesApplicationListRelationFilter
     withdrawals?: WithdrawalRequestListRelationFilter
     comments?: CommentListRelationFilter
@@ -41254,6 +41285,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     updatedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    series?: SeriesListRelationFilter
   }
 
   export type CreatorProfileOrderByWithRelationInput = {
@@ -41268,6 +41300,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
+    series?: SeriesOrderByRelationAggregateInput
   }
 
   export type CreatorProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -41285,6 +41318,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     updatedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    series?: SeriesListRelationFilter
   }, "id" | "userId">
 
   export type CreatorProfileOrderByWithAggregationInput = {
@@ -41571,7 +41605,7 @@ export namespace Prisma {
     discount?: StringNullableFilter<"Series"> | string | null
     createdAt?: DateTimeFilter<"Series"> | Date | string
     updatedAt?: DateTimeFilter<"Series"> | Date | string
-    creator?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    creator?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
     genres?: GenreListRelationFilter
     chapters?: ChapterListRelationFilter
     bookmarks?: BookmarkListRelationFilter
@@ -41602,7 +41636,7 @@ export namespace Prisma {
     discount?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    creator?: UserOrderByWithRelationInput
+    creator?: CreatorProfileOrderByWithRelationInput
     genres?: GenreOrderByRelationAggregateInput
     chapters?: ChapterOrderByRelationAggregateInput
     bookmarks?: BookmarkOrderByRelationAggregateInput
@@ -41636,7 +41670,7 @@ export namespace Prisma {
     discount?: StringNullableFilter<"Series"> | string | null
     createdAt?: DateTimeFilter<"Series"> | Date | string
     updatedAt?: DateTimeFilter<"Series"> | Date | string
-    creator?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    creator?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
     genres?: GenreListRelationFilter
     chapters?: ChapterListRelationFilter
     bookmarks?: BookmarkListRelationFilter
@@ -41862,6 +41896,7 @@ export namespace Prisma {
     maxDailyAdPoints?: IntFilter<"SiteConfig"> | number
     pointToFiatRate?: FloatFilter<"SiteConfig"> | number
     featuredRequestFee?: IntFilter<"SiteConfig"> | number
+    payoutMethods?: StringNullableListFilter<"SiteConfig">
     customAdScript?: StringNullableFilter<"SiteConfig"> | string | null
     updatedAt?: DateTimeFilter<"SiteConfig"> | Date | string
   }
@@ -41904,6 +41939,7 @@ export namespace Prisma {
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
+    payoutMethods?: SortOrder
     customAdScript?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
   }
@@ -41949,6 +41985,7 @@ export namespace Prisma {
     maxDailyAdPoints?: IntFilter<"SiteConfig"> | number
     pointToFiatRate?: FloatFilter<"SiteConfig"> | number
     featuredRequestFee?: IntFilter<"SiteConfig"> | number
+    payoutMethods?: StringNullableListFilter<"SiteConfig">
     customAdScript?: StringNullableFilter<"SiteConfig"> | string | null
     updatedAt?: DateTimeFilter<"SiteConfig"> | Date | string
   }, "id">
@@ -41991,6 +42028,7 @@ export namespace Prisma {
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
+    payoutMethods?: SortOrder
     customAdScript?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
     _count?: SiteConfigCountOrderByAggregateInput
@@ -42041,6 +42079,7 @@ export namespace Prisma {
     maxDailyAdPoints?: IntWithAggregatesFilter<"SiteConfig"> | number
     pointToFiatRate?: FloatWithAggregatesFilter<"SiteConfig"> | number
     featuredRequestFee?: IntWithAggregatesFilter<"SiteConfig"> | number
+    payoutMethods?: StringNullableListFilter<"SiteConfig">
     customAdScript?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     updatedAt?: DateTimeWithAggregatesFilter<"SiteConfig"> | Date | string
   }
@@ -43631,7 +43670,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -43674,7 +43712,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -43717,7 +43754,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -43760,7 +43796,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -43850,6 +43885,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutCreatorProfileInput
+    series?: SeriesCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileUncheckedCreateInput = {
@@ -43863,6 +43899,7 @@ export namespace Prisma {
     withdrawnAmount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileUpdateInput = {
@@ -43876,6 +43913,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    series?: SeriesUpdateManyWithoutCreatorNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateInput = {
@@ -43889,6 +43927,7 @@ export namespace Prisma {
     withdrawnAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type CreatorProfileCreateManyInput = {
@@ -44205,7 +44244,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     genres?: GenreCreateNestedManyWithoutSeriesInput
     chapters?: ChapterCreateNestedManyWithoutSeriesInput
     bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
@@ -44265,7 +44304,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     genres?: GenreUpdateManyWithoutSeriesNestedInput
     chapters?: ChapterUpdateManyWithoutSeriesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
@@ -44533,6 +44572,7 @@ export namespace Prisma {
     maxDailyAdPoints?: number
     pointToFiatRate?: number
     featuredRequestFee?: number
+    payoutMethods?: SiteConfigCreatepayoutMethodsInput | string[]
     customAdScript?: string | null
     updatedAt?: Date | string
   }
@@ -44575,6 +44615,7 @@ export namespace Prisma {
     maxDailyAdPoints?: number
     pointToFiatRate?: number
     featuredRequestFee?: number
+    payoutMethods?: SiteConfigCreatepayoutMethodsInput | string[]
     customAdScript?: string | null
     updatedAt?: Date | string
   }
@@ -44617,6 +44658,7 @@ export namespace Prisma {
     maxDailyAdPoints?: IntFieldUpdateOperationsInput | number
     pointToFiatRate?: FloatFieldUpdateOperationsInput | number
     featuredRequestFee?: IntFieldUpdateOperationsInput | number
+    payoutMethods?: SiteConfigUpdatepayoutMethodsInput | string[]
     customAdScript?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -44659,6 +44701,7 @@ export namespace Prisma {
     maxDailyAdPoints?: IntFieldUpdateOperationsInput | number
     pointToFiatRate?: FloatFieldUpdateOperationsInput | number
     featuredRequestFee?: IntFieldUpdateOperationsInput | number
+    payoutMethods?: SiteConfigUpdatepayoutMethodsInput | string[]
     customAdScript?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -44701,6 +44744,7 @@ export namespace Prisma {
     maxDailyAdPoints?: number
     pointToFiatRate?: number
     featuredRequestFee?: number
+    payoutMethods?: SiteConfigCreatepayoutMethodsInput | string[]
     customAdScript?: string | null
     updatedAt?: Date | string
   }
@@ -44743,6 +44787,7 @@ export namespace Prisma {
     maxDailyAdPoints?: IntFieldUpdateOperationsInput | number
     pointToFiatRate?: FloatFieldUpdateOperationsInput | number
     featuredRequestFee?: IntFieldUpdateOperationsInput | number
+    payoutMethods?: SiteConfigUpdatepayoutMethodsInput | string[]
     customAdScript?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -44785,6 +44830,7 @@ export namespace Prisma {
     maxDailyAdPoints?: IntFieldUpdateOperationsInput | number
     pointToFiatRate?: FloatFieldUpdateOperationsInput | number
     featuredRequestFee?: IntFieldUpdateOperationsInput | number
+    payoutMethods?: SiteConfigUpdatepayoutMethodsInput | string[]
     customAdScript?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -46558,12 +46604,6 @@ export namespace Prisma {
     isNot?: CreatorProfileWhereInput | null
   }
 
-  export type SeriesListRelationFilter = {
-    every?: SeriesWhereInput
-    some?: SeriesWhereInput
-    none?: SeriesWhereInput
-  }
-
   export type SeriesApplicationListRelationFilter = {
     every?: SeriesApplicationWhereInput
     some?: SeriesApplicationWhereInput
@@ -46664,10 +46704,6 @@ export namespace Prisma {
   }
 
   export type PaymentOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type SeriesOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -46894,6 +46930,16 @@ export namespace Prisma {
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
+  }
+
+  export type SeriesListRelationFilter = {
+    every?: SeriesWhereInput
+    some?: SeriesWhereInput
+    none?: SeriesWhereInput
+  }
+
+  export type SeriesOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type CreatorProfileCountOrderByAggregateInput = {
@@ -47327,6 +47373,14 @@ export namespace Prisma {
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type SiteConfigCountOrderByAggregateInput = {
     id?: SortOrder
     appName?: SortOrder
@@ -47365,6 +47419,7 @@ export namespace Prisma {
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
+    payoutMethods?: SortOrder
     customAdScript?: SortOrder
     updatedAt?: SortOrder
   }
@@ -47867,14 +47922,6 @@ export namespace Prisma {
   export type PointPackageSumOrderByAggregateInput = {
     points?: SortOrder
     price?: SortOrder
-  }
-
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    has?: string | StringFieldRefInput<$PrismaModel> | null
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
-    isEmpty?: boolean
   }
 
   export type AdRewardConfigCountOrderByAggregateInput = {
@@ -48546,13 +48593,6 @@ export namespace Prisma {
     connect?: CreatorProfileWhereUniqueInput
   }
 
-  export type SeriesCreateNestedManyWithoutCreatorInput = {
-    create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
-    connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
-    createMany?: SeriesCreateManyCreatorInputEnvelope
-    connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-  }
-
   export type SeriesApplicationCreateNestedManyWithoutCreatorInput = {
     create?: XOR<SeriesApplicationCreateWithoutCreatorInput, SeriesApplicationUncheckedCreateWithoutCreatorInput> | SeriesApplicationCreateWithoutCreatorInput[] | SeriesApplicationUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: SeriesApplicationCreateOrConnectWithoutCreatorInput | SeriesApplicationCreateOrConnectWithoutCreatorInput[]
@@ -48690,13 +48730,6 @@ export namespace Prisma {
     create?: XOR<CreatorProfileCreateWithoutUserInput, CreatorProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: CreatorProfileCreateOrConnectWithoutUserInput
     connect?: CreatorProfileWhereUniqueInput
-  }
-
-  export type SeriesUncheckedCreateNestedManyWithoutCreatorInput = {
-    create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
-    connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
-    createMany?: SeriesCreateManyCreatorInputEnvelope
-    connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
   }
 
   export type SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput = {
@@ -48938,20 +48971,6 @@ export namespace Prisma {
     delete?: CreatorProfileWhereInput | boolean
     connect?: CreatorProfileWhereUniqueInput
     update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutUserInput, CreatorProfileUpdateWithoutUserInput>, CreatorProfileUncheckedUpdateWithoutUserInput>
-  }
-
-  export type SeriesUpdateManyWithoutCreatorNestedInput = {
-    create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
-    connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
-    upsert?: SeriesUpsertWithWhereUniqueWithoutCreatorInput | SeriesUpsertWithWhereUniqueWithoutCreatorInput[]
-    createMany?: SeriesCreateManyCreatorInputEnvelope
-    set?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-    disconnect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-    delete?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-    connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-    update?: SeriesUpdateWithWhereUniqueWithoutCreatorInput | SeriesUpdateWithWhereUniqueWithoutCreatorInput[]
-    updateMany?: SeriesUpdateManyWithWhereWithoutCreatorInput | SeriesUpdateManyWithWhereWithoutCreatorInput[]
-    deleteMany?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
   }
 
   export type SeriesApplicationUpdateManyWithoutCreatorNestedInput = {
@@ -49230,20 +49249,6 @@ export namespace Prisma {
     update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutUserInput, CreatorProfileUpdateWithoutUserInput>, CreatorProfileUncheckedUpdateWithoutUserInput>
   }
 
-  export type SeriesUncheckedUpdateManyWithoutCreatorNestedInput = {
-    create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
-    connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
-    upsert?: SeriesUpsertWithWhereUniqueWithoutCreatorInput | SeriesUpsertWithWhereUniqueWithoutCreatorInput[]
-    createMany?: SeriesCreateManyCreatorInputEnvelope
-    set?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-    disconnect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-    delete?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-    connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
-    update?: SeriesUpdateWithWhereUniqueWithoutCreatorInput | SeriesUpdateWithWhereUniqueWithoutCreatorInput[]
-    updateMany?: SeriesUpdateManyWithWhereWithoutCreatorInput | SeriesUpdateManyWithWhereWithoutCreatorInput[]
-    deleteMany?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
-  }
-
   export type SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput = {
     create?: XOR<SeriesApplicationCreateWithoutCreatorInput, SeriesApplicationUncheckedCreateWithoutCreatorInput> | SeriesApplicationCreateWithoutCreatorInput[] | SeriesApplicationUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: SeriesApplicationCreateOrConnectWithoutCreatorInput | SeriesApplicationCreateOrConnectWithoutCreatorInput[]
@@ -49404,12 +49409,54 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type SeriesCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
+    createMany?: SeriesCreateManyCreatorInputEnvelope
+    connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+  }
+
+  export type SeriesUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
+    createMany?: SeriesCreateManyCreatorInputEnvelope
+    connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+  }
+
   export type UserUpdateOneRequiredWithoutCreatorProfileNestedInput = {
     create?: XOR<UserCreateWithoutCreatorProfileInput, UserUncheckedCreateWithoutCreatorProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutCreatorProfileInput
     upsert?: UserUpsertWithoutCreatorProfileInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatorProfileInput, UserUpdateWithoutCreatorProfileInput>, UserUncheckedUpdateWithoutCreatorProfileInput>
+  }
+
+  export type SeriesUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
+    upsert?: SeriesUpsertWithWhereUniqueWithoutCreatorInput | SeriesUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: SeriesCreateManyCreatorInputEnvelope
+    set?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+    disconnect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+    delete?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+    connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+    update?: SeriesUpdateWithWhereUniqueWithoutCreatorInput | SeriesUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: SeriesUpdateManyWithWhereWithoutCreatorInput | SeriesUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
+  }
+
+  export type SeriesUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
+    upsert?: SeriesUpsertWithWhereUniqueWithoutCreatorInput | SeriesUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: SeriesCreateManyCreatorInputEnvelope
+    set?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+    disconnect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+    delete?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+    connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+    update?: SeriesUpdateWithWhereUniqueWithoutCreatorInput | SeriesUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: SeriesUpdateManyWithWhereWithoutCreatorInput | SeriesUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -49440,10 +49487,10 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccountsInput, UserUpdateWithoutAccountsInput>, UserUncheckedUpdateWithoutAccountsInput>
   }
 
-  export type UserCreateNestedOneWithoutSeriesInput = {
-    create?: XOR<UserCreateWithoutSeriesInput, UserUncheckedCreateWithoutSeriesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSeriesInput
-    connect?: UserWhereUniqueInput
+  export type CreatorProfileCreateNestedOneWithoutSeriesInput = {
+    create?: XOR<CreatorProfileCreateWithoutSeriesInput, CreatorProfileUncheckedCreateWithoutSeriesInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutSeriesInput
+    connect?: CreatorProfileWhereUniqueInput
   }
 
   export type GenreCreateNestedManyWithoutSeriesInput = {
@@ -49570,14 +49617,14 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type UserUpdateOneWithoutSeriesNestedInput = {
-    create?: XOR<UserCreateWithoutSeriesInput, UserUncheckedCreateWithoutSeriesInput>
-    connectOrCreate?: UserCreateOrConnectWithoutSeriesInput
-    upsert?: UserUpsertWithoutSeriesInput
-    disconnect?: UserWhereInput | boolean
-    delete?: UserWhereInput | boolean
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSeriesInput, UserUpdateWithoutSeriesInput>, UserUncheckedUpdateWithoutSeriesInput>
+  export type CreatorProfileUpdateOneWithoutSeriesNestedInput = {
+    create?: XOR<CreatorProfileCreateWithoutSeriesInput, CreatorProfileUncheckedCreateWithoutSeriesInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutSeriesInput
+    upsert?: CreatorProfileUpsertWithoutSeriesInput
+    disconnect?: CreatorProfileWhereInput | boolean
+    delete?: CreatorProfileWhereInput | boolean
+    connect?: CreatorProfileWhereUniqueInput
+    update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutSeriesInput, CreatorProfileUpdateWithoutSeriesInput>, CreatorProfileUncheckedUpdateWithoutSeriesInput>
   }
 
   export type GenreUpdateManyWithoutSeriesNestedInput = {
@@ -49824,6 +49871,15 @@ export namespace Prisma {
     upsert?: SeriesUpsertWithoutFeaturedInput
     connect?: SeriesWhereUniqueInput
     update?: XOR<XOR<SeriesUpdateToOneWithWhereWithoutFeaturedInput, SeriesUpdateWithoutFeaturedInput>, SeriesUncheckedUpdateWithoutFeaturedInput>
+  }
+
+  export type SiteConfigCreatepayoutMethodsInput = {
+    set: string[]
+  }
+
+  export type SiteConfigUpdatepayoutMethodsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type SeriesCreateNestedManyWithoutGenresInput = {
@@ -50916,7 +50972,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -50958,7 +51013,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -51005,7 +51059,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -51047,7 +51100,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -51285,6 +51337,7 @@ export namespace Prisma {
     withdrawnAmount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    series?: SeriesCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileUncheckedCreateWithoutUserInput = {
@@ -51297,79 +51350,12 @@ export namespace Prisma {
     withdrawnAmount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutUserInput = {
     where: CreatorProfileWhereUniqueInput
     create: XOR<CreatorProfileCreateWithoutUserInput, CreatorProfileUncheckedCreateWithoutUserInput>
-  }
-
-  export type SeriesCreateWithoutCreatorInput = {
-    id?: string
-    title: string
-    slug: string
-    altTitles?: string | null
-    description?: string | null
-    coverUrl?: string | null
-    bgUrl?: string | null
-    type?: $Enums.SeriesType
-    status?: $Enums.SeriesStatus
-    rating?: number
-    favorites?: number
-    totalViews?: number
-    isPinned?: boolean
-    isHidden?: boolean
-    hiddenReason?: string | null
-    discount?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    genres?: GenreCreateNestedManyWithoutSeriesInput
-    chapters?: ChapterCreateNestedManyWithoutSeriesInput
-    bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
-    history?: HistoryCreateNestedManyWithoutSeriesInput
-    featured?: FeaturedSeriesCreateNestedOneWithoutSeriesInput
-    reviews?: ReviewCreateNestedManyWithoutSeriesInput
-    reports?: ReportCreateNestedManyWithoutSeriesInput
-    featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
-  }
-
-  export type SeriesUncheckedCreateWithoutCreatorInput = {
-    id?: string
-    title: string
-    slug: string
-    altTitles?: string | null
-    description?: string | null
-    coverUrl?: string | null
-    bgUrl?: string | null
-    type?: $Enums.SeriesType
-    status?: $Enums.SeriesStatus
-    rating?: number
-    favorites?: number
-    totalViews?: number
-    isPinned?: boolean
-    isHidden?: boolean
-    hiddenReason?: string | null
-    discount?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    genres?: GenreUncheckedCreateNestedManyWithoutSeriesInput
-    chapters?: ChapterUncheckedCreateNestedManyWithoutSeriesInput
-    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutSeriesInput
-    history?: HistoryUncheckedCreateNestedManyWithoutSeriesInput
-    featured?: FeaturedSeriesUncheckedCreateNestedOneWithoutSeriesInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
-    reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
-    featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
-  }
-
-  export type SeriesCreateOrConnectWithoutCreatorInput = {
-    where: SeriesWhereUniqueInput
-    create: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput>
-  }
-
-  export type SeriesCreateManyCreatorInputEnvelope = {
-    data: SeriesCreateManyCreatorInput | SeriesCreateManyCreatorInput[]
-    skipDuplicates?: boolean
   }
 
   export type SeriesApplicationCreateWithoutCreatorInput = {
@@ -51735,7 +51721,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -51777,7 +51762,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -52060,6 +52044,7 @@ export namespace Prisma {
     withdrawnAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    series?: SeriesUpdateManyWithoutCreatorNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateWithoutUserInput = {
@@ -52072,47 +52057,7 @@ export namespace Prisma {
     withdrawnAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SeriesUpsertWithWhereUniqueWithoutCreatorInput = {
-    where: SeriesWhereUniqueInput
-    update: XOR<SeriesUpdateWithoutCreatorInput, SeriesUncheckedUpdateWithoutCreatorInput>
-    create: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput>
-  }
-
-  export type SeriesUpdateWithWhereUniqueWithoutCreatorInput = {
-    where: SeriesWhereUniqueInput
-    data: XOR<SeriesUpdateWithoutCreatorInput, SeriesUncheckedUpdateWithoutCreatorInput>
-  }
-
-  export type SeriesUpdateManyWithWhereWithoutCreatorInput = {
-    where: SeriesScalarWhereInput
-    data: XOR<SeriesUpdateManyMutationInput, SeriesUncheckedUpdateManyWithoutCreatorInput>
-  }
-
-  export type SeriesScalarWhereInput = {
-    AND?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
-    OR?: SeriesScalarWhereInput[]
-    NOT?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
-    id?: StringFilter<"Series"> | string
-    creatorId?: StringNullableFilter<"Series"> | string | null
-    title?: StringFilter<"Series"> | string
-    slug?: StringFilter<"Series"> | string
-    altTitles?: StringNullableFilter<"Series"> | string | null
-    description?: StringNullableFilter<"Series"> | string | null
-    coverUrl?: StringNullableFilter<"Series"> | string | null
-    bgUrl?: StringNullableFilter<"Series"> | string | null
-    type?: EnumSeriesTypeFilter<"Series"> | $Enums.SeriesType
-    status?: EnumSeriesStatusFilter<"Series"> | $Enums.SeriesStatus
-    rating?: FloatFilter<"Series"> | number
-    favorites?: IntFilter<"Series"> | number
-    totalViews?: IntFilter<"Series"> | number
-    isPinned?: BoolFilter<"Series"> | boolean
-    isHidden?: BoolFilter<"Series"> | boolean
-    hiddenReason?: StringNullableFilter<"Series"> | string | null
-    discount?: StringNullableFilter<"Series"> | string | null
-    createdAt?: DateTimeFilter<"Series"> | Date | string
-    updatedAt?: DateTimeFilter<"Series"> | Date | string
+    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type SeriesApplicationUpsertWithWhereUniqueWithoutCreatorInput = {
@@ -52469,7 +52414,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionCreateNestedManyWithoutUserInput
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -52511,7 +52455,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUncheckedCreateNestedManyWithoutUserInput
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -52528,6 +52471,74 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutCreatorProfileInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutCreatorProfileInput, UserUncheckedCreateWithoutCreatorProfileInput>
+  }
+
+  export type SeriesCreateWithoutCreatorInput = {
+    id?: string
+    title: string
+    slug: string
+    altTitles?: string | null
+    description?: string | null
+    coverUrl?: string | null
+    bgUrl?: string | null
+    type?: $Enums.SeriesType
+    status?: $Enums.SeriesStatus
+    rating?: number
+    favorites?: number
+    totalViews?: number
+    isPinned?: boolean
+    isHidden?: boolean
+    hiddenReason?: string | null
+    discount?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    genres?: GenreCreateNestedManyWithoutSeriesInput
+    chapters?: ChapterCreateNestedManyWithoutSeriesInput
+    bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
+    history?: HistoryCreateNestedManyWithoutSeriesInput
+    featured?: FeaturedSeriesCreateNestedOneWithoutSeriesInput
+    reviews?: ReviewCreateNestedManyWithoutSeriesInput
+    reports?: ReportCreateNestedManyWithoutSeriesInput
+    featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+  }
+
+  export type SeriesUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    title: string
+    slug: string
+    altTitles?: string | null
+    description?: string | null
+    coverUrl?: string | null
+    bgUrl?: string | null
+    type?: $Enums.SeriesType
+    status?: $Enums.SeriesStatus
+    rating?: number
+    favorites?: number
+    totalViews?: number
+    isPinned?: boolean
+    isHidden?: boolean
+    hiddenReason?: string | null
+    discount?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    genres?: GenreUncheckedCreateNestedManyWithoutSeriesInput
+    chapters?: ChapterUncheckedCreateNestedManyWithoutSeriesInput
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutSeriesInput
+    history?: HistoryUncheckedCreateNestedManyWithoutSeriesInput
+    featured?: FeaturedSeriesUncheckedCreateNestedOneWithoutSeriesInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
+    reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
+    featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+  }
+
+  export type SeriesCreateOrConnectWithoutCreatorInput = {
+    where: SeriesWhereUniqueInput
+    create: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type SeriesCreateManyCreatorInputEnvelope = {
+    data: SeriesCreateManyCreatorInput | SeriesCreateManyCreatorInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserUpsertWithoutCreatorProfileInput = {
@@ -52569,7 +52580,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUpdateManyWithoutUserNestedInput
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -52611,7 +52621,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUncheckedUpdateManyWithoutUserNestedInput
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -52623,6 +52632,47 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type SeriesUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: SeriesWhereUniqueInput
+    update: XOR<SeriesUpdateWithoutCreatorInput, SeriesUncheckedUpdateWithoutCreatorInput>
+    create: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type SeriesUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: SeriesWhereUniqueInput
+    data: XOR<SeriesUpdateWithoutCreatorInput, SeriesUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type SeriesUpdateManyWithWhereWithoutCreatorInput = {
+    where: SeriesScalarWhereInput
+    data: XOR<SeriesUpdateManyMutationInput, SeriesUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type SeriesScalarWhereInput = {
+    AND?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
+    OR?: SeriesScalarWhereInput[]
+    NOT?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
+    id?: StringFilter<"Series"> | string
+    creatorId?: StringNullableFilter<"Series"> | string | null
+    title?: StringFilter<"Series"> | string
+    slug?: StringFilter<"Series"> | string
+    altTitles?: StringNullableFilter<"Series"> | string | null
+    description?: StringNullableFilter<"Series"> | string | null
+    coverUrl?: StringNullableFilter<"Series"> | string | null
+    bgUrl?: StringNullableFilter<"Series"> | string | null
+    type?: EnumSeriesTypeFilter<"Series"> | $Enums.SeriesType
+    status?: EnumSeriesStatusFilter<"Series"> | $Enums.SeriesStatus
+    rating?: FloatFilter<"Series"> | number
+    favorites?: IntFilter<"Series"> | number
+    totalViews?: IntFilter<"Series"> | number
+    isPinned?: BoolFilter<"Series"> | boolean
+    isHidden?: BoolFilter<"Series"> | boolean
+    hiddenReason?: StringNullableFilter<"Series"> | string | null
+    discount?: StringNullableFilter<"Series"> | string | null
+    createdAt?: DateTimeFilter<"Series"> | Date | string
+    updatedAt?: DateTimeFilter<"Series"> | Date | string
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -52653,7 +52703,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -52695,7 +52744,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -52753,7 +52801,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -52795,7 +52842,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -52837,7 +52883,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -52879,7 +52924,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -52937,7 +52981,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -52979,7 +53022,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -52993,93 +53035,35 @@ export namespace Prisma {
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
-  export type UserCreateWithoutSeriesInput = {
+  export type CreatorProfileCreateWithoutSeriesInput = {
     id?: string
-    name: string
-    email: string
-    emailVerified?: boolean
-    image?: string | null
-    role?: $Enums.Role
-    banned?: boolean
-    banReason?: string | null
-    banExpires?: Date | string | null
-    points?: number
-    transactionsFrozen?: boolean
-    mutedUntil?: Date | string | null
-    referralCode?: string | null
-    dailyAdViews?: number
-    dailyAdPointsEarned?: number
-    lastAdWatchDate?: Date | string
+    channelName: string
+    description?: string | null
+    bannerUrl?: string | null
+    profileImage?: string | null
+    totalEarnings?: number
+    withdrawnAmount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    referredBy?: UserCreateNestedOneWithoutReferralsInput
-    referrals?: UserCreateNestedManyWithoutReferredByInput
-    sessions?: SessionCreateNestedManyWithoutUserInput
-    accounts?: AccountCreateNestedManyWithoutUserInput
-    bookmarks?: BookmarkCreateNestedManyWithoutUserInput
-    history?: HistoryCreateNestedManyWithoutUserInput
-    pointTransactions?: PointTransactionCreateNestedManyWithoutUserInput
-    chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
-    payments?: PaymentCreateNestedManyWithoutUserInput
-    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
-    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
-    comments?: CommentCreateNestedManyWithoutUserInput
-    reviews?: ReviewCreateNestedManyWithoutUserInput
-    reports?: ReportCreateNestedManyWithoutReporterInput
-    featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
-    chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
-    creatorPosts?: CreatorPostCreateNestedManyWithoutCreatorInput
-    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
-    promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
-    createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    user: UserCreateNestedOneWithoutCreatorProfileInput
   }
 
-  export type UserUncheckedCreateWithoutSeriesInput = {
+  export type CreatorProfileUncheckedCreateWithoutSeriesInput = {
     id?: string
-    name: string
-    email: string
-    emailVerified?: boolean
-    image?: string | null
-    role?: $Enums.Role
-    banned?: boolean
-    banReason?: string | null
-    banExpires?: Date | string | null
-    points?: number
-    transactionsFrozen?: boolean
-    mutedUntil?: Date | string | null
-    referralCode?: string | null
-    referredById?: string | null
-    dailyAdViews?: number
-    dailyAdPointsEarned?: number
-    lastAdWatchDate?: Date | string
+    userId: string
+    channelName: string
+    description?: string | null
+    bannerUrl?: string | null
+    profileImage?: string | null
+    totalEarnings?: number
+    withdrawnAmount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
-    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
-    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
-    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
-    history?: HistoryUncheckedCreateNestedManyWithoutUserInput
-    pointTransactions?: PointTransactionUncheckedCreateNestedManyWithoutUserInput
-    chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
-    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
-    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
-    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
-    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
-    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
-    reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
-    featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
-    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
-    creatorPosts?: CreatorPostUncheckedCreateNestedManyWithoutCreatorInput
-    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
-    promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
-    createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
   }
 
-  export type UserCreateOrConnectWithoutSeriesInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutSeriesInput, UserUncheckedCreateWithoutSeriesInput>
+  export type CreatorProfileCreateOrConnectWithoutSeriesInput = {
+    where: CreatorProfileWhereUniqueInput
+    create: XOR<CreatorProfileCreateWithoutSeriesInput, CreatorProfileUncheckedCreateWithoutSeriesInput>
   }
 
   export type GenreCreateWithoutSeriesInput = {
@@ -53290,99 +53274,41 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type UserUpsertWithoutSeriesInput = {
-    update: XOR<UserUpdateWithoutSeriesInput, UserUncheckedUpdateWithoutSeriesInput>
-    create: XOR<UserCreateWithoutSeriesInput, UserUncheckedCreateWithoutSeriesInput>
-    where?: UserWhereInput
+  export type CreatorProfileUpsertWithoutSeriesInput = {
+    update: XOR<CreatorProfileUpdateWithoutSeriesInput, CreatorProfileUncheckedUpdateWithoutSeriesInput>
+    create: XOR<CreatorProfileCreateWithoutSeriesInput, CreatorProfileUncheckedCreateWithoutSeriesInput>
+    where?: CreatorProfileWhereInput
   }
 
-  export type UserUpdateToOneWithWhereWithoutSeriesInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutSeriesInput, UserUncheckedUpdateWithoutSeriesInput>
+  export type CreatorProfileUpdateToOneWithWhereWithoutSeriesInput = {
+    where?: CreatorProfileWhereInput
+    data: XOR<CreatorProfileUpdateWithoutSeriesInput, CreatorProfileUncheckedUpdateWithoutSeriesInput>
   }
 
-  export type UserUpdateWithoutSeriesInput = {
+  export type CreatorProfileUpdateWithoutSeriesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    banned?: BoolFieldUpdateOperationsInput | boolean
-    banReason?: NullableStringFieldUpdateOperationsInput | string | null
-    banExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    points?: IntFieldUpdateOperationsInput | number
-    transactionsFrozen?: BoolFieldUpdateOperationsInput | boolean
-    mutedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
-    dailyAdViews?: IntFieldUpdateOperationsInput | number
-    dailyAdPointsEarned?: IntFieldUpdateOperationsInput | number
-    lastAdWatchDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    channelName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    totalEarnings?: IntFieldUpdateOperationsInput | number
+    withdrawnAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    referredBy?: UserUpdateOneWithoutReferralsNestedInput
-    referrals?: UserUpdateManyWithoutReferredByNestedInput
-    sessions?: SessionUpdateManyWithoutUserNestedInput
-    accounts?: AccountUpdateManyWithoutUserNestedInput
-    bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
-    history?: HistoryUpdateManyWithoutUserNestedInput
-    pointTransactions?: PointTransactionUpdateManyWithoutUserNestedInput
-    chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
-    payments?: PaymentUpdateManyWithoutUserNestedInput
-    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
-    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
-    comments?: CommentUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUpdateManyWithoutUserNestedInput
-    reports?: ReportUpdateManyWithoutReporterNestedInput
-    featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
-    chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
-    creatorPosts?: CreatorPostUpdateManyWithoutCreatorNestedInput
-    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
-    promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
-    createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
   }
 
-  export type UserUncheckedUpdateWithoutSeriesInput = {
+  export type CreatorProfileUncheckedUpdateWithoutSeriesInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    emailVerified?: BoolFieldUpdateOperationsInput | boolean
-    image?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    banned?: BoolFieldUpdateOperationsInput | boolean
-    banReason?: NullableStringFieldUpdateOperationsInput | string | null
-    banExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    points?: IntFieldUpdateOperationsInput | number
-    transactionsFrozen?: BoolFieldUpdateOperationsInput | boolean
-    mutedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
-    referredById?: NullableStringFieldUpdateOperationsInput | string | null
-    dailyAdViews?: IntFieldUpdateOperationsInput | number
-    dailyAdPointsEarned?: IntFieldUpdateOperationsInput | number
-    lastAdWatchDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    channelName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    totalEarnings?: IntFieldUpdateOperationsInput | number
+    withdrawnAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
-    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
-    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
-    bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
-    history?: HistoryUncheckedUpdateManyWithoutUserNestedInput
-    pointTransactions?: PointTransactionUncheckedUpdateManyWithoutUserNestedInput
-    chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
-    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
-    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
-    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
-    reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
-    featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
-    chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
-    creatorPosts?: CreatorPostUncheckedUpdateManyWithoutCreatorNestedInput
-    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
-    promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
-    createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type GenreUpsertWithWhereUniqueWithoutSeriesInput = {
@@ -53573,7 +53499,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -53615,7 +53540,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -53673,7 +53597,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -53715,7 +53638,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -53747,7 +53669,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     genres?: GenreCreateNestedManyWithoutSeriesInput
     chapters?: ChapterCreateNestedManyWithoutSeriesInput
     bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
@@ -53821,7 +53743,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     genres?: GenreUpdateManyWithoutSeriesNestedInput
     chapters?: ChapterUpdateManyWithoutSeriesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
@@ -53879,7 +53801,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     chapters?: ChapterCreateNestedManyWithoutSeriesInput
     bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
     history?: HistoryCreateNestedManyWithoutSeriesInput
@@ -53958,7 +53880,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     genres?: GenreCreateNestedManyWithoutSeriesInput
     bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
     history?: HistoryCreateNestedManyWithoutSeriesInput
@@ -54128,7 +54050,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     genres?: GenreUpdateManyWithoutSeriesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
     history?: HistoryUpdateManyWithoutSeriesNestedInput
@@ -54349,7 +54271,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -54391,7 +54312,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -54429,7 +54349,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     genres?: GenreCreateNestedManyWithoutSeriesInput
     chapters?: ChapterCreateNestedManyWithoutSeriesInput
     history?: HistoryCreateNestedManyWithoutSeriesInput
@@ -54512,7 +54432,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -54554,7 +54473,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -54598,7 +54516,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     genres?: GenreUpdateManyWithoutSeriesNestedInput
     chapters?: ChapterUpdateManyWithoutSeriesNestedInput
     history?: HistoryUpdateManyWithoutSeriesNestedInput
@@ -54665,7 +54583,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -54707,7 +54624,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -54745,7 +54661,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     genres?: GenreCreateNestedManyWithoutSeriesInput
     chapters?: ChapterCreateNestedManyWithoutSeriesInput
     bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
@@ -54865,7 +54781,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -54907,7 +54822,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -54951,7 +54865,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     genres?: GenreUpdateManyWithoutSeriesNestedInput
     chapters?: ChapterUpdateManyWithoutSeriesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
@@ -55061,7 +54975,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -55103,7 +55016,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -55161,7 +55073,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -55203,7 +55114,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -55245,7 +55155,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -55287,7 +55196,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -55382,7 +55290,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -55424,7 +55331,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -55509,7 +55415,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionCreateNestedManyWithoutUserInput
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -55551,7 +55456,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUncheckedCreateNestedManyWithoutUserInput
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -55609,7 +55513,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUpdateManyWithoutUserNestedInput
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -55651,7 +55554,6 @@ export namespace Prisma {
     pointTransactions?: PointTransactionUncheckedUpdateManyWithoutUserNestedInput
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -55694,7 +55596,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     comments?: CommentCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -55736,7 +55637,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -55794,7 +55694,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -55836,7 +55735,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -55878,7 +55776,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     reviews?: ReviewCreateNestedManyWithoutUserInput
@@ -55920,7 +55817,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -56015,7 +55911,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     reviews?: ReviewUpdateManyWithoutUserNestedInput
@@ -56057,7 +55952,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -56142,7 +56036,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -56184,7 +56077,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -56221,7 +56113,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     genres?: GenreCreateNestedManyWithoutSeriesInput
     chapters?: ChapterCreateNestedManyWithoutSeriesInput
     bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
@@ -56305,7 +56197,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -56347,7 +56238,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -56390,7 +56280,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     genres?: GenreUpdateManyWithoutSeriesNestedInput
     chapters?: ChapterUpdateManyWithoutSeriesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
@@ -56458,7 +56348,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -56500,7 +56389,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -56537,7 +56425,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     genres?: GenreCreateNestedManyWithoutSeriesInput
     chapters?: ChapterCreateNestedManyWithoutSeriesInput
     bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
@@ -56621,7 +56509,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -56663,7 +56550,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -56706,7 +56592,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     genres?: GenreUpdateManyWithoutSeriesNestedInput
     chapters?: ChapterUpdateManyWithoutSeriesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
@@ -56764,7 +56650,7 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    creator?: UserCreateNestedOneWithoutSeriesInput
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
     genres?: GenreCreateNestedManyWithoutSeriesInput
     chapters?: ChapterCreateNestedManyWithoutSeriesInput
     bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
@@ -56837,7 +56723,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -56879,7 +56764,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -56927,7 +56811,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     genres?: GenreUpdateManyWithoutSeriesNestedInput
     chapters?: ChapterUpdateManyWithoutSeriesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
@@ -57006,7 +56890,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -57048,7 +56931,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -57090,7 +56972,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -57132,7 +57013,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -57190,7 +57070,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -57232,7 +57111,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -57274,7 +57152,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -57316,7 +57193,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -57374,7 +57250,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -57416,7 +57291,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -57458,7 +57332,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -57500,7 +57373,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -57580,7 +57452,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -57622,7 +57493,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -57715,7 +57585,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -57757,7 +57626,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -57856,7 +57724,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -57898,7 +57765,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -57940,7 +57806,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
     payments?: PaymentCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
-    series?: SeriesCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
@@ -57982,7 +57847,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
     payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
     creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
-    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
     seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
     withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
@@ -58040,7 +57904,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -58082,7 +57945,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -58179,27 +58041,6 @@ export namespace Prisma {
     stripeSessionId?: string | null
     stripePaymentId?: string | null
     packageId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type SeriesCreateManyCreatorInput = {
-    id?: string
-    title: string
-    slug: string
-    altTitles?: string | null
-    description?: string | null
-    coverUrl?: string | null
-    bgUrl?: string | null
-    type?: $Enums.SeriesType
-    status?: $Enums.SeriesStatus
-    rating?: number
-    favorites?: number
-    totalViews?: number
-    isPinned?: boolean
-    isHidden?: boolean
-    hiddenReason?: string | null
-    discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -58338,7 +58179,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
     payments?: PaymentUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
-    series?: SeriesUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
@@ -58380,7 +58220,6 @@ export namespace Prisma {
     chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
     payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
     creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
-    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
     seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
     withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
@@ -58612,85 +58451,6 @@ export namespace Prisma {
     stripeSessionId?: NullableStringFieldUpdateOperationsInput | string | null
     stripePaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     packageId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SeriesUpdateWithoutCreatorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    altTitles?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    coverUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    bgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumSeriesTypeFieldUpdateOperationsInput | $Enums.SeriesType
-    status?: EnumSeriesStatusFieldUpdateOperationsInput | $Enums.SeriesStatus
-    rating?: FloatFieldUpdateOperationsInput | number
-    favorites?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    isHidden?: BoolFieldUpdateOperationsInput | boolean
-    hiddenReason?: NullableStringFieldUpdateOperationsInput | string | null
-    discount?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    genres?: GenreUpdateManyWithoutSeriesNestedInput
-    chapters?: ChapterUpdateManyWithoutSeriesNestedInput
-    bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
-    history?: HistoryUpdateManyWithoutSeriesNestedInput
-    featured?: FeaturedSeriesUpdateOneWithoutSeriesNestedInput
-    reviews?: ReviewUpdateManyWithoutSeriesNestedInput
-    reports?: ReportUpdateManyWithoutSeriesNestedInput
-    featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
-  }
-
-  export type SeriesUncheckedUpdateWithoutCreatorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    altTitles?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    coverUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    bgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumSeriesTypeFieldUpdateOperationsInput | $Enums.SeriesType
-    status?: EnumSeriesStatusFieldUpdateOperationsInput | $Enums.SeriesStatus
-    rating?: FloatFieldUpdateOperationsInput | number
-    favorites?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    isHidden?: BoolFieldUpdateOperationsInput | boolean
-    hiddenReason?: NullableStringFieldUpdateOperationsInput | string | null
-    discount?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    genres?: GenreUncheckedUpdateManyWithoutSeriesNestedInput
-    chapters?: ChapterUncheckedUpdateManyWithoutSeriesNestedInput
-    bookmarks?: BookmarkUncheckedUpdateManyWithoutSeriesNestedInput
-    history?: HistoryUncheckedUpdateManyWithoutSeriesNestedInput
-    featured?: FeaturedSeriesUncheckedUpdateOneWithoutSeriesNestedInput
-    reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
-    reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
-    featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
-  }
-
-  export type SeriesUncheckedUpdateManyWithoutCreatorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    slug?: StringFieldUpdateOperationsInput | string
-    altTitles?: NullableStringFieldUpdateOperationsInput | string | null
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    coverUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    bgUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumSeriesTypeFieldUpdateOperationsInput | $Enums.SeriesType
-    status?: EnumSeriesStatusFieldUpdateOperationsInput | $Enums.SeriesStatus
-    rating?: FloatFieldUpdateOperationsInput | number
-    favorites?: IntFieldUpdateOperationsInput | number
-    totalViews?: IntFieldUpdateOperationsInput | number
-    isPinned?: BoolFieldUpdateOperationsInput | boolean
-    isHidden?: BoolFieldUpdateOperationsInput | boolean
-    hiddenReason?: NullableStringFieldUpdateOperationsInput | string | null
-    discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -59015,6 +58775,106 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SeriesCreateManyCreatorInput = {
+    id?: string
+    title: string
+    slug: string
+    altTitles?: string | null
+    description?: string | null
+    coverUrl?: string | null
+    bgUrl?: string | null
+    type?: $Enums.SeriesType
+    status?: $Enums.SeriesStatus
+    rating?: number
+    favorites?: number
+    totalViews?: number
+    isPinned?: boolean
+    isHidden?: boolean
+    hiddenReason?: string | null
+    discount?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SeriesUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    altTitles?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    coverUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bgUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumSeriesTypeFieldUpdateOperationsInput | $Enums.SeriesType
+    status?: EnumSeriesStatusFieldUpdateOperationsInput | $Enums.SeriesStatus
+    rating?: FloatFieldUpdateOperationsInput | number
+    favorites?: IntFieldUpdateOperationsInput | number
+    totalViews?: IntFieldUpdateOperationsInput | number
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    hiddenReason?: NullableStringFieldUpdateOperationsInput | string | null
+    discount?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    genres?: GenreUpdateManyWithoutSeriesNestedInput
+    chapters?: ChapterUpdateManyWithoutSeriesNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
+    history?: HistoryUpdateManyWithoutSeriesNestedInput
+    featured?: FeaturedSeriesUpdateOneWithoutSeriesNestedInput
+    reviews?: ReviewUpdateManyWithoutSeriesNestedInput
+    reports?: ReportUpdateManyWithoutSeriesNestedInput
+    featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+  }
+
+  export type SeriesUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    altTitles?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    coverUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bgUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumSeriesTypeFieldUpdateOperationsInput | $Enums.SeriesType
+    status?: EnumSeriesStatusFieldUpdateOperationsInput | $Enums.SeriesStatus
+    rating?: FloatFieldUpdateOperationsInput | number
+    favorites?: IntFieldUpdateOperationsInput | number
+    totalViews?: IntFieldUpdateOperationsInput | number
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    hiddenReason?: NullableStringFieldUpdateOperationsInput | string | null
+    discount?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    genres?: GenreUncheckedUpdateManyWithoutSeriesNestedInput
+    chapters?: ChapterUncheckedUpdateManyWithoutSeriesNestedInput
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutSeriesNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutSeriesNestedInput
+    featured?: FeaturedSeriesUncheckedUpdateOneWithoutSeriesNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
+    reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
+    featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+  }
+
+  export type SeriesUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    altTitles?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    coverUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bgUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumSeriesTypeFieldUpdateOperationsInput | $Enums.SeriesType
+    status?: EnumSeriesStatusFieldUpdateOperationsInput | $Enums.SeriesStatus
+    rating?: FloatFieldUpdateOperationsInput | number
+    favorites?: IntFieldUpdateOperationsInput | number
+    totalViews?: IntFieldUpdateOperationsInput | number
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    hiddenReason?: NullableStringFieldUpdateOperationsInput | string | null
+    discount?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ChapterCreateManySeriesInput = {
     id?: string
     number: number
@@ -59273,7 +59133,7 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    creator?: UserUpdateOneWithoutSeriesNestedInput
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
     chapters?: ChapterUpdateManyWithoutSeriesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
     history?: HistoryUpdateManyWithoutSeriesNestedInput

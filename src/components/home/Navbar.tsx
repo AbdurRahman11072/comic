@@ -220,7 +220,7 @@ export function Navbar() {
                           onClick={async () => {
                             setUserMenuOpen(false);
                             try {
-                              const res = await api.put('/api/v1/user/profile', { role: 'creator' });
+                              const res = await api.put('/creators/profile', {});
                               if (res.data.success) {
                                 toast.success("You are now a Creator!");
                                 window.location.href = '/dashboard/channel';

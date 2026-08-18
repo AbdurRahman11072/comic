@@ -90,7 +90,6 @@ model User {
   payments          Payment[]
 
   creatorProfile     CreatorProfile?
-  series             Series[]
   seriesApplications SeriesApplication[]
   withdrawals        WithdrawalRequest[]
   comments           Comment[]
@@ -116,6 +115,8 @@ model CreatorProfile {
   profileImage    String?
   totalEarnings   Int     @default(0)
   withdrawnAmount Int     @default(0)
+
+  series          Series[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -171,7 +172,7 @@ model Verification {
 model Series {
   id          String       @id @default(uuid())
   creatorId   String?
-  creator     User?         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator     CreatorProfile? @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   title       String
   slug        String       @unique
   altTitles   String?

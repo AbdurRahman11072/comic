@@ -88,10 +88,25 @@ const getAllUsers = async (query: any) => {
 };
 
 const updateUser = async (id: string, data: any) => {
-  return await prisma.user.update({
+  const updatedUser = await prisma.user.update({
     where: { id },
     data,
   });
+  if (updatedUser.role === 'creator' || updatedUser.role === 'admin') {
+    const existingProfile = await prisma.creatorProfile.findUnique({
+      where: { userId: id },
+    });
+    if (!existingProfile) {
+      await prisma.creatorProfile.create({
+        data: {
+          userId: id,
+          channelName: updatedUser.name || 'Creator Studio',
+          profileImage: updatedUser.image || null,
+        },
+      });
+    }
+  }
+  return updatedUser;
 };
 
 const deleteUser = async (id: string) => {

@@ -74,7 +74,7 @@ export default async function proxy(request: NextRequest) {
       path.startsWith('/dashboard/earnings') ||
       path.startsWith('/dashboard/channel')
     ) {
-      if (userRole !== 'creator') {
+      if (!['creator', 'admin'].includes(userRole)) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
       }
     }

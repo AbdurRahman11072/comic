@@ -196,7 +196,7 @@ export function ContactClient({ config }: ContactClientProps) {
           </div>
           <div className="pt-2">
             <Link
-              href="/become-creator"
+              href="/dashboard/channel"
               className="w-full block text-center py-2 px-3 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 rounded-xl text-xs font-bold border border-amber-500/30 transition"
             >
               Creator Portal

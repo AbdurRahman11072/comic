@@ -117,7 +117,7 @@ const buyChapter = async (userId: string, chapterId: string) => {
   // 1. Fetch chapter
   const chapter = await prisma.chapter.findUnique({
     where: { id: chapterId },
-    include: { series: true },
+    include: { series: { include: { creator: true } } },
   });
   if (!chapter) throw new AppError(httpStatus.NOT_FOUND, 'Chapter not found');
   if (!chapter.isLocked) throw new AppError(httpStatus.BAD_REQUEST, 'Chapter is not locked');
@@ -153,7 +153,9 @@ const buyChapter = async (userId: string, chapterId: string) => {
   if (user.points < chapter.coinCost)
     throw new AppError(httpStatus.BAD_REQUEST, 'Insufficient points');
 
-  const creatorId = chapter.series.creatorId;
+  const creatorProfile = chapter.series.creator;
+  const creatorProfileId = creatorProfile?.id;
+  const creatorUserId = creatorProfile?.userId;
 
   // 4. Deduct points, log transaction, create purchase record, credit creator (all atomic)
   const txs: any[] = [
@@ -175,17 +177,17 @@ const buyChapter = async (userId: string, chapterId: string) => {
     }),
   ];
 
-  if (creatorId) {
+  if (creatorProfileId && creatorUserId) {
     txs.push(
       prisma.user.update({
-        where: { id: creatorId },
+        where: { id: creatorUserId },
         data: { points: { increment: chapter.coinCost } },
       })
     );
     txs.push(
       prisma.pointTransaction.create({
         data: {
-          userId: creatorId,
+          userId: creatorUserId,
           type: 'BUY_CHAPTER',
           amount: chapter.coinCost,
           description: `Earning from chapter #${chapter.number} unlock: ${chapter.series.title}`,
@@ -193,14 +195,9 @@ const buyChapter = async (userId: string, chapterId: string) => {
       })
     );
     txs.push(
-      prisma.creatorProfile.upsert({
-        where: { userId: creatorId },
-        update: { totalEarnings: { increment: chapter.coinCost } },
-        create: {
-          userId: creatorId,
-          channelName: 'Creator Channel',
-          totalEarnings: chapter.coinCost,
-        },
+      prisma.creatorProfile.update({
+        where: { id: creatorProfileId },
+        data: { totalEarnings: { increment: chapter.coinCost } },
       })
     );
   }
@@ -242,7 +239,7 @@ const buyBulkChapters = async (userId: string, chapterIds: string[], promoCodeIn
   // 1. Fetch chapters
   const chapters = await prisma.chapter.findMany({
     where: { id: { in: chapterIds } },
-    include: { series: true },
+    include: { series: { include: { creator: true } } },
   });
 
   if (chapters.length === 0) {
@@ -369,26 +366,28 @@ const buyBulkChapters = async (userId: string, chapterIds: string[], promoCodeIn
     );
   }
 
-  // Group creator earnings
-  const creatorEarningsMap = new Map<string, number>();
+  // Group creator earnings by CreatorProfile
+  const creatorEarningsMap = new Map<string, { profileId: string; userId: string; earned: number }>();
   for (const c of chaptersToUnlock) {
-    if (c.series?.creatorId) {
-      const current = creatorEarningsMap.get(c.series.creatorId) || 0;
-      creatorEarningsMap.set(c.series.creatorId, current + (c.coinCost || 0));
+    const creator = c.series?.creator;
+    if (creator?.id && creator?.userId) {
+      const existing = creatorEarningsMap.get(creator.id) || { profileId: creator.id, userId: creator.userId, earned: 0 };
+      existing.earned += (c.coinCost || 0);
+      creatorEarningsMap.set(creator.id, existing);
     }
   }
 
-  for (const [creatorId, earned] of creatorEarningsMap.entries()) {
+  for (const { profileId, userId: creatorUserId, earned } of creatorEarningsMap.values()) {
     txs.push(
       prisma.user.update({
-        where: { id: creatorId },
+        where: { id: creatorUserId },
         data: { points: { increment: earned } },
       })
     );
     txs.push(
       prisma.pointTransaction.create({
         data: {
-          userId: creatorId,
+          userId: creatorUserId,
           type: 'BUY_CHAPTER',
           amount: earned,
           description: `Earnings from bulk unlock of ${chaptersToUnlock.length} chapters`,
@@ -396,14 +395,9 @@ const buyBulkChapters = async (userId: string, chapterIds: string[], promoCodeIn
       })
     );
     txs.push(
-      prisma.creatorProfile.upsert({
-        where: { userId: creatorId },
-        update: { totalEarnings: { increment: earned } },
-        create: {
-          userId: creatorId,
-          channelName: 'Creator Channel',
-          totalEarnings: earned,
-        },
+      prisma.creatorProfile.update({
+        where: { id: profileId },
+        data: { totalEarnings: { increment: earned } },
       })
     );
   }

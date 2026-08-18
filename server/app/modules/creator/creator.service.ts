@@ -28,15 +28,18 @@ const getAllCreators = async (query: any) => {
       points: true,
       banned: true,
       createdAt: true,
-      creatorProfile: true,
-      series: {
-        select: {
-          id: true,
-          title: true,
-          slug: true,
-          totalViews: true,
-          _count: {
-            select: { chapters: true },
+      creatorProfile: {
+        include: {
+          series: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              totalViews: true,
+              _count: {
+                select: { chapters: true },
+              },
+            },
           },
         },
       },
@@ -54,8 +57,9 @@ const getAllCreators = async (query: any) => {
   });
 
   const formatted = creators.map((c) => {
-    const totalViews = c.series.reduce((sum, s) => sum + s.totalViews, 0);
-    const totalChapters = c.series.reduce((sum, s) => sum + s._count.chapters, 0);
+    const seriesList = c.creatorProfile?.series || [];
+    const totalViews = seriesList.reduce((sum, s) => sum + s.totalViews, 0);
+    const totalChapters = seriesList.reduce((sum, s) => sum + s._count.chapters, 0);
     return {
       id: c.id,
       name: c.name,
@@ -71,7 +75,7 @@ const getAllCreators = async (query: any) => {
       channelBanner: c.creatorProfile?.bannerUrl || null,
       totalEarnings: c.creatorProfile?.totalEarnings || 0,
       withdrawnAmount: c.creatorProfile?.withdrawnAmount || 0,
-      seriesCount: c.series.length,
+      seriesCount: seriesList.length,
       totalChapters,
       totalViews,
       promoCodesCount: c.createdPromoCodes.length,
@@ -82,14 +86,26 @@ const getAllCreators = async (query: any) => {
 };
 
 const getProfile = async (userId: string) => {
-  const profile = await prisma.creatorProfile.findUnique({
+  let profile = await prisma.creatorProfile.findUnique({
     where: { userId },
   });
 
   if (!profile) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Creator profile not found');
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true, image: true, role: true },
+    });
+    if (!user) {
+      throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+    profile = await prisma.creatorProfile.create({
+      data: {
+        userId,
+        channelName: user.name || 'Creator Studio',
+        profileImage: user.image || null,
+      },
+    });
   }
-
   return profile;
 };
 
@@ -98,12 +114,25 @@ const updateProfile = async (userId: string, payload: any) => {
     where: { userId },
   });
 
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true, image: true, role: true },
+  });
+  if (user && user.role === 'user') {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { role: 'creator' },
+    });
+  }
   if (!profile) {
     return await prisma.creatorProfile.create({
       data: {
         userId,
-        channelName: payload.channelName || 'New Creator',
-        ...payload
+        channelName: payload.channelName?.trim() || user?.name || 'Creator Studio',
+        profileImage: payload.profileImage || user?.image || null,
+        description: payload.description || null,
+        bannerUrl: payload.bannerUrl || null,
+        ...payload,
       }
     });
   }
@@ -158,7 +187,7 @@ const getAnalytics = async (userId: string) => {
   });
 
   const isPlatformAdmin = user?.role === 'admin';
-  const seriesWhere = isPlatformAdmin ? {} : { creatorId: userId };
+  const seriesWhere = isPlatformAdmin ? {} : { creator: { userId } };
 
   const seriesList = await prisma.series.findMany({
     where: seriesWhere,
@@ -200,7 +229,7 @@ const getAnalytics = async (userId: string) => {
   const totalBookmarks = seriesList.reduce((sum, s) => sum + s._count.bookmarks, 0);
   const totalReviews = seriesList.reduce((sum, s) => sum + s._count.reviews, 0);
 
-  const purchaseWhere = isPlatformAdmin ? {} : { chapter: { series: { creatorId: userId } } };
+  const purchaseWhere = isPlatformAdmin ? {} : { chapter: { series: { creator: { userId } } } };
   const chapterPurchases = await prisma.chapterPurchase.findMany({
     where: purchaseWhere,
     select: {
@@ -312,13 +341,14 @@ const getAnalytics = async (userId: string) => {
 const requestFeatureSeries = async (userId: string, seriesId: string, durationDays: number = 7, notes?: string) => {
   const series = await prisma.series.findUnique({
     where: { id: seriesId },
+    include: { creator: { select: { userId: true } } },
   });
 
   if (!series) {
     throw new AppError(httpStatus.NOT_FOUND, 'Series not found');
   }
 
-  if (series.creatorId !== userId) {
+  if (series.creator?.userId !== userId && series.creatorId !== userId) {
     throw new AppError(httpStatus.FORBIDDEN, 'You do not own this series');
   }
 
@@ -415,26 +445,26 @@ const getPublicChannel = async (channelIdOrUserId: string) => {
       OR: [{ id: channelIdOrUserId }, { userId: channelIdOrUserId }],
     },
     include: {
+      series: {
+        where: { status: { not: 'DROPPED' } },
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+          coverUrl: true,
+          type: true,
+          status: true,
+          rating: true,
+          totalViews: true,
+          _count: { select: { chapters: true, bookmarks: true } },
+        },
+      },
       user: {
         select: {
           id: true,
           name: true,
           image: true,
           createdAt: true,
-          series: {
-            where: { status: { not: 'DROPPED' } },
-            select: {
-              id: true,
-              title: true,
-              slug: true,
-              coverUrl: true,
-              type: true,
-              status: true,
-              rating: true,
-              totalViews: true,
-              _count: { select: { chapters: true, bookmarks: true } },
-            },
-          },
           creatorPosts: {
             orderBy: [{ isPinned: 'desc' }, { createdAt: 'desc' }],
           },
@@ -454,6 +484,25 @@ const getPublicChannel = async (channelIdOrUserId: string) => {
   });
 
   if (!profile) {
+    const user = await prisma.user.findUnique({
+      where: { id: channelIdOrUserId },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        role: true,
+      },
+    });
+    if (user && (user.role === 'creator' || user.role === 'admin' || user.role === 'moderator')) {
+      await prisma.creatorProfile.create({
+        data: {
+          userId: user.id,
+          channelName: user.name || 'Creator Studio',
+          profileImage: user.image || null,
+        },
+      });
+      return await getPublicChannel(user.id);
+    }
     throw new AppError(httpStatus.NOT_FOUND, 'Creator channel not found');
   }
 
@@ -502,14 +551,21 @@ const getSingleSeriesAnalytics = async (userId: string, seriesId: string) => {
   });
 
   const isPlatformStaff = user?.role === 'admin' || user?.role === 'moderator';
-  const seriesWhere = isPlatformStaff ? { id: seriesId } : { id: seriesId, creatorId: userId };
+  const seriesWhere = isPlatformStaff
+    ? { id: seriesId }
+    : { id: seriesId, OR: [{ creatorId: userId }, { creator: { userId } }] };
 
   const series = await prisma.series.findFirst({
     where: seriesWhere,
     include: {
       genres: true,
       creator: {
-        select: { id: true, name: true, image: true },
+        select: {
+          id: true,
+          channelName: true,
+          profileImage: true,
+          user: { select: { id: true, name: true, image: true } },
+        },
       },
       chapters: {
         orderBy: { number: 'asc' },

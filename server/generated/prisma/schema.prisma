@@ -90,7 +90,6 @@ model User {
   payments          Payment[]
 
   creatorProfile     CreatorProfile?
-  series             Series[]
   seriesApplications SeriesApplication[]
   withdrawals        WithdrawalRequest[]
   comments           Comment[]
@@ -116,6 +115,8 @@ model CreatorProfile {
   profileImage    String?
   totalEarnings   Int     @default(0)
   withdrawnAmount Int     @default(0)
+
+  series Series[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -169,26 +170,26 @@ model Verification {
 }
 
 model Series {
-  id           String       @id @default(uuid())
+  id           String          @id @default(uuid())
   creatorId    String?
-  creator      User?        @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator      CreatorProfile? @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   title        String
-  slug         String       @unique
+  slug         String          @unique
   altTitles    String?
   description  String?
   coverUrl     String?
   bgUrl        String?
-  type         SeriesType   @default(MANHWA)
-  status       SeriesStatus @default(ONGOING)
-  rating       Float        @default(0.0)
-  favorites    Int          @default(0)
-  totalViews   Int          @default(0)
-  isPinned     Boolean      @default(false)
-  isHidden     Boolean      @default(false)
+  type         SeriesType      @default(MANHWA)
+  status       SeriesStatus    @default(ONGOING)
+  rating       Float           @default(0.0)
+  favorites    Int             @default(0)
+  totalViews   Int             @default(0)
+  isPinned     Boolean         @default(false)
+  isHidden     Boolean         @default(false)
   hiddenReason String?
   discount     String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 
   genres           Genre[]
   chapters         Chapter[]
@@ -270,6 +271,7 @@ model SiteConfig {
   maxDailyAdPoints           Int      @default(1000)
   pointToFiatRate            Float    @default(0.01) // 1 point = $0.01
   featuredRequestFee         Int      @default(500)
+  payoutMethods              String[] @default(["bKash", "Nagad", "Rocket", "Bank Transfer"])
   customAdScript             String?
   updatedAt                  DateTime @updatedAt
 

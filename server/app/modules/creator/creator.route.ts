@@ -15,7 +15,7 @@ router.delete('/posts/:id', authMiddleware(['creator', 'admin']), CreatorControl
 
 // Creator private dashboard
 router.get('/profile', authMiddleware(['creator', 'admin']), CreatorController.getProfile);
-router.put('/profile', authMiddleware(['creator', 'admin']), CreatorController.updateProfile);
+router.put('/profile', authMiddleware(['user', 'creator', 'admin']), CreatorController.updateProfile);
 router.get('/analytics', authMiddleware(['creator', 'admin']), CreatorController.getAnalytics);
 router.get('/series/:id/analytics', authMiddleware(['creator', 'moderator', 'admin']), CreatorController.getSingleSeriesAnalytics);
 router.post('/series-application', authMiddleware(['user', 'creator', 'admin']), CreatorController.applyForSeries);

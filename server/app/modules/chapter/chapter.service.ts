@@ -3,6 +3,29 @@ import { prisma } from '../../../lib/prisma';
 import AppError from '../../error/AppError';
 import { deleteFromCloudinary } from '../../utils/cloudinary';
 
+const formatCreator = (c: any) => {
+  if (!c) return null;
+  return {
+    id: c.user?.id || c.userId || c.id,
+    name: c.channelName || c.user?.name || 'Creator Studio',
+    email: c.user?.email || null,
+    image: c.profileImage || c.user?.image || null,
+    channelId: c.id,
+    channelName: c.channelName,
+    profileImage: c.profileImage,
+    bannerUrl: c.bannerUrl,
+    description: c.description,
+    creatorProfile: {
+      id: c.id,
+      channelName: c.channelName,
+      profileImage: c.profileImage,
+      bannerUrl: c.bannerUrl,
+      description: c.description,
+    },
+    user: c.user || null,
+  };
+};
+
 const isPremiumChaptersEnabled = async (): Promise<boolean> => {
   try {
     const config = await prisma.siteConfig.findUnique({
@@ -47,14 +70,16 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
             creator: {
               select: {
                 id: true,
-                name: true,
-                image: true,
-                creatorProfile: {
+                channelName: true,
+                profileImage: true,
+                description: true,
+                bannerUrl: true,
+                userId: true,
+                user: {
                   select: {
                     id: true,
-                    channelName: true,
-                    profileImage: true,
-                    description: true,
+                    name: true,
+                    image: true,
                   },
                 },
               },
@@ -98,27 +123,34 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
   });
 
   let chapterSeries = result.series;
-  if (chapterSeries && !(chapterSeries as any).creator) {
-    const defaultCreator = await prisma.user.findFirst({
-      where: { role: { in: ['creator', 'admin'] } },
-      select: {
-        id: true,
-        name: true,
-        image: true,
-        creatorProfile: {
-          select: {
-            id: true,
-            channelName: true,
-            profileImage: true,
-            description: true,
+  if (chapterSeries) {
+    let creator = formatCreator(chapterSeries.creator);
+    if (!creator) {
+      const defaultProfile = await prisma.creatorProfile.findFirst({
+        select: {
+          id: true,
+          channelName: true,
+          profileImage: true,
+          description: true,
+          bannerUrl: true,
+          userId: true,
+          user: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
           },
         },
-      },
-    });
+      });
+      if (defaultProfile) {
+        creator = formatCreator(defaultProfile);
+      }
+    }
     chapterSeries = {
       ...chapterSeries,
-      creator: defaultCreator,
-    } as any;
+      creator: creator as any,
+    };
   }
 
   return {
@@ -139,7 +171,14 @@ const getAllChapters = async (query: any) => {
 
   const where: any = {};
   if (seriesId) where.seriesId = seriesId;
-  if (creatorId) where.series = { creatorId };
+  if (creatorId) {
+    where.series = {
+      OR: [
+        { creatorId },
+        { creator: { userId: creatorId } },
+      ],
+    };
+  }
 
   const result = await prisma.chapter.findMany({
     where,
@@ -228,9 +267,9 @@ const createChapter = async (data: any, userId?: string, role?: string) => {
   if (role === 'creator') {
     const series = await prisma.series.findUnique({
       where: { id: chapterData.seriesId },
-      select: { creatorId: true },
+      include: { creator: { select: { userId: true } } },
     });
-    if (!series || series.creatorId !== userId) {
+    if (!series || (series.creator?.userId !== userId && series.creatorId !== userId)) {
       throw new AppError(httpStatus.FORBIDDEN, 'You can only add chapters to your own series');
     }
   }
@@ -255,7 +294,11 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
   const existing = await prisma.chapter.findUnique({
     where: { id },
     include: {
-      series: { select: { creatorId: true } },
+      series: {
+        include: {
+          creator: { select: { userId: true } },
+        },
+      },
       images: true,
     },
   });
@@ -263,7 +306,7 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
     throw new AppError(httpStatus.NOT_FOUND, 'Chapter not found');
   }
 
-  if (role === 'creator' && existing.series.creatorId !== userId) {
+  if (role === 'creator' && existing.series.creator?.userId !== userId && existing.series.creatorId !== userId) {
     throw new AppError(httpStatus.FORBIDDEN, 'You can only edit chapters of your own series');
   }
 
@@ -298,7 +341,11 @@ const deleteChapter = async (id: string, userId?: string, role?: string) => {
   const existing = await prisma.chapter.findUnique({
     where: { id },
     include: {
-      series: { select: { creatorId: true } },
+      series: {
+        include: {
+          creator: { select: { userId: true } },
+        },
+      },
       images: true,
     },
   });
@@ -306,7 +353,7 @@ const deleteChapter = async (id: string, userId?: string, role?: string) => {
     throw new AppError(httpStatus.NOT_FOUND, 'Chapter not found');
   }
 
-  if (role === 'creator' && existing.series.creatorId !== userId) {
+  if (role === 'creator' && existing.series.creator?.userId !== userId && existing.series.creatorId !== userId) {
     throw new AppError(httpStatus.FORBIDDEN, 'You can only delete chapters of your own series');
   }
 

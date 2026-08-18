@@ -25,6 +25,7 @@ export interface Genre {
 
 export interface Series {
   id: string;
+  creatorId?: string | null;
   title: string;
   slug: string;
   altTitles?: string;
@@ -43,8 +44,14 @@ export interface Series {
   chapters?: Chapter[];
   creator?: {
     id: string;
-    name: string;
+    name?: string;
+    email?: string | null;
     image?: string | null;
+    channelId?: string;
+    channelName?: string;
+    profileImage?: string | null;
+    bannerUrl?: string | null;
+    description?: string | null;
     creatorProfile?: {
       id: string;
       channelName: string;
@@ -52,9 +59,17 @@ export interface Series {
       bannerUrl?: string | null;
       description?: string | null;
     } | null;
+    user?: {
+      id: string;
+      name: string;
+      email?: string;
+      image?: string | null;
+    } | null;
   } | null;
   _count?: {
     chapters: number;
+    reports?: number;
+    bookmarks?: number;
   };
 }
 
