@@ -1,34 +1,31 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import {
-  CreditCard,
-  Check,
-  X,
-  Loader2,
-  AlertCircle,
-  Eye,
-  Copy,
-  Search,
-  Users,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  DollarSign,
-  Coins,
-  ChevronDown,
-  ChevronUp,
-  ShieldAlert,
-  ArrowUpDown,
-  Filter,
-  Tv,
-  Layers,
-  Sparkles,
-  Lock,
-  Unlock,
-} from "lucide-react";
 import api from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
+import {
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Coins,
+  Copy,
+  CreditCard,
+  Eye,
+  Filter,
+  Layers,
+  Loader2,
+  Lock,
+  Search,
+  Smartphone,
+  Sparkles,
+  Tv,
+  Unlock,
+  Users,
+  X,
+  XCircle
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 
 interface WithdrawalUser {
@@ -98,6 +95,90 @@ interface FinancialHistoryData {
     createdAt: string;
     updatedAt: string;
   }>;
+}
+
+interface ParsedPayout {
+  platform: string;
+  accountType?: string;
+  destination: string;
+  holderName?: string;
+}
+
+function parsePayoutDetails(raw: string): ParsedPayout {
+  if (!raw) return { platform: "Manual", destination: "—" };
+
+  const match = raw.match(/^\[([^\]]+)\]\s*(.*)$/);
+  if (match) {
+    const fullTag = match[1].trim(); // e.g. "bKash - Personal" or "Nagad" or "Bank Transfer"
+    let remainder = match[2].trim();  // e.g. "Phone: 01812345678 | Name: John"
+
+    let platform = fullTag;
+    let accountType: string | undefined = undefined;
+
+    if (fullTag.includes(" - ")) {
+      const parts = fullTag.split(" - ");
+      platform = parts[0].trim();
+      accountType = parts[1].trim();
+    }
+
+    let holderName: string | undefined = undefined;
+    if (remainder.includes(" | Name: ")) {
+      const parts = remainder.split(" | Name: ");
+      remainder = parts[0].trim();
+      holderName = parts[1].trim();
+    } else if (remainder.includes(" | ")) {
+      const parts = remainder.split(" | ");
+      remainder = parts[0].trim();
+      holderName = parts[1].trim();
+    }
+
+    return {
+      platform,
+      accountType,
+      destination: remainder,
+      holderName,
+    };
+  }
+
+  // Fallback for legacy format strings
+  const lower = raw.toLowerCase();
+  let detected = "Bank Transfer";
+  if (lower.includes("bkash")) detected = "bKash";
+  else if (lower.includes("nagad")) detected = "Nagad";
+  else if (lower.includes("rocket")) detected = "Rocket";
+  else if (lower.includes("paypal")) detected = "PayPal";
+  else if (lower.includes("usdt") || lower.includes("crypto") || lower.includes("trc20")) detected = "USDT";
+
+  return {
+    platform: detected,
+    destination: raw,
+  };
+}
+
+function getPlatformBadgeStyle(platform: string) {
+  const p = platform.toLowerCase();
+  if (p.includes("bkash")) {
+    return "bg-pink-500/15 text-pink-400 border-pink-500/30";
+  }
+  if (p.includes("nagad")) {
+    return "bg-orange-500/15 text-orange-400 border-orange-500/30";
+  }
+  if (p.includes("rocket")) {
+    return "bg-purple-500/15 text-purple-400 border-purple-500/30";
+  }
+  if (p.includes("upay")) {
+    return "bg-yellow-500/15 text-yellow-400 border-yellow-500/30";
+  }
+  if (p.includes("paypal")) {
+    return "bg-sky-500/15 text-sky-400 border-sky-500/30";
+  }
+  if (p.includes("usdt") || p.includes("crypto") || p.includes("binance")) {
+    return "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
+  }
+  if (p.includes("bank")) {
+    return "bg-blue-500/15 text-blue-400 border-blue-500/30";
+  }
+  return "bg-primary/15 text-primary border-primary/30";
 }
 
 export default function WithdrawalsPage() {
@@ -493,7 +574,8 @@ export default function WithdrawalsPage() {
                   <th className="px-4 py-4 w-12 text-center">#</th>
                   <th className="px-5 py-4">User / Creator</th>
                   <th className="px-5 py-4">Payout Amount</th>
-                  <th className="px-5 py-4">Payment Method & Bank</th>
+                  <th className="px-5 py-4">Platform & Method</th>
+                  <th className="px-5 py-4">Account / Phone Details</th>
                   <th className="px-5 py-4">Ad Activity (Today / Total)</th>
                   <th className="px-4 py-4">Date</th>
                   <th className="px-4 py-4 text-center">Status</th>
@@ -555,20 +637,56 @@ export default function WithdrawalsPage() {
                       </div>
                     </td>
 
-                    {/* Bank / Payout details */}
-                    <td className="px-5 py-4 max-w-[200px]">
-                      <div className="flex items-center gap-2 group/copy">
-                        <span className="font-mono text-xs text-foreground/90 truncate">
-                          {req.bankDetails}
-                        </span>
-                        <button
-                          onClick={() => copyToClipboard(req.bankDetails, "Bank Details")}
-                          title="Copy account details"
-                          className="p-1 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground opacity-0 group-hover/copy:opacity-100 transition"
-                        >
-                          <Copy className="w-3 h-3" />
-                        </button>
-                      </div>
+                    {/* Platform & Method */}
+                    <td className="px-5 py-4 whitespace-nowrap">
+                      {(() => {
+                        const parsed = parsePayoutDetails(req.bankDetails);
+                        return (
+                          <div className="flex flex-col items-start gap-1">
+                            <span
+                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-bold border shadow-sm ${getPlatformBadgeStyle(
+                                parsed.platform
+                              )}`}
+                            >
+                              <Smartphone className="w-3.5 h-3.5 shrink-0" />
+                              <span>{parsed.platform}</span>
+                            </span>
+                            {parsed.accountType && (
+                              <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                                {parsed.accountType}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </td>
+
+                    {/* Phone / Account Destination */}
+                    <td className="px-5 py-4 min-w-[180px] max-w-[260px]">
+                      {(() => {
+                        const parsed = parsePayoutDetails(req.bankDetails);
+                        return (
+                          <div className="flex flex-col gap-0.5 group/copy">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-bold text-foreground truncate">
+                                {parsed.destination}
+                              </span>
+                              <button
+                                onClick={() => copyToClipboard(parsed.destination, "Account Number")}
+                                title="Copy account details"
+                                className="p-1 rounded hover:bg-white/10 text-muted-foreground hover:text-foreground opacity-0 group-hover/copy:opacity-100 transition cursor-pointer"
+                              >
+                                <Copy className="w-3 h-3" />
+                              </button>
+                            </div>
+                            {parsed.holderName && (
+                              <span className="text-[11px] text-muted-foreground truncate">
+                                Name: <span className="text-foreground/90 font-medium">{parsed.holderName}</span>
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </td>
 
                     {/* Ad Metrics (Today & Total) */}
@@ -749,28 +867,64 @@ export default function WithdrawalsPage() {
               </div>
 
               {/* Payment & Bank Details Box */}
-              <div className="pt-4">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
+              <div className="pt-4 space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
                   <CreditCard className="w-4 h-4 text-primary" />
-                  Payout Destination Details
+                  Payout Destination & Platform Breakdown
                 </h3>
-                <div className="p-4 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-mono font-semibold text-foreground">
-                      {selectedRequest.bankDetails}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">
-                      Submitted on {new Date(selectedRequest.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => copyToClipboard(selectedRequest.bankDetails, "Bank Details")}
-                    className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold border border-white/10 flex items-center gap-1.5 transition shrink-0"
-                  >
-                    <Copy className="w-3.5 h-3.5" />
-                    Copy
-                  </button>
-                </div>
+
+                {(() => {
+                  const parsed = parsePayoutDetails(selectedRequest.bankDetails);
+                  return (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {/* Platform Card */}
+                      <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-1.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                          Transaction Platform
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold border shadow-sm ${getPlatformBadgeStyle(
+                              parsed.platform
+                            )}`}
+                          >
+                            <Smartphone className="w-3.5 h-3.5" />
+                            <span>{parsed.platform}</span>
+                          </span>
+                          {parsed.accountType && (
+                            <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] font-medium text-white/80 uppercase">
+                              {parsed.accountType}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Destination Details Card */}
+                      <div className="p-4 rounded-2xl bg-black/40 border border-white/10 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+                            Phone / Account Number
+                          </span>
+                          <p className="text-sm font-mono font-bold text-foreground truncate mt-0.5">
+                            {parsed.destination}
+                          </p>
+                          {parsed.holderName && (
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              Holder: <span className="text-white font-medium">{parsed.holderName}</span>
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => copyToClipboard(parsed.destination, "Account Number")}
+                          className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold border border-white/10 flex items-center gap-1.5 transition shrink-0 cursor-pointer"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Lifetime Metrics Overview */}
@@ -902,10 +1056,10 @@ export default function WithdrawalsPage() {
                                   {t.type}
                                 </span>
                               </td>
-                              <td className="px-4 py-2.5 text-muted-foreground max-w-[200px] truncate">
+                              <td className="px-4 py-2.5 text-muted-foreground max-w-xs truncate">
                                 {t.description}
                               </td>
-                              <td className="px-4 py-2.5 text-muted-foreground text-[11px] whitespace-nowrap">
+                              <td className="px-4 py-2.5 text-muted-foreground whitespace-nowrap">
                                 {new Date(t.createdAt).toLocaleDateString(undefined, {
                                   month: "short",
                                   day: "numeric",
@@ -936,6 +1090,7 @@ export default function WithdrawalsPage() {
                     ) : (
                       historyData.withdrawals.map((w) => {
                         const isExpanded = expandedWithdrawalId === w.id;
+                        const parsedW = parsePayoutDetails(w.bankDetails);
                         return (
                           <div
                             key={w.id}
@@ -946,7 +1101,7 @@ export default function WithdrawalsPage() {
                               onClick={() =>
                                 setExpandedWithdrawalId(isExpanded ? null : w.id)
                               }
-                              className="w-full p-3.5 flex items-center justify-between text-left hover:bg-white/[0.03] transition"
+                              className="w-full p-3.5 flex items-center justify-between text-left hover:bg-white/[0.03] transition cursor-pointer"
                             >
                               <div className="flex items-center gap-3">
                                 <span
@@ -966,6 +1121,9 @@ export default function WithdrawalsPage() {
                                 <span className="text-muted-foreground text-xs">
                                   ({w.pointsRequested.toLocaleString()} pts)
                                 </span>
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-semibold border ${getPlatformBadgeStyle(parsedW.platform)}`}>
+                                  {parsedW.platform}
+                                </span>
                               </div>
 
                               <div className="flex items-center gap-3">
@@ -983,20 +1141,29 @@ export default function WithdrawalsPage() {
                             {/* Accordion Content / Dropdown Details */}
                             {isExpanded && (
                               <div className="p-4 border-t border-white/5 bg-black/30 text-xs space-y-2">
-                                <div className="grid grid-cols-2 gap-2 text-muted-foreground">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-muted-foreground">
                                   <div>
-                                    <span className="font-semibold text-foreground">Bank/Account:</span>{" "}
-                                    {w.bankDetails}
+                                    <span className="font-semibold text-foreground block text-[11px]">Platform:</span>
+                                    <span className={`inline-block mt-1 px-2.5 py-1 rounded-xl text-xs font-bold border ${getPlatformBadgeStyle(parsedW.platform)}`}>
+                                      {parsedW.platform} {parsedW.accountType ? `(${parsedW.accountType})` : ""}
+                                    </span>
                                   </div>
                                   <div>
-                                    <span className="font-semibold text-foreground">Updated:</span>{" "}
-                                    {new Date(w.updatedAt).toLocaleString()}
+                                    <span className="font-semibold text-foreground block text-[11px]">Phone / Account:</span>
+                                    <span className="font-mono text-foreground font-bold mt-1 block">{parsedW.destination}</span>
+                                    {parsedW.holderName && (
+                                      <span className="text-[10px] text-muted-foreground mt-0.5 block">Holder: {parsedW.holderName}</span>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <span className="font-semibold text-foreground block text-[11px]">Updated:</span>
+                                    <span className="mt-1 block">{new Date(w.updatedAt).toLocaleString()}</span>
                                   </div>
                                 </div>
                                 {w.notes && (
-                                  <div className="p-2.5 rounded-xl bg-white/5 text-foreground mt-1">
-                                    <span className="text-muted-foreground font-semibold">Moderator Note:</span>{" "}
-                                    {w.notes}
+                                  <div className="pt-2 border-t border-white/5">
+                                    <span className="font-semibold text-foreground">Moderator Notes:</span>{" "}
+                                    <span className="italic text-muted-foreground">{w.notes}</span>
                                   </div>
                                 )}
                               </div>

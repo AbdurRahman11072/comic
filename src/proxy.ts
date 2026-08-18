@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // Configuration to only run middleware on /dashboard routes
 export const config = {
