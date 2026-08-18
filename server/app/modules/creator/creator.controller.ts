@@ -63,6 +63,19 @@ const getAnalytics = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getSingleSeriesAnalytics = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+  const { id } = req.params;
+  const result = await CreatorService.getSingleSeriesAnalytics(userId as string, id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Series analytics fetched successfully',
+    data: result,
+  });
+});
+
 const requestFeatureSeries = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.id;
   const { seriesId, durationDays, notes } = req.body;
@@ -143,6 +156,7 @@ export const CreatorController = {
   updateProfile,
   applyForSeries,
   getAnalytics,
+  getSingleSeriesAnalytics,
   requestFeatureSeries,
   getCreatorFeatureRequests,
   getPublicChannel,

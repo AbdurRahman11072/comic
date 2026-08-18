@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Series } from "@/types";
 import {
   Edit2, Eye, Filter, Search, Star, Trash2, Plus,
-  Sparkles, Coins, Calendar, X, Loader2, AlertCircle, Check
+  Sparkles, Coins, Calendar, X, Loader2, AlertCircle, Check, BarChart3
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -239,9 +239,25 @@ export function SeriesTable({ initialSeries, userRole }: SeriesTableProps) {
           },
           { header: "Chapters", accessor: (item: Series) => item._count?.chapters || 0 },
           { 
+            header: "Views", 
+            accessor: (item: Series) => (
+              <div className="flex items-center gap-1.5 font-mono text-sm">
+                <Eye className="w-3.5 h-3.5 text-amber-400" />
+                <span>{(item.totalViews || 0).toLocaleString()}</span>
+              </div>
+            ),
+          },
+          { 
             header: "Actions", 
             accessor: (item: Series) => (
               <div className="flex items-center justify-end gap-1">
+                <Link 
+                  href={`/dashboard/series/${item.id}/analytics`} 
+                  className="p-2 hover:bg-cyan-500/10 hover:text-cyan-400 rounded-lg transition-colors" 
+                  title="View Series Analytics & Diagnostics"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                </Link>
                 {canModify && (
                   <Link href={`/dashboard/chapters/add?seriesId=${item.id}`} className="p-2 hover:bg-green-500/10 hover:text-green-500 rounded-lg transition-colors" title="Add Chapter">
                     <Plus className="w-4 h-4" />
