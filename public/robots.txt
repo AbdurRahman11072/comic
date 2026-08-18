@@ -1,0 +1,29 @@
+# Comic BD - Search Engine & Crawler Policy
+User-agent: *
+Allow: /
+Allow: /series
+Allow: /series/*
+Allow: /latest
+Allow: /bookmarks
+Allow: /history
+Allow: /channel/*
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /dmca
+Allow: /shop
+Allow: /rewards
+Allow: /become-creator
+
+# Restricted Private Routes
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /api/*
+Disallow: /stripe-sandbox
+Disallow: /profile
+Disallow: /transactions
+
+# Crawl Delay & Sitemap Index
+Crawl-delay: 1
+Sitemap: https://comicbd.com/sitemap.xml
