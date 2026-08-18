@@ -27,7 +27,7 @@ const dev = process.env.NODE_ENV !== "production";
 const server = next({ dev });
 const handle = server.getRequestHandler();
 const port = envConfig.PORT || 3000;
-// Server initialized with full dynamic route indexing
+// Server initialized with full dynamic robots, sitemap & contact route indexing
 
 server
   .prepare()
@@ -84,6 +84,114 @@ server
 
     // API routes - BEFORE Next.js handler
     app.use("/api/v1", RootRoutes);
+
+    // SEO routes (robots.txt and dynamic sitemap.xml)
+    app.get("/robots.txt", (req: Request, res: Response) => {
+      const baseUrl = envConfig.FRONTEND_URL || "https://comicbd.com";
+      const robotsTxt = `# Comic BD - Search Engine & Crawler Policy
+User-agent: *
+Allow: /
+Allow: /series
+Allow: /series/*
+Allow: /latest
+Allow: /bookmarks
+Allow: /history
+Allow: /channel/*
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /dmca
+Allow: /shop
+Allow: /rewards
+Allow: /become-creator
+
+# Restricted Private Routes
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /api/*
+Disallow: /stripe-sandbox
+Disallow: /profile
+Disallow: /transactions
+
+# Crawl Delay & Sitemap Index
+Crawl-delay: 1
+Sitemap: ${baseUrl}/sitemap.xml
+`;
+      res.setHeader("Content-Type", "text/plain");
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.status(200).send(robotsTxt);
+    });
+
+    app.get("/sitemap.xml", async (req: Request, res: Response) => {
+      const baseUrl = envConfig.FRONTEND_URL || "https://comicbd.com";
+      try {
+        const staticPages = [
+          { url: `${baseUrl}/`, priority: "1.0", changefreq: "always" },
+          { url: `${baseUrl}/latest`, priority: "0.9", changefreq: "hourly" },
+          { url: `${baseUrl}/about`, priority: "0.7", changefreq: "monthly" },
+          { url: `${baseUrl}/contact`, priority: "0.7", changefreq: "monthly" },
+          { url: `${baseUrl}/privacy`, priority: "0.5", changefreq: "monthly" },
+          { url: `${baseUrl}/terms`, priority: "0.5", changefreq: "monthly" },
+          { url: `${baseUrl}/dmca`, priority: "0.5", changefreq: "monthly" },
+          { url: `${baseUrl}/become-creator`, priority: "0.6", changefreq: "monthly" },
+          { url: `${baseUrl}/rewards`, priority: "0.6", changefreq: "weekly" },
+          { url: `${baseUrl}/shop`, priority: "0.7", changefreq: "weekly" },
+        ];
+
+        const seriesList = await prisma.series.findMany({
+          where: { isHidden: false },
+          select: {
+            slug: true,
+            updatedAt: true,
+            chapters: {
+              select: {
+                number: true,
+                createdAt: true,
+              },
+              orderBy: { number: "desc" },
+            },
+          },
+          take: 1000,
+        });
+
+        const creators = await prisma.creatorProfile.findMany({
+          select: {
+            userId: true,
+            updatedAt: true,
+          },
+          take: 200,
+        });
+
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+        xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+        for (const page of staticPages) {
+          xml += `  <url>\n    <loc>${page.url}</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
+        }
+
+        for (const s of seriesList) {
+          xml += `  <url>\n    <loc>${baseUrl}/series/${s.slug}</loc>\n    <lastmod>${new Date(s.updatedAt).toISOString()}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
+
+          for (const c of s.chapters) {
+            xml += `  <url>\n    <loc>${baseUrl}/series/${s.slug}/chapter-${c.number}</loc>\n    <lastmod>${new Date(c.createdAt).toISOString()}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+          }
+        }
+
+        for (const cr of creators) {
+          xml += `  <url>\n    <loc>${baseUrl}/channel/${cr.userId}</loc>\n    <lastmod>${new Date(cr.updatedAt).toISOString()}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`;
+        }
+
+        xml += `</urlset>`;
+
+        res.setHeader("Content-Type", "application/xml");
+        res.setHeader("Cache-Control", "public, max-age=3600");
+        res.status(200).send(xml);
+      } catch (error) {
+        console.error("Error generating sitemap XML:", error);
+        res.status(500).send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
+      }
+    });
 
     // Next.js handler for all other routes (must be last)
     app.use((req: Request, res: Response) => {

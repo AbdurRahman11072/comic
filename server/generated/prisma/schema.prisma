@@ -242,6 +242,7 @@ model SiteConfig {
   privacyPolicy  String?
   aboutUs        String?
   dmcaEmail      String?
+  contactEmail   String? @default("support@comicbd.com")
 
   // 🛡️ System & Access Controls
   isMaintenanceMode        Boolean @default(false)
@@ -473,6 +474,8 @@ model WithdrawalRequest {
   pointsRequested Int
   fiatAmount      Float
   bankDetails     String
+  paymentMethod   String?
+  accountNumber   String?
   status          ApplicationStatus @default(PENDING)
   notes           String?
   createdAt       DateTime          @default(now())
@@ -611,4 +614,17 @@ model AuditLog {
   createdAt  DateTime @default(now())
 
   @@map("audit_log")
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String?
+  category  String?  @default("General")
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("contact_messages")
 }

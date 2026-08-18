@@ -102,7 +102,42 @@ const updateConfig = async (data: any) => {
   };
 };
 
+const submitContactMessage = async (data: {
+  name: string;
+  email: string;
+  subject?: string;
+  category?: string;
+  message: string;
+}) => {
+  return await prisma.contactMessage.create({
+    data: {
+      name: data.name.trim(),
+      email: data.email.trim(),
+      subject: data.subject?.trim() || null,
+      category: data.category?.trim() || 'General',
+      message: data.message.trim(),
+    },
+  });
+};
+
+const getContactMessages = async () => {
+  return await prisma.contactMessage.findMany({
+    orderBy: { createdAt: 'desc' },
+    take: 100,
+  });
+};
+
+const markContactMessageRead = async (id: string) => {
+  return await prisma.contactMessage.update({
+    where: { id },
+    data: { isRead: true },
+  });
+};
+
 export const SiteConfigService = {
   getConfig,
   updateConfig,
+  submitContactMessage,
+  getContactMessages,
+  markContactMessageRead,
 };

@@ -24,6 +24,7 @@ export const updateSiteConfigSchema = z.object({
       announceText: optionalString,
       announceLink: optionalString,
       dmcaEmail: optionalString,
+      contactEmail: optionalString,
       termsOfService: optionalString,
       privacyPolicy: optionalString,
       aboutUs: optionalString,

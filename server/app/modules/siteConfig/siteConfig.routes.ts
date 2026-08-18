@@ -14,4 +14,9 @@ router.put(
   SiteConfigController.updateConfig
 );
 
+// Contact messages
+router.post('/contact', SiteConfigController.submitContact);
+router.get('/contact-messages', authMiddleware(['admin', 'moderator']), SiteConfigController.getContactMessages);
+router.patch('/contact-messages/:id/read', authMiddleware(['admin', 'moderator']), SiteConfigController.markMessageRead);
+
 export const SiteConfigRoutes = router;

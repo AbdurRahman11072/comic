@@ -163,6 +163,11 @@ export type PromoCodeRedemption = $Result.DefaultSelection<Prisma.$PromoCodeRede
  * 
  */
 export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
+/**
+ * Model ContactMessage
+ * 
+ */
+export type ContactMessage = $Result.DefaultSelection<Prisma.$ContactMessagePayload>
 
 /**
  * Enums
@@ -739,6 +744,16 @@ export class PrismaClient<
     * ```
     */
   get auditLog(): Prisma.AuditLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.contactMessage`: Exposes CRUD operations for the **ContactMessage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ContactMessages
+    * const contactMessages = await prisma.contactMessage.findMany()
+    * ```
+    */
+  get contactMessage(): Prisma.ContactMessageDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1202,7 +1217,8 @@ export namespace Prisma {
     CreatorPost: 'CreatorPost',
     PromoCode: 'PromoCode',
     PromoCodeRedemption: 'PromoCodeRedemption',
-    AuditLog: 'AuditLog'
+    AuditLog: 'AuditLog',
+    ContactMessage: 'ContactMessage'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1218,7 +1234,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "creatorProfile" | "session" | "account" | "verification" | "series" | "seriesApplication" | "featuredSeries" | "siteConfig" | "genre" | "chapter" | "chapterImage" | "bookmark" | "history" | "pointTransaction" | "chapterPurchase" | "payment" | "pointPackage" | "adRewardConfig" | "customAd" | "withdrawalRequest" | "comment" | "review" | "report" | "featuredRequest" | "chatMessage" | "creatorPost" | "promoCode" | "promoCodeRedemption" | "auditLog"
+      modelProps: "user" | "creatorProfile" | "session" | "account" | "verification" | "series" | "seriesApplication" | "featuredSeries" | "siteConfig" | "genre" | "chapter" | "chapterImage" | "bookmark" | "history" | "pointTransaction" | "chapterPurchase" | "payment" | "pointPackage" | "adRewardConfig" | "customAd" | "withdrawalRequest" | "comment" | "review" | "report" | "featuredRequest" | "chatMessage" | "creatorPost" | "promoCode" | "promoCodeRedemption" | "auditLog" | "contactMessage"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3442,6 +3458,80 @@ export namespace Prisma {
           }
         }
       }
+      ContactMessage: {
+        payload: Prisma.$ContactMessagePayload<ExtArgs>
+        fields: Prisma.ContactMessageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ContactMessageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ContactMessageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>
+          }
+          findFirst: {
+            args: Prisma.ContactMessageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ContactMessageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>
+          }
+          findMany: {
+            args: Prisma.ContactMessageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>[]
+          }
+          create: {
+            args: Prisma.ContactMessageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>
+          }
+          createMany: {
+            args: Prisma.ContactMessageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ContactMessageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>[]
+          }
+          delete: {
+            args: Prisma.ContactMessageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>
+          }
+          update: {
+            args: Prisma.ContactMessageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>
+          }
+          deleteMany: {
+            args: Prisma.ContactMessageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ContactMessageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ContactMessageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>[]
+          }
+          upsert: {
+            args: Prisma.ContactMessageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ContactMessagePayload>
+          }
+          aggregate: {
+            args: Prisma.ContactMessageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateContactMessage>
+          }
+          groupBy: {
+            args: Prisma.ContactMessageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ContactMessageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ContactMessageCountArgs<ExtArgs>
+            result: $Utils.Optional<ContactMessageCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3580,6 +3670,7 @@ export namespace Prisma {
     promoCode?: PromoCodeOmit
     promoCodeRedemption?: PromoCodeRedemptionOmit
     auditLog?: AuditLogOmit
+    contactMessage?: ContactMessageOmit
   }
 
   /* Types for Logging */
@@ -14178,6 +14269,7 @@ export namespace Prisma {
     privacyPolicy: string | null
     aboutUs: string | null
     dmcaEmail: string | null
+    contactEmail: string | null
     isMaintenanceMode: boolean | null
     maintenanceMessage: string | null
     allowNewRegistrations: boolean | null
@@ -14218,6 +14310,7 @@ export namespace Prisma {
     privacyPolicy: string | null
     aboutUs: string | null
     dmcaEmail: string | null
+    contactEmail: string | null
     isMaintenanceMode: boolean | null
     maintenanceMessage: string | null
     allowNewRegistrations: boolean | null
@@ -14259,6 +14352,7 @@ export namespace Prisma {
     privacyPolicy: number
     aboutUs: number
     dmcaEmail: number
+    contactEmail: number
     isMaintenanceMode: number
     maintenanceMessage: number
     allowNewRegistrations: number
@@ -14321,6 +14415,7 @@ export namespace Prisma {
     privacyPolicy?: true
     aboutUs?: true
     dmcaEmail?: true
+    contactEmail?: true
     isMaintenanceMode?: true
     maintenanceMessage?: true
     allowNewRegistrations?: true
@@ -14361,6 +14456,7 @@ export namespace Prisma {
     privacyPolicy?: true
     aboutUs?: true
     dmcaEmail?: true
+    contactEmail?: true
     isMaintenanceMode?: true
     maintenanceMessage?: true
     allowNewRegistrations?: true
@@ -14402,6 +14498,7 @@ export namespace Prisma {
     privacyPolicy?: true
     aboutUs?: true
     dmcaEmail?: true
+    contactEmail?: true
     isMaintenanceMode?: true
     maintenanceMessage?: true
     allowNewRegistrations?: true
@@ -14530,6 +14627,7 @@ export namespace Prisma {
     privacyPolicy: string | null
     aboutUs: string | null
     dmcaEmail: string | null
+    contactEmail: string | null
     isMaintenanceMode: boolean
     maintenanceMessage: string | null
     allowNewRegistrations: boolean
@@ -14590,6 +14688,7 @@ export namespace Prisma {
     privacyPolicy?: boolean
     aboutUs?: boolean
     dmcaEmail?: boolean
+    contactEmail?: boolean
     isMaintenanceMode?: boolean
     maintenanceMessage?: boolean
     allowNewRegistrations?: boolean
@@ -14631,6 +14730,7 @@ export namespace Prisma {
     privacyPolicy?: boolean
     aboutUs?: boolean
     dmcaEmail?: boolean
+    contactEmail?: boolean
     isMaintenanceMode?: boolean
     maintenanceMessage?: boolean
     allowNewRegistrations?: boolean
@@ -14672,6 +14772,7 @@ export namespace Prisma {
     privacyPolicy?: boolean
     aboutUs?: boolean
     dmcaEmail?: boolean
+    contactEmail?: boolean
     isMaintenanceMode?: boolean
     maintenanceMessage?: boolean
     allowNewRegistrations?: boolean
@@ -14713,6 +14814,7 @@ export namespace Prisma {
     privacyPolicy?: boolean
     aboutUs?: boolean
     dmcaEmail?: boolean
+    contactEmail?: boolean
     isMaintenanceMode?: boolean
     maintenanceMessage?: boolean
     allowNewRegistrations?: boolean
@@ -14738,7 +14840,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "enableStripePayment" | "enableCashOut" | "enablePremiumChapters" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
+  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "contactEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "enableStripePayment" | "enableCashOut" | "enablePremiumChapters" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
 
   export type $SiteConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SiteConfig"
@@ -14759,6 +14861,7 @@ export namespace Prisma {
       privacyPolicy: string | null
       aboutUs: string | null
       dmcaEmail: string | null
+      contactEmail: string | null
       isMaintenanceMode: boolean
       maintenanceMessage: string | null
       allowNewRegistrations: boolean
@@ -15220,6 +15323,7 @@ export namespace Prisma {
     readonly privacyPolicy: FieldRef<"SiteConfig", 'String'>
     readonly aboutUs: FieldRef<"SiteConfig", 'String'>
     readonly dmcaEmail: FieldRef<"SiteConfig", 'String'>
+    readonly contactEmail: FieldRef<"SiteConfig", 'String'>
     readonly isMaintenanceMode: FieldRef<"SiteConfig", 'Boolean'>
     readonly maintenanceMessage: FieldRef<"SiteConfig", 'String'>
     readonly allowNewRegistrations: FieldRef<"SiteConfig", 'Boolean'>
@@ -27969,6 +28073,8 @@ export namespace Prisma {
     pointsRequested: number | null
     fiatAmount: number | null
     bankDetails: string | null
+    paymentMethod: string | null
+    accountNumber: string | null
     status: $Enums.ApplicationStatus | null
     notes: string | null
     createdAt: Date | null
@@ -27981,6 +28087,8 @@ export namespace Prisma {
     pointsRequested: number | null
     fiatAmount: number | null
     bankDetails: string | null
+    paymentMethod: string | null
+    accountNumber: string | null
     status: $Enums.ApplicationStatus | null
     notes: string | null
     createdAt: Date | null
@@ -27993,6 +28101,8 @@ export namespace Prisma {
     pointsRequested: number
     fiatAmount: number
     bankDetails: number
+    paymentMethod: number
+    accountNumber: number
     status: number
     notes: number
     createdAt: number
@@ -28017,6 +28127,8 @@ export namespace Prisma {
     pointsRequested?: true
     fiatAmount?: true
     bankDetails?: true
+    paymentMethod?: true
+    accountNumber?: true
     status?: true
     notes?: true
     createdAt?: true
@@ -28029,6 +28141,8 @@ export namespace Prisma {
     pointsRequested?: true
     fiatAmount?: true
     bankDetails?: true
+    paymentMethod?: true
+    accountNumber?: true
     status?: true
     notes?: true
     createdAt?: true
@@ -28041,6 +28155,8 @@ export namespace Prisma {
     pointsRequested?: true
     fiatAmount?: true
     bankDetails?: true
+    paymentMethod?: true
+    accountNumber?: true
     status?: true
     notes?: true
     createdAt?: true
@@ -28140,6 +28256,8 @@ export namespace Prisma {
     pointsRequested: number
     fiatAmount: number
     bankDetails: string
+    paymentMethod: string | null
+    accountNumber: string | null
     status: $Enums.ApplicationStatus
     notes: string | null
     createdAt: Date
@@ -28171,6 +28289,8 @@ export namespace Prisma {
     pointsRequested?: boolean
     fiatAmount?: boolean
     bankDetails?: boolean
+    paymentMethod?: boolean
+    accountNumber?: boolean
     status?: boolean
     notes?: boolean
     createdAt?: boolean
@@ -28184,6 +28304,8 @@ export namespace Prisma {
     pointsRequested?: boolean
     fiatAmount?: boolean
     bankDetails?: boolean
+    paymentMethod?: boolean
+    accountNumber?: boolean
     status?: boolean
     notes?: boolean
     createdAt?: boolean
@@ -28197,6 +28319,8 @@ export namespace Prisma {
     pointsRequested?: boolean
     fiatAmount?: boolean
     bankDetails?: boolean
+    paymentMethod?: boolean
+    accountNumber?: boolean
     status?: boolean
     notes?: boolean
     createdAt?: boolean
@@ -28210,13 +28334,15 @@ export namespace Prisma {
     pointsRequested?: boolean
     fiatAmount?: boolean
     bankDetails?: boolean
+    paymentMethod?: boolean
+    accountNumber?: boolean
     status?: boolean
     notes?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type WithdrawalRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "pointsRequested" | "fiatAmount" | "bankDetails" | "status" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["withdrawalRequest"]>
+  export type WithdrawalRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "pointsRequested" | "fiatAmount" | "bankDetails" | "paymentMethod" | "accountNumber" | "status" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["withdrawalRequest"]>
   export type WithdrawalRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -28238,6 +28364,8 @@ export namespace Prisma {
       pointsRequested: number
       fiatAmount: number
       bankDetails: string
+      paymentMethod: string | null
+      accountNumber: string | null
       status: $Enums.ApplicationStatus
       notes: string | null
       createdAt: Date
@@ -28671,6 +28799,8 @@ export namespace Prisma {
     readonly pointsRequested: FieldRef<"WithdrawalRequest", 'Int'>
     readonly fiatAmount: FieldRef<"WithdrawalRequest", 'Float'>
     readonly bankDetails: FieldRef<"WithdrawalRequest", 'String'>
+    readonly paymentMethod: FieldRef<"WithdrawalRequest", 'String'>
+    readonly accountNumber: FieldRef<"WithdrawalRequest", 'String'>
     readonly status: FieldRef<"WithdrawalRequest", 'ApplicationStatus'>
     readonly notes: FieldRef<"WithdrawalRequest", 'String'>
     readonly createdAt: FieldRef<"WithdrawalRequest", 'DateTime'>
@@ -39106,6 +39236,1045 @@ export namespace Prisma {
 
 
   /**
+   * Model ContactMessage
+   */
+
+  export type AggregateContactMessage = {
+    _count: ContactMessageCountAggregateOutputType | null
+    _min: ContactMessageMinAggregateOutputType | null
+    _max: ContactMessageMaxAggregateOutputType | null
+  }
+
+  export type ContactMessageMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    email: string | null
+    subject: string | null
+    category: string | null
+    message: string | null
+    isRead: boolean | null
+    createdAt: Date | null
+  }
+
+  export type ContactMessageMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    email: string | null
+    subject: string | null
+    category: string | null
+    message: string | null
+    isRead: boolean | null
+    createdAt: Date | null
+  }
+
+  export type ContactMessageCountAggregateOutputType = {
+    id: number
+    name: number
+    email: number
+    subject: number
+    category: number
+    message: number
+    isRead: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ContactMessageMinAggregateInputType = {
+    id?: true
+    name?: true
+    email?: true
+    subject?: true
+    category?: true
+    message?: true
+    isRead?: true
+    createdAt?: true
+  }
+
+  export type ContactMessageMaxAggregateInputType = {
+    id?: true
+    name?: true
+    email?: true
+    subject?: true
+    category?: true
+    message?: true
+    isRead?: true
+    createdAt?: true
+  }
+
+  export type ContactMessageCountAggregateInputType = {
+    id?: true
+    name?: true
+    email?: true
+    subject?: true
+    category?: true
+    message?: true
+    isRead?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ContactMessageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContactMessage to aggregate.
+     */
+    where?: ContactMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContactMessages to fetch.
+     */
+    orderBy?: ContactMessageOrderByWithRelationInput | ContactMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ContactMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContactMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContactMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ContactMessages
+    **/
+    _count?: true | ContactMessageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ContactMessageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ContactMessageMaxAggregateInputType
+  }
+
+  export type GetContactMessageAggregateType<T extends ContactMessageAggregateArgs> = {
+        [P in keyof T & keyof AggregateContactMessage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateContactMessage[P]>
+      : GetScalarType<T[P], AggregateContactMessage[P]>
+  }
+
+
+
+
+  export type ContactMessageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ContactMessageWhereInput
+    orderBy?: ContactMessageOrderByWithAggregationInput | ContactMessageOrderByWithAggregationInput[]
+    by: ContactMessageScalarFieldEnum[] | ContactMessageScalarFieldEnum
+    having?: ContactMessageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ContactMessageCountAggregateInputType | true
+    _min?: ContactMessageMinAggregateInputType
+    _max?: ContactMessageMaxAggregateInputType
+  }
+
+  export type ContactMessageGroupByOutputType = {
+    id: string
+    name: string
+    email: string
+    subject: string | null
+    category: string | null
+    message: string
+    isRead: boolean
+    createdAt: Date
+    _count: ContactMessageCountAggregateOutputType | null
+    _min: ContactMessageMinAggregateOutputType | null
+    _max: ContactMessageMaxAggregateOutputType | null
+  }
+
+  type GetContactMessageGroupByPayload<T extends ContactMessageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ContactMessageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ContactMessageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ContactMessageGroupByOutputType[P]>
+            : GetScalarType<T[P], ContactMessageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ContactMessageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    email?: boolean
+    subject?: boolean
+    category?: boolean
+    message?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["contactMessage"]>
+
+  export type ContactMessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    email?: boolean
+    subject?: boolean
+    category?: boolean
+    message?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["contactMessage"]>
+
+  export type ContactMessageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    email?: boolean
+    subject?: boolean
+    category?: boolean
+    message?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["contactMessage"]>
+
+  export type ContactMessageSelectScalar = {
+    id?: boolean
+    name?: boolean
+    email?: boolean
+    subject?: boolean
+    category?: boolean
+    message?: boolean
+    isRead?: boolean
+    createdAt?: boolean
+  }
+
+  export type ContactMessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "subject" | "category" | "message" | "isRead" | "createdAt", ExtArgs["result"]["contactMessage"]>
+
+  export type $ContactMessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ContactMessage"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      email: string
+      subject: string | null
+      category: string | null
+      message: string
+      isRead: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["contactMessage"]>
+    composites: {}
+  }
+
+  type ContactMessageGetPayload<S extends boolean | null | undefined | ContactMessageDefaultArgs> = $Result.GetResult<Prisma.$ContactMessagePayload, S>
+
+  type ContactMessageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ContactMessageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ContactMessageCountAggregateInputType | true
+    }
+
+  export interface ContactMessageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ContactMessage'], meta: { name: 'ContactMessage' } }
+    /**
+     * Find zero or one ContactMessage that matches the filter.
+     * @param {ContactMessageFindUniqueArgs} args - Arguments to find a ContactMessage
+     * @example
+     * // Get one ContactMessage
+     * const contactMessage = await prisma.contactMessage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ContactMessageFindUniqueArgs>(args: SelectSubset<T, ContactMessageFindUniqueArgs<ExtArgs>>): Prisma__ContactMessageClient<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ContactMessage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ContactMessageFindUniqueOrThrowArgs} args - Arguments to find a ContactMessage
+     * @example
+     * // Get one ContactMessage
+     * const contactMessage = await prisma.contactMessage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ContactMessageFindUniqueOrThrowArgs>(args: SelectSubset<T, ContactMessageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ContactMessageClient<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ContactMessage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactMessageFindFirstArgs} args - Arguments to find a ContactMessage
+     * @example
+     * // Get one ContactMessage
+     * const contactMessage = await prisma.contactMessage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ContactMessageFindFirstArgs>(args?: SelectSubset<T, ContactMessageFindFirstArgs<ExtArgs>>): Prisma__ContactMessageClient<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ContactMessage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactMessageFindFirstOrThrowArgs} args - Arguments to find a ContactMessage
+     * @example
+     * // Get one ContactMessage
+     * const contactMessage = await prisma.contactMessage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ContactMessageFindFirstOrThrowArgs>(args?: SelectSubset<T, ContactMessageFindFirstOrThrowArgs<ExtArgs>>): Prisma__ContactMessageClient<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ContactMessages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactMessageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ContactMessages
+     * const contactMessages = await prisma.contactMessage.findMany()
+     * 
+     * // Get first 10 ContactMessages
+     * const contactMessages = await prisma.contactMessage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const contactMessageWithIdOnly = await prisma.contactMessage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ContactMessageFindManyArgs>(args?: SelectSubset<T, ContactMessageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ContactMessage.
+     * @param {ContactMessageCreateArgs} args - Arguments to create a ContactMessage.
+     * @example
+     * // Create one ContactMessage
+     * const ContactMessage = await prisma.contactMessage.create({
+     *   data: {
+     *     // ... data to create a ContactMessage
+     *   }
+     * })
+     * 
+     */
+    create<T extends ContactMessageCreateArgs>(args: SelectSubset<T, ContactMessageCreateArgs<ExtArgs>>): Prisma__ContactMessageClient<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ContactMessages.
+     * @param {ContactMessageCreateManyArgs} args - Arguments to create many ContactMessages.
+     * @example
+     * // Create many ContactMessages
+     * const contactMessage = await prisma.contactMessage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ContactMessageCreateManyArgs>(args?: SelectSubset<T, ContactMessageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ContactMessages and returns the data saved in the database.
+     * @param {ContactMessageCreateManyAndReturnArgs} args - Arguments to create many ContactMessages.
+     * @example
+     * // Create many ContactMessages
+     * const contactMessage = await prisma.contactMessage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ContactMessages and only return the `id`
+     * const contactMessageWithIdOnly = await prisma.contactMessage.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ContactMessageCreateManyAndReturnArgs>(args?: SelectSubset<T, ContactMessageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ContactMessage.
+     * @param {ContactMessageDeleteArgs} args - Arguments to delete one ContactMessage.
+     * @example
+     * // Delete one ContactMessage
+     * const ContactMessage = await prisma.contactMessage.delete({
+     *   where: {
+     *     // ... filter to delete one ContactMessage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ContactMessageDeleteArgs>(args: SelectSubset<T, ContactMessageDeleteArgs<ExtArgs>>): Prisma__ContactMessageClient<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ContactMessage.
+     * @param {ContactMessageUpdateArgs} args - Arguments to update one ContactMessage.
+     * @example
+     * // Update one ContactMessage
+     * const contactMessage = await prisma.contactMessage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ContactMessageUpdateArgs>(args: SelectSubset<T, ContactMessageUpdateArgs<ExtArgs>>): Prisma__ContactMessageClient<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ContactMessages.
+     * @param {ContactMessageDeleteManyArgs} args - Arguments to filter ContactMessages to delete.
+     * @example
+     * // Delete a few ContactMessages
+     * const { count } = await prisma.contactMessage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ContactMessageDeleteManyArgs>(args?: SelectSubset<T, ContactMessageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContactMessages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactMessageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ContactMessages
+     * const contactMessage = await prisma.contactMessage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ContactMessageUpdateManyArgs>(args: SelectSubset<T, ContactMessageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ContactMessages and returns the data updated in the database.
+     * @param {ContactMessageUpdateManyAndReturnArgs} args - Arguments to update many ContactMessages.
+     * @example
+     * // Update many ContactMessages
+     * const contactMessage = await prisma.contactMessage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ContactMessages and only return the `id`
+     * const contactMessageWithIdOnly = await prisma.contactMessage.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ContactMessageUpdateManyAndReturnArgs>(args: SelectSubset<T, ContactMessageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ContactMessage.
+     * @param {ContactMessageUpsertArgs} args - Arguments to update or create a ContactMessage.
+     * @example
+     * // Update or create a ContactMessage
+     * const contactMessage = await prisma.contactMessage.upsert({
+     *   create: {
+     *     // ... data to create a ContactMessage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ContactMessage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ContactMessageUpsertArgs>(args: SelectSubset<T, ContactMessageUpsertArgs<ExtArgs>>): Prisma__ContactMessageClient<$Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ContactMessages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactMessageCountArgs} args - Arguments to filter ContactMessages to count.
+     * @example
+     * // Count the number of ContactMessages
+     * const count = await prisma.contactMessage.count({
+     *   where: {
+     *     // ... the filter for the ContactMessages we want to count
+     *   }
+     * })
+    **/
+    count<T extends ContactMessageCountArgs>(
+      args?: Subset<T, ContactMessageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ContactMessageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ContactMessage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactMessageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ContactMessageAggregateArgs>(args: Subset<T, ContactMessageAggregateArgs>): Prisma.PrismaPromise<GetContactMessageAggregateType<T>>
+
+    /**
+     * Group by ContactMessage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ContactMessageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ContactMessageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ContactMessageGroupByArgs['orderBy'] }
+        : { orderBy?: ContactMessageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ContactMessageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetContactMessageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ContactMessage model
+   */
+  readonly fields: ContactMessageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ContactMessage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ContactMessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ContactMessage model
+   */
+  interface ContactMessageFieldRefs {
+    readonly id: FieldRef<"ContactMessage", 'String'>
+    readonly name: FieldRef<"ContactMessage", 'String'>
+    readonly email: FieldRef<"ContactMessage", 'String'>
+    readonly subject: FieldRef<"ContactMessage", 'String'>
+    readonly category: FieldRef<"ContactMessage", 'String'>
+    readonly message: FieldRef<"ContactMessage", 'String'>
+    readonly isRead: FieldRef<"ContactMessage", 'Boolean'>
+    readonly createdAt: FieldRef<"ContactMessage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ContactMessage findUnique
+   */
+  export type ContactMessageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContactMessage to fetch.
+     */
+    where: ContactMessageWhereUniqueInput
+  }
+
+  /**
+   * ContactMessage findUniqueOrThrow
+   */
+  export type ContactMessageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContactMessage to fetch.
+     */
+    where: ContactMessageWhereUniqueInput
+  }
+
+  /**
+   * ContactMessage findFirst
+   */
+  export type ContactMessageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContactMessage to fetch.
+     */
+    where?: ContactMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContactMessages to fetch.
+     */
+    orderBy?: ContactMessageOrderByWithRelationInput | ContactMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContactMessages.
+     */
+    cursor?: ContactMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContactMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContactMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContactMessages.
+     */
+    distinct?: ContactMessageScalarFieldEnum | ContactMessageScalarFieldEnum[]
+  }
+
+  /**
+   * ContactMessage findFirstOrThrow
+   */
+  export type ContactMessageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContactMessage to fetch.
+     */
+    where?: ContactMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContactMessages to fetch.
+     */
+    orderBy?: ContactMessageOrderByWithRelationInput | ContactMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ContactMessages.
+     */
+    cursor?: ContactMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContactMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContactMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContactMessages.
+     */
+    distinct?: ContactMessageScalarFieldEnum | ContactMessageScalarFieldEnum[]
+  }
+
+  /**
+   * ContactMessage findMany
+   */
+  export type ContactMessageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * Filter, which ContactMessages to fetch.
+     */
+    where?: ContactMessageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ContactMessages to fetch.
+     */
+    orderBy?: ContactMessageOrderByWithRelationInput | ContactMessageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ContactMessages.
+     */
+    cursor?: ContactMessageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ContactMessages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ContactMessages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ContactMessages.
+     */
+    distinct?: ContactMessageScalarFieldEnum | ContactMessageScalarFieldEnum[]
+  }
+
+  /**
+   * ContactMessage create
+   */
+  export type ContactMessageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ContactMessage.
+     */
+    data: XOR<ContactMessageCreateInput, ContactMessageUncheckedCreateInput>
+  }
+
+  /**
+   * ContactMessage createMany
+   */
+  export type ContactMessageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ContactMessages.
+     */
+    data: ContactMessageCreateManyInput | ContactMessageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ContactMessage createManyAndReturn
+   */
+  export type ContactMessageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * The data used to create many ContactMessages.
+     */
+    data: ContactMessageCreateManyInput | ContactMessageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ContactMessage update
+   */
+  export type ContactMessageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ContactMessage.
+     */
+    data: XOR<ContactMessageUpdateInput, ContactMessageUncheckedUpdateInput>
+    /**
+     * Choose, which ContactMessage to update.
+     */
+    where: ContactMessageWhereUniqueInput
+  }
+
+  /**
+   * ContactMessage updateMany
+   */
+  export type ContactMessageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ContactMessages.
+     */
+    data: XOR<ContactMessageUpdateManyMutationInput, ContactMessageUncheckedUpdateManyInput>
+    /**
+     * Filter which ContactMessages to update
+     */
+    where?: ContactMessageWhereInput
+    /**
+     * Limit how many ContactMessages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContactMessage updateManyAndReturn
+   */
+  export type ContactMessageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * The data used to update ContactMessages.
+     */
+    data: XOR<ContactMessageUpdateManyMutationInput, ContactMessageUncheckedUpdateManyInput>
+    /**
+     * Filter which ContactMessages to update
+     */
+    where?: ContactMessageWhereInput
+    /**
+     * Limit how many ContactMessages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContactMessage upsert
+   */
+  export type ContactMessageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ContactMessage to update in case it exists.
+     */
+    where: ContactMessageWhereUniqueInput
+    /**
+     * In case the ContactMessage found by the `where` argument doesn't exist, create a new ContactMessage with this data.
+     */
+    create: XOR<ContactMessageCreateInput, ContactMessageUncheckedCreateInput>
+    /**
+     * In case the ContactMessage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ContactMessageUpdateInput, ContactMessageUncheckedUpdateInput>
+  }
+
+  /**
+   * ContactMessage delete
+   */
+  export type ContactMessageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+    /**
+     * Filter which ContactMessage to delete.
+     */
+    where: ContactMessageWhereUniqueInput
+  }
+
+  /**
+   * ContactMessage deleteMany
+   */
+  export type ContactMessageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ContactMessages to delete
+     */
+    where?: ContactMessageWhereInput
+    /**
+     * Limit how many ContactMessages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ContactMessage without action
+   */
+  export type ContactMessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ContactMessage
+     */
+    select?: ContactMessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ContactMessage
+     */
+    omit?: ContactMessageOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -39271,6 +40440,7 @@ export namespace Prisma {
     privacyPolicy: 'privacyPolicy',
     aboutUs: 'aboutUs',
     dmcaEmail: 'dmcaEmail',
+    contactEmail: 'contactEmail',
     isMaintenanceMode: 'isMaintenanceMode',
     maintenanceMessage: 'maintenanceMessage',
     allowNewRegistrations: 'allowNewRegistrations',
@@ -39455,6 +40625,8 @@ export namespace Prisma {
     pointsRequested: 'pointsRequested',
     fiatAmount: 'fiatAmount',
     bankDetails: 'bankDetails',
+    paymentMethod: 'paymentMethod',
+    accountNumber: 'accountNumber',
     status: 'status',
     notes: 'notes',
     createdAt: 'createdAt',
@@ -39581,6 +40753,20 @@ export namespace Prisma {
   };
 
   export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+  export const ContactMessageScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    email: 'email',
+    subject: 'subject',
+    category: 'category',
+    message: 'message',
+    isRead: 'isRead',
+    createdAt: 'createdAt'
+  };
+
+  export type ContactMessageScalarFieldEnum = (typeof ContactMessageScalarFieldEnum)[keyof typeof ContactMessageScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -40654,6 +41840,7 @@ export namespace Prisma {
     privacyPolicy?: StringNullableFilter<"SiteConfig"> | string | null
     aboutUs?: StringNullableFilter<"SiteConfig"> | string | null
     dmcaEmail?: StringNullableFilter<"SiteConfig"> | string | null
+    contactEmail?: StringNullableFilter<"SiteConfig"> | string | null
     isMaintenanceMode?: BoolFilter<"SiteConfig"> | boolean
     maintenanceMessage?: StringNullableFilter<"SiteConfig"> | string | null
     allowNewRegistrations?: BoolFilter<"SiteConfig"> | boolean
@@ -40695,6 +41882,7 @@ export namespace Prisma {
     privacyPolicy?: SortOrderInput | SortOrder
     aboutUs?: SortOrderInput | SortOrder
     dmcaEmail?: SortOrderInput | SortOrder
+    contactEmail?: SortOrderInput | SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrderInput | SortOrder
     allowNewRegistrations?: SortOrder
@@ -40739,6 +41927,7 @@ export namespace Prisma {
     privacyPolicy?: StringNullableFilter<"SiteConfig"> | string | null
     aboutUs?: StringNullableFilter<"SiteConfig"> | string | null
     dmcaEmail?: StringNullableFilter<"SiteConfig"> | string | null
+    contactEmail?: StringNullableFilter<"SiteConfig"> | string | null
     isMaintenanceMode?: BoolFilter<"SiteConfig"> | boolean
     maintenanceMessage?: StringNullableFilter<"SiteConfig"> | string | null
     allowNewRegistrations?: BoolFilter<"SiteConfig"> | boolean
@@ -40780,6 +41969,7 @@ export namespace Prisma {
     privacyPolicy?: SortOrderInput | SortOrder
     aboutUs?: SortOrderInput | SortOrder
     dmcaEmail?: SortOrderInput | SortOrder
+    contactEmail?: SortOrderInput | SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrderInput | SortOrder
     allowNewRegistrations?: SortOrder
@@ -40829,6 +42019,7 @@ export namespace Prisma {
     privacyPolicy?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     aboutUs?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     dmcaEmail?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
+    contactEmail?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     isMaintenanceMode?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
     maintenanceMessage?: StringNullableWithAggregatesFilter<"SiteConfig"> | string | null
     allowNewRegistrations?: BoolWithAggregatesFilter<"SiteConfig"> | boolean
@@ -41648,6 +42839,8 @@ export namespace Prisma {
     pointsRequested?: IntFilter<"WithdrawalRequest"> | number
     fiatAmount?: FloatFilter<"WithdrawalRequest"> | number
     bankDetails?: StringFilter<"WithdrawalRequest"> | string
+    paymentMethod?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    accountNumber?: StringNullableFilter<"WithdrawalRequest"> | string | null
     status?: EnumApplicationStatusFilter<"WithdrawalRequest"> | $Enums.ApplicationStatus
     notes?: StringNullableFilter<"WithdrawalRequest"> | string | null
     createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
@@ -41661,6 +42854,8 @@ export namespace Prisma {
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
     bankDetails?: SortOrder
+    paymentMethod?: SortOrderInput | SortOrder
+    accountNumber?: SortOrderInput | SortOrder
     status?: SortOrder
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -41677,6 +42872,8 @@ export namespace Prisma {
     pointsRequested?: IntFilter<"WithdrawalRequest"> | number
     fiatAmount?: FloatFilter<"WithdrawalRequest"> | number
     bankDetails?: StringFilter<"WithdrawalRequest"> | string
+    paymentMethod?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    accountNumber?: StringNullableFilter<"WithdrawalRequest"> | string | null
     status?: EnumApplicationStatusFilter<"WithdrawalRequest"> | $Enums.ApplicationStatus
     notes?: StringNullableFilter<"WithdrawalRequest"> | string | null
     createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
@@ -41690,6 +42887,8 @@ export namespace Prisma {
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
     bankDetails?: SortOrder
+    paymentMethod?: SortOrderInput | SortOrder
+    accountNumber?: SortOrderInput | SortOrder
     status?: SortOrder
     notes?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -41710,6 +42909,8 @@ export namespace Prisma {
     pointsRequested?: IntWithAggregatesFilter<"WithdrawalRequest"> | number
     fiatAmount?: FloatWithAggregatesFilter<"WithdrawalRequest"> | number
     bankDetails?: StringWithAggregatesFilter<"WithdrawalRequest"> | string
+    paymentMethod?: StringNullableWithAggregatesFilter<"WithdrawalRequest"> | string | null
+    accountNumber?: StringNullableWithAggregatesFilter<"WithdrawalRequest"> | string | null
     status?: EnumApplicationStatusWithAggregatesFilter<"WithdrawalRequest"> | $Enums.ApplicationStatus
     notes?: StringNullableWithAggregatesFilter<"WithdrawalRequest"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"WithdrawalRequest"> | Date | string
@@ -42332,6 +43533,73 @@ export namespace Prisma {
     targetId?: StringNullableWithAggregatesFilter<"AuditLog"> | string | null
     details?: JsonNullableWithAggregatesFilter<"AuditLog">
     createdAt?: DateTimeWithAggregatesFilter<"AuditLog"> | Date | string
+  }
+
+  export type ContactMessageWhereInput = {
+    AND?: ContactMessageWhereInput | ContactMessageWhereInput[]
+    OR?: ContactMessageWhereInput[]
+    NOT?: ContactMessageWhereInput | ContactMessageWhereInput[]
+    id?: StringFilter<"ContactMessage"> | string
+    name?: StringFilter<"ContactMessage"> | string
+    email?: StringFilter<"ContactMessage"> | string
+    subject?: StringNullableFilter<"ContactMessage"> | string | null
+    category?: StringNullableFilter<"ContactMessage"> | string | null
+    message?: StringFilter<"ContactMessage"> | string
+    isRead?: BoolFilter<"ContactMessage"> | boolean
+    createdAt?: DateTimeFilter<"ContactMessage"> | Date | string
+  }
+
+  export type ContactMessageOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    subject?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    message?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ContactMessageWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ContactMessageWhereInput | ContactMessageWhereInput[]
+    OR?: ContactMessageWhereInput[]
+    NOT?: ContactMessageWhereInput | ContactMessageWhereInput[]
+    name?: StringFilter<"ContactMessage"> | string
+    email?: StringFilter<"ContactMessage"> | string
+    subject?: StringNullableFilter<"ContactMessage"> | string | null
+    category?: StringNullableFilter<"ContactMessage"> | string | null
+    message?: StringFilter<"ContactMessage"> | string
+    isRead?: BoolFilter<"ContactMessage"> | boolean
+    createdAt?: DateTimeFilter<"ContactMessage"> | Date | string
+  }, "id">
+
+  export type ContactMessageOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    subject?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    message?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+    _count?: ContactMessageCountOrderByAggregateInput
+    _max?: ContactMessageMaxOrderByAggregateInput
+    _min?: ContactMessageMinOrderByAggregateInput
+  }
+
+  export type ContactMessageScalarWhereWithAggregatesInput = {
+    AND?: ContactMessageScalarWhereWithAggregatesInput | ContactMessageScalarWhereWithAggregatesInput[]
+    OR?: ContactMessageScalarWhereWithAggregatesInput[]
+    NOT?: ContactMessageScalarWhereWithAggregatesInput | ContactMessageScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ContactMessage"> | string
+    name?: StringWithAggregatesFilter<"ContactMessage"> | string
+    email?: StringWithAggregatesFilter<"ContactMessage"> | string
+    subject?: StringNullableWithAggregatesFilter<"ContactMessage"> | string | null
+    category?: StringNullableWithAggregatesFilter<"ContactMessage"> | string | null
+    message?: StringWithAggregatesFilter<"ContactMessage"> | string
+    isRead?: BoolWithAggregatesFilter<"ContactMessage"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"ContactMessage"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -43243,6 +44511,7 @@ export namespace Prisma {
     privacyPolicy?: string | null
     aboutUs?: string | null
     dmcaEmail?: string | null
+    contactEmail?: string | null
     isMaintenanceMode?: boolean
     maintenanceMessage?: string | null
     allowNewRegistrations?: boolean
@@ -43284,6 +44553,7 @@ export namespace Prisma {
     privacyPolicy?: string | null
     aboutUs?: string | null
     dmcaEmail?: string | null
+    contactEmail?: string | null
     isMaintenanceMode?: boolean
     maintenanceMessage?: string | null
     allowNewRegistrations?: boolean
@@ -43325,6 +44595,7 @@ export namespace Prisma {
     privacyPolicy?: NullableStringFieldUpdateOperationsInput | string | null
     aboutUs?: NullableStringFieldUpdateOperationsInput | string | null
     dmcaEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     isMaintenanceMode?: BoolFieldUpdateOperationsInput | boolean
     maintenanceMessage?: NullableStringFieldUpdateOperationsInput | string | null
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
@@ -43366,6 +44637,7 @@ export namespace Prisma {
     privacyPolicy?: NullableStringFieldUpdateOperationsInput | string | null
     aboutUs?: NullableStringFieldUpdateOperationsInput | string | null
     dmcaEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     isMaintenanceMode?: BoolFieldUpdateOperationsInput | boolean
     maintenanceMessage?: NullableStringFieldUpdateOperationsInput | string | null
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
@@ -43407,6 +44679,7 @@ export namespace Prisma {
     privacyPolicy?: string | null
     aboutUs?: string | null
     dmcaEmail?: string | null
+    contactEmail?: string | null
     isMaintenanceMode?: boolean
     maintenanceMessage?: string | null
     allowNewRegistrations?: boolean
@@ -43448,6 +44721,7 @@ export namespace Prisma {
     privacyPolicy?: NullableStringFieldUpdateOperationsInput | string | null
     aboutUs?: NullableStringFieldUpdateOperationsInput | string | null
     dmcaEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     isMaintenanceMode?: BoolFieldUpdateOperationsInput | boolean
     maintenanceMessage?: NullableStringFieldUpdateOperationsInput | string | null
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
@@ -43489,6 +44763,7 @@ export namespace Prisma {
     privacyPolicy?: NullableStringFieldUpdateOperationsInput | string | null
     aboutUs?: NullableStringFieldUpdateOperationsInput | string | null
     dmcaEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    contactEmail?: NullableStringFieldUpdateOperationsInput | string | null
     isMaintenanceMode?: BoolFieldUpdateOperationsInput | boolean
     maintenanceMessage?: NullableStringFieldUpdateOperationsInput | string | null
     allowNewRegistrations?: BoolFieldUpdateOperationsInput | boolean
@@ -44347,6 +45622,8 @@ export namespace Prisma {
     pointsRequested: number
     fiatAmount: number
     bankDetails: string
+    paymentMethod?: string | null
+    accountNumber?: string | null
     status?: $Enums.ApplicationStatus
     notes?: string | null
     createdAt?: Date | string
@@ -44360,6 +45637,8 @@ export namespace Prisma {
     pointsRequested: number
     fiatAmount: number
     bankDetails: string
+    paymentMethod?: string | null
+    accountNumber?: string | null
     status?: $Enums.ApplicationStatus
     notes?: string | null
     createdAt?: Date | string
@@ -44371,6 +45650,8 @@ export namespace Prisma {
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
     bankDetails?: StringFieldUpdateOperationsInput | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44384,6 +45665,8 @@ export namespace Prisma {
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
     bankDetails?: StringFieldUpdateOperationsInput | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44396,6 +45679,8 @@ export namespace Prisma {
     pointsRequested: number
     fiatAmount: number
     bankDetails: string
+    paymentMethod?: string | null
+    accountNumber?: string | null
     status?: $Enums.ApplicationStatus
     notes?: string | null
     createdAt?: Date | string
@@ -44407,6 +45692,8 @@ export namespace Prisma {
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
     bankDetails?: StringFieldUpdateOperationsInput | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44419,6 +45706,8 @@ export namespace Prisma {
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
     bankDetails?: StringFieldUpdateOperationsInput | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45056,6 +46345,83 @@ export namespace Prisma {
     targetType?: StringFieldUpdateOperationsInput | string
     targetId?: NullableStringFieldUpdateOperationsInput | string | null
     details?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContactMessageCreateInput = {
+    id?: string
+    name: string
+    email: string
+    subject?: string | null
+    category?: string | null
+    message: string
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type ContactMessageUncheckedCreateInput = {
+    id?: string
+    name: string
+    email: string
+    subject?: string | null
+    category?: string | null
+    message: string
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type ContactMessageUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContactMessageUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContactMessageCreateManyInput = {
+    id?: string
+    name: string
+    email: string
+    subject?: string | null
+    category?: string | null
+    message: string
+    isRead?: boolean
+    createdAt?: Date | string
+  }
+
+  export type ContactMessageUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContactMessageUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    subject?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    message?: StringFieldUpdateOperationsInput | string
+    isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -45977,6 +47343,7 @@ export namespace Prisma {
     privacyPolicy?: SortOrder
     aboutUs?: SortOrder
     dmcaEmail?: SortOrder
+    contactEmail?: SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrder
     allowNewRegistrations?: SortOrder
@@ -46027,6 +47394,7 @@ export namespace Prisma {
     privacyPolicy?: SortOrder
     aboutUs?: SortOrder
     dmcaEmail?: SortOrder
+    contactEmail?: SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrder
     allowNewRegistrations?: SortOrder
@@ -46067,6 +47435,7 @@ export namespace Prisma {
     privacyPolicy?: SortOrder
     aboutUs?: SortOrder
     dmcaEmail?: SortOrder
+    contactEmail?: SortOrder
     isMaintenanceMode?: SortOrder
     maintenanceMessage?: SortOrder
     allowNewRegistrations?: SortOrder
@@ -46685,6 +48054,8 @@ export namespace Prisma {
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
     bankDetails?: SortOrder
+    paymentMethod?: SortOrder
+    accountNumber?: SortOrder
     status?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
@@ -46702,6 +48073,8 @@ export namespace Prisma {
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
     bankDetails?: SortOrder
+    paymentMethod?: SortOrder
+    accountNumber?: SortOrder
     status?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
@@ -46714,6 +48087,8 @@ export namespace Prisma {
     pointsRequested?: SortOrder
     fiatAmount?: SortOrder
     bankDetails?: SortOrder
+    paymentMethod?: SortOrder
+    accountNumber?: SortOrder
     status?: SortOrder
     notes?: SortOrder
     createdAt?: SortOrder
@@ -47067,6 +48442,39 @@ export namespace Prisma {
     action?: SortOrder
     targetType?: SortOrder
     targetId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ContactMessageCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    subject?: SortOrder
+    category?: SortOrder
+    message?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ContactMessageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    subject?: SortOrder
+    category?: SortOrder
+    message?: SortOrder
+    isRead?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ContactMessageMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    email?: SortOrder
+    subject?: SortOrder
+    category?: SortOrder
+    message?: SortOrder
+    isRead?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -49999,6 +51407,8 @@ export namespace Prisma {
     pointsRequested: number
     fiatAmount: number
     bankDetails: string
+    paymentMethod?: string | null
+    accountNumber?: string | null
     status?: $Enums.ApplicationStatus
     notes?: string | null
     createdAt?: Date | string
@@ -50010,6 +51420,8 @@ export namespace Prisma {
     pointsRequested: number
     fiatAmount: number
     bankDetails: string
+    paymentMethod?: string | null
+    accountNumber?: string | null
     status?: $Enums.ApplicationStatus
     notes?: string | null
     createdAt?: Date | string
@@ -50758,6 +52170,8 @@ export namespace Prisma {
     pointsRequested?: IntFilter<"WithdrawalRequest"> | number
     fiatAmount?: FloatFilter<"WithdrawalRequest"> | number
     bankDetails?: StringFilter<"WithdrawalRequest"> | string
+    paymentMethod?: StringNullableFilter<"WithdrawalRequest"> | string | null
+    accountNumber?: StringNullableFilter<"WithdrawalRequest"> | string | null
     status?: EnumApplicationStatusFilter<"WithdrawalRequest"> | $Enums.ApplicationStatus
     notes?: StringNullableFilter<"WithdrawalRequest"> | string | null
     createdAt?: DateTimeFilter<"WithdrawalRequest"> | Date | string
@@ -56805,6 +58219,8 @@ export namespace Prisma {
     pointsRequested: number
     fiatAmount: number
     bankDetails: string
+    paymentMethod?: string | null
+    accountNumber?: string | null
     status?: $Enums.ApplicationStatus
     notes?: string | null
     createdAt?: Date | string
@@ -57314,6 +58730,8 @@ export namespace Prisma {
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
     bankDetails?: StringFieldUpdateOperationsInput | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57325,6 +58743,8 @@ export namespace Prisma {
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
     bankDetails?: StringFieldUpdateOperationsInput | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57336,6 +58756,8 @@ export namespace Prisma {
     pointsRequested?: IntFieldUpdateOperationsInput | number
     fiatAmount?: FloatFieldUpdateOperationsInput | number
     bankDetails?: StringFieldUpdateOperationsInput | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    accountNumber?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumApplicationStatusFieldUpdateOperationsInput | $Enums.ApplicationStatus
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

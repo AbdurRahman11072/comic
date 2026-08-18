@@ -248,6 +248,7 @@ exports.Prisma.SiteConfigScalarFieldEnum = {
   privacyPolicy: 'privacyPolicy',
   aboutUs: 'aboutUs',
   dmcaEmail: 'dmcaEmail',
+  contactEmail: 'contactEmail',
   isMaintenanceMode: 'isMaintenanceMode',
   maintenanceMessage: 'maintenanceMessage',
   allowNewRegistrations: 'allowNewRegistrations',
@@ -396,6 +397,8 @@ exports.Prisma.WithdrawalRequestScalarFieldEnum = {
   pointsRequested: 'pointsRequested',
   fiatAmount: 'fiatAmount',
   bankDetails: 'bankDetails',
+  paymentMethod: 'paymentMethod',
+  accountNumber: 'accountNumber',
   status: 'status',
   notes: 'notes',
   createdAt: 'createdAt',
@@ -491,6 +494,17 @@ exports.Prisma.AuditLogScalarFieldEnum = {
   targetType: 'targetType',
   targetId: 'targetId',
   details: 'details',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.ContactMessageScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  subject: 'subject',
+  category: 'category',
+  message: 'message',
+  isRead: 'isRead',
   createdAt: 'createdAt'
 };
 
@@ -622,7 +636,8 @@ exports.Prisma.ModelName = {
   CreatorPost: 'CreatorPost',
   PromoCode: 'PromoCode',
   PromoCodeRedemption: 'PromoCodeRedemption',
-  AuditLog: 'AuditLog'
+  AuditLog: 'AuditLog',
+  ContactMessage: 'ContactMessage'
 };
 
 /**
