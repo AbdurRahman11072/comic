@@ -29,18 +29,23 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=5000
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 appuser
+# Create non-root user and prepare upload & temp directories
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 appuser && \
+    mkdir -p /app/public/uploads /tmp/comic-uploads && \
+    chown -R appuser:nodejs /app /tmp/comic-uploads
 
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/server ./server
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/tsconfig.server.json ./tsconfig.server.json
+COPY --chown=appuser:nodejs --from=builder /app/package.json ./package.json
+COPY --chown=appuser:nodejs --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --chown=appuser:nodejs --from=builder /app/node_modules ./node_modules
+COPY --chown=appuser:nodejs --from=builder /app/.next ./.next
+COPY --chown=appuser:nodejs --from=builder /app/public ./public
+COPY --chown=appuser:nodejs --from=builder /app/server ./server
+COPY --chown=appuser:nodejs --from=builder /app/prisma ./prisma
+COPY --chown=appuser:nodejs --from=builder /app/tsconfig.server.json ./tsconfig.server.json
+
+# Ensure appuser owns all application files
+RUN chown -R appuser:nodejs /app /tmp/comic-uploads
 
 USER appuser
 

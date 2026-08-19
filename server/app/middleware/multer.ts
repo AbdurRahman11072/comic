@@ -1,14 +1,33 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import AppError from '../error/AppError';
 import httpStatus from 'http-status';
 
-// Ensure uploads directory exists
-const uploadDir = './public/uploads';
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Determine an available writable upload directory with fallback to os.tmpdir
+const getUploadDir = (): string => {
+  const localDir = path.join(process.cwd(), 'public', 'uploads');
+  try {
+    if (!fs.existsSync(localDir)) {
+      fs.mkdirSync(localDir, { recursive: true });
+    }
+    fs.accessSync(localDir, fs.constants.W_OK);
+    return localDir;
+  } catch {
+    const tempDir = path.join(os.tmpdir(), 'comic-uploads');
+    try {
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+      return tempDir;
+    } catch {
+      return os.tmpdir();
+    }
+  }
+};
+
+const uploadDir = getUploadDir();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

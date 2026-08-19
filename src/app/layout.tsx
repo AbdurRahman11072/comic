@@ -5,6 +5,7 @@ import { siteService } from "@/services/site.service";
 import { ReduxProvider } from "@/providers/ReduxProvider";
 import { constructMetadata } from "@/lib/metadata";
 import { CookieConsent } from "@/components/ads/CookieConsent";
+import Script from "next/script";
 
 export const dynamic = "force-dynamic";
 
@@ -25,16 +26,15 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <head>
+      <body className="min-h-screen flex flex-col font-sans antialiased bg-background text-foreground">
         {adSenseClient && (
-          <script
-            async
+          <Script
+            id="google-adsense"
+            strategy="afterInteractive"
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adSenseClient}`}
             crossOrigin="anonymous"
           />
         )}
-      </head>
-      <body className="min-h-screen flex flex-col font-sans antialiased bg-background text-foreground">
         <ReduxProvider>
           {children}
           <CookieConsent />
