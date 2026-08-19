@@ -6,7 +6,7 @@ import api from "@/lib/api";
 import {
   BookOpen, Search, Filter, EyeOff, Eye, Star,
   ExternalLink, Edit, AlertTriangle, Loader2, CheckCircle2,
-  RefreshCw, ShieldAlert, Trash2, BarChart3
+  RefreshCw, ShieldAlert, Trash2, BarChart3, Layers
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -411,6 +411,14 @@ export default function AdminSeriesManagementPage() {
                         >
                           {item.isHidden ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                         </button>
+
+                        <Link
+                          href={`/dashboard/series/${item.id}`}
+                          className="p-2 rounded-lg glass glass-hover text-purple-400/80 hover:text-purple-400 hover:bg-purple-500/10"
+                          title="Manage Series & Chapters"
+                        >
+                          <Layers className="w-3.5 h-3.5" />
+                        </Link>
 
                         <Link
                           href={`/dashboard/series/${item.id}/analytics`}

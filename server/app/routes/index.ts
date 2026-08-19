@@ -34,6 +34,10 @@ const moduleRoutes = [
     route: ChapterRoutes,
   },
   {
+    path: '/stats',
+    route: StatsRoutes,
+  },
+  {
     path: '/admin/stats',
     route: StatsRoutes,
   },

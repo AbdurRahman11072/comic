@@ -263,7 +263,7 @@ export function SeriesTable({ initialSeries, userRole }: SeriesTableProps) {
                     <Plus className="w-4 h-4" />
                   </Link>
                 )}
-                <Link href={`/series/${item.slug}`} className="p-2 hover:bg-blue-500/10 hover:text-blue-500 rounded-lg transition-colors" title="View Series">
+                <Link href={`/dashboard/series/${item.id}`} className="p-2 hover:bg-blue-500/10 hover:text-blue-500 rounded-lg transition-colors" title="Manage Series & Chapters">
                   <Eye className="w-4 h-4" />
                 </Link>
                 {canModify && (

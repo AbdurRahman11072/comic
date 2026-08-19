@@ -1,4 +1,6 @@
 import httpStatus from 'http-status';
+import axios from 'axios';
+import * as cheerio from 'cheerio';
 import { prisma } from '../../../lib/prisma';
 import AppError from '../../error/AppError';
 import { deleteFromCloudinary } from '../../utils/cloudinary';
@@ -369,6 +371,124 @@ const deleteChapter = async (id: string, userId?: string, role?: string) => {
   });
 };
 
+const extractWebpageImages = async (pageUrl: string) => {
+  if (!pageUrl || (!pageUrl.startsWith('http://') && !pageUrl.startsWith('https://'))) {
+    throw new AppError(httpStatus.BAD_REQUEST, 'Please provide a valid web URL (e.g., https://example.com/chapter-1)');
+  }
+
+  try {
+    const parsedUrl = new URL(pageUrl);
+    const response = await axios.get(pageUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept':
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Referer': parsedUrl.origin,
+      },
+      timeout: 20000,
+    });
+
+    const html = response.data;
+    if (typeof html !== 'string') {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Invalid response received from the specified URL.');
+    }
+
+    const $ = cheerio.load(html);
+    const extractedSet = new Set<string>();
+
+    const pageTitle = $('title').first().text().trim() || $('h1').first().text().trim() || '';
+
+    // Check high priority comic reader containers first
+    const readerSelectors = [
+      '.reading-content img',
+      '.reader-area img',
+      '#chapter-images img',
+      '.chapter-image img',
+      '.container-chapter-reader img',
+      '.page-break img',
+      '.entry-content img',
+      '.entry-content-single img',
+      '.chapter-content img',
+      '#readerarea img',
+      '.comic-page img',
+      '.pages-container img',
+      'article img',
+      'main img',
+      'img',
+    ];
+
+    let foundElements: any = null;
+    for (const selector of readerSelectors) {
+      const el = $(selector);
+      if (el.length > 2) {
+        foundElements = el;
+        break;
+      }
+    }
+
+    if (!foundElements || foundElements.length === 0) {
+      foundElements = $('img');
+    }
+
+    foundElements.each((_: any, el: any) => {
+      const elem = $(el);
+      const possibleSrc =
+        elem.attr('data-src') ||
+        elem.attr('data-lazy-src') ||
+        elem.attr('data-original') ||
+        elem.attr('data-url') ||
+        elem.attr('data-srcset')?.split(' ')[0] ||
+        elem.attr('src');
+
+      if (possibleSrc) {
+        const trimmed = possibleSrc.trim();
+        if (
+          trimmed.startsWith('data:image/svg') ||
+          trimmed.includes('gravatar.com') ||
+          trimmed.includes('avatar') ||
+          trimmed.includes('favicon') ||
+          trimmed.includes('logo') ||
+          trimmed.includes('badge') ||
+          trimmed.includes('pixel') ||
+          trimmed.includes('banner-ad')
+        ) {
+          return;
+        }
+
+        try {
+          const absoluteUrl = new URL(trimmed, pageUrl).href;
+          extractedSet.add(absoluteUrl);
+        } catch {
+          // Ignore invalid URLs
+        }
+      }
+    });
+
+    const images = Array.from(extractedSet);
+
+    if (images.length === 0) {
+      throw new AppError(httpStatus.NOT_FOUND, 'No readable comic images found on the provided webpage.');
+    }
+
+    // Natural numerical sort on image filenames/URLs
+    images.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+
+    return {
+      title: pageTitle,
+      count: images.length,
+      images,
+    };
+  } catch (error: any) {
+    if (error instanceof AppError) throw error;
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      error?.response?.statusText || error?.message || 'Failed to fetch and scrape the webpage.'
+    );
+  }
+};
+
 export const ChapterService = {
   getChapterById,
   getChapterByNumber,
@@ -376,4 +496,5 @@ export const ChapterService = {
   createChapter,
   updateChapter,
   deleteChapter,
+  extractWebpageImages,
 };

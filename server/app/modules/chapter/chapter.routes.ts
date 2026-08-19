@@ -7,6 +7,11 @@ import { createChapterSchema, updateChapterSchema } from './chapter.validation';
 const router = Router();
 
 router.get('/', ChapterController.getAllChapters);
+router.post(
+  '/extract-webpage-images',
+  authMiddleware(['creator', 'moderator', 'admin']),
+  ChapterController.extractWebpageImages
+);
 router.get('/:id', optionalAuthMiddleware, ChapterController.getChapterById);
 router.get('/:slug/:number', optionalAuthMiddleware, ChapterController.getChapterByNumber);
 router.post(

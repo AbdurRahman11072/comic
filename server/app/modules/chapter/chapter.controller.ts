@@ -83,6 +83,18 @@ const deleteChapter = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const extractWebpageImages = asyncHandler(async (req: Request, res: Response) => {
+  const { url } = req.body;
+  const result = await ChapterService.extractWebpageImages(url);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Images extracted successfully from webpage',
+    data: result,
+  });
+});
+
 export const ChapterController = {
   getChapterById,
   getChapterByNumber,
@@ -90,4 +102,5 @@ export const ChapterController = {
   createChapter,
   updateChapter,
   deleteChapter,
+  extractWebpageImages,
 };

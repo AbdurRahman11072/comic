@@ -4,8 +4,9 @@ import asyncHandler from '../../utils/asyncHandler';
 import sendResponse from '../../utils/sendResponse';
 import { StatsService } from './stats.service';
 
-const getAdminStats = asyncHandler(async (req: Request, res: Response) => {
-  const result = await StatsService.getAdminStats();
+const getDashboardStats = asyncHandler(async (req: Request, res: Response) => {
+  const user = (req as any).user || { id: '', role: 'user' };
+  const result = await StatsService.getDashboardStats(user);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -16,5 +17,5 @@ const getAdminStats = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const StatsController = {
-  getAdminStats,
+  getDashboardStats,
 };

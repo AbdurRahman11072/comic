@@ -14,34 +14,62 @@ import {
   Cell
 } from "recharts";
 
-const DATA = [
-  { name: "Jan", revenue: 4000, visitors: 2400 },
-  { name: "Feb", revenue: 3000, visitors: 1398 },
-  { name: "Mar", revenue: 2000, visitors: 9800 },
-  { name: "Apr", revenue: 2780, visitors: 3908 },
-  { name: "May", revenue: 1890, visitors: 4800 },
-  { name: "Jun", revenue: 2390, visitors: 3800 },
-  { name: "Jul", revenue: 3490, visitors: 4300 },
+interface RevenueDataPoint {
+  name: string;
+  revenue: number;
+}
+
+interface ContentDistributionItem {
+  name: string;
+  value: number;
+  color: string;
+}
+
+interface OverviewChartsProps {
+  revenueData?: RevenueDataPoint[];
+  distributionData?: ContentDistributionItem[];
+  currencySymbol?: string;
+}
+
+const DEFAULT_REVENUE: RevenueDataPoint[] = [
+  { name: "Jan", revenue: 0 },
+  { name: "Feb", revenue: 0 },
+  { name: "Mar", revenue: 0 },
+  { name: "Apr", revenue: 0 },
+  { name: "May", revenue: 0 },
+  { name: "Jun", revenue: 0 },
+  { name: "Jul", revenue: 0 },
 ];
 
-const SERIES_STATS = [
-  { name: "Action", value: 400, color: "#e11d48" },
-  { name: "Romance", value: 300, color: "#3b82f6" },
-  { name: "Comedy", value: 300, color: "#10b981" },
-  { name: "Drama", value: 200, color: "#8b5cf6" },
+const DEFAULT_DISTRIBUTION: ContentDistributionItem[] = [
+  { name: "MANHWA", value: 1, color: "#e11d48" },
+  { name: "MANGA", value: 1, color: "#3b82f6" },
+  { name: "COMIC", value: 1, color: "#10b981" },
+  { name: "MANHUA", value: 1, color: "#8b5cf6" },
 ];
 
-export function OverviewCharts() {
+export function OverviewCharts({
+  revenueData,
+  distributionData,
+  currencySymbol = "$",
+}: OverviewChartsProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div className="h-[400px] w-full bg-white/5 animate-pulse rounded-2xl" />
-    <div className="h-[400px] w-full bg-white/5 animate-pulse rounded-2xl" />
-  </div>;
+  const chartRevenue = revenueData && revenueData.length > 0 ? revenueData : DEFAULT_REVENUE;
+  const chartDistribution = distributionData && distributionData.length > 0 ? distributionData : DEFAULT_DISTRIBUTION;
+
+  if (!mounted) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="h-[400px] w-full bg-white/5 animate-pulse rounded-2xl" />
+        <div className="h-[400px] w-full bg-white/5 animate-pulse rounded-2xl" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -50,7 +78,7 @@ export function OverviewCharts() {
         <h3 className="text-lg font-bold mb-6">Revenue & Growth</h3>
         <div className="flex-1 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={DATA}>
+            <AreaChart data={chartRevenue}>
               <defs>
                 <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#e11d48" stopOpacity={0.3}/>
@@ -70,7 +98,7 @@ export function OverviewCharts() {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`}
               />
               <Tooltip 
                 contentStyle={{ 
@@ -79,6 +107,7 @@ export function OverviewCharts() {
                   borderRadius: "12px",
                   backdropFilter: "blur(8px)"
                 }}
+                formatter={(val: any) => [`${currencySymbol}${Number(val).toLocaleString()}`, "Revenue"]}
                 itemStyle={{ color: "#fff" }}
               />
               <Area 
@@ -99,7 +128,7 @@ export function OverviewCharts() {
         <h3 className="text-lg font-bold mb-6">Content Distribution</h3>
         <div className="flex-1 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={SERIES_STATS} layout="vertical" margin={{ left: 20 }}>
+            <BarChart data={chartDistribution} layout="vertical" margin={{ left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
               <XAxis type="number" hide />
               <YAxis 
@@ -117,9 +146,10 @@ export function OverviewCharts() {
                   borderColor: "rgba(255,255,255,0.1)",
                   borderRadius: "12px"
                 }}
+                formatter={(val: any) => [`${val} series`, "Count"]}
               />
               <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={24}>
-                {SERIES_STATS.map((entry, index) => (
+                {chartDistribution.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Bar>

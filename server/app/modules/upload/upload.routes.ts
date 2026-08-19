@@ -5,9 +5,11 @@ import authMiddleware from '../../middleware/authMiddleware';
 
 const router = Router();
 
+router.get('/proxy-image', UploadController.proxyImage);
+
 router.post(
   '/',
-  authMiddleware(['user', 'creator', 'moderator', 'admin']),
+  authMiddleware(['creator', 'moderator', 'admin']),
   multerUpload.single('image'),
   UploadController.uploadImage
 );
