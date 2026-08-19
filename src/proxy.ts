@@ -12,30 +12,37 @@ export default async function proxy(request: NextRequest) {
   // 1. Get the session cookie from the request
   const cookie = request.headers.get('cookie');
 
-  // If no cookie exists, redirect to login/home
+  // If no cookie exists at all, redirect to login/home
   if (!cookie) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
   try {
-    // 2. Fetch session from backend using local loopback port
+    // 2. Fetch session from backend using local loopback port with forwarded headers
     const backendUrl = `http://127.0.0.1:${process.env.PORT || 5000}`;
+    const proto = request.headers.get('x-forwarded-proto') || request.nextUrl.protocol.replace(':', '') || 'http';
+    const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || request.nextUrl.host;
+
     const res = await fetch(`${backendUrl}/api/auth/get-session`, {
       headers: {
         cookie,
+        'x-forwarded-proto': proto,
+        'x-forwarded-host': host,
+        host: host,
       },
       cache: 'no-store',
     });
 
     if (!res.ok) {
-      return NextResponse.redirect(new URL('/', request.url));
+      // If loopback fetch failed or returned 401, allow request to proceed to layout server component
+      return NextResponse.next();
     }
 
     const sessionData = await res.json();
     const userRole = sessionData?.user?.role || 'user';
 
     // 3. User is not allowed in dashboard at all
-    if (userRole === 'user') {
+    if (sessionData?.user && userRole === 'user') {
       return NextResponse.redirect(new URL('/', request.url));
     }
 

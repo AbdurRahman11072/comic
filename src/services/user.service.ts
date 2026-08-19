@@ -1,16 +1,32 @@
 import { env } from "@/env";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 export const userService = {
   getUserSession: async () => {
     try {
       const cookieStore = await cookies();
+      const cookieHeader = cookieStore.toString();
+      if (!cookieHeader) return null;
+
+      const forwardedHeaders: Record<string, string> = {
+        Cookie: cookieHeader,
+      };
+
+      try {
+        const headerList = await headers();
+        const proto = headerList.get("x-forwarded-proto") || "http";
+        const host = headerList.get("x-forwarded-host") || headerList.get("host") || "";
+        if (proto) forwardedHeaders["x-forwarded-proto"] = proto;
+        if (host) {
+          forwardedHeaders["x-forwarded-host"] = host;
+          forwardedHeaders["host"] = host;
+        }
+      } catch {}
+
       const res = await fetch(
         `${env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/auth/get-session`,
         {
-          headers: {
-            Cookie: cookieStore.toString(),
-          },
+          headers: forwardedHeaders,
           cache: "no-store",
         }
       );
@@ -18,6 +34,7 @@ export const userService = {
       const session = await res.json();
       return session;
     } catch (error) {
+      console.error("[userService.getUserSession] Error:", error);
       return null;
     }
   },
