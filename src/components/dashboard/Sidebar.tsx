@@ -1,36 +1,32 @@
 "use client";
 
+import { SITE_DEFAULTS } from "@/config/site";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import {
+  AlertCircle,
+  ArrowLeft,
+  BarChart3,
+  BookOpen,
+  CreditCard,
+  Database,
+  DollarSign,
+  FileText,
+  LayoutDashboard,
+  Megaphone,
+  Menu,
+  Palette,
+  Settings,
+  Shield,
+  Sparkles,
+  Users,
+  Wallet,
+  X
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  Users, 
-  BookOpen, 
-  Layers, 
-  AlertCircle, 
-  CreditCard, 
-  Settings, 
-  Menu, 
-  X, 
-  Shield, 
-  Palette, 
-  BarChart3, 
-  FileText, 
-  MessageSquare, 
-  DollarSign, 
-  Megaphone, 
-  UserCog, 
-  Sparkles,
-  Database,
-  Globe,
-  ArrowLeft,
-  Wallet
-} from "lucide-react";
-import { useState, useMemo } from "react";
-import { cn } from "@/lib/utils";
-import { authClient } from "@/lib/auth-client";
-import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
-import { SITE_DEFAULTS } from "@/config/site";
+import { useMemo, useState } from "react";
 
 type NavItem = {
   label: string;
@@ -45,7 +41,6 @@ const ALL_NAV_ITEMS: NavItem[] = [
 
   // Creator items
   { label: "My Series", href: "/dashboard/series", icon: BookOpen, roles: ["creator"] },
-  { label: "My Chapters", href: "/dashboard/chapters", icon: Layers, roles: ["creator"] },
   { label: "Promo Codes", href: "/dashboard/promos", icon: Sparkles, roles: ["creator", "admin"] },
   { label: "Earnings", href: "/dashboard/earnings", icon: DollarSign, roles: ["creator"] },
   { label: "Analytics", href: "/dashboard/analytics", icon: BarChart3, roles: ["creator"] },
