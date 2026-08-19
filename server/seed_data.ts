@@ -1,5 +1,5 @@
-import { prisma } from './lib/prisma';
 import 'dotenv/config';
+import { prisma } from './lib/prisma';
 
 // ─── ADMIN CREDENTIALS ────────────────────────────────────────────────────────
 const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL || 'admin@gmail.com';
@@ -31,8 +31,7 @@ async function seedAdmin() {
   const backendUrl =
     process.env.NEXT_PUBLIC_APP_URL ||
     process.env.BACKEND_URL ||
-    process.env.BETTER_AUTH_URL ||
-    'http://localhost:5000';
+    process.env.BETTER_AUTH_URL ;
 
   try {
     const res = await fetch(`${backendUrl}/api/auth/sign-up/email`, {

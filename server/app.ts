@@ -4,10 +4,10 @@ import express, { Application } from 'express';
 import helmet from 'helmet';
 import httpStatus from 'http-status';
 import pinoHttp from 'pino-http';
+import { apiVersionMiddleware } from './app/middleware/apiVersion';
 import globalErrorHandler from './app/middleware/globalErrorHandler';
 import { RootRoutes } from './app/routes';
 import { HealthRoutes } from './app/routes/health.routes';
-import { apiVersionMiddleware } from './app/middleware/apiVersion';
 import { logger } from './app/utils/logger';
 
 import { envConfig } from './app/config/envConfig';
@@ -37,8 +37,6 @@ app.use(
       const allowed = [
         envConfig.FRONTEND_URL,
         envConfig.BACKEND_URL,
-        'http://localhost:3000',
-        'http://localhost:5000',
         ...(process.env.ADDITIONAL_ORIGINS ? process.env.ADDITIONAL_ORIGINS.split(',').map((s) => s.trim()) : []),
       ];
       if (allowed.includes(origin) || origin.endsWith('.vercel.app')) {

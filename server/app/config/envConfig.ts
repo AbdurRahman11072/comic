@@ -3,19 +3,19 @@ import path from 'path';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:5000';
+const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
 export const envConfig = {
   PORT: process.env.PORT || 5000,
   DATABASE_URL: process.env.DATABASE_URL,
-  NODE_ENV: process.env.NODE_ENV || 'development',
+  NODE_ENV: process.env.NODE_ENV,
 
   APP_URL: appUrl,
   FRONTEND_URL: appUrl,
   BACKEND_URL: appUrl,
 
-  BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || 'dev_better_auth_secret_comic_bd_super_secure',
-  BETTER_AUTH_URL: process.env.BETTER_AUTH_URL || appUrl,
+  BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET ,
+  BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
 
   ADMIN_NAME: process.env.ADMIN_NAME,
   ADMIN_EMAIL: process.env.ADMIN_EMAIL,
