@@ -50,11 +50,31 @@ server
       })
     );
 
-    // Security & CORS
+    // Security & CORS (Dynamic multi-origin support for local and cloud deployments)
     app.use(
       cors({
-        origin: envConfig.FRONTEND_URL || "*",
+        origin: (origin, callback) => {
+          // Allow requests with no origin (mobile apps, curl, same-origin)
+          if (!origin) {
+            return callback(null, true);
+          }
+          // Dynamically allow requesting origin for seamless CORS with credentials
+          return callback(null, origin);
+        },
         credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: [
+          'Content-Type',
+          'Authorization',
+          'Cookie',
+          'X-Requested-With',
+          'Accept',
+          'Origin',
+          'Cache-Control',
+          'Pragma',
+          'X-Api-Version',
+        ],
+        exposedHeaders: ['Set-Cookie'],
       }),
     );
 

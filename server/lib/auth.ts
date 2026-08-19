@@ -8,18 +8,20 @@ const additionalOrigins = process.env.ADDITIONAL_ORIGINS
   ? process.env.ADDITIONAL_ORIGINS.split(',').map((o) => o.trim())
   : [];
 
-const trustedOrigins = Array.from(
+const trustedOrigins: string[] = Array.from(
   new Set([
-    envConfig.FRONTEND_URL,
-    envConfig.BACKEND_URL,
+    envConfig.APP_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
     'http://localhost:3000',
     'http://localhost:5000',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5000',
     ...additionalOrigins,
   ])
-).filter(Boolean);
+).filter((o): o is string => Boolean(o));
 
 export const auth = betterAuth({
-  baseURL: envConfig.BACKEND_URL,
+  baseURL: envConfig.APP_URL,
   trustedOrigins,
   database: prismaAdapter(prisma, {
     provider: 'postgresql',

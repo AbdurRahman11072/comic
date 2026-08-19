@@ -110,7 +110,7 @@ export function ProfileClient({ initialProfile }: ProfileClientProps) {
                   const formData = new FormData();
                   formData.append('image', file);
                   
-                  const url = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+                  const url = typeof window !== 'undefined' ? '' : (process.env.NEXT_PUBLIC_APP_URL || 'http://127.0.0.1:5000');
                   const res = await fetch(`${url}/api/v1/upload`, {
                     method: 'POST',
                     body: formData,

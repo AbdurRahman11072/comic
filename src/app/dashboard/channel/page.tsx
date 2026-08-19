@@ -85,7 +85,9 @@ export default function ChannelSettingsPage() {
       const formData = new FormData();
       formData.append("image", file);
       const uploadUrl =
-        process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        typeof window !== "undefined"
+          ? ""
+          : process.env.NEXT_PUBLIC_APP_URL || "http://127.0.0.1:5000";
       const res = await fetch(`${uploadUrl}/api/v1/upload`, {
         method: "POST",
         body: formData,

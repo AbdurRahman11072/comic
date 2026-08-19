@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+const getServerBaseUrl = () => {
+  if (typeof window !== 'undefined') return '';
+  return `http://127.0.0.1:${process.env.PORT || 5000}`;
+};
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000',
+  baseURL: getServerBaseUrl(),
   withCredentials: true, // send cookies for better-auth sessions
   headers: {
     'Content-Type': 'application/json',

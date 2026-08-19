@@ -492,7 +492,7 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
               <span className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-inner">
                 <FileUp className="w-5 h-5" />
               </span>
-              {initialData ? `Edit Chapter ${initialData.number}` : "Upload New Chapter"}
+              {initialData?.id ? `Edit Chapter ${initialData.number}` : "Upload New Chapter"}
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
               Add chapter pages, configure release schedule, and monetize with coins.
@@ -526,7 +526,7 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
               ) : (
                 <>
                   <Check className="w-3.5 h-3.5 mr-1.5" />
-                  {initialData ? "Save Changes" : "Publish Chapter"}
+                  {initialData?.id ? "Save Changes" : "Publish Chapter"}
                 </>
               )}
             </Button>

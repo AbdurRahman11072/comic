@@ -1,5 +1,5 @@
 import { Sidebar } from "@/components/dashboard/Sidebar";
-import { cookies } from "next/headers";
+import { userService } from "@/services/user.service";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -11,35 +11,11 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const backendUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.NEXT_PUBLIC_BETTER_AUTH_URL ||
-    "http://localhost:5000";
+  const sessionData = await userService.getUserSession();
+  const userRole = (sessionData?.user as any)?.role || "user";
 
-  try {
-    const res = await fetch(`${backendUrl}/api/auth/get-session`, {
-      headers: {
-        cookie: cookieStore.toString(),
-      },
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      redirect("/");
-    }
-
-    const sessionData = await res.json();
-    const userRole = sessionData?.user?.role || "user";
-
-    if (!sessionData?.user || !ALLOWED_ROLES.includes(userRole)) {
-      redirect("/");
-    }
-  } catch (err: any) {
-    if (err?.digest?.startsWith("NEXT_REDIRECT")) {
-      throw err;
-    }
-    // If backend is unreachable or not ready, fallback to proxy.ts middleware protection
+  if (!sessionData?.user || !ALLOWED_ROLES.includes(userRole)) {
+    redirect("/");
   }
 
   return (
@@ -58,7 +34,8 @@ export default async function DashboardLayout({
           </div>
         </header>
 
-        <div className="p-6 lg:p-10 flex-1">{children}</div>
+        {/* Content */}
+        <div className="p-6 md:p-8 flex-1">{children}</div>
       </main>
     </div>
   );

@@ -18,13 +18,13 @@ export default async function proxy(request: NextRequest) {
   }
 
   try {
-    // 2. Fetch session from backend
-    // better-auth endpoint to fetch session from cookies
-    const backendUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:5000';
+    // 2. Fetch session from backend using local loopback port
+    const backendUrl = `http://127.0.0.1:${process.env.PORT || 5000}`;
     const res = await fetch(`${backendUrl}/api/auth/get-session`, {
       headers: {
         cookie,
       },
+      cache: 'no-store',
     });
 
     if (!res.ok) {
@@ -45,7 +45,9 @@ export default async function proxy(request: NextRequest) {
     if (
       path.startsWith('/dashboard/payments') ||
       path.startsWith('/dashboard/roles') ||
-      path.startsWith('/dashboard/settings')
+      path.startsWith('/dashboard/settings') ||
+      path.startsWith('/dashboard/backup') ||
+      path.startsWith('/dashboard/audit')
     ) {
       if (userRole !== 'admin') {
         return NextResponse.redirect(new URL('/dashboard', request.url));
@@ -59,19 +61,18 @@ export default async function proxy(request: NextRequest) {
       path.startsWith('/dashboard/withdrawals') ||
       path.startsWith('/dashboard/cashout') ||
       path.startsWith('/dashboard/reports') ||
-      path.startsWith('/dashboard/comments') ||
-      path.startsWith('/dashboard/ads')
+      path.startsWith('/dashboard/admin-series') ||
+      path.startsWith('/dashboard/creators')
     ) {
-      if (!['admin', 'moderator'].includes(userRole)) {
+      if (!['moderator', 'admin'].includes(userRole)) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
       }
     }
 
-    // Creator Only
-    // Wait, creators have earnings and channel. But technically admins could view them? 
-    // In our sidebar, 'Earnings' is only for 'creator'. Let's strictly enforce it.
+    // Creator and Admin Only
     if (
       path.startsWith('/dashboard/earnings') ||
+      path.startsWith('/dashboard/promos') ||
       path.startsWith('/dashboard/channel')
     ) {
       if (!['creator', 'admin'].includes(userRole)) {
@@ -79,12 +80,10 @@ export default async function proxy(request: NextRequest) {
       }
     }
 
-    // Series & Chapters (Creator, Moderator, Admin can access, so we do nothing here since 'user' is already kicked out)
-
     return NextResponse.next();
   } catch (error) {
     console.error('Middleware session fetch error:', error);
-    // On fetch error, err on the side of caution
-    return NextResponse.redirect(new URL('/', request.url));
+    // Let dashboard layout server component handle auth verification on fallback
+    return NextResponse.next();
   }
 }

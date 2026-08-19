@@ -1,7 +1,14 @@
 import { createAuthClient } from 'better-auth/react';
 
+const getAuthBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  return `http://127.0.0.1:${process.env.PORT || 5000}`;
+};
+
 export const authClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:5000',
+  baseURL: getAuthBaseUrl(),
   fetchOptions: {
     credentials: 'include',
   },
