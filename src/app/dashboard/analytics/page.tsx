@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, Suspense } from "react";
 import { authClient } from "@/lib/auth-client";
-import api from "@/lib/api";
+import { creatorService } from "@/services/creator.service";
 import {
   BarChart3,
   Eye,
@@ -130,9 +130,9 @@ function AnalyticsContent() {
     const fetchAnalytics = async () => {
       if (!session?.user?.id) return;
       try {
-        const res = await api.get("/api/v1/creators/analytics");
-        if (res.data.success) {
-          setData(res.data.data);
+        const res = await creatorService.getAnalytics();
+        if (res.success && res.data) {
+          setData(res.data);
         }
       } catch (err) {
         console.error("Failed to fetch analytics", err);

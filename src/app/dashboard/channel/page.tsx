@@ -1,6 +1,5 @@
 "use client";
 
-import api from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import {
   Camera,
@@ -18,17 +17,12 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
-
-interface CreatorProfile {
-  id: string;
-  userId: string;
-  channelName: string;
-  description: string | null;
-  bannerUrl: string | null;
-  profileImage: string | null;
-  totalEarnings: number;
-  withdrawnAmount: number;
-}
+import { creatorService, CreatorPost, CreatorProfile } from "@/services/creator.service";
+import {
+  CreateCreatorPostAction,
+  DeleteCreatorPostAction,
+  UpdateCreatorProfileAction,
+} from "@/actions/creator";
 
 export default function ChannelSettingsPage() {
   const { data: session } = authClient.useSession();
@@ -54,20 +48,22 @@ export default function ChannelSettingsPage() {
     const fetchProfile = async () => {
       if (!session?.user?.id) return;
       try {
-        const res = await api.get("/api/v1/creators/profile");
-        if (res.data.success) {
-          const p = res.data.data;
+        const res = await creatorService.getProfile();
+        if (res.success && res.data) {
+          const p = res.data;
           setProfile(p);
           setChannelName(p.channelName || "");
           setDescription(p.description || "");
           setProfileImage(p.profileImage || "");
           setBannerUrl(p.bannerUrl || "");
-        }
-      } catch (err: any) {
-        if (err.response?.status === 404) {
+        } else if (res.statusCode === 404) {
           setNotFound(true);
+        } else {
+          toast.error(res.message || "Failed to load creator profile");
         }
+      } catch (err) {
         console.error("Failed to fetch creator profile", err);
+        toast.error("Failed to load creator profile");
       } finally {
         setLoading(false);
       }
@@ -116,20 +112,20 @@ export default function ChannelSettingsPage() {
 
     setSaving(true);
     try {
-      const res = await api.put("/api/v1/creators/profile", {
+      const res = await UpdateCreatorProfileAction({
         channelName: channelName.trim(),
         description: description.trim() || null,
         profileImage: profileImage || null,
         bannerUrl: bannerUrl || null,
       });
-      if (res.data.success) {
-        setProfile(res.data.data);
+      if (res.success && res.data) {
+        setProfile(res.data);
         toast.success("Channel settings saved successfully!");
+      } else {
+        toast.error(res.message || "Failed to save channel settings.");
       }
-    } catch (err: any) {
-      toast.error(
-        err.response?.data?.message || "Failed to save channel settings."
-      );
+    } catch (_err) {
+      toast.error("Failed to save channel settings.");
     } finally {
       setSaving(false);
     }
@@ -383,14 +379,14 @@ function ChannelAnnouncementComposer({ creatorId }: { creatorId: string }) {
   const [content, setContent] = useState("");
   const [isPinned, setIsPinned] = useState(false);
   const [posting, setPosting] = useState(false);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<CreatorPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
 
   const fetchPosts = async () => {
     try {
-      const res = await api.get(`/api/v1/creators/${creatorId}/posts`);
-      if (res.data.success) {
-        setPosts(res.data.data);
+      const res = await creatorService.getCreatorPosts(creatorId);
+      if (res.success && res.data) {
+        setPosts(res.data);
       }
     } catch (err) {
       console.error(err);
@@ -409,20 +405,22 @@ function ChannelAnnouncementComposer({ creatorId }: { creatorId: string }) {
 
     setPosting(true);
     try {
-      const res = await api.post("/api/v1/creators/posts", {
+      const res = await CreateCreatorPostAction({
         title: title.trim(),
         content: content.trim(),
         isPinned,
       });
-      if (res.data.success) {
+      if (res.success) {
         toast.success("Announcement published!");
         setTitle("");
         setContent("");
         setIsPinned(false);
         fetchPosts();
+      } else {
+        toast.error(res.message || "Failed to publish announcement");
       }
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to publish announcement");
+    } catch (_err) {
+      toast.error("Failed to publish announcement");
     } finally {
       setPosting(false);
     }
@@ -431,10 +429,14 @@ function ChannelAnnouncementComposer({ creatorId }: { creatorId: string }) {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this announcement?")) return;
     try {
-      await api.delete(`/api/v1/creators/posts/${id}`);
-      toast.success("Announcement deleted");
-      fetchPosts();
-    } catch (err) {
+      const res = await DeleteCreatorPostAction(id, creatorId);
+      if (res.success) {
+        toast.success("Announcement deleted");
+        fetchPosts();
+      } else {
+        toast.error(res.message || "Failed to delete");
+      }
+    } catch (_err) {
       toast.error("Failed to delete");
     }
   };

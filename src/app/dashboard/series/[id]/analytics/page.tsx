@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import api from "@/lib/api";
+import { creatorService } from "@/services/creator.service";
 import {
   BarChart3,
   Eye,
@@ -134,15 +134,15 @@ export default function SeriesAnalyticsPage() {
       setLoading(true);
       setError(null);
       try {
-        const res = await api.get(`/api/v1/creators/series/${id}/analytics`);
-        if (res.data?.success) {
-          setData(res.data.data);
+        const res = await creatorService.getSingleSeriesAnalytics(id);
+        if (res.success && res.data) {
+          setData(res.data);
         } else {
-          setError(res.data?.message || "Failed to load series analytics");
+          setError(res.message || "Series analytics not found or unauthorized");
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error("Error loading series analytics", err);
-        setError(err.response?.data?.message || "Series analytics not found or unauthorized");
+        setError("Failed to load series analytics");
       } finally {
         setLoading(false);
       }

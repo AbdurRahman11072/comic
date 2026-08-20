@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import api from "@/lib/api";
+import { UpdateCreatorProfileAction } from "@/actions/creator";
 import { LoginDialog } from "./LoginDialog";
 import { ChatDrawer } from "./ChatDrawer";
 import { BottomNav } from "./BottomNav";
@@ -220,14 +221,14 @@ export function Navbar() {
                           onClick={async () => {
                             setUserMenuOpen(false);
                             try {
-                              const res = await api.put('/creators/profile', {});
-                              if (res.data.success) {
+                              const res = await UpdateCreatorProfileAction({});
+                              if (res.success) {
                                 toast.success("You are now a Creator!");
                                 window.location.href = '/dashboard/channel';
                               } else {
-                                toast.error(res.data.message || "Failed to become a creator");
+                                toast.error(res.message || "Failed to become a creator");
                               }
-                            } catch (err) {
+                            } catch (_err) {
                               toast.error("Failed to become a creator");
                             }
                           }}

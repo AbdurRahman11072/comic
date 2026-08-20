@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
-import { useGetPublicChannelQuery } from "@/redux/api/creatorApi";
+import { creatorService, PublicChannelData } from "@/services/creator.service";
 import { useRedeemPromoCodeMutation } from "@/redux/api/promoApi";
 import {
   BookOpen, Star, Eye, Bookmark, Gift, MessageSquare,
@@ -14,9 +14,30 @@ import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
 export function ChannelClient({ channelId }: { channelId: string }) {
-  const { data: channelData, isLoading, isError } = useGetPublicChannelQuery(channelId);
+  const [profile, setProfile] = useState<PublicChannelData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
   const [redeemMutate, { isLoading: redeeming }] = useRedeemPromoCodeMutation();
   const [activeTab, setActiveTab] = useState<"series" | "announcements" | "promos">("series");
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    setIsError(false);
+    creatorService.getPublicChannel(channelId).then((res) => {
+      if (isMounted) {
+        if (res.success && res.data) {
+          setProfile(res.data);
+        } else {
+          setIsError(true);
+        }
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [channelId]);
 
   if (isLoading) {
     return (
@@ -30,7 +51,7 @@ export function ChannelClient({ channelId }: { channelId: string }) {
     );
   }
 
-  if (isError || !channelData?.data) {
+  if (isError || !profile) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Navbar />
@@ -48,9 +69,8 @@ export function ChannelClient({ channelId }: { channelId: string }) {
     );
   }
 
-  const profile = channelData.data;
   const user = profile.user;
-  const seriesList = user?.series || [];
+  const seriesList = profile.series || [];
   const posts = user?.creatorPosts || [];
   const promos = user?.createdPromoCodes || [];
 
@@ -69,11 +89,11 @@ export function ChannelClient({ channelId }: { channelId: string }) {
       <Navbar />
 
       <main className="flex-1 pb-16">
-        {/* Banner */}
-        <div className="relative h-64 md:h-80 w-full bg-gradient-to-r from-primary/30 via-purple-900/20 to-background overflow-hidden border-b border-white/10">
+        {/* Banner Section */}
+        <div className="relative h-64 md:h-80 w-full bg-neutral-900 overflow-hidden">
           {profile.bannerUrl && (
             <img
-              src={profile.bannerUrl}
+              src={profile.bannerUrl || ""}
               alt={profile.channelName}
               className="w-full h-full object-cover"
             />
@@ -88,7 +108,7 @@ export function ChannelClient({ channelId }: { channelId: string }) {
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-3xl border-4 border-background bg-neutral-900 overflow-hidden shrink-0 shadow-2xl">
                 {profile.profileImage || user.image ? (
                   <img
-                    src={profile.profileImage || user.image}
+                    src={profile.profileImage || user.image || ""}
                     alt={profile.channelName}
                     className="w-full h-full object-cover"
                   />

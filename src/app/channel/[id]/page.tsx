@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ChannelClient } from "@/components/channel/ChannelClient";
 import { constructMetadata } from "@/lib/metadata";
-import { env } from "@/env";
+import { creatorService } from "@/services/creator.service";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -10,11 +10,8 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   try {
-    const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/creators/channel/${id}`, {
-      next: { revalidate: 60 },
-    });
-    const json = await res.json();
-    const profile = json?.data;
+    const res = await creatorService.getPublicChannel(id, { revalidate: 60 });
+    const profile = res?.data;
     if (profile) {
       return constructMetadata({
         title: `${profile.channelName} — Creator Studio`,

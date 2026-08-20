@@ -4,28 +4,10 @@ import { useEffect, useState } from "react";
 import { Sparkles, Check, X, Loader2, AlertCircle, Plus, Coins, Calendar, FileText } from "lucide-react";
 import api from "@/lib/api";
 import { userService } from "@/services/user.service";
+import { creatorService, FeaturedRequestItem } from "@/services/creator.service";
+import { RequestFeatureSeriesAction } from "@/actions/creator";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-hot-toast";
-
-interface FeaturedRequest {
-  id: string;
-  seriesId: string;
-  creatorId: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
-  notes: string | null;
-  createdAt: string;
-  series: {
-    id: string;
-    title: string;
-    coverUrl: string;
-    slug: string;
-  };
-  creator?: {
-    id: string;
-    name: string;
-    email: string;
-  };
-}
 
 interface Series {
   id: string;
@@ -35,7 +17,7 @@ interface Series {
 
 export default function FeaturedRequestsPage() {
   const { data: session } = authClient.useSession();
-  const [requests, setRequests] = useState<FeaturedRequest[]>([]);
+  const [requests, setRequests] = useState<FeaturedRequestItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   
@@ -69,8 +51,8 @@ export default function FeaturedRequestsPage() {
     try {
       if (isCreator) {
         // Fetch creator's requests
-        const reqRes = await api.get("/creators/feature-requests");
-        setRequests(reqRes.data.data || []);
+        const reqRes = await creatorService.getCreatorFeatureRequests();
+        setRequests(reqRes.data || []);
 
         // Fetch creator's series
         const seriesRes = await api.get(`/series?creatorId=${session?.user?.id}&limit=100`);
@@ -120,22 +102,24 @@ export default function FeaturedRequestsPage() {
 
     setSubmitting(true);
     try {
-      const res = await api.post("/creators/feature-request", {
+      const res = await RequestFeatureSeriesAction({
         seriesId: selectedSeriesId,
         durationDays,
         notes: notes.trim() || undefined,
       });
 
-      if (res.data.success) {
+      if (res.success) {
         toast.success("Featured placement request submitted to admin!");
         setShowModal(false);
         setSelectedSeriesId("");
         setDurationDays(7);
         setNotes("");
         fetchData();
+      } else {
+        toast.error(res.message || "Failed to submit request");
       }
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to submit request");
+    } catch (_err) {
+      toast.error("Failed to submit request");
     } finally {
       setSubmitting(false);
     }
@@ -253,7 +237,7 @@ export default function FeaturedRequestsPage() {
               <div className="flex items-center gap-4">
                 <div 
                   className="w-14 h-20 rounded-xl bg-white/10 bg-cover bg-center border border-white/10 shrink-0"
-                  style={{ backgroundImage: `url(${req.series.coverUrl})` }}
+                  style={{ backgroundImage: req.series?.coverUrl ? `url(${req.series.coverUrl})` : undefined }}
                 />
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">

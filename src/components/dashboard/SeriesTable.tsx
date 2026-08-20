@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { DeleteSeriesAction, ToggleFeaturedAction } from "@/actions/series";
+import { RequestFeatureSeriesAction } from "@/actions/creator";
 import { userService } from "@/services/user.service";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
@@ -124,23 +125,23 @@ export function SeriesTable({ initialSeries, userRole }: SeriesTableProps) {
 
     setSubmittingRequest(true);
     try {
-      const res = await api.post("/api/v1/creators/feature-request", {
+      const res = await RequestFeatureSeriesAction({
         seriesId: requestModalSeries.id,
         durationDays,
         notes: pitchNotes.trim() || undefined,
       });
 
-      if (res.data?.success) {
+      if (res.success) {
         toast.success("Featured placement request submitted to admin!");
         setRequestModalSeries(null);
         setPitchNotes("");
         setDurationDays(7);
         router.refresh();
       } else {
-        toast.error(res.data?.message || "Failed to submit request.");
+        toast.error(res.message || "Failed to submit request.");
       }
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to submit featured request.");
+    } catch (_err) {
+      toast.error("Failed to submit featured request.");
     } finally {
       setSubmittingRequest(false);
     }

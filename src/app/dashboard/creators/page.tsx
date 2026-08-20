@@ -2,34 +2,13 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import api from "@/lib/api";
 import {
   Palette, Search, ExternalLink, BookOpen, Layers,
   Eye, DollarSign, Sparkles, RefreshCw, Loader2,
   User as UserIcon, ShieldAlert, CheckCircle2
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-
-interface CreatorItem {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  image: string | null;
-  points: number;
-  banned: boolean;
-  createdAt: string;
-  channelId: string;
-  channelName: string;
-  channelDescription: string | null;
-  channelBanner: string | null;
-  totalEarnings: number;
-  withdrawnAmount: number;
-  seriesCount: number;
-  totalChapters: number;
-  totalViews: number;
-  promoCodesCount: number;
-}
+import { creatorService, CreatorItem } from "@/services/creator.service";
 
 export default function AdminCreatorsDirectoryPage() {
   const [creators, setCreators] = useState<CreatorItem[]>([]);
@@ -39,13 +18,15 @@ export default function AdminCreatorsDirectoryPage() {
   const fetchCreators = async () => {
     setLoading(true);
     try {
-      const params: any = {};
-      if (search.trim()) params.search = search.trim();
-      const { data } = await api.get("/api/v1/creators/admin/all", { params });
-      if (data.success) {
-        setCreators(data.data);
+      const res = await creatorService.getAllCreators(
+        search.trim() ? { search: search.trim() } : {}
+      );
+      if (res.success && res.data) {
+        setCreators(res.data);
+      } else {
+        toast.error(res.message || "Failed to load creators list.");
       }
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to load creators list.");
     } finally {
       setLoading(false);
