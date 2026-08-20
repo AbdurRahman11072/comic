@@ -4,6 +4,7 @@ import "./globals.css";
 import { siteService } from "@/services/site.service";
 import { ReduxProvider } from "@/providers/ReduxProvider";
 import { PointsProvider } from "@/providers/PointsProvider";
+import { SiteConfigProvider } from "@/providers/SiteConfigProvider";
 import { constructMetadata } from "@/lib/metadata";
 import { CookieConsent } from "@/components/ads/CookieConsent";
 import { ReferralCapture } from "@/components/home/ReferralCapture";
@@ -38,11 +39,13 @@ export default async function RootLayout({
           />
         )}
         <ReduxProvider>
-          <PointsProvider>
-            <ReferralCapture />
-            {children}
-            <CookieConsent />
-          </PointsProvider>
+          <SiteConfigProvider initialConfig={config}>
+            <PointsProvider>
+              <ReferralCapture />
+              {children}
+              <CookieConsent />
+            </PointsProvider>
+          </SiteConfigProvider>
         </ReduxProvider>
         <Toaster position="bottom-right" />
         {customAdScript && (

@@ -20,16 +20,10 @@ import {
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
+import { SiteConfigData } from "@/services/site.service";
 
 interface ContactClientProps {
-  config: {
-    appName?: string;
-    contactEmail?: string;
-    dmcaEmail?: string;
-    discord?: string;
-    twitter?: string;
-    telegram?: string;
-  };
+  config: Partial<SiteConfigData>;
 }
 
 export function ContactClient({ config }: ContactClientProps) {

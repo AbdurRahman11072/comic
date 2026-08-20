@@ -9,7 +9,7 @@ import { Loader2, Zap, Shield, Rocket, Sparkles, AlertTriangle } from "lucide-re
 import { useSession } from "@/lib/auth-client";
 import { LoginDialog } from "@/components/home/LoginDialog";
 import { toast } from "react-hot-toast";
-import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
 
 const POINT_PACKAGES = [
   { id: "pkg_1", points: 100, price: 1.0, name: "100 Points Starter", icon: Zap, color: "blue", popular: false },
@@ -30,8 +30,8 @@ function ShopContent() {
   const [loading, setLoading] = useState<string | null>(null);
   const [loginOpen, setLoginOpen] = useState(false);
   const { data: session } = useSession();
-  const { data: configRes } = useGetSiteConfigQuery();
-  const isStripeEnabled = configRes?.data?.enableStripePayment ?? true;
+  const { config } = useSiteConfig();
+  const isStripeEnabled = config?.enableStripePayment ?? true;
 
   const handlePurchase = async (packageId: string) => {
     if (!isStripeEnabled) {

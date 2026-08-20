@@ -7,20 +7,21 @@ import {
   AlertTriangle, Lock, Users, MessageCircle, BarChart3,
   CreditCard, Banknote, Wallet, X, Plus
 } from "lucide-react";
-import { useGetSiteConfigQuery, useUpdateSiteConfigMutation } from "@/redux/api/siteConfigApi";
 import { toast } from "react-hot-toast";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
+import { UpdateSiteConfigAction } from "@/actions/site";
 
 interface SettingsClientProps {
   initialConfig?: any;
 }
 
 export function SettingsClient({ initialConfig }: SettingsClientProps) {
-  const { data: configRes, isLoading: configLoading } = useGetSiteConfigQuery();
-  const [updateMutate, { isLoading: saving }] = useUpdateSiteConfigMutation();
+  const { config: globalConfig, updateConfig } = useSiteConfig();
+  const [saving, setSaving] = useState(false);
 
   const [activeTab, setActiveTab] = useState<"system" | "branding" | "announcement" | "socials" | "economy" | "seo" | "mobile" | "legal">("system");
 
-  const configData = configRes?.data || initialConfig || {};
+  const configData = globalConfig || initialConfig || {};
 
   const [form, setForm] = useState({
     // System & Access
@@ -86,8 +87,8 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
   });
 
   useEffect(() => {
-    if (configRes?.data) {
-      const d: any = configRes.data;
+    if (globalConfig) {
+      const d: any = globalConfig;
       setForm((prev) => ({
         ...prev,
         ...d,
@@ -110,7 +111,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
         payoutMethods: d.payoutMethods && Array.isArray(d.payoutMethods) && d.payoutMethods.length > 0 ? d.payoutMethods : ["bKash", "Nagad", "Rocket", "Bank Transfer"],
       }));
     }
-  }, [configRes]);
+  }, [globalConfig]);
 
   const updateField = (key: string, value: any) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -118,11 +119,19 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
 
   const handleSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
+    setSaving(true);
     try {
-      await updateMutate(form).unwrap();
-      toast.success("Platform settings saved & updated live!");
+      const res = await UpdateSiteConfigAction(form);
+      if (res.success && res.data) {
+        updateConfig(res.data);
+        toast.success("Platform settings saved & updated live!");
+      } else {
+        toast.error(res.message || "Failed to save settings.");
+      }
     } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to save settings.");
+      toast.error(err?.message || "Failed to save settings.");
+    } finally {
+      setSaving(false);
     }
   };
 

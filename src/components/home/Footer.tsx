@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
 
 const DiscordSVG = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -43,8 +43,7 @@ const FacebookSVG = () => (
 );
 
 export function Footer() {
-  const { data: configRes } = useGetSiteConfigQuery();
-  const config = configRes?.data;
+  const { config } = useSiteConfig();
 
   const appName = config?.appName || "Genz Toon";
   const appTagline = config?.appTagline || "Dedicated to providing high-quality comic translations and reading experiences.";

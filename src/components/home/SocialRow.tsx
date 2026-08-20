@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
 
 // Official Social SVG Logos
 const DiscordSVG = () => (
@@ -50,8 +50,7 @@ const ReportSVG = () => (
 );
 
 export function SocialRow() {
-  const { data: configRes } = useGetSiteConfigQuery();
-  const config = configRes?.data;
+  const { config } = useSiteConfig();
 
   // Compile active individual socials
   const socials = [

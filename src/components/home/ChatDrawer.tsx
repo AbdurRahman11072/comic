@@ -11,7 +11,7 @@ import { uploadImage } from "@/lib/api";
 import { communityService, ChatMessageItem } from "@/services/community.service";
 import { SendChatMessageAction, DeleteChatMessageAction } from "@/actions/community";
 import { toast } from "react-hot-toast";
-import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
 
 interface ChatDrawerProps {
   open: boolean;
@@ -29,8 +29,7 @@ const REACTION_GIFS = [
 
 export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
   const { data: session } = useSession();
-  const { data: configRes } = useGetSiteConfigQuery();
-  const config = configRes?.data;
+  const { config } = useSiteConfig();
 
   const [messages, setMessages] = useState<ChatMessageItem[]>([]);
   const [loading, setLoading] = useState(false);

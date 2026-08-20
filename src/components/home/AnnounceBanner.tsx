@@ -1,12 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
 import { Megaphone, AlertTriangle, ArrowRight } from "lucide-react";
 
 export function AnnounceBanner() {
-  const { data: configRes } = useGetSiteConfigQuery();
-  const config = configRes?.data;
+  const { config } = useSiteConfig();
 
   // If maintenance mode is active, display a maintenance notice banner
   if (config?.isMaintenanceMode) {

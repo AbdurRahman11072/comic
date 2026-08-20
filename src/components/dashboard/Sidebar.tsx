@@ -3,7 +3,7 @@
 import { SITE_DEFAULTS } from "@/config/site";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
-import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
 import {
   AlertCircle,
   ArrowLeft,
@@ -68,8 +68,8 @@ export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = authClient.useSession();
 
-  const { data: configRes } = useGetSiteConfigQuery();
-  const appName = configRes?.data?.appName || SITE_DEFAULTS.appName;
+  const { config } = useSiteConfig();
+  const appName = config?.appName || SITE_DEFAULTS.appName;
 
   const userRole = (session?.user as any)?.role || "user";
 

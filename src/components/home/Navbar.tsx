@@ -12,7 +12,7 @@ import { BottomNav } from "./BottomNav";
 import { User as UserIcon, Settings, Bookmark, History, LayoutDashboard, MessageCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { usePoints } from "@/providers/PointsProvider";
-import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
 import { SITE_DEFAULTS } from "@/config/site";
 
 const NAV_LINKS = [
@@ -57,8 +57,7 @@ export function Navbar() {
   const router = useRouter();
   const { data: session, isPending } = useSession();
 
-  const { data: configRes } = useGetSiteConfigQuery();
-  const config = configRes?.data;
+  const { config } = useSiteConfig();
   const appName = config?.appName || SITE_DEFAULTS.appName;
   const appLogoUrl = config?.appLogoUrl || SITE_DEFAULTS.appLogoUrl;
 
