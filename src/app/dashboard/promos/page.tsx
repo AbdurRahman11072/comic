@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import {
-  useGetPromoCodesQuery,
-  useCreatePromoCodeMutation,
-  useDeletePromoCodeMutation,
-} from "@/redux/api/promoApi";
+import { useState, useEffect } from "react";
+import { promoService, PromoCode } from "@/services/promo.service";
+import { CreatePromoCodeAction, DeletePromoCodeAction } from "@/actions/promo";
 import {
   Gift, Plus, Trash2, Copy, Check, Sparkles, Loader2, Calendar, AlertCircle, Percent, Clock
 } from "lucide-react";
@@ -13,9 +10,10 @@ import { toast } from "react-hot-toast";
 import { format, isPast } from "date-fns";
 
 export default function PromoCodesDashboardPage() {
-  const { data: promoData, isLoading } = useGetPromoCodesQuery();
-  const [createPromoMutate, { isLoading: creating }] = useCreatePromoCodeMutation();
-  const [deletePromoMutate] = useDeletePromoCodeMutation();
+  const [promos, setPromos] = useState<PromoCode[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [code, setCode] = useState("");
@@ -25,7 +23,23 @@ export default function PromoCodesDashboardPage() {
   const [expiresAt, setExpiresAt] = useState("");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const promos = promoData?.data || [];
+  const fetchPromos = async () => {
+    setIsLoading(true);
+    try {
+      const res = await promoService.getPromoCodes();
+      if (res.success && res.data) {
+        setPromos(res.data);
+      }
+    } catch (_err) {
+      toast.error("Failed to load promo codes");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromos();
+  }, []);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,34 +48,50 @@ export default function PromoCodesDashboardPage() {
       return;
     }
 
+    setCreating(true);
     try {
-      await createPromoMutate({
+      const res = await CreatePromoCodeAction({
         code: code.trim(),
         pointsReward: Number(pointsReward) || 0,
         discountPercent: Number(discountPercent) || 0,
         maxUses: Number(maxUses) || 100,
         expiresAt: expiresAt ? new Date(expiresAt).toISOString() : null,
-      }).unwrap();
+      });
 
-      toast.success("Promo code created successfully!");
-      setModalOpen(false);
-      setCode("");
-      setPointsReward("50");
-      setDiscountPercent("0");
-      setMaxUses("100");
-      setExpiresAt("");
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to create promo code");
+      if (res.success) {
+        toast.success("Promo code created successfully!");
+        setModalOpen(false);
+        setCode("");
+        setPointsReward("50");
+        setDiscountPercent("0");
+        setMaxUses("100");
+        setExpiresAt("");
+        fetchPromos();
+      } else {
+        toast.error(res.message || "Failed to create promo code");
+      }
+    } catch (_err) {
+      toast.error("Failed to create promo code");
+    } finally {
+      setCreating(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this promo code?")) return;
+    setDeletingId(id);
     try {
-      await deletePromoMutate(id).unwrap();
-      toast.success("Promo code deleted");
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to delete promo code");
+      const res = await DeletePromoCodeAction(id);
+      if (res.success) {
+        toast.success("Promo code deleted");
+        fetchPromos();
+      } else {
+        toast.error(res.message || "Failed to delete promo code");
+      }
+    } catch (_err) {
+      toast.error("Failed to delete promo code");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -203,10 +233,15 @@ export default function PromoCodesDashboardPage() {
                       <td className="py-4 px-6 text-right">
                         <button
                           onClick={() => handleDelete(promo.id)}
-                          className="p-2 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition cursor-pointer"
+                          disabled={deletingId === promo.id}
+                          className="p-2 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition cursor-pointer disabled:opacity-50"
                           title="Delete Code"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          {deletingId === promo.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
                         </button>
                       </td>
                     </tr>

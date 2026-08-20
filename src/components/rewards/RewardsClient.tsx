@@ -15,8 +15,8 @@ import api from "@/lib/api";
 import Link from "next/link";
 import { adService, CustomAdItem } from "@/services/ad.service";
 import { referralService, ReferralStatsData } from "@/services/referral.service";
+import { RedeemPromoCodeAction } from "@/actions/promo";
 import { useEarnFromAdMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
-import { useRedeemPromoCodeMutation } from "@/redux/api/promoApi";
 import { LoginDialog } from "@/components/home/LoginDialog";
 
 const YoutubeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
@@ -518,18 +518,26 @@ function RewardsContent() {
 
 function PromoRedeemBox() {
   const [code, setCode] = useState("");
-  const [redeemMutate, { isLoading }] = useRedeemPromoCodeMutation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRedeem = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!code.trim()) return;
 
+    setIsLoading(true);
     try {
-      const res = await redeemMutate({ code: code.trim() }).unwrap();
-      toast.success(`🎉 Code redeemed! You got ${res.data.pointsAwarded} points.`);
-      setCode("");
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Invalid or expired promo code.");
+      const res = await RedeemPromoCodeAction({ code: code.trim() });
+      if (res.success) {
+        const pts = res.data?.pointsAwarded ?? 0;
+        toast.success(`🎉 Code redeemed! You got ${pts} points.`);
+        setCode("");
+      } else {
+        toast.error(res.message || "Invalid or expired promo code.");
+      }
+    } catch (_err) {
+      toast.error("Invalid or expired promo code.");
+    } finally {
+      setIsLoading(false);
     }
   };
 

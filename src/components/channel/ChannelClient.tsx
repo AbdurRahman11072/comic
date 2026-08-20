@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Navbar } from "@/components/home/Navbar";
 import { Footer } from "@/components/home/Footer";
 import { creatorService, PublicChannelData } from "@/services/creator.service";
-import { useRedeemPromoCodeMutation } from "@/redux/api/promoApi";
+import { RedeemPromoCodeAction } from "@/actions/promo";
 import {
   BookOpen, Star, Eye, Bookmark, Gift, MessageSquare,
   Pin, Calendar, CheckCircle2, Loader2, Sparkles
@@ -17,7 +17,7 @@ export function ChannelClient({ channelId }: { channelId: string }) {
   const [profile, setProfile] = useState<PublicChannelData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [redeemMutate, { isLoading: redeeming }] = useRedeemPromoCodeMutation();
+  const [redeeming, setRedeeming] = useState(false);
   const [activeTab, setActiveTab] = useState<"series" | "announcements" | "promos">("series");
 
   useEffect(() => {
@@ -75,12 +75,21 @@ export function ChannelClient({ channelId }: { channelId: string }) {
   const promos = user?.createdPromoCodes || [];
 
   const handleCopyCode = async (code: string) => {
+    setRedeeming(true);
     try {
-      const res = await redeemMutate({ code }).unwrap();
-      toast.success(`🎉 Redeemed code ${code}! Added ${res.data.pointsAwarded} points.`);
-    } catch (err: any) {
+      const res = await RedeemPromoCodeAction({ code });
+      if (res.success) {
+        const pts = res.data?.pointsAwarded ?? 0;
+        toast.success(`🎉 Redeemed code ${code}! Added ${pts} points.`);
+      } else {
+        navigator.clipboard.writeText(code);
+        toast.error(res.message || "Copied code to clipboard!");
+      }
+    } catch (_err) {
       navigator.clipboard.writeText(code);
-      toast.error(err?.data?.message || "Copied code to clipboard!");
+      toast.error("Copied code to clipboard!");
+    } finally {
+      setRedeeming(false);
     }
   };
 
