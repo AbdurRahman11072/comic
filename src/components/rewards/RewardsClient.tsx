@@ -16,7 +16,8 @@ import Link from "next/link";
 import { adService, CustomAdItem } from "@/services/ad.service";
 import { referralService, ReferralStatsData } from "@/services/referral.service";
 import { RedeemPromoCodeAction } from "@/actions/promo";
-import { useEarnFromAdMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
+import { EarnFromAdAction } from "@/actions/points";
+import { usePoints } from "@/providers/PointsProvider";
 import { LoginDialog } from "@/components/home/LoginDialog";
 
 const YoutubeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
@@ -68,9 +69,13 @@ function RewardsContent() {
   const [loginOpen, setLoginOpen] = useState(false);
 
   // Live Database Points & Daily Ad Stats
-  const { data: balanceData } = useGetPointsBalanceQuery(undefined, { skip: !session });
-  const totalDailyViews = balanceData?.data?.dailyAdViews ?? 0;
-  const totalDailyPoints = balanceData?.data?.dailyAdPointsEarned ?? 0;
+  const {
+    points: userPoints,
+    dailyAdViews: totalDailyViews,
+    dailyAdPointsEarned: totalDailyPoints,
+    updateBalance,
+    refreshPoints,
+  } = usePoints();
 
   // Storage key for persisting active ad pack across page refreshes
   const storageKey = `comic_reward_pack_${session?.user?.id || "guest"}`;
@@ -250,8 +255,6 @@ function RewardsContent() {
     startVerification();
   };
 
-  const [earnFromAdMutate] = useEarnFromAdMutation();
-
   const completeReward = async () => {
     setVerifying(false);
     const adBonus = customAd ? customAd.points : 0;
@@ -259,8 +262,14 @@ function RewardsContent() {
     const totalPoints = Math.min(basePoints + adBonus, 150);
 
     try {
-      const res = await earnFromAdMutate({ amount: totalPoints, adsCount: targetAds }).unwrap();
-      if (!res.success) throw new Error(res.message);
+      const res = await EarnFromAdAction({ amount: totalPoints, adsCount: targetAds });
+      if (!res.success) throw new Error(res.message || "Failed to earn points");
+
+      if (res.data?.points !== undefined) {
+        updateBalance(res.data.points, res.data.dailyAdViews);
+      } else {
+        refreshPoints();
+      }
 
       setPointsEarned(totalPoints);
       setDone(true);
@@ -273,7 +282,7 @@ function RewardsContent() {
       toast.success(`🎉 You earned ${totalPoints} points!`, { duration: 5000 });
     } catch (error: any) {
       console.error("Failed to earn points:", error);
-      toast.error(error?.data?.message || "Error earning points. Please try again.");
+      toast.error(error?.message || "Error earning points. Please try again.");
       setDone(false);
     }
   };
@@ -329,7 +338,7 @@ function RewardsContent() {
             <div className="inline-flex items-center gap-3 px-4 py-2 mt-4 rounded-2xl glass border border-white/10 shadow-lg text-xs font-semibold text-white">
               <span className="flex items-center gap-1.5 text-amber-400">
                 <Coins className="w-4 h-4" />
-                <span>{balanceData?.data?.points ?? (session?.user as any)?.points ?? 0} Points</span>
+                <span>{userPoints ?? (session?.user as any)?.points ?? 0} Points</span>
               </span>
               <span className="text-white/20">•</span>
               <span className="flex items-center gap-1.5 text-emerald-400">

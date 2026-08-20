@@ -5,7 +5,7 @@ import { Lock, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import { BuyChapterAction } from "@/actions/points";
-import { useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
+import { usePoints } from "@/providers/PointsProvider";
 import { InsufficientPointsModal } from "@/components/ui/InsufficientPointsModal";
 import { toast } from "react-hot-toast";
 
@@ -35,8 +35,7 @@ export function ChapterRow({
   onUnlocked,
 }: ChapterRowProps) {
   const { data: session } = useSession();
-  const { data: balanceData } = useGetPointsBalanceQuery(undefined, { skip: !session });
-  const userPoints = balanceData?.data?.points ?? 0;
+  const { points: userPoints, refreshPoints, updateBalance } = usePoints();
 
   const [localPurchased, setLocalPurchased] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -75,12 +74,13 @@ export function ChapterRow({
       if (id) {
         onUnlocked?.(id);
       }
-      
-      // Refresh points in navbar
-      if ((window as any).__refreshNavPoints) {
-        (window as any).__refreshNavPoints();
+
+      if (result.data?.points !== undefined) {
+        updateBalance(result.data.points);
+      } else {
+        refreshPoints();
       }
-      
+
       toast.success("Chapter unlocked successfully!");
     } catch (error: any) {
       console.error("Failed to buy chapter:", error);

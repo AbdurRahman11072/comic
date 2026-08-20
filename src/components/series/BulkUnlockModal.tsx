@@ -4,7 +4,8 @@ import { useState, useMemo } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Lock, Unlock, Sparkles, Gift, Check, Loader2, Coins, CheckCheck, XCircle } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
-import { useGetPointsBalanceQuery, useBuyBulkChaptersMutation } from "@/redux/api/pointsApi";
+import { BuyBulkChaptersAction } from "@/actions/points";
+import { usePoints } from "@/providers/PointsProvider";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import { LoginDialog } from "@/components/home/LoginDialog";
@@ -37,12 +38,8 @@ export function BulkUnlockModal({
   const { data: session } = useSession();
   const [loginOpen, setLoginOpen] = useState(false);
 
-  const { data: balanceData, refetch: refetchBalance } = useGetPointsBalanceQuery(undefined, {
-    skip: !session,
-  });
-  const userPoints = balanceData?.data?.points ?? 0;
-
-  const [buyBulkMutate, { isLoading: unlocking }] = useBuyBulkChaptersMutation();
+  const { points: userPoints, refreshPoints: refetchBalance, updateBalance } = usePoints();
+  const [unlocking, setUnlocking] = useState(false);
 
   // Filter only locked, unpurchased chapters in natural ascending order
   const lockedChapters = useMemo(() => {
@@ -108,25 +105,34 @@ export function BulkUnlockModal({
       return;
     }
 
+    setUnlocking(true);
     try {
-      const res = await buyBulkMutate({
+      const res = await BuyBulkChaptersAction({
         chapterIds: selectedIds,
         promoCode: promoCode.trim() || undefined,
-      }).unwrap();
+      });
 
       if (res.success) {
         toast.success(`🎉 Unlocked ${res.data.unlockedCount || selectedIds.length} chapters successfully!`);
-        refetchBalance();
+        if (res.data?.newBalance !== undefined) {
+          updateBalance(res.data.newBalance);
+        } else {
+          refetchBalance();
+        }
         onSuccess?.(selectedIds);
         onOpenChange(false);
+      } else {
+        const errMsg = res.message || "Failed to unlock chapters";
+        if (errMsg.toLowerCase().includes("insufficient") || errMsg.toLowerCase().includes("point")) {
+          setInsufficientPointsOpen(true);
+        } else {
+          toast.error(errMsg);
+        }
       }
     } catch (err: any) {
-      const errMsg = err?.data?.message || err?.message || "";
-      if (errMsg.toLowerCase().includes("insufficient") || errMsg.toLowerCase().includes("point")) {
-        setInsufficientPointsOpen(true);
-      } else {
-        toast.error(errMsg || "Failed to unlock chapters");
-      }
+      toast.error("Failed to unlock chapters");
+    } finally {
+      setUnlocking(false);
     }
   };
 

@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { siteService } from "@/services/site.service";
 import { ReduxProvider } from "@/providers/ReduxProvider";
+import { PointsProvider } from "@/providers/PointsProvider";
 import { constructMetadata } from "@/lib/metadata";
 import { CookieConsent } from "@/components/ads/CookieConsent";
 import { ReferralCapture } from "@/components/home/ReferralCapture";
@@ -37,9 +38,11 @@ export default async function RootLayout({
           />
         )}
         <ReduxProvider>
-          <ReferralCapture />
-          {children}
-          <CookieConsent />
+          <PointsProvider>
+            <ReferralCapture />
+            {children}
+            <CookieConsent />
+          </PointsProvider>
         </ReduxProvider>
         <Toaster position="bottom-right" />
         {customAdScript && (

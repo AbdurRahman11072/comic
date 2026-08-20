@@ -11,7 +11,8 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { InsufficientPointsModal } from "@/components/ui/InsufficientPointsModal";
-import { useBuyChapterMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
+import { BuyChapterAction } from "@/actions/points";
+import { usePoints } from "@/providers/PointsProvider";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setImageWidth, setReaderMode, setReaderTheme } from "@/redux/slices/readerSlice";
 
@@ -57,8 +58,7 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
     return () => window.removeEventListener("scroll", handleScrollDirection);
   }, []);
 
-  // RTK Query buy chapter mutation
-  const [buyChapterMutate, { isLoading: buying }] = useBuyChapterMutation();
+  const [buying, setBuying] = useState(false);
   
   useEffect(() => {
     setChapter(initialChapter);
@@ -133,8 +133,7 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
   }, [session, chapter?.seriesId, chapter?.id]);
 
   // Points balance & insufficient points modal
-  const { data: balanceData } = useGetPointsBalanceQuery(undefined, { skip: !session });
-  const userPoints = balanceData?.data?.points ?? 0;
+  const { points: userPoints, refreshPoints, updateBalance } = usePoints();
   const [insufficientPointsOpen, setInsufficientPointsOpen] = useState(false);
 
   const handleBuy = async () => {
@@ -149,22 +148,30 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
       return;
     }
 
+    setBuying(true);
     try {
-      const res = await buyChapterMutate({ chapterId: chapter.id }).unwrap();
+      const res = await BuyChapterAction(chapter.id);
       if (res.success) {
+        if (res.data?.points !== undefined) {
+          updateBalance(res.data.points);
+        } else {
+          refreshPoints();
+        }
         toast.success("Chapter unlocked successfully!");
         router.refresh();
       } else {
-        toast.error(res.message || "Failed to unlock chapter.");
+        const errMsg = res.message || "Failed to unlock chapter.";
+        if (errMsg.toLowerCase().includes("insufficient") || errMsg.toLowerCase().includes("point")) {
+          setInsufficientPointsOpen(true);
+        } else {
+          toast.error(errMsg);
+        }
       }
     } catch (error: any) {
       console.error("Failed to buy chapter:", error);
-      const errMsg = error.data?.message || "";
-      if (errMsg.toLowerCase().includes("insufficient") || errMsg.toLowerCase().includes("point")) {
-        setInsufficientPointsOpen(true);
-      } else {
-        toast.error(errMsg || "Failed to unlock chapter.");
-      }
+      toast.error("Failed to unlock chapter.");
+    } finally {
+      setBuying(false);
     }
   };
 

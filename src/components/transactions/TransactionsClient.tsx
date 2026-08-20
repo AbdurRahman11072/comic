@@ -28,14 +28,10 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
+import { pointsService, PointTransactionItem } from "@/services/points.service";
+import { siteService } from "@/services/site.service";
 
-interface Transaction {
-  id: string;
-  type: string;
-  amount: number;
-  description: string;
-  createdAt: string;
-}
+type Transaction = PointTransactionItem;
 
 export function TransactionsClient() {
   const { data: session, isPending: sessionLoading } = useSession();
@@ -71,12 +67,12 @@ export function TransactionsClient() {
     setLoading(true);
     try {
       const [txRes, configRes] = await Promise.all([
-        api.get("/api/v1/points/transactions"),
-        api.get("/api/v1/site-config"),
+        pointsService.getTransactions(),
+        siteService.getSiteConfig(),
       ]);
 
-      if (txRes.data?.success && txRes.data?.data) {
-        const d = txRes.data.data;
+      if (txRes.success && txRes.data) {
+        const d = txRes.data;
         setBalance(d.balance ?? 0);
         setIsFrozen(d.transactionsFrozen ?? false);
         if (d.enableCashOut !== undefined) setIsCashOutDisabled(!d.enableCashOut);
@@ -89,8 +85,8 @@ export function TransactionsClient() {
         setTransactions(d.transactions ?? []);
       }
 
-      if (configRes.data?.success && configRes.data?.data) {
-        const c = configRes.data.data;
+      if (configRes?.success && configRes?.data) {
+        const c = configRes.data;
         if (c.enableCashOut !== undefined) setIsCashOutDisabled(!c.enableCashOut);
         if (c.pointToFiatRate) setPointRate(c.pointToFiatRate);
         if (c.minWithdrawalPoints) setMinPoints(c.minWithdrawalPoints);

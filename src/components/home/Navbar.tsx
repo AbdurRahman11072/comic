@@ -11,7 +11,7 @@ import { ChatDrawer } from "./ChatDrawer";
 import { BottomNav } from "./BottomNav";
 import { User as UserIcon, Settings, Bookmark, History, LayoutDashboard, MessageCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
+import { usePoints } from "@/providers/PointsProvider";
 import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
 import { SITE_DEFAULTS } from "@/config/site";
 
@@ -62,11 +62,7 @@ export function Navbar() {
   const appName = config?.appName || SITE_DEFAULTS.appName;
   const appLogoUrl = config?.appLogoUrl || SITE_DEFAULTS.appLogoUrl;
 
-  // RTK Query hook — automatically syncs with cache and tags across the entire application
-  const { data: pointsData, refetch: refetchPoints } = useGetPointsBalanceQuery(undefined, {
-    skip: !session?.user,
-  });
-  const points = pointsData?.data?.points ?? null;
+  const { points, isLoading: isPointsLoading, refreshPoints } = usePoints();
 
   const handleSignOut = async () => {
     await signOut();
@@ -145,8 +141,8 @@ export function Navbar() {
 
           {/* Right: points badge + auth */}
           <div className="flex items-center gap-3">
-            {/* Points badge — visible only when logged in */}
-            {isLoggedIn && points !== null && (
+            {/* Points pill */}
+            {isLoggedIn && !isPointsLoading && (
               <Link
                 href="/shop"
                 className="flex items-center gap-1.5 rounded-full px-3 py-[5px] border glass glass-hover text-[13px] font-semibold"
@@ -158,12 +154,12 @@ export function Navbar() {
                   <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" fill="none" />
                   <text x="10" y="14.5" textAnchor="middle" fontSize="9" fontWeight="bold" fill="currentColor">P</text>
                 </svg>
-                <span>{points.toLocaleString()}</span>
+                <span>{points?.toLocaleString()}</span>
               </Link>
             )}
 
             {/* Loading skeleton for points */}
-            {isLoggedIn && points === null && (
+            {isLoggedIn && isPointsLoading && (
               <div className="rounded-full px-3 py-[5px] border border-white/5 bg-white/5 animate-pulse w-[70px] h-[30px]" />
             )}
 
@@ -314,7 +310,7 @@ export function Navbar() {
       <LoginDialog
         open={loginOpen}
         onOpenChange={setLoginOpen}
-        onAuthSuccess={() => { setLoginOpen(false); refetchPoints(); }}
+        onAuthSuccess={() => { setLoginOpen(false); refreshPoints(); }}
       />
 
       {/* Mobile bottom navigation */}
