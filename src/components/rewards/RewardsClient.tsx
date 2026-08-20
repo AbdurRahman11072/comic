@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import api from "@/lib/api";
 import Link from "next/link";
+import { adService, CustomAdItem } from "@/services/ad.service";
 import { useEarnFromAdMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
 import { useRedeemPromoCodeMutation } from "@/redux/api/promoApi";
 import { useGetReferralStatsQuery } from "@/redux/api/referralApi";
@@ -91,7 +92,7 @@ function RewardsContent() {
   const [done, setDone] = useState(false);
 
   // Custom Ad
-  const [customAd, setCustomAd] = useState<CustomAd | null>(null);
+  const [customAd, setCustomAd] = useState<CustomAdItem | null>(null);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
 
@@ -164,9 +165,9 @@ function RewardsContent() {
   useEffect(() => {
     const fetchAd = async () => {
       try {
-        const res = await api.get("/ads/active");
-        if (res.data.success && res.data.data) {
-          setCustomAd(res.data.data);
+        const res = await adService.getAdByPlacement("rewarded_unlock");
+        if (res.success && res.data) {
+          setCustomAd(res.data);
         }
       } catch (err) {
         // Silently fall back
@@ -218,7 +219,7 @@ function RewardsContent() {
     if (customAd) {
       if (customAd.adType === "VIDEO" && customAd.videoUrl) {
         setVideoModalOpen(true);
-      } else if (customAd.adType === "SOCIAL") {
+      } else if (customAd.adType === "SOCIAL" && customAd.linkUrl) {
         window.open(customAd.linkUrl, "_blank");
         startVerification();
       } else {
@@ -385,14 +386,14 @@ function RewardsContent() {
                 </p>
               </div>
 
-              {customAd ? (
+              {customAd && customAd.imageUrl ? (
                 <button
                   onClick={handleFinalAdClick}
                   className="w-full aspect-video rounded-xl overflow-hidden relative group border-2 border-primary/30 hover:border-primary transition-colors"
                 >
                   <img
                     src={customAd.imageUrl}
-                    alt={customAd.title}
+                    alt={customAd.title || "Sponsored"}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">

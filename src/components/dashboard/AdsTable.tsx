@@ -9,32 +9,12 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import api from "@/lib/api";
-
-interface CustomAdItem {
-  id: string;
-  title: string;
-  provider: "CUSTOM" | "ADSENSE" | "ADMOB";
-  format: "BANNER" | "INTERSTITIAL" | "REWARDED" | "NATIVE";
-  placement: string;
-  imageUrl?: string;
-  linkUrl?: string;
-  videoUrl?: string;
-  adType?: string;
-  socialPlatform?: string;
-  socialActionUrl?: string;
-  adClient?: string;
-  adSlotId?: string;
-  adUnitId?: string;
-  points: number;
-  impressions: number;
-  clicks: number;
-  revenue: number;
-  isActive: boolean;
-  status: "ACTIVE" | "PAUSED" | "ARCHIVED";
-  targetCountries: string[];
-  createdAt: string;
-}
+import { adService, CustomAdItem, AdStats } from "@/services/ad.service";
+import {
+  CreateAdminAdAction,
+  UpdateAdminAdAction,
+  DeleteAdminAdAction,
+} from "@/actions/ad";
 
 const defaultForm = {
   title: "",
@@ -58,7 +38,7 @@ const defaultForm = {
 
 export function AdsTable() {
   const [ads, setAds] = useState<CustomAdItem[]>([]);
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<AdStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [providerFilter, setProviderFilter] = useState("ALL");
@@ -73,12 +53,14 @@ export function AdsTable() {
     setLoading(true);
     try {
       const [adsRes, statsRes] = await Promise.all([
-        api.get("/api/v1/ads"),
-        api.get("/api/v1/ads/stats").catch(() => ({ data: { data: null } })),
+        adService.getCustomAds(),
+        adService.getAdStats(),
       ]);
-      setAds(adsRes.data.data || []);
-      if (statsRes.data?.data) {
-        setStats(statsRes.data.data);
+      if (adsRes.success && Array.isArray(adsRes.data)) {
+        setAds(adsRes.data);
+      }
+      if (statsRes.success && statsRes.data) {
+        setStats(statsRes.data);
       }
     } catch (err) {
       console.error("Failed to fetch ads", err);
@@ -103,8 +85,8 @@ export function AdsTable() {
     setEditAd(ad);
     setForm({
       title: ad.title || "",
-      provider: ad.provider || "CUSTOM",
-      format: ad.format || "BANNER",
+      provider: (ad.provider as any) || "CUSTOM",
+      format: (ad.format as any) || "BANNER",
       placement: ad.placement || "home_top",
       imageUrl: ad.imageUrl || "",
       linkUrl: ad.linkUrl || "",
@@ -117,7 +99,7 @@ export function AdsTable() {
       adUnitId: ad.adUnitId || "",
       points: ad.points || 10,
       isActive: ad.isActive ?? true,
-      status: ad.status || "ACTIVE",
+      status: (ad.status as any) || "ACTIVE",
       targetCountries: ad.targetCountries || [],
     });
     setCountriesInput((ad.targetCountries || []).join(", "));
@@ -144,16 +126,26 @@ export function AdsTable() {
       };
 
       if (editAd) {
-        await api.put(`/api/v1/ads/${editAd.id}`, payload);
-        toast.success("Ad unit updated successfully!");
+        const res = await UpdateAdminAdAction(editAd.id, payload);
+        if (res.success) {
+          toast.success("Ad unit updated successfully!");
+          setShowModal(false);
+          fetchData();
+        } else {
+          toast.error(res.message || "Failed to save ad unit");
+        }
       } else {
-        await api.post("/api/v1/ads", payload);
-        toast.success("Ad unit created successfully!");
+        const res = await CreateAdminAdAction(payload);
+        if (res.success) {
+          toast.success("Ad unit created successfully!");
+          setShowModal(false);
+          fetchData();
+        } else {
+          toast.error(res.message || "Failed to save ad unit");
+        }
       }
-      setShowModal(false);
-      fetchData();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to save ad unit");
+    } catch (_err) {
+      toast.error("Failed to save ad unit");
     } finally {
       setSaving(false);
     }
@@ -162,12 +154,16 @@ export function AdsTable() {
   const handleToggle = async (ad: CustomAdItem) => {
     try {
       const newStatus = !ad.isActive;
-      await api.put(`/api/v1/ads/${ad.id}`, {
+      const res = await UpdateAdminAdAction(ad.id, {
         isActive: newStatus,
         status: newStatus ? "ACTIVE" : "PAUSED",
       });
-      toast.success(`Ad unit ${newStatus ? "activated" : "paused"}`);
-      fetchData();
+      if (res.success) {
+        toast.success(`Ad unit ${newStatus ? "activated" : "paused"}`);
+        fetchData();
+      } else {
+        toast.error(res.message || "Failed to update ad status");
+      }
     } catch {
       toast.error("Failed to update ad status");
     }
@@ -176,9 +172,14 @@ export function AdsTable() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this ad configuration? This cannot be undone.")) return;
     try {
-      await api.delete(`/api/v1/ads/${id}`);
-      toast.success("Ad unit deleted");
-      fetchData();
+      const ad = ads.find((a) => a.id === id);
+      const res = await DeleteAdminAdAction(id, ad?.placement);
+      if (res.success) {
+        toast.success("Ad unit deleted");
+        fetchData();
+      } else {
+        toast.error(res.message || "Failed to delete ad unit");
+      }
     } catch {
       toast.error("Failed to delete ad unit");
     }

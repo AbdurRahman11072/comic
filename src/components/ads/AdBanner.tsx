@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { useGetAdByPlacementQuery, useRecordAdImpressionMutation, useRecordAdClickMutation } from "@/redux/api/adApi";
+import { useState, useEffect, useRef } from "react";
+import { adService, CustomAdItem } from "@/services/ad.service";
+import { RecordAdImpressionAction, RecordAdClickAction } from "@/actions/ad";
 import { ExternalLink, Sparkles } from "lucide-react";
 
 interface AdBannerProps {
@@ -11,20 +12,32 @@ interface AdBannerProps {
 }
 
 export function AdBanner({ placement, className = "", slotName }: AdBannerProps) {
-  const { data: adRes, isLoading } = useGetAdByPlacementQuery(placement);
-  const [recordImpression] = useRecordAdImpressionMutation();
-  const [recordClick] = useRecordAdClickMutation();
+  const [ad, setAd] = useState<CustomAdItem | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const impressionRecorded = useRef(false);
 
-  const ad = adRes?.data;
+  useEffect(() => {
+    let isMounted = true;
+    adService.getAdByPlacement(placement).then((res) => {
+      if (isMounted) {
+        if (res.success && res.data) {
+          setAd(res.data);
+        }
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [placement]);
 
   // Track impression once on mount when ad is loaded
   useEffect(() => {
     if (ad?.id && !impressionRecorded.current) {
       impressionRecorded.current = true;
-      recordImpression(ad.id).catch(() => null);
+      RecordAdImpressionAction(ad.id).catch(() => null);
     }
-  }, [ad?.id, recordImpression]);
+  }, [ad?.id]);
 
   // Handle AdSense script push
   useEffect(() => {
@@ -72,7 +85,7 @@ export function AdBanner({ placement, className = "", slotName }: AdBannerProps)
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => {
-              if (ad.id) recordClick(ad.id).catch(() => null);
+              if (ad.id) RecordAdClickAction(ad.id).catch(() => null);
             }}
             className="block relative w-full h-24 sm:h-28 overflow-hidden"
           >
