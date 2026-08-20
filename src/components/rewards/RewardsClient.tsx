@@ -14,9 +14,9 @@ import {
 import api from "@/lib/api";
 import Link from "next/link";
 import { adService, CustomAdItem } from "@/services/ad.service";
+import { referralService, ReferralStatsData } from "@/services/referral.service";
 import { useEarnFromAdMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
 import { useRedeemPromoCodeMutation } from "@/redux/api/promoApi";
-import { useGetReferralStatsQuery } from "@/redux/api/referralApi";
 import { LoginDialog } from "@/components/home/LoginDialog";
 
 const YoutubeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
@@ -565,9 +565,30 @@ function PromoRedeemBox() {
 function ReferralRewardsCard({ onOpenLogin }: { onOpenLogin: () => void }) {
   const { data: session } = useSession();
   const user = session?.user;
-  const { data: referralRes, isLoading } = useGetReferralStatsQuery(undefined, { skip: !user });
-  const referralStats = referralRes?.data;
+  const [referralStats, setReferralStats] = useState<ReferralStatsData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setReferralStats(null);
+      setIsLoading(false);
+      return;
+    }
+    let isMounted = true;
+    setIsLoading(true);
+    referralService.getReferralStats().then((res) => {
+      if (isMounted) {
+        if (res.success && res.data) {
+          setReferralStats(res.data);
+        }
+        setIsLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   const referralCode = referralStats?.referralCode || (user as any)?.referralCode || "";
   const origin = typeof window !== "undefined" ? window.location.origin : "https://comicbd.com";

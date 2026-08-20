@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Loader2,
   User as UserIcon,
@@ -27,7 +27,7 @@ import { authClient } from "@/lib/auth-client";
 import { UpdateUserAction } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { useGetReferralStatsQuery } from "@/redux/api/referralApi";
+import { referralService, ReferralStatsData } from "@/services/referral.service";
 
 interface ProfileClientProps {
   initialProfile: any;
@@ -41,8 +41,23 @@ export function ProfileClient({ initialProfile }: ProfileClientProps) {
   const [copiedLink, setCopiedLink] = useState(false);
 
   // Live Referral Stats
-  const { data: referralData, isLoading: referralLoading } = useGetReferralStatsQuery();
-  const referralStats = referralData?.data;
+  const [referralStats, setReferralStats] = useState<ReferralStatsData | null>(null);
+  const [referralLoading, setReferralLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    referralService.getReferralStats().then((res) => {
+      if (isMounted) {
+        if (res.success && res.data) {
+          setReferralStats(res.data);
+        }
+        setReferralLoading(false);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Profile Edit State
   const [saving, setSaving] = useState(false);

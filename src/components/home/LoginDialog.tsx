@@ -12,7 +12,7 @@ import { SITE_DEFAULTS } from "@/config/site";
 import { signIn, signUp } from "@/lib/auth-client";
 import { AlertTriangle, Clock, Eye, EyeOff, Gift, Sparkles, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import api from "@/lib/api";
+import { referralService } from "@/services/referral.service";
 
 const COVERS = [
   "https://wsrv.nl/?url=cdn.meowing.org/uploads/H70SqQB-7tA&w=300",
@@ -108,13 +108,13 @@ export function LoginDialog({
 
     const timer = setTimeout(async () => {
       try {
-        const res = await api.get(`/referrals/validate/${code}`);
-        if (res.data.success && res.data.data) {
-          setReferrerInfo(res.data.data);
+        const res = await referralService.validateReferralCode(code);
+        if (res.success && res.data) {
+          setReferrerInfo(res.data);
         } else {
           setReferrerInfo(null);
         }
-      } catch (err) {
+      } catch (_err) {
         setReferrerInfo(null);
       }
     }, 400);
