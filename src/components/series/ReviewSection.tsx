@@ -3,21 +3,10 @@
 import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
 import { Star, Send, Trash2, Loader2 } from "lucide-react";
-import api from "@/lib/api";
+import { communityService, ReviewItem } from "@/services/community.service";
+import { CreateReviewAction, DeleteReviewAction } from "@/actions/community";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "react-hot-toast";
-
-interface Review {
-  id: string;
-  rating: number;
-  content: string | null;
-  createdAt: string;
-  user: {
-    id: string;
-    name: string;
-    image: string | null;
-  };
-}
 
 interface ReviewSectionProps {
   seriesId: string;
@@ -25,7 +14,7 @@ interface ReviewSectionProps {
 
 export function ReviewSection({ seriesId }: ReviewSectionProps) {
   const { data: session } = useSession();
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [rating, setRating] = useState(5);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
@@ -33,12 +22,12 @@ export function ReviewSection({ seriesId }: ReviewSectionProps) {
 
   const fetchReviews = async () => {
     try {
-      const res = await api.get(`/community/reviews/${seriesId}`);
-      if (res.data.success) {
-        setReviews(res.data.data);
+      const res = await communityService.getReviews(seriesId);
+      if (res.success && Array.isArray(res.data)) {
+        setReviews(res.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch reviews:", error);
+    } catch (_error) {
+      // Handled in service fallback
     } finally {
       setLoading(false);
     }
@@ -57,18 +46,21 @@ export function ReviewSection({ seriesId }: ReviewSectionProps) {
 
     setSubmitting(true);
     try {
-      const res = await api.post(`/community/reviews/${seriesId}`, {
+      const res = await CreateReviewAction({
+        seriesId,
         rating,
-        content
+        content: content.trim() || undefined,
       });
-      if (res.data.success) {
+      if (res.success) {
         toast.success("Review submitted successfully");
         setRating(0);
         setContent("");
         fetchReviews();
+      } else {
+        toast.error(res.message || "Failed to submit review");
       }
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to submit review");
+    } catch (_error) {
+      toast.error("Failed to submit review");
     } finally {
       setSubmitting(false);
     }
@@ -77,10 +69,14 @@ export function ReviewSection({ seriesId }: ReviewSectionProps) {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this review?")) return;
     try {
-      await api.delete(`/community/reviews/${id}`);
-      fetchReviews();
-    } catch (err) {
-      console.error("Failed to delete review", err);
+      const res = await DeleteReviewAction(id, seriesId);
+      if (res.success) {
+        toast.success("Review deleted.");
+        setReviews((prev) => prev.filter((r) => r.id !== id));
+      } else {
+        toast.error(res.message || "Failed to delete review.");
+      }
+    } catch (_err) {
       toast.error("Failed to delete review.");
     }
   };

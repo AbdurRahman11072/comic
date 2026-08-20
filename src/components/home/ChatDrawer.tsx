@@ -7,22 +7,11 @@ import {
   Image as ImageIcon, Smile, Sparkles
 } from "lucide-react";
 import { useSession } from "@/lib/auth-client";
-import api, { uploadImage } from "@/lib/api";
+import { uploadImage } from "@/lib/api";
+import { communityService, ChatMessageItem } from "@/services/community.service";
+import { SendChatMessageAction, DeleteChatMessageAction } from "@/actions/community";
 import { toast } from "react-hot-toast";
 import { useGetSiteConfigQuery } from "@/redux/api/siteConfigApi";
-
-interface ChatMessage {
-  id: string;
-  content: string;
-  imageUrl?: string | null;
-  createdAt: string;
-  user: {
-    id: string;
-    name: string;
-    image: string | null;
-    role: string;
-  };
-}
 
 interface ChatDrawerProps {
   open: boolean;
@@ -43,7 +32,7 @@ export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
   const { data: configRes } = useGetSiteConfigQuery();
   const config = configRes?.data;
 
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessageItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -65,9 +54,9 @@ export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
 
   const fetchMessages = async () => {
     try {
-      const { data } = await api.get("/api/v1/community/chat");
-      if (data.success) {
-        setMessages(data.data);
+      const res = await communityService.getChatMessages();
+      if (res.success && Array.isArray(res.data)) {
+        setMessages(res.data);
       }
     } catch (err) {
       console.error("Failed to fetch chat messages", err);
@@ -136,18 +125,20 @@ export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
 
     setSending(true);
     try {
-      const { data } = await api.post("/api/v1/community/chat", {
-        content: input.trim(),
+      const res = await SendChatMessageAction({
+        content: input.trim() || undefined,
         imageUrl: selectedImage || undefined,
       });
-      if (data.success) {
-        setMessages((prev) => [...prev, data.data]);
+      if (res.success && res.data) {
+        setMessages((prev) => [...prev, res.data]);
         setInput("");
         setSelectedImage(null);
         setShowGifPicker(false);
+      } else {
+        toast.error(res.message || "Failed to send message.");
       }
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to send message.");
+    } catch (_err) {
+      toast.error("Failed to send message.");
     } finally {
       setSending(false);
     }
@@ -155,10 +146,14 @@ export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
 
   const handleDelete = async (msgId: string) => {
     try {
-      await api.delete(`/api/v1/community/chat/${msgId}`);
-      setMessages((prev) => prev.filter((m) => m.id !== msgId));
-      toast.success("Message deleted.");
-    } catch (err) {
+      const res = await DeleteChatMessageAction(msgId);
+      if (res.success) {
+        setMessages((prev) => prev.filter((m) => m.id !== msgId));
+        toast.success("Message deleted.");
+      } else {
+        toast.error(res.message || "Failed to delete message.");
+      }
+    } catch (_err) {
       toast.error("Failed to delete message.");
     }
   };

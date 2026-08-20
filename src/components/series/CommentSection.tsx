@@ -57,47 +57,68 @@ function SpoilerText({ text }: { text: string }) {
   );
 }
 
-import {
-  useGetCommentsQuery,
-  useCreateCommentMutation,
-  useDeleteCommentMutation,
-} from "@/redux/api/communityApi";
+import { communityService, CommentItem } from "@/services/community.service";
+import { CreateCommentAction, DeleteCommentAction } from "@/actions/community";
 
 export function CommentSection({ chapterId }: CommentSectionProps) {
   const { data: session } = useSession();
   const [newComment, setNewComment] = useState("");
+  const [comments, setComments] = useState<CommentItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  // RTK Query: automatically fetches, caches, and refetches when comments change
-  const { data: commentsData, isLoading: loading } = useGetCommentsQuery(chapterId);
-  const comments = commentsData?.data || [];
+  const fetchComments = async () => {
+    try {
+      const res = await communityService.getComments(chapterId);
+      if (res.success && Array.isArray(res.data)) {
+        setComments(res.data);
+      }
+    } catch (_err) {
+      // Service error fallback
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const [createCommentMutate, { isLoading: submitting }] = useCreateCommentMutation();
-  const [deleteCommentMutate] = useDeleteCommentMutation();
+  useEffect(() => {
+    fetchComments();
+  }, [chapterId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim() || !session) return;
     
+    setSubmitting(true);
     try {
-      await createCommentMutate({
+      const res = await CreateCommentAction({
         chapterId,
         content: newComment.trim(),
-      }).unwrap();
-      setNewComment("");
-      toast.success("Comment posted!");
-    } catch (err) {
-      console.error("Failed to post comment", err);
+      });
+      if (res.success) {
+        setNewComment("");
+        toast.success("Comment posted!");
+        await fetchComments();
+      } else {
+        toast.error(res.message || "Failed to post comment.");
+      }
+    } catch (_err) {
       toast.error("Failed to post comment.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this comment?")) return;
     try {
-      await deleteCommentMutate({ commentId: id, chapterId }).unwrap();
-      toast.success("Comment deleted.");
-    } catch (err) {
-      console.error("Failed to delete comment", err);
+      const res = await DeleteCommentAction(id, chapterId);
+      if (res.success) {
+        toast.success("Comment deleted.");
+        setComments((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        toast.error(res.message || "Failed to delete comment.");
+      }
+    } catch (_err) {
       toast.error("Failed to delete comment.");
     }
   };

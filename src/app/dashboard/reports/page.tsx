@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import api from "@/lib/api";
+import { communityService, ReportItem } from "@/services/community.service";
+import { ResolveReportAction } from "@/actions/community";
+import { MuteUserAction, BanUserAction } from "@/actions/user";
 import {
   AlertTriangle, CheckCircle2, XCircle, Shield, Ban, VolumeX, Loader2, RefreshCw, MessageSquare
 } from "lucide-react";
@@ -9,16 +11,16 @@ import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
 export default function ReportsManagementPage() {
-  const [reports, setReports] = useState<any[]>([]);
+  const [reports, setReports] = useState<ReportItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("PENDING");
 
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/api/v1/community/reports?status=${statusFilter}`);
-      if (res.data.success) {
-        setReports(res.data.data);
+      const res = await communityService.getReports({ status: statusFilter });
+      if (res.success && Array.isArray(res.data)) {
+        setReports(res.data);
       }
     } catch (err) {
       console.error("Failed to fetch reports", err);
@@ -33,33 +35,45 @@ export default function ReportsManagementPage() {
 
   const handleResolve = async (id: string, status: "RESOLVED" | "DISMISSED") => {
     try {
-      await api.patch(`/api/v1/community/reports/${id}`, { status });
-      toast.success(`Report marked as ${status.toLowerCase()}`);
-      fetchReports();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to update report");
+      const res = await ResolveReportAction(id, { status });
+      if (res.success) {
+        toast.success(`Report marked as ${status.toLowerCase()}`);
+        fetchReports();
+      } else {
+        toast.error(res.message || "Failed to update report");
+      }
+    } catch (_err) {
+      toast.error("Failed to update report");
     }
   };
 
   const handleMuteUser = async (userId: string, hours: number) => {
     try {
-      await api.post(`/api/v1/moderator/users/${userId}/mute`, { durationHours: hours });
-      toast.success(`User muted for ${hours} hours`);
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to mute user");
+      const res = await MuteUserAction(userId, { durationHours: hours });
+      if (res.success) {
+        toast.success(`User muted for ${hours} hours`);
+      } else {
+        toast.error(res.message || "Failed to mute user");
+      }
+    } catch (_err) {
+      toast.error("Failed to mute user");
     }
   };
 
   const handleBanUser = async (userId: string, reason: string) => {
     if (!confirm("Are you sure you want to ban this user?")) return;
     try {
-      await api.post(`/api/v1/moderator/users/${userId}/ban`, {
+      const res = await BanUserAction(userId, {
         banned: true,
         banReason: reason,
       });
-      toast.success("User banned successfully");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to ban user");
+      if (res.success) {
+        toast.success("User banned successfully");
+      } else {
+        toast.error(res.message || "Failed to ban user");
+      }
+    } catch (_err) {
+      toast.error("Failed to ban user");
     }
   };
 
