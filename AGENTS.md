@@ -67,8 +67,12 @@ server/app/modules/{feature}/
 └── {feature}.routes.ts    # Route defs + authMiddleware
 ```
 
-## Frontend Patterns
-- **Server components** (default in `src/app`) - fetch data at build/request time
-- **Client components** (`'use client'`) - interactivity, browser APIs
-- **Services** (`src/services/*.ts`) - return `{success, data, message}` typed responses
-- **Actions** (`src/actions/*.ts`) - server actions with `revalidateTag` for mutations
+## Frontend Patterns & Data Fetching Convention
+- **Server Components** (default in `src/app`): Handle server-side data fetching at request time using typed services (`src/services/*.ts`) with Next.js cache tags (`next: { tags: [...] }`).
+- **Client Components** (`'use client'` in `src/components`): Interactivity, client state, and browser APIs. Receive server data via props or read from dedicated providers.
+- **Services** (`src/services/*.ts`): Typed API fetch abstractions returning standardized `{ success, data, message }` responses.
+- **Server Actions** (`src/actions/*.ts`): All backend mutations with forwarded auth cookies and `revalidateTag` cache invalidation.
+- **Reactive State Providers**:
+  - `PointsProvider` (`src/providers/PointsProvider.tsx` / `usePoints()`): Global real-time balance and daily ad view/point synchronization across Navbar, Reader, ChapterRow, BulkUnlockModal, and RewardsClient.
+  - `SiteConfigProvider` (`src/providers/SiteConfigProvider.tsx` / `useSiteConfig()`): Global branding, system flags, and announcement banner state seeded from SSR `initialConfig` for 0ms CLS-free initial render.
+- **Redux Store** (`src/redux/`): Exclusively houses pure client-side UI preference state (`readerSlice.ts` for reader scroll/page mode, theme, and image zoom width with `localStorage` persistence). Zero RTK Query.
