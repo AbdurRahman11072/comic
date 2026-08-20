@@ -1,18 +1,41 @@
 import { env } from "@/env";
-import { cookies, headers } from "next/headers";
+
+export interface UserFilterParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+  status?: string;
+  [key: string]: any;
+}
+
+export interface ServiceResponse<T> {
+  success: boolean;
+  data: T;
+  meta?: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  message?: string;
+}
 
 export const userService = {
   getUserSession: async () => {
     try {
-      const cookieStore = await cookies();
-      const cookieHeader = cookieStore.toString();
-      if (!cookieHeader) return null;
-
-      const forwardedHeaders: Record<string, string> = {
-        Cookie: cookieHeader,
-      };
+      const forwardedHeaders: Record<string, string> = {};
 
       try {
+        const { cookies, headers } = await import("next/headers");
+        const cookieStore = await cookies();
+        const cookieHeader = cookieStore.toString();
+        if (cookieHeader) forwardedHeaders["Cookie"] = cookieHeader;
+
         const headerList = await headers();
         const proto = headerList.get("x-forwarded-proto") || "http";
         const host = headerList.get("x-forwarded-host") || headerList.get("host") || "";
@@ -21,8 +44,11 @@ export const userService = {
           forwardedHeaders["x-forwarded-host"] = host;
           forwardedHeaders["host"] = host;
         }
-      } catch {}
+      } catch (_e) {
+        // Headers unavailable in client context
+      }
 
+      // Known debt: Better-Auth session query is called per-request; cache strategy will be unified in Phase 2
       const res = await fetch(
         `${env.NEXT_PUBLIC_BETTER_AUTH_URL}/api/auth/get-session`,
         {
@@ -33,34 +59,48 @@ export const userService = {
       if (!res.ok) return null;
       const session = await res.json();
       return session;
-    } catch (error) {
-      console.error("[userService.getUserSession] Error:", error);
+    } catch (_error) {
       return null;
     }
   },
 
-  getProfile: async () => {
+  getProfile: async (): Promise<ServiceResponse<any | null>> => {
     try {
-      const cookieStore = await cookies();
+      let cookieHeader = "";
+      try {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        cookieHeader = cookieStore.toString();
+      } catch (_e) {
+        // Ignored when called in client browser
+      }
+
       const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/user/profile`, {
-        headers: {
-          Cookie: cookieStore.toString(),
-        },
+        headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+        credentials: "include",
         cache: "no-store",
       });
       const data = await res.json();
       return data;
-    } catch (error) {
-      return null;
+    } catch (_error) {
+      return { success: false, data: null, message: "Failed to fetch user profile" };
     }
   },
 
-  getAllUsers: async (params: any = {}) => {
+  getAllUsers: async (params: UserFilterParams = {}): Promise<ServiceResponse<any[]>> => {
     try {
-      const cookieStore = await cookies();
+      let cookieHeader = "";
+      try {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        cookieHeader = cookieStore.toString();
+      } catch (_e) {
+        // Ignored when called in client browser
+      }
+
       const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null && value !== "") {
           searchParams.append(key, String(value));
         }
       });
@@ -68,42 +108,40 @@ export const userService = {
       const res = await fetch(
         `${env.NEXT_PUBLIC_API_URL}/api/v1/user?${searchParams.toString()}`,
         {
-          headers: {
-            Cookie: cookieStore.toString(),
-          },
+          headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+          credentials: "include",
           next: { tags: ["AllUsers"] },
+          cache: "no-store",
         }
       );
       const data = await res.json();
       return data;
-    } catch (error) {
-      return { success: false, data: [] };
+    } catch (_error) {
+      return { success: false, data: [], message: "Failed to fetch users" };
     }
   },
 
-  getAllTransactions: async (params: any = {}) => {
+  getUserFinancialHistory: async (userId: string): Promise<ServiceResponse<any | null>> => {
     try {
-      const cookieStore = await cookies();
-      const searchParams = new URLSearchParams();
-      Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          searchParams.append(key, String(value));
-        }
-      });
+      let cookieHeader = "";
+      try {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        cookieHeader = cookieStore.toString();
+      } catch (_e) {
+        // Ignored when called in client browser
+      }
 
-      const res = await fetch(
-        `${env.NEXT_PUBLIC_API_URL}/api/v1/user/admin/transactions?${searchParams.toString()}`,
-        {
-          headers: {
-            Cookie: cookieStore.toString(),
-          },
-          next: { tags: ["AllTransactions"] },
-        }
-      );
+      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/moderator/users/${userId}/financial-history`, {
+        headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+        credentials: "include",
+        cache: "no-store",
+      });
       const data = await res.json();
       return data;
-    } catch (error) {
-      return { success: false, data: [] };
+    } catch (_error) {
+      return { success: false, data: null, message: "Failed to fetch financial history" };
     }
   },
 };
+

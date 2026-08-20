@@ -6,9 +6,14 @@ import {
   UserCog, Ban, Lock, VolumeX, CheckCircle2, AlertTriangle,
   RefreshCw, Filter, Sparkles
 } from "lucide-react";
-import { DeleteUserAction, UpdateUserAction } from "@/actions/user";
+import {
+  DeleteUserAction,
+  UpdateUserAction,
+  BanUserAction,
+  FreezeUserAction,
+  MuteUserAction,
+} from "@/actions/user";
 import { useRouter } from "next/navigation";
-import api from "@/lib/api";
 import { toast } from "react-hot-toast";
 
 interface UsersTableProps {
@@ -38,7 +43,7 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
       } else {
         toast.error(res.message || "Failed to update role.");
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to update user role.");
     } finally {
       setUpdatingId(null);
@@ -49,11 +54,15 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
     if (!confirm(`Are you sure you want to ${user.banned ? "unban" : "ban"} ${user.name}?`)) return;
     setUpdatingId(user.id);
     try {
-      await api.post(`/api/v1/moderator/users/${user.id}/ban`);
-      toast.success(user.banned ? "User unbanned." : "User banned.");
-      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, banned: !u.banned } : u)));
-      router.refresh();
-    } catch (error) {
+      const res = await BanUserAction(user.id);
+      if (res.success) {
+        toast.success(user.banned ? "User unbanned." : "User banned.");
+        setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, banned: !u.banned } : u)));
+        router.refresh();
+      } else {
+        toast.error(res.message || "Failed to toggle ban status.");
+      }
+    } catch (_error) {
       toast.error("Failed to toggle ban status.");
     } finally {
       setUpdatingId(null);
@@ -64,11 +73,15 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
     if (!confirm(`Are you sure you want to ${user.transactionsFrozen ? "unfreeze" : "freeze"} transactions for ${user.name}?`)) return;
     setUpdatingId(user.id);
     try {
-      await api.post(`/api/v1/moderator/users/${user.id}/freeze`);
-      toast.success(user.transactionsFrozen ? "Transactions unfrozen." : "Transactions frozen.");
-      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, transactionsFrozen: !u.transactionsFrozen } : u)));
-      router.refresh();
-    } catch (error) {
+      const res = await FreezeUserAction(user.id);
+      if (res.success) {
+        toast.success(user.transactionsFrozen ? "Transactions unfrozen." : "Transactions frozen.");
+        setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, transactionsFrozen: !u.transactionsFrozen } : u)));
+        router.refresh();
+      } else {
+        toast.error(res.message || "Failed to toggle transaction freeze.");
+      }
+    } catch (_error) {
       toast.error("Failed to toggle transaction freeze.");
     } finally {
       setUpdatingId(null);
@@ -78,10 +91,14 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
   const handleMute = async (user: any) => {
     setUpdatingId(user.id);
     try {
-      await api.post(`/api/v1/moderator/users/${user.id}/mute`, { hours: 24 });
-      toast.success("User muted for 24 hours.");
-      router.refresh();
-    } catch (error) {
+      const res = await MuteUserAction(user.id, { durationHours: 24 });
+      if (res.success) {
+        toast.success("User muted for 24 hours.");
+        router.refresh();
+      } else {
+        toast.error(res.message || "Failed to mute user.");
+      }
+    } catch (_error) {
       toast.error("Failed to mute user.");
     } finally {
       setUpdatingId(null);

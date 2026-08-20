@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { DollarSign, Gift, TrendingUp, Users, ArrowRight, Loader2, AlertCircle, Copy } from "lucide-react";
 import api from "@/lib/api";
+import { userService } from "@/services/user.service";
 import { toast } from "react-hot-toast";
 
 interface UserProfile {
@@ -31,10 +32,10 @@ export default function EarningsPage() {
     const fetchData = async () => {
       try {
         const [profileRes, configRes] = await Promise.all([
-          session?.user?.id ? api.get(`/user/profile`) : Promise.resolve(null),
+          session?.user?.id ? userService.getProfile() : Promise.resolve(null),
           api.get(`/site-config`),
         ]);
-        if (profileRes) setProfile(profileRes.data?.data);
+        if (profileRes?.success && profileRes.data) setProfile(profileRes.data);
         if (configRes) setSiteConfig(configRes.data?.data);
       } catch (err) {
         console.error("Failed to fetch profile or config", err);
@@ -58,8 +59,10 @@ export default function EarningsPage() {
       setWithdrawAmount("");
       setBankDetails("");
       // Refresh profile points
-      const res = await api.get(`/user/profile`);
-      setProfile(res.data.data);
+      const res = await userService.getProfile();
+      if (res.success && res.data) {
+        setProfile(res.data);
+      }
     } catch (err: any) {
       setMessage({ type: 'error', text: err.response?.data?.message || 'Failed to submit withdrawal' });
     } finally {

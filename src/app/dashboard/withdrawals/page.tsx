@@ -2,6 +2,8 @@
 
 import api from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
+import { userService } from "@/services/user.service";
+import { FreezeUserAction } from "@/actions/user";
 import {
   Check,
   CheckCircle2,
@@ -285,10 +287,13 @@ export default function WithdrawalsPage() {
     setHistoryData(null);
     setExpandedWithdrawalId(null);
     try {
-      const res = await api.get(`/moderator/users/${req.user.id}/financial-history`);
-      setHistoryData(res.data.data);
-    } catch (err) {
-      console.error("Failed to fetch user financial history", err);
+      const res = await userService.getUserFinancialHistory(req.user.id);
+      if (res.success) {
+        setHistoryData(res.data);
+      } else {
+        toast.error(res.message || "Failed to load user financial history");
+      }
+    } catch (_err) {
       toast.error("Failed to load user financial history");
     } finally {
       setHistoryLoading(false);
@@ -298,26 +303,30 @@ export default function WithdrawalsPage() {
   const toggleFreezeUser = async (userId: string, currentFrozen: boolean) => {
     setFreezeLoading(true);
     try {
-      await api.post(`/moderator/users/${userId}/freeze`, { frozen: !currentFrozen });
-      toast.success(!currentFrozen ? "User transactions frozen" : "User transactions unfrozen");
-      
-      // Update local modal data
-      if (historyData) {
-        setHistoryData({
-          ...historyData,
-          user: { ...historyData.user, transactionsFrozen: !currentFrozen },
-        });
+      const res = await FreezeUserAction(userId, { frozen: !currentFrozen });
+      if (res.success) {
+        toast.success(!currentFrozen ? "User transactions frozen" : "User transactions unfrozen");
+        
+        // Update local modal data
+        if (historyData) {
+          setHistoryData({
+            ...historyData,
+            user: { ...historyData.user, transactionsFrozen: !currentFrozen },
+          });
+        }
+        // Update in requests table
+        setRequests((prev) =>
+          prev.map((r) =>
+            r.user.id === userId
+              ? { ...r, user: { ...r.user, transactionsFrozen: !currentFrozen } }
+              : r
+          )
+        );
+      } else {
+        toast.error(res.message || "Failed to update freeze status");
       }
-      // Update in requests table
-      setRequests((prev) =>
-        prev.map((r) =>
-          r.user.id === userId
-            ? { ...r, user: { ...r.user, transactionsFrozen: !currentFrozen } }
-            : r
-        )
-      );
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to update freeze status");
+      toast.error(err?.message || "Failed to update freeze status");
     } finally {
       setFreezeLoading(false);
     }

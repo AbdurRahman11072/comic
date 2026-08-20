@@ -78,12 +78,83 @@ export const UpdateUserAction = async (userId: string, updateData: Record<string
     });
 
     const data = await res.json();
-    if (data.success) {
+    if (res.ok && data.success) {
       (revalidateTag as any)("AllUsers");
+      return data;
     }
-    return data;
-  } catch (error) {
+    return { success: false, message: data?.message || "Failed to update user" };
+  } catch (_error) {
     return { success: false, message: "Failed to update user" };
   }
 };
+
+export const BanUserAction = async (userId: string, payload: { banned?: boolean; banReason?: string; banExpires?: string | Date } = {}) => {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/moderator/users/${userId}/ban`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      (revalidateTag as any)("AllUsers");
+      return data;
+    }
+    return { success: false, message: data?.message || "Failed to update ban status" };
+  } catch (_error) {
+    return { success: false, message: "Failed to update ban status" };
+  }
+};
+
+export const FreezeUserAction = async (userId: string, payload: { frozen?: boolean } = {}) => {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/moderator/users/${userId}/freeze`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      (revalidateTag as any)("AllUsers");
+      return data;
+    }
+    return { success: false, message: data?.message || "Failed to update transaction freeze" };
+  } catch (_error) {
+    return { success: false, message: "Failed to update transaction freeze" };
+  }
+};
+
+export const MuteUserAction = async (userId: string, payload: { durationHours?: number; unmute?: boolean } = {}) => {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/moderator/users/${userId}/mute`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      (revalidateTag as any)("AllUsers");
+      return data;
+    }
+    return { success: false, message: data?.message || "Failed to mute user" };
+  } catch (_error) {
+    return { success: false, message: "Failed to mute user" };
+  }
+};
+
 

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Sparkles, Check, X, Loader2, AlertCircle, Plus, Coins, Calendar, FileText } from "lucide-react";
 import api from "@/lib/api";
+import { userService } from "@/services/user.service";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "react-hot-toast";
 
@@ -76,8 +77,8 @@ export default function FeaturedRequestsPage() {
         setSeriesList(seriesRes.data.data || []);
 
         // Fetch user points
-        const userRes = await api.get("/user/profile");
-        setUserPoints(userRes.data.data?.points || 0);
+        const userRes = await userService.getProfile();
+        setUserPoints(userRes.data?.points || 0);
 
         // Fetch SiteConfig for the fee
         const configRes = await api.get("/site-config");

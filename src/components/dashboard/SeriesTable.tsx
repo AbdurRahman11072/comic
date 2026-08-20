@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { DeleteSeriesAction, ToggleFeaturedAction } from "@/actions/series";
+import { userService } from "@/services/user.service";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import api from "@/lib/api";
@@ -52,11 +53,11 @@ export function SeriesTable({ initialSeries, userRole }: SeriesTableProps) {
     const loadData = async () => {
       try {
         const [userRes, configRes] = await Promise.all([
-          api.get("/api/v1/user/profile").catch(() => null),
+          userService.getProfile().catch(() => null),
           api.get("/api/v1/site-config").catch(() => null),
         ]);
-        if (userRes?.data?.data?.points !== undefined) {
-          setUserPoints(userRes.data.data.points);
+        if (userRes?.data?.points !== undefined) {
+          setUserPoints(userRes.data.points);
         } else if ((session?.user as any)?.points !== undefined) {
           setUserPoints((session?.user as any).points);
         }

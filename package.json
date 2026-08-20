@@ -11,7 +11,7 @@
     "build:server": "npx prisma generate && tsc --project tsconfig.server.json",
     "start": "tsx server/index.ts",
     "start:server": "tsx server/server.ts",
-    "lint": "next lint",
+    "lint": "eslint .",
     "mg": "npx prisma migrate dev",
     "ge": "npx prisma generate",
     "seed": "tsx server/seed_data.ts",

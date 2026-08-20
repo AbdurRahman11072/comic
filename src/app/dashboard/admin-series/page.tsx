@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import api from "@/lib/api";
+import { seriesService } from "@/services/series.service";
+import { DeleteSeriesAction, AdminHideSeriesAction, ToggleFeaturedAction } from "@/actions/series";
 import {
   BookOpen, Search, Filter, EyeOff, Eye, Star,
   ExternalLink, Edit, AlertTriangle, Loader2, CheckCircle2,
@@ -67,12 +68,14 @@ export default function AdminSeriesManagementPage() {
       if (typeFilter !== "ALL") params.type = typeFilter;
       if (hiddenFilter !== "all") params.isHidden = hiddenFilter;
 
-      const { data } = await api.get("/api/v1/series/admin/all", { params });
+      const data = await seriesService.getAdminAllSeries(params);
       if (data.success) {
         setSeriesList(data.data);
-        setTotal(data.pagination?.total || 0);
+        setTotal(data.pagination?.total || data.meta?.total || 0);
+      } else {
+        toast.error(data.message || "Failed to load series catalog.");
       }
-    } catch (err) {
+    } catch (_err) {
       toast.error("Failed to load series catalog.");
     } finally {
       setLoading(false);
@@ -83,14 +86,16 @@ export default function AdminSeriesManagementPage() {
     if (!seriesToDelete) return;
     setDeleting(true);
     try {
-      const { data } = await api.delete(`/api/v1/series/${seriesToDelete.id}`);
+      const data = await DeleteSeriesAction(seriesToDelete.id);
       if (data.success) {
         toast.success(`Series "${seriesToDelete.title}" deleted successfully.`);
         setSeriesList((prev) => prev.filter((s) => s.id !== seriesToDelete.id));
         setSeriesToDelete(null);
+      } else {
+        toast.error(data.message || "Failed to delete series.");
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to delete series.");
+      toast.error(err?.message || "Failed to delete series.");
     } finally {
       setDeleting(false);
     }
@@ -110,23 +115,23 @@ export default function AdminSeriesManagementPage() {
     if (!selectedSeries) return;
     setUpdatingHide(true);
     const newHiddenState = !selectedSeries.isHidden;
+    const reason = newHiddenState ? (hideReason.trim() || "Hidden by administration") : null;
 
     try {
-      const { data } = await api.put(`/api/v1/series/admin/${selectedSeries.id}/hide`, {
-        isHidden: newHiddenState,
-        hiddenReason: newHiddenState ? (hideReason.trim() || "Hidden by administration") : null,
-      });
+      const data = await AdminHideSeriesAction(selectedSeries.id, newHiddenState, reason);
 
       if (data.success) {
         toast.success(newHiddenState ? "Series hidden from public" : "Series restored to public");
         setSeriesList((prev) =>
-          prev.map((s) => (s.id === selectedSeries.id ? { ...s, isHidden: newHiddenState, hiddenReason: data.data.hiddenReason } : s))
+          prev.map((s) => (s.id === selectedSeries.id ? { ...s, isHidden: newHiddenState, hiddenReason: data.data?.hiddenReason || reason } : s))
         );
         setSelectedSeries(null);
         setHideReason("");
+      } else {
+        toast.error(data.message || "Failed to update series visibility.");
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to update series visibility.");
+      toast.error(err?.message || "Failed to update series visibility.");
     } finally {
       setUpdatingHide(false);
     }
@@ -134,7 +139,7 @@ export default function AdminSeriesManagementPage() {
 
   const handleToggleFeatured = async (id: string) => {
     try {
-      const { data } = await api.post(`/series/${id}/toggle-featured`);
+      const data = await ToggleFeaturedAction(id);
       if (data.success) {
         toast.success(data.data?.featured ? "Series added to featured homepage!" : "Series removed from featured.");
         setSeriesList((prev) =>
@@ -142,9 +147,11 @@ export default function AdminSeriesManagementPage() {
             s.id === id ? { ...s, featured: data.data?.featured ? { id: "featured" } : null } : s
           )
         );
+      } else {
+        toast.error(data.message || "Failed to toggle featured status.");
       }
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to toggle featured status.");
+      toast.error(err?.message || "Failed to toggle featured status.");
     }
   };
 
