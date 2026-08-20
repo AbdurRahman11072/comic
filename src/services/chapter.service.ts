@@ -1,28 +1,63 @@
 import { env } from "@/env";
-import { cookies } from "next/headers";
+
+export interface ChapterFilterParams {
+  page?: number;
+  limit?: number;
+  seriesId?: string;
+  creatorId?: string;
+  [key: string]: any;
+}
+
+export interface ServiceResponse<T> {
+  success: boolean;
+  data: T;
+  meta?: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  pagination?: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  message?: string;
+}
 
 export const chapterService = {
-  getAllChapters: async (params: any = {}) => {
+  getAllChapters: async (params: ChapterFilterParams = {}): Promise<ServiceResponse<any[]>> => {
     try {
+      let cookieHeader = "";
+      try {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        cookieHeader = cookieStore.toString();
+      } catch (_e) {
+        // Ignored when called in client context
+      }
+
       const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null && value !== "") {
           searchParams.append(key, String(value));
         }
       });
 
       const url = `${env.NEXT_PUBLIC_API_URL}/api/v1/chapters?${searchParams.toString()}`;
+      // Known debt: no-store and next.tags are both set; caching strategy will be unified in Phase 2
       const res = await fetch(url, {
+        headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+        credentials: "include",
         next: { tags: ["AllChapters"] },
         cache: "no-store",
       });
       const data = await res.json();
       
       if (!res.ok) {
-        return { success: false, data: [] };
+        return { success: false, data: [], message: data?.message || "Failed to fetch chapters" };
       }
       return data;
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         message: "Something went wrong",
@@ -31,29 +66,52 @@ export const chapterService = {
     }
   },
 
-  getChapterByNumber: async (slug: string, number: number) => {
+  getChapterByNumber: async (slug: string, number: number): Promise<ServiceResponse<any | null>> => {
     try {
-      const cookieStore = await cookies();
+      let cookieHeader = "";
+      try {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        cookieHeader = cookieStore.toString();
+      } catch (_e) {
+        // Ignored when called in client context
+      }
+
       const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/chapters/${slug}/${number}`, {
-        headers: {
-          Cookie: cookieStore.toString(),
-        },
+        headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+        credentials: "include",
         next: { tags: [`Chapter-${slug}-${number}`] },
+        cache: "no-store",
       });
       const data = await res.json();
       return data;
-    } catch (error) {
-      return { success: false, message: "Failed to fetch chapter details" };
+    } catch (_error) {
+      return { success: false, data: null, message: "Failed to fetch chapter details" };
     }
   },
-  getChapterById: async (id: string) => {
+
+  getChapterById: async (id: string): Promise<ServiceResponse<any | null>> => {
     try {
-      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/chapters/${id}`);
+      let cookieHeader = "";
+      try {
+        const { cookies } = await import("next/headers");
+        const cookieStore = await cookies();
+        cookieHeader = cookieStore.toString();
+      } catch (_e) {
+        // Ignored when called in client context
+      }
+
+      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/chapters/${id}`, {
+        headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+        credentials: "include",
+        cache: "no-store",
+      });
       const data = await res.json();
-      if (!res.ok) return { success: false, data: null };
+      if (!res.ok) return { success: false, data: null, message: data?.message || "Failed to fetch chapter" };
       return { success: true, data: data.data };
-    } catch (error) {
-      return { success: false, data: null };
+    } catch (_error) {
+      return { success: false, data: null, message: "Failed to fetch chapter" };
     }
   }
 };
+

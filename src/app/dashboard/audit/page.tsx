@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useGetAuditLogsQuery } from "@/redux/api/auditApi";
+import { useState, useEffect, useCallback } from "react";
+import { auditService, AuditLog } from "@/services/audit.service";
 import {
   ShieldAlert, ShieldCheck, UserCheck, Settings, Trash2, Ban, RefreshCw, Loader2, Calendar
 } from "lucide-react";
@@ -9,10 +9,27 @@ import { format } from "date-fns";
 
 export default function AuditLogsDashboardPage() {
   const [page, setPage] = useState(1);
-  const { data: auditData, isLoading, refetch } = useGetAuditLogsQuery({ page, limit: 25 });
+  const [logs, setLogs] = useState<AuditLog[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const logs = auditData?.data || [];
-  const meta = auditData?.pagination;
+  const fetchLogs = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const res = await auditService.getAuditLogs({ page, limit: 25 });
+      if (res.success && Array.isArray(res.data)) {
+        setLogs(res.data);
+      }
+    } catch (_err) {
+      // Handled in service fallback
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    fetchLogs();
+  }, [fetchLogs]);
+
 
   const getActionBadge = (action: string) => {
     if (action.includes("BAN")) {
@@ -56,10 +73,11 @@ export default function AuditLogsDashboardPage() {
           </p>
         </div>
         <button
-          onClick={() => refetch()}
-          className="flex items-center gap-2 px-4 py-2 glass glass-hover rounded-xl text-sm font-semibold text-white/80 hover:text-white"
+          onClick={() => fetchLogs()}
+          disabled={isLoading}
+          className="flex items-center gap-2 px-4 py-2 glass glass-hover rounded-xl text-sm font-semibold text-white/80 hover:text-white disabled:opacity-50"
         >
-          <RefreshCw className="w-4 h-4" /> Refresh
+          <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin text-primary" : ""}`} /> Refresh
         </button>
       </div>
 

@@ -17,12 +17,13 @@ export const CreateChapterAction = async (payload: any) => {
     });
 
     const data = await res.json();
-    if (data.success) {
+    if (res.ok && data.success) {
       (revalidateTag as any)("AllChapters");
       (revalidateTag as any)("AllSeries");
+      return data;
     }
-    return data;
-  } catch (error) {
+    return { success: false, message: data?.message || "Failed to create chapter" };
+  } catch (_error) {
     return { success: false, message: "Failed to create chapter" };
   }
 };
@@ -40,11 +41,13 @@ export const UpdateChapterAction = async (id: string, payload: any) => {
     });
 
     const data = await res.json();
-    if (data.success) {
+    if (res.ok && data.success) {
       (revalidateTag as any)("AllChapters");
+      (revalidateTag as any)("AllSeries");
+      return data;
     }
-    return data;
-  } catch (error) {
+    return { success: false, message: data?.message || "Failed to update chapter" };
+  } catch (_error) {
     return { success: false, message: "Failed to update chapter" };
   }
 };
@@ -60,12 +63,14 @@ export const DeleteChapterAction = async (id: string) => {
     });
 
     const data = await res.json();
-    if (res.ok) {
+    if (res.ok && (data.success || data.statusCode === 200)) {
       (revalidateTag as any)("AllChapters");
-      return { success: true };
+      (revalidateTag as any)("AllSeries");
+      return { success: true, message: data?.message || "Chapter deleted successfully" };
     }
-    return data;
-  } catch (error) {
+    return { success: false, message: data?.message || "Failed to delete chapter" };
+  } catch (_error) {
     return { success: false, message: "Failed to delete chapter" };
   }
 };
+
