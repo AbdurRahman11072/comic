@@ -61,6 +61,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
     featuredRequestFee: configData.featuredRequestFee ?? 500,
     referralBonusPercent: configData.referralBonusPercent ?? 10,
     referralActiveMonths: configData.referralActiveMonths ?? 3,
+    referralSignupBonus: configData.referralSignupBonus ?? 50,
     payoutMethods: configData.payoutMethods ?? ["bKash", "Nagad", "Rocket", "Bank Transfer"],
     customAdScript: configData.customAdScript ?? "",
 
@@ -105,6 +106,7 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
         featuredRequestFee: d.featuredRequestFee ?? 500,
         referralBonusPercent: d.referralBonusPercent ?? 10,
         referralActiveMonths: d.referralActiveMonths ?? 3,
+        referralSignupBonus: d.referralSignupBonus ?? 50,
         payoutMethods: d.payoutMethods && Array.isArray(d.payoutMethods) && d.payoutMethods.length > 0 ? d.payoutMethods : ["bKash", "Nagad", "Rocket", "Bank Transfer"],
       }));
     }
@@ -536,12 +538,24 @@ export function SettingsClient({ initialConfig }: SettingsClientProps) {
 
               <div>
                 <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
-                  Referral Bonus (% of referee purchases)
+                  Referral Ad Bonus (% of referee ad earnings)
                 </label>
                 <input
                   type="number"
                   value={form.referralBonusPercent}
                   onChange={(e) => updateField("referralBonusPercent", parseInt(e.target.value))}
+                  className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-2">
+                  Instant Referral Welcome Bonus (Points)
+                </label>
+                <input
+                  type="number"
+                  value={form.referralSignupBonus}
+                  onChange={(e) => updateField("referralSignupBonus", parseInt(e.target.value))}
                   className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white font-mono"
                 />
               </div>

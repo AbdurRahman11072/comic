@@ -10,8 +10,9 @@ import {
 } from "@/components/ui/dialog";
 import { SITE_DEFAULTS } from "@/config/site";
 import { signIn, signUp } from "@/lib/auth-client";
-import { AlertTriangle, Clock, Eye, EyeOff } from "lucide-react";
+import { AlertTriangle, Clock, Eye, EyeOff, Gift, Sparkles, CheckCircle2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import api from "@/lib/api";
 
 const COVERS = [
   "https://wsrv.nl/?url=cdn.meowing.org/uploads/H70SqQB-7tA&w=300",
@@ -44,13 +45,27 @@ interface LoginDialogProps {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   onAuthSuccess?: () => void;
+  initialTab?: Tab;
+  initialReferralCode?: string;
 }
 
-export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogProps) {
-  const [tab, setTab] = useState<Tab>("login");
+export function LoginDialog({
+  open,
+  onOpenChange,
+  onAuthSuccess,
+  initialTab = "login",
+  initialReferralCode = "",
+}: LoginDialogProps) {
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [referralCode, setReferralCode] = useState(initialReferralCode);
+  const [showReferralInput, setShowReferralInput] = useState(false);
+  const [referrerInfo, setReferrerInfo] = useState<{
+    referrerName: string;
+    signupBonusPoints: number;
+  } | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,6 +80,47 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
     setLoading(false);
     setRetryCountdown(null);
   };
+
+  // Sync initial tab & referral code when opened
+  useEffect(() => {
+    if (open) {
+      if (initialTab) setTab(initialTab);
+      const savedRef =
+        initialReferralCode ||
+        (typeof window !== "undefined"
+          ? localStorage.getItem("comic_referral_code") || ""
+          : "");
+      if (savedRef) {
+        setReferralCode(savedRef.toUpperCase());
+        setShowReferralInput(true);
+        setTab("signup");
+      }
+    }
+  }, [open, initialTab, initialReferralCode]);
+
+  // Validate referral code when typed
+  useEffect(() => {
+    const code = referralCode.trim();
+    if (!code || code.length < 3) {
+      setReferrerInfo(null);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api.get(`/referrals/validate/${code}`);
+        if (res.data.success && res.data.data) {
+          setReferrerInfo(res.data.data);
+        } else {
+          setReferrerInfo(null);
+        }
+      } catch (err) {
+        setReferrerInfo(null);
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [referralCode]);
 
   useEffect(() => {
     if (retryCountdown === null || retryCountdown <= 0) return;
@@ -99,8 +155,25 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
           throw new Error(errMsg);
         }
       } else {
-        const res = await signUp.email({ email, password, name });
+        const signupPayload: any = {
+          email,
+          password,
+          name,
+        };
+
+        const cleanRef = referralCode.trim();
+        if (cleanRef) {
+          signupPayload.referralCode = cleanRef;
+          signupPayload.referredByCode = cleanRef;
+        }
+
+        const res = await signUp.email(signupPayload);
         if (res.error) throw new Error(res.error.message || "Sign up failed");
+
+        // Clean up referral stored in local storage upon successful registration
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("comic_referral_code");
+        }
       }
       reset();
       onAuthSuccess?.();
@@ -200,6 +273,52 @@ export function LoginDialog({ open, onOpenChange, onAuthSuccess }: LoginDialogPr
                 )}
               </button>
             </div>
+
+            {/* Referral Code section (Sign-up only) */}
+            {tab === "signup" && (
+              <div className="space-y-1.5 pt-1">
+                {!showReferralInput && !referralCode ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowReferralInput(true)}
+                    className="text-xs text-primary/90 hover:text-primary flex items-center gap-1.5 font-medium transition-colors"
+                  >
+                    <Gift className="w-3.5 h-3.5" /> Have a referral or invite code?
+                  </button>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Referral Code (e.g. CBD-7X9K2M)"
+                        value={referralCode}
+                        onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                        className="w-full rounded-xl px-4 py-2.5 text-[13px] bg-white/5 border border-purple-500/30 outline-none focus:border-purple-500 transition-colors text-white font-mono uppercase"
+                      />
+                      {referrerInfo && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-emerald-400 text-xs font-semibold">
+                          <CheckCircle2 className="w-4 h-4" />
+                        </div>
+                      )}
+                    </div>
+
+                    {referrerInfo && (
+                      <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs flex items-center justify-between animate-in fade-in slide-in-from-top-1 duration-200">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-emerald-400 shrink-0" />
+                          <span>
+                            Invited by <strong className="text-white">{referrerInfo.referrerName}</strong>
+                          </span>
+                        </div>
+                        <span className="font-bold text-[11px] bg-emerald-500/20 px-2 py-0.5 rounded-full">
+                          +{referrerInfo.signupBonusPoints} Bonus Pts
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {error && (
               <div className="text-[12px] text-red-400 bg-red-400/10 border border-red-500/20 rounded-xl px-3.5 py-2.5 space-y-1">

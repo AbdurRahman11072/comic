@@ -67,6 +67,7 @@ const updateConfig = async (data: any) => {
   if (configData.featuredRequestFee !== undefined) configData.featuredRequestFee = Number(configData.featuredRequestFee);
   if (configData.referralBonusPercent !== undefined) configData.referralBonusPercent = Number(configData.referralBonusPercent);
   if (configData.referralActiveMonths !== undefined) configData.referralActiveMonths = Number(configData.referralActiveMonths);
+  if (configData.referralSignupBonus !== undefined) configData.referralSignupBonus = Number(configData.referralSignupBonus);
   if (configData.minWithdrawalPoints !== undefined) configData.minWithdrawalPoints = Number(configData.minWithdrawalPoints);
   if (configData.creatorRevenueSharePercent !== undefined) configData.creatorRevenueSharePercent = Number(configData.creatorRevenueSharePercent);
 

@@ -5,6 +5,7 @@ import { siteService } from "@/services/site.service";
 import { ReduxProvider } from "@/providers/ReduxProvider";
 import { constructMetadata } from "@/lib/metadata";
 import { CookieConsent } from "@/components/ads/CookieConsent";
+import { ReferralCapture } from "@/components/home/ReferralCapture";
 import Script from "next/script";
 
 export const dynamic = "force-dynamic";
@@ -36,6 +37,7 @@ export default async function RootLayout({
           />
         )}
         <ReduxProvider>
+          <ReferralCapture />
           {children}
           <CookieConsent />
         </ReduxProvider>

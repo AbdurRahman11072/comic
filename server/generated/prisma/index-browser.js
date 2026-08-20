@@ -267,6 +267,7 @@ exports.Prisma.SiteConfigScalarFieldEnum = {
   creatorRevenueSharePercent: 'creatorRevenueSharePercent',
   referralBonusPercent: 'referralBonusPercent',
   referralActiveMonths: 'referralActiveMonths',
+  referralSignupBonus: 'referralSignupBonus',
   maxDailyAdPoints: 'maxDailyAdPoints',
   pointToFiatRate: 'pointToFiatRate',
   featuredRequestFee: 'featuredRequestFee',

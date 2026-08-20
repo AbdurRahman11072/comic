@@ -268,6 +268,7 @@ model SiteConfig {
   creatorRevenueSharePercent Int      @default(70)
   referralBonusPercent       Int      @default(10)
   referralActiveMonths       Int      @default(3)
+  referralSignupBonus        Int      @default(50)
   maxDailyAdPoints           Int      @default(1000)
   pointToFiatRate            Float    @default(0.01) // 1 point = $0.01
   featuredRequestFee         Int      @default(500)

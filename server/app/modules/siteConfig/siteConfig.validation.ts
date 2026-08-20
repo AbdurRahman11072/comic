@@ -51,6 +51,7 @@ export const updateSiteConfigSchema = z.object({
       featuredRequestFee: optionalNumber,
       referralBonusPercent: optionalNumber,
       referralActiveMonths: optionalNumber,
+      referralSignupBonus: optionalNumber,
       customAdScript: optionalString,
       payoutMethods: z.array(z.string()).optional(),
       discord: optionalString,

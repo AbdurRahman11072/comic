@@ -14263,6 +14263,7 @@ export namespace Prisma {
     creatorRevenueSharePercent: number | null
     referralBonusPercent: number | null
     referralActiveMonths: number | null
+    referralSignupBonus: number | null
     maxDailyAdPoints: number | null
     pointToFiatRate: number | null
     featuredRequestFee: number | null
@@ -14273,6 +14274,7 @@ export namespace Prisma {
     creatorRevenueSharePercent: number | null
     referralBonusPercent: number | null
     referralActiveMonths: number | null
+    referralSignupBonus: number | null
     maxDailyAdPoints: number | null
     pointToFiatRate: number | null
     featuredRequestFee: number | null
@@ -14312,6 +14314,7 @@ export namespace Prisma {
     creatorRevenueSharePercent: number | null
     referralBonusPercent: number | null
     referralActiveMonths: number | null
+    referralSignupBonus: number | null
     maxDailyAdPoints: number | null
     pointToFiatRate: number | null
     featuredRequestFee: number | null
@@ -14353,6 +14356,7 @@ export namespace Prisma {
     creatorRevenueSharePercent: number | null
     referralBonusPercent: number | null
     referralActiveMonths: number | null
+    referralSignupBonus: number | null
     maxDailyAdPoints: number | null
     pointToFiatRate: number | null
     featuredRequestFee: number | null
@@ -14395,6 +14399,7 @@ export namespace Prisma {
     creatorRevenueSharePercent: number
     referralBonusPercent: number
     referralActiveMonths: number
+    referralSignupBonus: number
     maxDailyAdPoints: number
     pointToFiatRate: number
     featuredRequestFee: number
@@ -14410,6 +14415,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: true
     referralBonusPercent?: true
     referralActiveMonths?: true
+    referralSignupBonus?: true
     maxDailyAdPoints?: true
     pointToFiatRate?: true
     featuredRequestFee?: true
@@ -14420,6 +14426,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: true
     referralBonusPercent?: true
     referralActiveMonths?: true
+    referralSignupBonus?: true
     maxDailyAdPoints?: true
     pointToFiatRate?: true
     featuredRequestFee?: true
@@ -14459,6 +14466,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: true
     referralBonusPercent?: true
     referralActiveMonths?: true
+    referralSignupBonus?: true
     maxDailyAdPoints?: true
     pointToFiatRate?: true
     featuredRequestFee?: true
@@ -14500,6 +14508,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: true
     referralBonusPercent?: true
     referralActiveMonths?: true
+    referralSignupBonus?: true
     maxDailyAdPoints?: true
     pointToFiatRate?: true
     featuredRequestFee?: true
@@ -14542,6 +14551,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: true
     referralBonusPercent?: true
     referralActiveMonths?: true
+    referralSignupBonus?: true
     maxDailyAdPoints?: true
     pointToFiatRate?: true
     featuredRequestFee?: true
@@ -14672,6 +14682,7 @@ export namespace Prisma {
     creatorRevenueSharePercent: number
     referralBonusPercent: number
     referralActiveMonths: number
+    referralSignupBonus: number
     maxDailyAdPoints: number
     pointToFiatRate: number
     featuredRequestFee: number
@@ -14734,6 +14745,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: boolean
     referralBonusPercent?: boolean
     referralActiveMonths?: boolean
+    referralSignupBonus?: boolean
     maxDailyAdPoints?: boolean
     pointToFiatRate?: boolean
     featuredRequestFee?: boolean
@@ -14777,6 +14789,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: boolean
     referralBonusPercent?: boolean
     referralActiveMonths?: boolean
+    referralSignupBonus?: boolean
     maxDailyAdPoints?: boolean
     pointToFiatRate?: boolean
     featuredRequestFee?: boolean
@@ -14820,6 +14833,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: boolean
     referralBonusPercent?: boolean
     referralActiveMonths?: boolean
+    referralSignupBonus?: boolean
     maxDailyAdPoints?: boolean
     pointToFiatRate?: boolean
     featuredRequestFee?: boolean
@@ -14863,6 +14877,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: boolean
     referralBonusPercent?: boolean
     referralActiveMonths?: boolean
+    referralSignupBonus?: boolean
     maxDailyAdPoints?: boolean
     pointToFiatRate?: boolean
     featuredRequestFee?: boolean
@@ -14871,7 +14886,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "contactEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "enableStripePayment" | "enableCashOut" | "enablePremiumChapters" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "payoutMethods" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
+  export type SiteConfigOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "appName" | "appTagline" | "appLogoUrl" | "heroHeadline" | "heroSubtitle" | "playStoreUrl" | "appStoreUrl" | "announceText" | "announceLink" | "socialLinks" | "termsOfService" | "privacyPolicy" | "aboutUs" | "dmcaEmail" | "contactEmail" | "isMaintenanceMode" | "maintenanceMessage" | "allowNewRegistrations" | "allowCreatorApplications" | "enableGlobalChat" | "enableStripePayment" | "enableCashOut" | "enablePremiumChapters" | "seoTitle" | "seoDescription" | "seoKeywords" | "ogImageUrl" | "gaTrackingId" | "adClient" | "minWithdrawalPoints" | "creatorRevenueSharePercent" | "referralBonusPercent" | "referralActiveMonths" | "referralSignupBonus" | "maxDailyAdPoints" | "pointToFiatRate" | "featuredRequestFee" | "payoutMethods" | "customAdScript" | "updatedAt", ExtArgs["result"]["siteConfig"]>
 
   export type $SiteConfigPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SiteConfig"
@@ -14911,6 +14926,7 @@ export namespace Prisma {
       creatorRevenueSharePercent: number
       referralBonusPercent: number
       referralActiveMonths: number
+      referralSignupBonus: number
       maxDailyAdPoints: number
       pointToFiatRate: number
       featuredRequestFee: number
@@ -15374,6 +15390,7 @@ export namespace Prisma {
     readonly creatorRevenueSharePercent: FieldRef<"SiteConfig", 'Int'>
     readonly referralBonusPercent: FieldRef<"SiteConfig", 'Int'>
     readonly referralActiveMonths: FieldRef<"SiteConfig", 'Int'>
+    readonly referralSignupBonus: FieldRef<"SiteConfig", 'Int'>
     readonly maxDailyAdPoints: FieldRef<"SiteConfig", 'Int'>
     readonly pointToFiatRate: FieldRef<"SiteConfig", 'Float'>
     readonly featuredRequestFee: FieldRef<"SiteConfig", 'Int'>
@@ -40492,6 +40509,7 @@ export namespace Prisma {
     creatorRevenueSharePercent: 'creatorRevenueSharePercent',
     referralBonusPercent: 'referralBonusPercent',
     referralActiveMonths: 'referralActiveMonths',
+    referralSignupBonus: 'referralSignupBonus',
     maxDailyAdPoints: 'maxDailyAdPoints',
     pointToFiatRate: 'pointToFiatRate',
     featuredRequestFee: 'featuredRequestFee',
@@ -41893,6 +41911,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: IntFilter<"SiteConfig"> | number
     referralBonusPercent?: IntFilter<"SiteConfig"> | number
     referralActiveMonths?: IntFilter<"SiteConfig"> | number
+    referralSignupBonus?: IntFilter<"SiteConfig"> | number
     maxDailyAdPoints?: IntFilter<"SiteConfig"> | number
     pointToFiatRate?: FloatFilter<"SiteConfig"> | number
     featuredRequestFee?: IntFilter<"SiteConfig"> | number
@@ -41936,6 +41955,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
     referralActiveMonths?: SortOrder
+    referralSignupBonus?: SortOrder
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
@@ -41982,6 +42002,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: IntFilter<"SiteConfig"> | number
     referralBonusPercent?: IntFilter<"SiteConfig"> | number
     referralActiveMonths?: IntFilter<"SiteConfig"> | number
+    referralSignupBonus?: IntFilter<"SiteConfig"> | number
     maxDailyAdPoints?: IntFilter<"SiteConfig"> | number
     pointToFiatRate?: FloatFilter<"SiteConfig"> | number
     featuredRequestFee?: IntFilter<"SiteConfig"> | number
@@ -42025,6 +42046,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
     referralActiveMonths?: SortOrder
+    referralSignupBonus?: SortOrder
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
@@ -42076,6 +42098,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: IntWithAggregatesFilter<"SiteConfig"> | number
     referralBonusPercent?: IntWithAggregatesFilter<"SiteConfig"> | number
     referralActiveMonths?: IntWithAggregatesFilter<"SiteConfig"> | number
+    referralSignupBonus?: IntWithAggregatesFilter<"SiteConfig"> | number
     maxDailyAdPoints?: IntWithAggregatesFilter<"SiteConfig"> | number
     pointToFiatRate?: FloatWithAggregatesFilter<"SiteConfig"> | number
     featuredRequestFee?: IntWithAggregatesFilter<"SiteConfig"> | number
@@ -44569,6 +44592,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: number
     referralBonusPercent?: number
     referralActiveMonths?: number
+    referralSignupBonus?: number
     maxDailyAdPoints?: number
     pointToFiatRate?: number
     featuredRequestFee?: number
@@ -44612,6 +44636,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: number
     referralBonusPercent?: number
     referralActiveMonths?: number
+    referralSignupBonus?: number
     maxDailyAdPoints?: number
     pointToFiatRate?: number
     featuredRequestFee?: number
@@ -44655,6 +44680,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: IntFieldUpdateOperationsInput | number
     referralBonusPercent?: IntFieldUpdateOperationsInput | number
     referralActiveMonths?: IntFieldUpdateOperationsInput | number
+    referralSignupBonus?: IntFieldUpdateOperationsInput | number
     maxDailyAdPoints?: IntFieldUpdateOperationsInput | number
     pointToFiatRate?: FloatFieldUpdateOperationsInput | number
     featuredRequestFee?: IntFieldUpdateOperationsInput | number
@@ -44698,6 +44724,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: IntFieldUpdateOperationsInput | number
     referralBonusPercent?: IntFieldUpdateOperationsInput | number
     referralActiveMonths?: IntFieldUpdateOperationsInput | number
+    referralSignupBonus?: IntFieldUpdateOperationsInput | number
     maxDailyAdPoints?: IntFieldUpdateOperationsInput | number
     pointToFiatRate?: FloatFieldUpdateOperationsInput | number
     featuredRequestFee?: IntFieldUpdateOperationsInput | number
@@ -44741,6 +44768,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: number
     referralBonusPercent?: number
     referralActiveMonths?: number
+    referralSignupBonus?: number
     maxDailyAdPoints?: number
     pointToFiatRate?: number
     featuredRequestFee?: number
@@ -44784,6 +44812,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: IntFieldUpdateOperationsInput | number
     referralBonusPercent?: IntFieldUpdateOperationsInput | number
     referralActiveMonths?: IntFieldUpdateOperationsInput | number
+    referralSignupBonus?: IntFieldUpdateOperationsInput | number
     maxDailyAdPoints?: IntFieldUpdateOperationsInput | number
     pointToFiatRate?: FloatFieldUpdateOperationsInput | number
     featuredRequestFee?: IntFieldUpdateOperationsInput | number
@@ -44827,6 +44856,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: IntFieldUpdateOperationsInput | number
     referralBonusPercent?: IntFieldUpdateOperationsInput | number
     referralActiveMonths?: IntFieldUpdateOperationsInput | number
+    referralSignupBonus?: IntFieldUpdateOperationsInput | number
     maxDailyAdPoints?: IntFieldUpdateOperationsInput | number
     pointToFiatRate?: FloatFieldUpdateOperationsInput | number
     featuredRequestFee?: IntFieldUpdateOperationsInput | number
@@ -47416,6 +47446,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
     referralActiveMonths?: SortOrder
+    referralSignupBonus?: SortOrder
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
@@ -47429,6 +47460,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
     referralActiveMonths?: SortOrder
+    referralSignupBonus?: SortOrder
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
@@ -47468,6 +47500,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
     referralActiveMonths?: SortOrder
+    referralSignupBonus?: SortOrder
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
@@ -47509,6 +47542,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
     referralActiveMonths?: SortOrder
+    referralSignupBonus?: SortOrder
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder
@@ -47521,6 +47555,7 @@ export namespace Prisma {
     creatorRevenueSharePercent?: SortOrder
     referralBonusPercent?: SortOrder
     referralActiveMonths?: SortOrder
+    referralSignupBonus?: SortOrder
     maxDailyAdPoints?: SortOrder
     pointToFiatRate?: SortOrder
     featuredRequestFee?: SortOrder

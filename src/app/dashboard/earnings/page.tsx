@@ -69,7 +69,7 @@ export default function EarningsPage() {
 
   const copyReferral = () => {
     if (!profile?.referralCode) return;
-    const link = `${window.location.origin}/signup?ref=${profile.referralCode}`;
+    const link = `${window.location.origin}/?ref=${profile.referralCode}`;
     navigator.clipboard.writeText(link);
     toast.success("Referral link copied to clipboard!");
   };

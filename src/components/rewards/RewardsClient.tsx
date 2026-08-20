@@ -9,11 +9,13 @@ import { Suspense } from "react";
 import { toast } from "react-hot-toast";
 import {
   Loader2, Play, Gift, AlertCircle,
-  X, ExternalLink, CheckCircle2, Sparkles, Coins, Flame
+  X, ExternalLink, CheckCircle2, Sparkles, Coins, Flame, Users, Copy, Check
 } from "lucide-react";
 import api from "@/lib/api";
+import Link from "next/link";
 import { useEarnFromAdMutation, useGetPointsBalanceQuery } from "@/redux/api/pointsApi";
 import { useRedeemPromoCodeMutation } from "@/redux/api/promoApi";
+import { useGetReferralStatsQuery } from "@/redux/api/referralApi";
 import { LoginDialog } from "@/components/home/LoginDialog";
 
 const YoutubeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
@@ -494,8 +496,11 @@ function RewardsContent() {
           )}
         </div>
 
-        {/* Promo Code Section */}
-        <PromoRedeemBox />
+        {/* Bottom Reward Options (Promo Code & Referral Program) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mt-8">
+          <PromoRedeemBox />
+          <ReferralRewardsCard onOpenLogin={() => setLoginOpen(true)} />
+        </div>
       </main>
 
       <Footer />
@@ -528,18 +533,21 @@ function PromoRedeemBox() {
   };
 
   return (
-    <div className="w-full max-w-lg glass p-6 rounded-2xl border border-white/10 mt-8 space-y-4">
+    <div className="w-full glass p-6 rounded-2xl border border-white/10 space-y-4">
       <div className="flex items-center gap-2">
         <Gift className="w-5 h-5 text-amber-400" />
-        <h3 className="text-base font-bold text-white">Have a Creator or Event Promo Code?</h3>
+        <h3 className="text-base font-bold text-white">Have a Promo Code?</h3>
       </div>
+      <p className="text-xs text-muted-foreground">
+        Redeem codes from creators or special events to get instant free coins.
+      </p>
       <form onSubmit={handleRedeem} className="flex gap-2">
         <input
           type="text"
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
           placeholder="ENTER PROMO CODE"
-          className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/50 outline-none text-white font-mono font-bold uppercase text-sm tracking-wider"
+          className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/50 outline-none text-white font-mono font-bold uppercase text-xs tracking-wider"
         />
         <button
           type="submit"
@@ -552,3 +560,87 @@ function PromoRedeemBox() {
     </div>
   );
 }
+
+function ReferralRewardsCard({ onOpenLogin }: { onOpenLogin: () => void }) {
+  const { data: session } = useSession();
+  const user = session?.user;
+  const { data: referralRes, isLoading } = useGetReferralStatsQuery(undefined, { skip: !user });
+  const referralStats = referralRes?.data;
+  const [copied, setCopied] = useState(false);
+
+  const referralCode = referralStats?.referralCode || (user as any)?.referralCode || "";
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://comicbd.com";
+  const shareableUrl = referralCode ? `${origin}/?ref=${referralCode}` : `${origin}/?ref=...`;
+
+  const copyLink = () => {
+    if (!user) {
+      onOpenLogin();
+      return;
+    }
+    if (!referralCode) {
+      toast.error("Generating your referral link...");
+      return;
+    }
+    navigator.clipboard.writeText(`${origin}/?ref=${referralCode}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast.success("Referral link copied!");
+  };
+
+  return (
+    <div className="w-full glass p-6 rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-950/20 to-popover space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-purple-400" />
+          <h3 className="text-base font-bold text-white">Refer Friends & Earn 10%</h3>
+        </div>
+        <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+          +{referralStats?.referralSignupBonus || 50} Pts Welcome
+        </span>
+      </div>
+
+      <p className="text-xs text-muted-foreground">
+        Earn <strong className="text-purple-300">{referralStats?.referralBonusPercent || 10}% of all ad points</strong> your invited friends earn for {referralStats?.referralActiveMonths || 3} months, plus an instant <strong className="text-emerald-300">+{referralStats?.referralSignupBonus || 50} points</strong> welcome reward!
+      </p>
+
+      {user ? (
+        <div className="space-y-2.5 pt-1">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              readOnly
+              value={isLoading ? "Loading your referral link..." : shareableUrl}
+              className="flex-1 px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-muted-foreground font-mono text-xs truncate select-all"
+            />
+            <button
+              type="button"
+              onClick={copyLink}
+              disabled={isLoading || !referralCode}
+              className="px-4 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shrink-0 shadow-lg shadow-primary/20 cursor-pointer disabled:opacity-50"
+            >
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? "Copied" : "Copy Link"}
+            </button>
+          </div>
+          <div className="flex justify-end">
+            <Link
+              href="/profile"
+              className="text-[11px] text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 transition-colors"
+            >
+              View Full Referral Hub & Stats →
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={onOpenLogin}
+          className="w-full py-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <Users className="w-4 h-4" /> Sign In to Get Your Referral Link
+        </button>
+      )}
+    </div>
+  );
+}
+

@@ -45,6 +45,7 @@ export interface SiteConfigData {
   creatorRevenueSharePercent: number;
   referralBonusPercent: number;
   referralActiveMonths: number;
+  referralSignupBonus: number;
   maxDailyAdPoints: number;
   pointToFiatRate: number;
   featuredRequestFee: number;
