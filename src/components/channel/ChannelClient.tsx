@@ -115,9 +115,9 @@ export function ChannelClient({ channelId }: { channelId: string }) {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/10">
             <div className="flex items-end gap-5">
               <div className="w-28 h-28 md:w-36 md:h-36 rounded-3xl border-4 border-background bg-neutral-900 overflow-hidden shrink-0 shadow-2xl">
-                {profile.profileImage || user.image ? (
+                {profile.profileImage || user?.image ? (
                   <img
-                    src={profile.profileImage || user.image || ""}
+                    src={profile.profileImage || user?.image || ""}
                     alt={profile.channelName}
                     className="w-full h-full object-cover"
                   />
@@ -144,7 +144,7 @@ export function ChannelClient({ channelId }: { channelId: string }) {
                   <span>•</span>
                   <span>{posts.length} Announcements</span>
                   <span>•</span>
-                  <span>Joined {new Date(user.createdAt).getFullYear()}</span>
+                  <span>Joined {user?.createdAt ? new Date(user.createdAt).getFullYear() : new Date().getFullYear()}</span>
                 </div>
               </div>
             </div>

@@ -21,17 +21,36 @@ export interface CreatorProfile {
   userId: string;
   channelName: string;
   channelDescription?: string | null;
+  description?: string | null;
   channelBanner?: string | null;
+  bannerUrl?: string | null;
+  profileImage?: string | null;
   socialTwitter?: string | null;
   socialDiscord?: string | null;
   socialInstagram?: string | null;
   socialWebsite?: string | null;
   donationLink?: string | null;
+  totalEarnings?: number;
+  withdrawnAmount?: number;
   user?: {
     id: string;
     name: string;
     image: string | null;
     role: string;
+    createdAt?: string;
+  };
+}
+
+export interface PublicChannelData extends CreatorProfile {
+  series?: any[];
+  user?: {
+    id: string;
+    name: string;
+    image: string | null;
+    role: string;
+    createdAt?: string;
+    creatorPosts?: CreatorPost[];
+    createdPromoCodes?: any[];
   };
 }
 
@@ -107,13 +126,24 @@ export interface SeriesStat {
   title: string;
   slug: string;
   coverUrl: string | null;
-  views: number;
-  chaptersCount: number;
-  likesCount: number;
+  views?: number;
+  totalViews?: number;
+  chaptersCount?: number;
+  likesCount?: number;
   rating: number;
   earnings: number;
-  commentsCount: number;
+  commentsCount?: number;
   status: string;
+  type?: string;
+  bookmarkRate?: number;
+  daysSinceUpdate?: number;
+  attentionStatus?: "TRENDING" | "STEADY" | "NEEDS_ATTENTION" | "NEW";
+  attentionReason?: string;
+  _count?: {
+    chapters: number;
+    bookmarks: number;
+    reviews: number;
+  };
 }
 
 export interface RevenuePoint {
@@ -203,11 +233,11 @@ export const creatorService = {
     }
   },
 
-  getPublicChannel: async (id: string): Promise<ServiceResponse<CreatorProfile | null>> => {
+  getPublicChannel: async (id: string, fetchOptions?: any): Promise<ServiceResponse<PublicChannelData | null>> => {
     try {
       const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/creators/channel/${id}`, {
-        next: { tags: [`CreatorChannel-${id}`] },
-        cache: "no-store",
+        next: { tags: [`CreatorChannel-${id}`], ...(fetchOptions?.next || {}) },
+        cache: fetchOptions?.cache || "no-store",
       });
 
       const data = await res.json();
