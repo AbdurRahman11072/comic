@@ -5,7 +5,15 @@ const getProfile = async (userId: string) => {
     where: { id: userId },
     include: {
       bookmarks: {
-        include: { series: true },
+        include: {
+          series: {
+            include: {
+              _count: {
+                select: { chapters: true },
+              },
+            },
+          },
+        },
       },
       history: {
         include: { series: true, chapter: true },

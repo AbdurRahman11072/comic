@@ -285,9 +285,13 @@ const createChatMessage = async (userId: string, content?: string, imageUrl?: st
   return result;
 };
 
-const deleteChatMessage = async (messageId: string) => {
+const deleteChatMessage = async (messageId: string, userId?: string, role?: string) => {
   const message = await prisma.chatMessage.findUnique({ where: { id: messageId } });
   if (!message) throw new AppError(httpStatus.NOT_FOUND, 'Message not found');
+
+  if (role !== 'admin' && role !== 'moderator' && message.userId !== userId) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You can only delete your own chat messages');
+  }
 
   await prisma.chatMessage.delete({ where: { id: messageId } });
 };

@@ -256,9 +256,9 @@ function RewardsContent() {
 
   const completeReward = async () => {
     setVerifying(false);
-    const adBonus = customAd ? customAd.points : 0;
-    const basePoints = targetAds * 10;
-    const totalPoints = Math.min(basePoints + adBonus, 150);
+    const adBonus = (customAd && typeof customAd.points === "number" && !isNaN(customAd.points)) ? customAd.points : 0;
+    const basePoints = (Number(targetAds) || 5) * 10;
+    const totalPoints = Number.isFinite(basePoints + adBonus) ? Math.min(basePoints + adBonus, 150) : 50;
 
     try {
       const res = await EarnFromAdAction({ amount: totalPoints, adsCount: targetAds });
@@ -374,7 +374,7 @@ function RewardsContent() {
             <div className="flex flex-col items-center text-center space-y-6 py-4">
               <CheckCircle2 className="w-20 h-20 text-emerald-400" />
               <div>
-                <h2 className="text-3xl font-black text-emerald-400">+{pointsEarned} Points!</h2>
+                <h2 className="text-3xl font-black text-emerald-400">+{Number(pointsEarned) || 50} Points!</h2>
                 <p className="text-muted-foreground mt-2">Points have been added to your account.</p>
               </div>
               <button
@@ -390,7 +390,7 @@ function RewardsContent() {
               <div>
                 <h2 className="text-2xl font-bold mb-2">Final Step!</h2>
                 <p className="text-muted-foreground text-sm">
-                  Click the sponsored banner below to claim your {targetAds * 10 + (customAd?.points || 0)} points.
+                  Click the sponsored banner below to claim your {(Number(targetAds) || 5) * 10 + (Number(customAd?.points) || 0)} points.
                 </p>
               </div>
 
@@ -445,7 +445,7 @@ function RewardsContent() {
                 </div>
                 <h3 className="text-2xl font-bold text-white">Watch {targetAds} Short Ads</h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Earn up to {targetAds * 10 + (customAd ? customAd.points : 0)} points upon completion!
+                  Earn up to {(Number(targetAds) || 5) * 10 + (Number(customAd?.points) || 0)} points upon completion!
                 </p>
               </div>
 

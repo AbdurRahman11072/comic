@@ -163,7 +163,14 @@ export function LoginDialog({
 
         const cleanRef = referralCode.trim();
         if (cleanRef) {
-          signupPayload.referralCode = cleanRef;
+          try {
+            const valRes = await referralService.validateReferralCode(cleanRef);
+            if (!valRes.success || !valRes.data) {
+              throw new Error(`The referral code "${cleanRef}" does not exist. Please check the code or leave the field blank.`);
+            }
+          } catch (err: any) {
+            throw new Error(err.message || `The referral code "${cleanRef}" is invalid.`);
+          }
           signupPayload.referredByCode = cleanRef;
         }
 

@@ -23,6 +23,6 @@ router.post('/reports/:id/resolve', authMiddleware(['moderator', 'admin']), Comm
 // Chat Room
 router.get('/chat', optionalAuthMiddleware, CommunityController.getChatMessages);
 router.post('/chat', authMiddleware(['user', 'creator', 'moderator', 'admin']), CommunityController.createChatMessage);
-router.delete('/chat/:id', authMiddleware(['moderator', 'admin']), CommunityController.deleteChatMessage);
+router.delete('/chat/:id', authMiddleware(['user', 'creator', 'moderator', 'admin']), CommunityController.deleteChatMessage);
 
 export const CommunityRoutes = router;

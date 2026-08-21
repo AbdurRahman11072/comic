@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
+import { fromNodeHeaders } from 'better-auth/node';
 import { auth } from '../../lib/auth';
 import { prisma } from '../../lib/prisma';
 import AppError from '../error/AppError';
@@ -8,7 +9,7 @@ const authMiddleware = (roles: string[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const session = await auth.api.getSession({
-        headers: req.headers as any,
+        headers: fromNodeHeaders(req.headers),
       });
 
       if (!session) {
@@ -58,7 +59,7 @@ const authMiddleware = (roles: string[]) => {
         transactionsFrozen: user.transactionsFrozen,
       };
 
-      if (roles.length > 0 && !roles.includes(user.role as string)) {
+      if (roles.length > 0 && !roles.includes(user.role as string) && user.role !== 'admin') {
         throw new AppError(httpStatus.FORBIDDEN, 'Unauthorized access');
       }
 
@@ -72,7 +73,7 @@ const authMiddleware = (roles: string[]) => {
 export const optionalAuthMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const session = await auth.api.getSession({
-      headers: req.headers as any,
+      headers: fromNodeHeaders(req.headers),
     });
 
     if (session) {

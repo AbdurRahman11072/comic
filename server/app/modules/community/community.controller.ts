@@ -147,7 +147,9 @@ const createChatMessage = asyncHandler(async (req: Request, res: Response) => {
 
 const deleteChatMessage = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  await CommunityService.deleteChatMessage(id as string);
+  const userId = req.user?.id;
+  const role = req.user?.role;
+  await CommunityService.deleteChatMessage(id as string, userId as string, role as string);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

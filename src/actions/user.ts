@@ -88,6 +88,29 @@ export const UpdateUserAction = async (userId: string, updateData: Record<string
   }
 };
 
+export const UpdateUserProfileAction = async (updateData: { name?: string; image?: string }) => {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/user/profile`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookieStore.toString(),
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      (revalidateTag as any)("UserProfile");
+      return data;
+    }
+    return { success: false, message: data?.message || "Failed to update profile" };
+  } catch (_error) {
+    return { success: false, message: "Failed to update profile" };
+  }
+};
+
 export const BanUserAction = async (userId: string, payload: { banned?: boolean; banReason?: string; banExpires?: string | Date } = {}) => {
   try {
     const cookieStore = await cookies();

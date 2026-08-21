@@ -43,10 +43,8 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user: any, context?: any) => {
-          // 1. Generate unique clean referral code for new user
-          if (!user.referralCode || user.referralCode.length > 15) {
-            user.referralCode = await generateUniqueReferralCode();
-          }
+          // 1. Always generate a fresh unique referral code for the newly registered user
+          user.referralCode = await generateUniqueReferralCode();
 
           // 2. Resolve referrer if referral code was supplied during registration
           const bodyRefCode = (

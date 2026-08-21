@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
-import { UpdateUserAction } from "@/actions/user";
+import { UpdateUserProfileAction } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { referralService, ReferralStatsData } from "@/services/referral.service";
@@ -92,7 +92,7 @@ export function ProfileClient({ initialProfile }: ProfileClientProps) {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await UpdateUserAction(profile.id, { name, image });
+      const res = await UpdateUserProfileAction({ name, image });
       if (res.success) {
         setProfile({ ...profile, name, image });
         toast.success("Profile updated successfully!");

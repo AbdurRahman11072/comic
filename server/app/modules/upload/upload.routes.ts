@@ -9,7 +9,7 @@ router.get('/proxy-image', UploadController.proxyImage);
 
 router.post(
   '/',
-  authMiddleware(['creator', 'moderator', 'admin']),
+  authMiddleware(['user', 'creator', 'moderator', 'admin']),
   multerUpload.single('image'),
   UploadController.uploadImage
 );

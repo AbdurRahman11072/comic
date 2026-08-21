@@ -12,6 +12,7 @@ import { communityService, ChatMessageItem } from "@/services/community.service"
 import { SendChatMessageAction, DeleteChatMessageAction } from "@/actions/community";
 import { toast } from "react-hot-toast";
 import { useSiteConfig } from "@/providers/SiteConfigProvider";
+import { LoginDialog } from "./LoginDialog";
 
 interface ChatDrawerProps {
   open: boolean;
@@ -38,6 +39,7 @@ export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
   const [input, setInput] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showGifPicker, setShowGifPicker] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -319,6 +321,20 @@ export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
           <div className="p-4 border-t border-white/10 bg-amber-500/5 text-center text-xs text-amber-300 font-medium">
             Community Chat is temporarily paused by moderators.
           </div>
+        ) : !currentUser ? (
+          <div className="p-4 border-t border-white/10 bg-white/[0.02] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-xs text-white/70">
+              <MessageCircle className="w-4 h-4 text-primary shrink-0" />
+              <span>Sign in to join the conversation and send messages.</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setLoginOpen(true)}
+              className="px-4 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-primary/90 transition shrink-0 shadow-md shadow-primary/20 cursor-pointer"
+            >
+              Sign In
+            </button>
+          </div>
         ) : (
           <form onSubmit={handleSend} className="p-3 border-t border-white/10 bg-white/[0.02]">
             <div className="flex items-center gap-2">
@@ -337,7 +353,7 @@ export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploadingImage}
-                className="p-2 rounded-xl glass border border-white/10 text-white/60 hover:text-white transition"
+                className="p-2 rounded-xl glass border border-white/10 text-white/60 hover:text-white transition cursor-pointer"
                 title="Upload Image"
               >
                 {uploadingImage ? <Loader2 className="w-4 h-4 animate-spin text-primary" /> : <ImageIcon className="w-4 h-4" />}
@@ -354,21 +370,23 @@ export function ChatDrawer({ open, onOpenChange }: ChatDrawerProps) {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={currentUser ? "Type a message..." : "Sign in to chat"}
-                disabled={!currentUser || sending}
+                placeholder="Type a message..."
+                disabled={sending}
                 className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-primary/50 outline-none text-white text-sm placeholder:text-white/30"
               />
 
               <button
                 type="submit"
-                disabled={(!input.trim() && !selectedImage) || sending || !currentUser}
-                className="p-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition disabled:opacity-40 shrink-0 shadow-lg shadow-primary/20"
+                disabled={(!input.trim() && !selectedImage) || sending}
+                className="p-2.5 bg-primary text-white rounded-xl hover:bg-primary/90 transition disabled:opacity-40 shrink-0 shadow-lg shadow-primary/20 cursor-pointer"
               >
                 {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>
             </div>
           </form>
         )}
+
+        <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
       </div>
     </div>,
     document.body
