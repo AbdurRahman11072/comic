@@ -205,6 +205,10 @@ export interface SingleSeriesAnalyticsData {
 }
 
 export const creatorService = {
+  getProfile: async (): Promise<ServiceResponse<CreatorProfile | null>> => {
+    return creatorService.getCreatorProfile();
+  },
+
   getCreatorProfile: async (): Promise<ServiceResponse<CreatorProfile | null>> => {
     try {
       let cookieHeader = "";
@@ -262,7 +266,7 @@ export const creatorService = {
       }
 
       const url = creatorId
-        ? `${env.NEXT_PUBLIC_API_URL}/api/v1/creators/channel/${creatorId}/posts`
+        ? `${env.NEXT_PUBLIC_API_URL}/api/v1/creators/${creatorId}/posts`
         : `${env.NEXT_PUBLIC_API_URL}/api/v1/creators/posts`;
 
       const tags = creatorId ? [`CreatorPosts-${creatorId}`] : ["CreatorPosts"];
