@@ -14,7 +14,7 @@ import { RequestFeatureSeriesAction } from "@/actions/creator";
 import { userService } from "@/services/user.service";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import api from "@/lib/api";
+import { siteService } from "@/services/site.service";
 import { authClient } from "@/lib/auth-client";
 
 interface SeriesTableProps {
@@ -55,15 +55,15 @@ export function SeriesTable({ initialSeries, userRole }: SeriesTableProps) {
       try {
         const [userRes, configRes] = await Promise.all([
           userService.getProfile().catch(() => null),
-          api.get("/api/v1/site-config").catch(() => null),
+          siteService.getSiteConfig().catch(() => null),
         ]);
         if (userRes?.data?.points !== undefined) {
           setUserPoints(userRes.data.points);
         } else if ((session?.user as any)?.points !== undefined) {
           setUserPoints((session?.user as any).points);
         }
-        if (configRes?.data?.data?.featuredRequestFee) {
-          setBaseFee(configRes.data.data.featuredRequestFee);
+        if (configRes?.data?.featuredRequestFee) {
+          setBaseFee(configRes.data.featuredRequestFee);
         }
       } catch (e) {
         console.error("Failed to load fee or points", e);

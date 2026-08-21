@@ -27,9 +27,9 @@ import {
   Smartphone
 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import api from "@/lib/api";
 import { pointsService, PointTransactionItem } from "@/services/points.service";
 import { siteService } from "@/services/site.service";
+import { RequestWithdrawalAction } from "@/actions/withdrawal";
 
 type Transaction = PointTransactionItem;
 
@@ -154,12 +154,12 @@ export function TransactionsClient() {
         fullDetails = `[${payoutMethod}] ${phoneNumber.trim() || bankDetails.trim()}${accountHolderName.trim() ? ` | Name: ${accountHolderName.trim()}` : ""}`;
       }
 
-      const res = await api.post("/api/v1/withdrawals", {
+      const res = await RequestWithdrawalAction({
         pointsRequested: numPoints,
         bankDetails: fullDetails,
       });
 
-      if (res.data?.success || res.status === 201) {
+      if (res.success) {
         toast.success("Cashout request submitted successfully! Pending admin approval.");
         setBalance((prev) => Math.max(0, prev - numPoints));
         const newTx: Transaction = {

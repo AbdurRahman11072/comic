@@ -28,3 +28,23 @@ export const UpdateSiteConfigAction = async (payload: Partial<SiteConfigData>) =
     return { success: false, message: "Failed to update site config" };
   }
 };
+
+export const SendContactMessageAction = async (payload: {
+  name: string;
+  email: string;
+  category?: string;
+  subject?: string;
+  message: string;
+}) => {
+  try {
+    const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/site-config/contact`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    return data;
+  } catch (_error) {
+    return { success: false, message: "Failed to send contact message" };
+  }
+};

@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
-import api from "@/lib/api";
+import { SendContactMessageAction } from "@/actions/site";
 import { SiteConfigData } from "@/services/site.service";
 
 interface ContactClientProps {
@@ -60,8 +60,8 @@ export function ContactClient({ config }: ContactClientProps) {
 
     setLoading(true);
     try {
-      const res = await api.post("/api/v1/site-config/contact", form);
-      if (res.data?.success) {
+      const res = await SendContactMessageAction(form);
+      if (res.success) {
         setSubmitted(true);
         toast.success("Message sent successfully!");
         setForm({
@@ -72,7 +72,7 @@ export function ContactClient({ config }: ContactClientProps) {
           message: "",
         });
       } else {
-        toast.error(res.data?.message || "Failed to send message. Please try again.");
+        toast.error(res.message || "Failed to send message. Please try again.");
       }
     } catch (err: any) {
       console.error("Error sending contact message:", err);

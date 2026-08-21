@@ -15,12 +15,18 @@ pnpm seed         # Seed admin + sample series (requires running backend)
 - **Hybrid Express + Next.js 16**: Express handles `/api/v1/*`, Next.js App Router handles everything else
 - **Monorepo**: Single package.json, shared Prisma client at `server/generated/prisma/`
 - **Backend modules**: `server/app/modules/{feature}/{service,controller,routes}.ts`
-- **Frontend**: `src/app` (server components), `src/components` (client), `src/services` (API fetch), `src/actions` (server actions)
+- **Frontend**: `src/app` (Server Components), `src/components` (Client Components), `src/services` (typed fetch services), `src/actions` (Server Actions)
 
 ## Key Conventions
 - **Auth**: Better-auth with email/password + admin plugin. Sessions via cookies (`credentials: 'include'`)
-- **API calls**: Frontend uses axios instance (`src/lib/api.ts`) with `withCredentials: true`
-- **Server actions**: Mutations in `src/actions/*.ts` with `revalidateTag` for cache invalidation
+- **Data Fetching (Single Convention)**:
+  - **Reads / SSR**: Typed fetch services (`src/services/*.ts`) called in async Server Components (`page.tsx`) with cache tags.
+  - **Mutations**: Server Actions (`src/actions/*.ts`) with `cookies()` forwarding and targeted `revalidateTag(...)` cache invalidation.
+  - **Client State**: `PointsProvider` and `SiteConfigProvider` contexts for instant cross-component client state synchronization.
+  - **Redux Store**: `readerSlice` in `src/redux/store.ts` exclusively for client-side reader preferences (theme, layout, font-size). Zero RTK Query.
+- **Dashboard Architecture (Phase 2 Convention)**:
+  - Every route under `src/app/dashboard/*` is a thin async Server Component `page.tsx` that performs request-time SSR data fetching.
+  - Interactive UI, forms, tables, filters, and modal managers are isolated in dedicated Client Components under `src/components/dashboard/[feature]/[Feature]Client.tsx`.
 - **Prisma output**: Custom path `../server/generated/prisma` (not node_modules)
 - **Role-based auth middleware**: `authMiddleware(['creator','admin'])` in route files
 - **IP signup restriction**: 1 account per IP (enforced in `server/index.ts:51-72`)
@@ -67,12 +73,8 @@ server/app/modules/{feature}/
 └── {feature}.routes.ts    # Route defs + authMiddleware
 ```
 
-## Frontend Patterns & Data Fetching Convention
-- **Server Components** (default in `src/app`): Handle server-side data fetching at request time using typed services (`src/services/*.ts`) with Next.js cache tags (`next: { tags: [...] }`).
-- **Client Components** (`'use client'` in `src/components`): Interactivity, client state, and browser APIs. Receive server data via props or read from dedicated providers.
-- **Services** (`src/services/*.ts`): Typed API fetch abstractions returning standardized `{ success, data, message }` responses.
-- **Server Actions** (`src/actions/*.ts`): All backend mutations with forwarded auth cookies and `revalidateTag` cache invalidation.
-- **Reactive State Providers**:
-  - `PointsProvider` (`src/providers/PointsProvider.tsx` / `usePoints()`): Global real-time balance and daily ad view/point synchronization across Navbar, Reader, ChapterRow, BulkUnlockModal, and RewardsClient.
-  - `SiteConfigProvider` (`src/providers/SiteConfigProvider.tsx` / `useSiteConfig()`): Global branding, system flags, and announcement banner state seeded from SSR `initialConfig` for 0ms CLS-free initial render.
-- **Redux Store** (`src/redux/`): Exclusively houses pure client-side UI preference state (`readerSlice.ts` for reader scroll/page mode, theme, and image zoom width with `localStorage` persistence). Zero RTK Query.
+## Frontend Patterns
+- **Server Components** (`src/app/**/page.tsx` default): Fetch initial data on the server via `services/*.ts`, construct metadata, and pass typed props.
+- **Client Components** (`src/components/**` with `'use client'`): Handle interactivity, event handlers, animations, and modal state.
+- **Services** (`src/services/*.ts`): Provide typed fetch wrappers returning `{ success, data, statusCode, message }` with `next: { tags }`.
+- **Actions** (`src/actions/*.ts`): Perform mutations via Server Actions, forward session cookies, and call `revalidateTag` to bust cached reads.

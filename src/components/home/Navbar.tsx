@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
-import api from "@/lib/api";
 import { UpdateCreatorProfileAction } from "@/actions/creator";
 import { LoginDialog } from "./LoginDialog";
 import { ChatDrawer } from "./ChatDrawer";

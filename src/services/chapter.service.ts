@@ -101,17 +101,37 @@ export const chapterService = {
         // Ignored when called in client context
       }
 
-      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/chapters/${id}`, {
+      const url = `${env.NEXT_PUBLIC_API_URL}/api/v1/chapters/${id}`;
+      // Known debt: no-store and next.tags are both set; caching strategy will be unified in Phase 2
+      const res = await fetch(url, {
         headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
         credentials: "include",
+        next: { tags: [`Chapter-${id}`] },
         cache: "no-store",
       });
       const data = await res.json();
-      if (!res.ok) return { success: false, data: null, message: data?.message || "Failed to fetch chapter" };
-      return { success: true, data: data.data };
+      
+      if (!res.ok) {
+        return { success: false, data: null, message: data?.message || "Failed to fetch chapter" };
+      }
+      return data;
     } catch (_error) {
       return { success: false, data: null, message: "Failed to fetch chapter" };
     }
-  }
-};
+  },
 
+  extractWebpageImages: async (url: string): Promise<ServiceResponse<{ images: string[] }>> => {
+    try {
+      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/chapters/extract-webpage-images`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ url }),
+      });
+      const data = await res.json();
+      return data;
+    } catch (_error) {
+      return { success: false, data: { images: [] }, message: "Failed to extract images from webpage" };
+    }
+  },
+};

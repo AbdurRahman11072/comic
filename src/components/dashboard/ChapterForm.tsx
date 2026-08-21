@@ -29,8 +29,9 @@ import {
 } from "lucide-react";
 import { CreateChapterAction, UpdateChapterAction } from "@/actions/chapter";
 import { seriesService } from "@/services/series.service";
+import { chapterService } from "@/services/chapter.service";
 import { useRouter } from "next/navigation";
-import api, { uploadImage } from "@/lib/api";
+import { uploadImage } from "@/lib/api";
 import { extractImagesFromZip, naturalNumericalSort } from "@/lib/zipExtractor";
 import { downloadChapterImagesAsZip } from "@/lib/zipDownloader";
 import { toast } from "react-hot-toast";
@@ -247,12 +248,12 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
     });
 
     try {
-      const res = await api.post("/api/v1/chapters/extract-webpage-images", { url: trimmed });
-      if (!res.data.success || !res.data.data?.images || res.data.data.images.length === 0) {
-        throw new Error(res.data.message || "No comic images found on the provided webpage.");
+      const res = await chapterService.extractWebpageImages(trimmed);
+      if (!res.success || !res.data?.images || res.data.images.length === 0) {
+        throw new Error(res.message || "No comic images found on the provided webpage.");
       }
 
-      const extractedUrls: string[] = res.data.data.images;
+      const extractedUrls: string[] = res.data.images;
       const newItems: ChapterPageItem[] = extractedUrls.map((url, idx) => ({
         id: `scraped-${Date.now()}-${idx}-${Math.random().toString(36).slice(2, 6)}`,
         previewUrl: url,

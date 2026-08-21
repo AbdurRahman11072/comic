@@ -11,7 +11,6 @@ import {
   Loader2, Play, Gift, AlertCircle,
   X, ExternalLink, CheckCircle2, Sparkles, Coins, Flame, Users, Copy, Check
 } from "lucide-react";
-import api from "@/lib/api";
 import Link from "next/link";
 import { adService, CustomAdItem } from "@/services/ad.service";
 import { referralService, ReferralStatsData } from "@/services/referral.service";

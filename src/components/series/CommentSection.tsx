@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useSession } from "@/lib/auth-client";
 import { MessageSquare, Send, MoreVertical, Trash2, Loader2, AlertCircle } from "lucide-react";
-import api from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
 import { toast } from "react-hot-toast";
 
