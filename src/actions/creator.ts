@@ -117,3 +117,35 @@ export const RequestFeatureSeriesAction = async (payload: {
     return { success: false, message: "Failed to submit feature request" };
   }
 };
+
+export const ReviewFeaturedRequestAction = async (
+  id: string,
+  payload: { status: "APPROVED" | "REJECTED"; notes?: string }
+) => {
+  try {
+    const cookieStore = await cookies();
+    const res = await fetch(
+      `${env.NEXT_PUBLIC_API_URL}/api/v1/moderator/featured-requests/${id}/review`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const data = await res.json();
+    if (res.ok && data.success) {
+      (revalidateTag as any)("FeaturedRequests");
+      (revalidateTag as any)("FeaturedSeries");
+      (revalidateTag as any)("CreatorFeatureRequests");
+      (revalidateTag as any)("UserPoints");
+      return data;
+    }
+    return { success: false, message: data?.message || "Failed to review featured request" };
+  } catch (_error) {
+    return { success: false, message: "Failed to review featured request" };
+  }
+};
