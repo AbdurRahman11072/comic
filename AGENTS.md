@@ -28,7 +28,7 @@ pnpm seed         # Seed admin + sample series (requires running backend)
   - Every route under `src/app/dashboard/*` is a thin async Server Component `page.tsx` that performs request-time SSR data fetching.
   - Interactive UI, forms, tables, filters, and modal managers are isolated in dedicated Client Components under `src/components/dashboard/[feature]/[Feature]Client.tsx`.
 - **Public Layout Route Group `(public)`**:
-  - All public-facing consumer routes (`/`, `/about`, `/add-series`, `/bookmarks`, `/channel/[id]`, `/contact`, `/dmca`, `/history`, `/latest`, `/privacy`, `/profile`, `/rewards`, `/series`, `/series/[slug]`, `/shop`, `/terms`, `/transactions`) reside under `src/app/(public)/`.
+  - All public-facing consumer routes (`/`, `/about`, `/bookmarks`, `/channel/[id]`, `/contact`, `/dmca`, `/history`, `/latest`, `/privacy`, `/profile`, `/rewards`, `/series`, `/series/[slug]`, `/shop`, `/terms`, `/transactions`) reside under `src/app/(public)/`.
   - Framed by a unified `src/app/(public)/layout.tsx` rendering `<Navbar />`, `<main className="flex-1 relative">{children}</main>`, and `<Footer />`.
   - **Exceptions**:
     - Chapter Reader (`src/app/series/[slug]/[chapterNumber]/page.tsx`) remains outside `(public)` for distraction-free reading without global Navbar collision.
