@@ -19,14 +19,16 @@ pnpm seed         # Seed admin + sample series (requires running backend)
 
 ## Key Conventions
 - **Auth**: Better-auth with email/password + admin plugin. Sessions via cookies (`credentials: 'include'`)
-- **Data Fetching (Single Convention)**:
-  - **Reads / SSR**: Typed fetch services (`src/services/*.ts`) called in async Server Components (`page.tsx`) with cache tags.
+- **Data Fetching & Component Patterns**:
+  - **Reads / SSR**: Server Components (`src/app/**/page.tsx` default) fetch initial data on the server via typed fetch services (`src/services/*.ts`) with cache tags, construct metadata via `constructMetadata`, and pass typed props down. Some services (`creator`, `ad`, `promo`, `referral`) also surface an HTTP `statusCode` for callers that need to distinguish error types (e.g. 404 vs 500).
   - **Mutations**: Server Actions (`src/actions/*.ts`) with `cookies()` forwarding and targeted `revalidateTag(...)` cache invalidation.
+  - **Interactive UI**: Client Components (`src/components/**` with `'use client'`) handle user interactivity, event handlers, local animations, and modal state.
   - **Client State**: `PointsProvider` and `SiteConfigProvider` contexts for instant cross-component client state synchronization.
   - **Redux Store**: `readerSlice` in `src/redux/store.ts` exclusively for client-side reader preferences (theme, layout, font-size). Zero RTK Query.
 - **Dashboard Architecture (Phase 2 Convention)**:
-  - Every route under `src/app/dashboard/*` is a thin async Server Component `page.tsx` that performs request-time SSR data fetching.
-  - Interactive UI, forms, tables, filters, and modal managers are isolated in dedicated Client Components under `src/components/dashboard/[feature]/[Feature]Client.tsx`.
+  - Every data-driven route under `src/app/dashboard/*` follows this pattern: a thin async Server Component `page.tsx` that performs request-time SSR data fetching, delegating interactive UI, forms, tables, filters, and modal managers to dedicated Client Components under `src/components/dashboard/[feature]/[Feature]Client.tsx`.
+  - A few routes (`cms`, `roles`, `comments`, `cashout`) are simple redirects/re-exports to other dashboard pages and have no Server Component data-fetching of their own.
+  - Legacy exception: some dashboard components (`UsersTable`, `SeriesTable`, `ChaptersTable`, `TransactionsTable`, and similar pre-Phase-2 components) live flat under `src/components/dashboard/` rather than in a `[feature]/` subfolder — the nested `[feature]/[Feature]Client.tsx` pattern applies to pages split during Phase 2 specifically.
 - **Public Layout Route Group `(public)`**:
   - All public-facing consumer routes (`/`, `/about`, `/bookmarks`, `/channel/[id]`, `/contact`, `/dmca`, `/history`, `/latest`, `/privacy`, `/profile`, `/rewards`, `/series`, `/series/[slug]`, `/shop`, `/terms`, `/transactions`) reside under `src/app/(public)/`.
   - Framed by a unified `src/app/(public)/layout.tsx` rendering `<Navbar />`, `<main className="flex-1 relative">{children}</main>`, and `<Footer />`.
@@ -79,9 +81,3 @@ server/app/modules/{feature}/
 ├── {feature}.controller.ts # HTTP handlers, uses asyncHandler + sendResponse
 └── {feature}.routes.ts    # Route defs + authMiddleware
 ```
-
-## Frontend Patterns
-- **Server Components** (`src/app/**/page.tsx` default): Fetch initial data on the server via `services/*.ts`, construct metadata, and pass typed props.
-- **Client Components** (`src/components/**` with `'use client'`): Handle interactivity, event handlers, animations, and modal state.
-- **Services** (`src/services/*.ts`): Provide typed fetch wrappers returning `{ success, data, statusCode, message }` with `next: { tags }`.
-- **Actions** (`src/actions/*.ts`): Perform mutations via Server Actions, forward session cookies, and call `revalidateTag` to bust cached reads.
