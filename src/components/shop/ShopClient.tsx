@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { Button } from "@/components/ui/button";
 import { CreateCheckoutSessionAction } from "@/actions/payment";
 import { Loader2, Zap, Shield, Rocket, Sparkles, AlertTriangle } from "lucide-react";
@@ -60,10 +58,7 @@ function ShopContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <Navbar />
-
-      <main className="flex-1 max-w-[72rem] w-full mx-auto px-4 py-16">
+    <div className="max-w-[72rem] w-full mx-auto px-4 py-16">
         <div className="text-center space-y-4 mb-12">
           <h1 className="text-4xl md:text-5xl font-heading tracking-tight">Point Shop</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
@@ -172,9 +167,6 @@ function ShopContent() {
             <p className="text-sm text-muted-foreground">Purchasing points directly supports the platform and the expansion of our library.</p>
           </div>
         </div>
-      </main>
-
-      <Footer />
 
       <LoginDialog
         open={loginOpen}

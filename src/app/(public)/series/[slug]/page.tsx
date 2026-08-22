@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { SeriesDetailContent } from "@/components/series/SeriesDetailContent";
 import { seriesService } from "@/services/series.service";
 import { type Series } from "@/types";
@@ -42,12 +40,8 @@ export default async function SeriesPage({ params }: Props) {
 
   if (!series) {
     return (
-      <div className="flex flex-col min-h-screen">
-        <Navbar />
-        <main className="flex-1 flex items-center justify-center">
-          <h1 className="text-2xl font-bold text-foreground/50">Series not found</h1>
-        </main>
-        <Footer />
+      <div className="flex items-center justify-center py-32">
+        <h1 className="text-2xl font-bold text-foreground/50">Series not found</h1>
       </div>
     );
   }
@@ -74,12 +68,8 @@ export default async function SeriesPage({ params }: Props) {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main className="flex-1 relative">
-        <SeriesDetailContent series={mappedSeries as any} />
-      </main>
-      <Footer />
+    <div className="relative w-full">
+      <SeriesDetailContent series={mappedSeries as any} />
     </div>
   );
 }

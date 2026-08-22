@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { useSession } from "@/lib/auth-client";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
@@ -319,13 +317,11 @@ function RewardsContent() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
-      <Navbar />
-
+    <div className="relative overflow-hidden w-full">
       <div className="fixed -top-40 -left-40 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed -bottom-40 -right-40 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
 
-      <main className="flex-1 max-w-[48rem] w-full mx-auto px-4 py-12 relative z-10 flex flex-col items-center">
+      <div className="max-w-[48rem] w-full mx-auto px-4 py-12 relative z-10 flex flex-col items-center">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-heading tracking-tight mb-3">Rewards Center</h1>
           <p className="text-muted-foreground text-base max-w-lg mx-auto">
@@ -510,9 +506,7 @@ function RewardsContent() {
           <PromoRedeemBox />
           <ReferralRewardsCard onOpenLogin={() => setLoginOpen(true)} />
         </div>
-      </main>
-
-      <Footer />
+      </div>
 
       {/* Direct Login Modal on Rewards Page */}
       <LoginDialog

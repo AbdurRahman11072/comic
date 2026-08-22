@@ -3,11 +3,9 @@
 import { useEffect, useState } from "react";
 import { AnnounceBanner } from "@/components/home/AnnounceBanner";
 import { FilterTabs } from "@/components/home/FilterTabs";
-import { Footer } from "@/components/home/Footer";
 import { GridCard } from "@/components/home/GridCard";
 import { HeroSlider } from "@/components/home/HeroSlider";
 import { HSlider } from "@/components/home/HSlider";
-import { Navbar } from "@/components/home/Navbar";
 import { PosterCard } from "@/components/home/PosterCard";
 import { SectionHeader } from "@/components/home/SectionHeader";
 import { SocialRow } from "@/components/home/SocialRow";
@@ -66,14 +64,12 @@ export function HomeClient() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
+    <div className="relative overflow-hidden w-full">
       {/* Decorative background blobs */}
       <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 -translate-x-1/2 translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <Navbar />
-
-      <main className="flex-1 max-w-[72rem] w-full mx-auto px-4 pb-12 relative z-10">
+      <div className="max-w-[72rem] w-full mx-auto px-4 pb-12 relative z-10">
         <HeroSlider />
         <AnnounceBanner />
         <SocialRow />
@@ -172,9 +168,7 @@ export function HomeClient() {
         )}
         {/* ── HOME BOTTOM AD BANNER ── */}
         <AdBanner placement="home_bottom" />
-      </main>
-
-      <Footer />
+      </div>
     </div>
   );
 }

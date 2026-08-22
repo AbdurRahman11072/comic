@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { GridCard } from "@/components/home/GridCard";
 import { SeriesFilter } from "@/components/series/SeriesFilter";
 import { type Series } from "@/types";
@@ -138,19 +136,15 @@ function SeriesContent() {
 
 export function SeriesClient() {
   return (
-    <div className="flex flex-col min-h-screen bg-background relative overflow-hidden">
+    <div className="relative overflow-hidden w-full">
       <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 -translate-x-1/4 translate-y-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
 
-      <Navbar />
-
-      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+      <div className="max-w-[1400px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="w-10 h-10 animate-spin text-primary" /></div>}>
           <SeriesContent />
         </Suspense>
-      </main>
-
-      <Footer />
+      </div>
     </div>
   );
 }

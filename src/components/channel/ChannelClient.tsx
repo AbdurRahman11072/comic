@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { creatorService, PublicChannelData } from "@/services/creator.service";
 import { RedeemPromoCodeAction } from "@/actions/promo";
 import {
@@ -41,30 +39,22 @@ export function ChannelClient({ channelId }: { channelId: string }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-        <Footer />
+      <div className="flex-1 flex items-center justify-center py-32">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   if (isError || !profile) {
     return (
-      <div className="min-h-screen bg-background flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
-          <h2 className="text-2xl font-bold mb-2">Creator Channel Not Found</h2>
-          <p className="text-muted-foreground text-sm mb-6">
-            The creator channel you are looking for does not exist or has been removed.
-          </p>
-          <Link href="/series" className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold">
-            Browse All Series
-          </Link>
-        </div>
-        <Footer />
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-4 py-32">
+        <h2 className="text-2xl font-bold mb-2">Creator Channel Not Found</h2>
+        <p className="text-muted-foreground text-sm mb-6">
+          The creator channel you are looking for does not exist or has been removed.
+        </p>
+        <Link href="/series" className="px-6 py-2.5 bg-primary text-white rounded-xl font-bold">
+          Browse All Series
+        </Link>
       </div>
     );
   }
@@ -94,10 +84,7 @@ export function ChannelClient({ channelId }: { channelId: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col selection:bg-primary/30">
-      <Navbar />
-
-      <main className="flex-1 pb-16">
+    <div className="w-full pb-16 selection:bg-primary/30">
         {/* Banner Section */}
         <div className="relative h-64 md:h-80 w-full bg-neutral-900 overflow-hidden">
           {profile.bannerUrl && (
@@ -320,9 +307,6 @@ export function ChannelClient({ channelId }: { channelId: string }) {
             </div>
           )}
         </div>
-      </main>
-
-      <Footer />
     </div>
   );
 }

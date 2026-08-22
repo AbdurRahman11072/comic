@@ -1,5 +1,3 @@
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { siteService } from "@/services/site.service";
 import { Sparkles, BookOpen, Users, HeartHandshake, ShieldCheck, Mail } from "lucide-react";
 import Link from "next/link";
@@ -23,10 +21,7 @@ export default async function AboutUsPage() {
   const appTagline = config?.appTagline || "Discover Unlimited Stories, Webtoons, Manga & Comics.";
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <Navbar />
-
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-12 space-y-12">
+    <div className="max-w-4xl w-full mx-auto px-4 py-12 space-y-12">
         {/* Hero Section */}
         <div className="space-y-4 text-center border-b border-white/10 pb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
@@ -116,9 +111,6 @@ export default async function AboutUsPage() {
             </section>
           </div>
         )}
-      </main>
-
-      <Footer />
     </div>
   );
 }

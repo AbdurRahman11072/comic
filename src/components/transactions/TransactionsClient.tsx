@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Navbar } from "@/components/home/Navbar";
-import { Footer } from "@/components/home/Footer";
 import { useSession } from "@/lib/auth-client";
 import { LoginDialog } from "@/components/home/LoginDialog";
 import {
@@ -194,10 +192,8 @@ export function TransactionsClient() {
   });
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground relative overflow-hidden">
-      <Navbar />
-
-      <main className="flex-1 max-w-[72rem] w-full mx-auto px-4 py-12 relative z-10 space-y-8">
+    <div className="relative w-full">
+      <div className="max-w-[72rem] w-full mx-auto px-4 py-12 relative z-10 space-y-8">
         {/* Unauthenticated View */}
         {!sessionLoading && !session ? (
           <div className="glass rounded-3xl p-8 sm:p-12 border border-white/10 text-center max-w-xl mx-auto space-y-6 shadow-2xl">
@@ -416,9 +412,7 @@ export function TransactionsClient() {
             </div>
           </>
         )}
-      </main>
-
-      <Footer />
+      </div>
 
       {/* Login Dialog for Unauthenticated Users */}
       <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} onAuthSuccess={fetchTransactionsData} />
