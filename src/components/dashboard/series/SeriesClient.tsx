@@ -434,19 +434,8 @@ export function SeriesClient({
 
                     {/* Chapters */}
                     <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-2">
-                        <div>
-                          <span className="font-bold text-white text-sm">{item._count?.chapters || 0}</span>
-                          <span className="text-[10px] text-muted-foreground block">chapters</span>
-                        </div>
-                        <Link
-                          href={`/dashboard/chapters/add?seriesId=${item.id}`}
-                          className="p-1 rounded-md bg-white/5 hover:bg-primary/20 text-muted-foreground hover:text-primary transition border border-white/10"
-                          title="Add new chapter"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </Link>
-                      </div>
+                      <span className="font-bold text-white text-sm">{item._count?.chapters || 0}</span>
+                      <span className="text-[10px] text-muted-foreground block">chapters</span>
                     </td>
 
                     {/* Views & Rating */}
@@ -512,6 +501,14 @@ export function SeriesClient({
                     {/* Actions Toolbar */}
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        <Link
+                          href={`/dashboard/chapters/add?seriesId=${item.id}`}
+                          className="p-2 rounded-lg glass glass-hover text-emerald-400/80 hover:text-emerald-400 hover:bg-emerald-500/10 transition"
+                          title="Add New Chapter"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </Link>
+
                         <Link
                           href={`/dashboard/series/${item.id}/analytics`}
                           className="p-2 rounded-lg glass glass-hover text-cyan-400/80 hover:text-cyan-400 hover:bg-cyan-500/10 transition"

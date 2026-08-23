@@ -96,6 +96,12 @@ const getAllSeries = async (query: any) => {
           },
         },
       },
+      _count: {
+        select: {
+          chapters: true,
+          bookmarks: true,
+        },
+      },
     },
   });
 
