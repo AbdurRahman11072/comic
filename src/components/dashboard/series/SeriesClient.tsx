@@ -73,7 +73,7 @@ export function SeriesClient({
 
   const role = userRole?.toLowerCase() || (session?.user as any)?.role?.toLowerCase() || "creator";
   const isModOrAdmin = ["admin", "moderator"].includes(role);
-  const canCreate = ["creator", "admin"].includes(role);
+  const canCreate = role === "creator";
 
   // Request Feature Modal State for Creators
   const [requestModalSeries, setRequestModalSeries] = useState<UnifiedSeriesItem | null>(null);
@@ -664,13 +664,15 @@ export function SeriesClient({
                           </button>
                         )}
 
-                        <Link
-                          href={`/dashboard/chapters/add?seriesId=${item.id}`}
-                          className="p-2 rounded-lg glass glass-hover text-emerald-400/80 hover:text-emerald-400 hover:bg-emerald-500/10 transition"
-                          title="Add New Chapter"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </Link>
+                        {canCreate && (
+                          <Link
+                            href={`/dashboard/chapters/add?seriesId=${item.id}`}
+                            className="p-2 rounded-lg glass glass-hover text-emerald-400/80 hover:text-emerald-400 hover:bg-emerald-500/10 transition"
+                            title="Add New Chapter"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </Link>
+                        )}
 
                         <Link
                           href={`/dashboard/series/${item.id}/analytics`}
@@ -688,13 +690,15 @@ export function SeriesClient({
                           <Layers className="w-3.5 h-3.5" />
                         </Link>
 
-                        <Link
-                          href={`/dashboard/series/edit/${item.id}`}
-                          className="p-2 rounded-lg glass glass-hover text-primary/80 hover:text-primary hover:bg-primary/10 transition"
-                          title="Edit Series Details"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </Link>
+                        {canCreate && (
+                          <Link
+                            href={`/dashboard/series/edit/${item.id}`}
+                            className="p-2 rounded-lg glass glass-hover text-primary/80 hover:text-primary hover:bg-primary/10 transition"
+                            title="Edit Series Details"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </Link>
+                        )}
 
                         <Link
                           href={`/series/${item.slug}`}

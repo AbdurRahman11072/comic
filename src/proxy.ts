@@ -76,6 +76,18 @@ export default async function proxy(request: NextRequest) {
       }
     }
 
+    // Creator Only (Authoring)
+    if (
+      path.startsWith('/dashboard/series/add') ||
+      path.startsWith('/dashboard/series/edit') ||
+      path.startsWith('/dashboard/chapters/add') ||
+      path.startsWith('/dashboard/chapters/edit')
+    ) {
+      if (userRole !== 'creator') {
+        return NextResponse.redirect(new URL('/dashboard/series', request.url));
+      }
+    }
+
     // Creator and Admin Only
     if (
       path.startsWith('/dashboard/earnings') ||
