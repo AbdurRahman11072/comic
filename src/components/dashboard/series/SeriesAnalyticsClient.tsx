@@ -55,14 +55,17 @@ const CustomChartTooltip = ({ active, payload }: any) => {
 interface SeriesAnalyticsClientProps {
   initialData?: SingleSeriesAnalyticsData | null;
   seriesId: string;
+  userRole?: string;
 }
 
 export function SeriesAnalyticsClient({
   initialData = null,
   seriesId: _seriesId,
+  userRole,
 }: SeriesAnalyticsClientProps) {
   const [data] = useState<SingleSeriesAnalyticsData | null>(initialData);
   const [mounted, setMounted] = useState(false);
+  const canModify = userRole?.toLowerCase() === "creator";
 
   useEffect(() => {
     setMounted(true);
@@ -159,16 +162,20 @@ export function SeriesAnalyticsClient({
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2 flex-wrap self-end lg:self-center">
-            <Link href={`/dashboard/chapters/add?seriesId=${series.id}`}>
-              <button className="flex items-center gap-1.5 px-4 py-2 bg-primary rounded-xl text-xs font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition cursor-pointer">
-                <Plus className="w-3.5 h-3.5" /> Add Chapter
-              </button>
-            </Link>
-            <Link href={`/dashboard/series/edit/${series.id}`}>
-              <button className="flex items-center gap-1.5 px-3.5 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold border border-white/10 transition cursor-pointer">
-                <Edit2 className="w-3.5 h-3.5" /> Edit
-              </button>
-            </Link>
+            {canModify && (
+              <>
+                <Link href={`/dashboard/chapters/add?seriesId=${series.id}`}>
+                  <button className="flex items-center gap-1.5 px-4 py-2 bg-primary rounded-xl text-xs font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition cursor-pointer">
+                    <Plus className="w-3.5 h-3.5" /> Add Chapter
+                  </button>
+                </Link>
+                <Link href={`/dashboard/series/edit/${series.id}`}>
+                  <button className="flex items-center gap-1.5 px-3.5 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold border border-white/10 transition cursor-pointer">
+                    <Edit2 className="w-3.5 h-3.5" /> Edit
+                  </button>
+                </Link>
+              </>
+            )}
             <Link href={`/series/${series.slug}`} target="_blank">
               <button className="flex items-center gap-1.5 px-3.5 py-2 bg-white/5 hover:bg-white/10 text-white rounded-xl text-xs font-bold border border-white/10 transition cursor-pointer">
                 <ExternalLink className="w-3.5 h-3.5" /> View Public
@@ -431,13 +438,15 @@ export function SeriesAnalyticsClient({
                       >
                         <Eye className="w-4 h-4" />
                       </Link>
-                      <Link
-                        href={`/dashboard/chapters/edit/${c.id}`}
-                        className="p-2 hover:bg-primary/10 rounded-lg text-muted-foreground hover:text-primary transition inline-block"
-                        title="Edit Chapter"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Link>
+                      {canModify && (
+                        <Link
+                          href={`/dashboard/chapters/edit/${c.id}`}
+                          className="p-2 hover:bg-primary/10 rounded-lg text-muted-foreground hover:text-primary transition inline-block"
+                          title="Edit Chapter"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Link>
+                      )}
                     </td>
                   </tr>
                 ))}

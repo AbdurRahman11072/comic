@@ -1,4 +1,5 @@
 import { creatorService } from "@/services/creator.service";
+import { userService } from "@/services/user.service";
 import { SeriesAnalyticsClient } from "@/components/dashboard/series/SeriesAnalyticsClient";
 import { Suspense } from "react";
 import { Loader2 } from "lucide-react";
@@ -14,7 +15,11 @@ interface Props {
 
 export default async function SeriesAnalyticsPage({ params }: Props) {
   const { id } = await params;
-  const res = await creatorService.getSingleSeriesAnalytics(id);
+  const [session, res] = await Promise.all([
+    userService.getUserSession(),
+    creatorService.getSingleSeriesAnalytics(id),
+  ]);
+  const role = (session?.user as any)?.role?.toLowerCase() ?? "creator";
   const data = res.success ? res.data : null;
 
   return (
@@ -25,7 +30,7 @@ export default async function SeriesAnalyticsPage({ params }: Props) {
         </div>
       }
     >
-      <SeriesAnalyticsClient initialData={data} seriesId={id} />
+      <SeriesAnalyticsClient initialData={data} seriesId={id} userRole={role} />
     </Suspense>
   );
 }

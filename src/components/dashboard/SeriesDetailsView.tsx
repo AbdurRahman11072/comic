@@ -39,6 +39,7 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const canModify = userRole?.toLowerCase() === "creator";
 
   if (!series) {
     return (
@@ -104,21 +105,25 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
               <BarChart3 className="w-3.5 h-3.5 mr-1.5" /> Diagnostics & Analytics
             </Button>
           </Link>
-          <Link href={`/dashboard/series/edit/${series.id}`}>
-            <Button variant="outline" size="sm" className="text-xs border-white/10 hover:bg-white/5 rounded-xl h-9">
-              <Edit2 className="w-3.5 h-3.5 mr-1.5" /> Edit Series
-            </Button>
-          </Link>
+          {canModify && (
+            <Link href={`/dashboard/series/edit/${series.id}`}>
+              <Button variant="outline" size="sm" className="text-xs border-white/10 hover:bg-white/5 rounded-xl h-9">
+                <Edit2 className="w-3.5 h-3.5 mr-1.5" /> Edit Series
+              </Button>
+            </Link>
+          )}
           <Link href={`/series/${series.slug}`} target="_blank">
             <Button variant="secondary" size="sm" className="text-xs bg-white/10 hover:bg-white/15 rounded-xl h-9">
               <ExternalLink className="w-3.5 h-3.5 mr-1.5" /> View Public Page
             </Button>
           </Link>
-          <Link href={`/dashboard/chapters/add?seriesId=${series.id}`}>
-            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20 text-xs rounded-xl h-9 px-4">
-              <Plus className="w-4 h-4 mr-1" /> Upload Chapter
-            </Button>
-          </Link>
+          {canModify && (
+            <Link href={`/dashboard/chapters/add?seriesId=${series.id}`}>
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20 text-xs rounded-xl h-9 px-4">
+                <Plus className="w-4 h-4 mr-1" /> Upload Chapter
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
 
@@ -263,11 +268,13 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
                 className="pl-9 h-9 text-xs bg-background/50 border-white/10 rounded-xl"
               />
             </div>
-            <Link href={`/dashboard/chapters/add?seriesId=${series.id}`}>
-              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs rounded-xl h-9 shadow-md">
-                <Plus className="w-3.5 h-3.5 mr-1" /> Add Chapter
-              </Button>
-            </Link>
+            {canModify && (
+              <Link href={`/dashboard/chapters/add?seriesId=${series.id}`}>
+                <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs rounded-xl h-9 shadow-md">
+                  <Plus className="w-3.5 h-3.5 mr-1" /> Add Chapter
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -286,7 +293,7 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
                   {searchTerm ? "Try searching for a different number or title." : "Start uploading comic pages to release your first chapter to readers."}
                 </p>
               </div>
-              {!searchTerm && (
+              {canModify && !searchTerm && (
                 <Link href={`/dashboard/chapters/add?seriesId=${series.id}`}>
                   <Button size="sm" className="bg-primary text-primary-foreground font-bold rounded-xl text-xs px-5 shadow-lg shadow-primary/20">
                     <Plus className="w-4 h-4 mr-1.5" /> Upload First Chapter
@@ -364,13 +371,15 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
                             <Eye className="w-4 h-4" />
                           </Link>
 
-                          <Link
-                            href={`/dashboard/chapters/edit/${c.id}`}
-                            className="p-2 hover:bg-primary/10 text-neutral-400 hover:text-primary rounded-xl transition"
-                            title="Edit Chapter"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Link>
+                          {canModify && (
+                            <Link
+                              href={`/dashboard/chapters/edit/${c.id}`}
+                              className="p-2 hover:bg-primary/10 text-neutral-400 hover:text-primary rounded-xl transition"
+                              title="Edit Chapter"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Link>
+                          )}
 
                           <button
                             type="button"
