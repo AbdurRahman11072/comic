@@ -179,7 +179,7 @@ export function CreatorsDirectoryClient({
                     <ExternalLink className="w-3.5 h-3.5" />
                   </Link>
                   <Link
-                    href={`/dashboard/admin-series?search=${encodeURIComponent(c.name)}`}
+                    href={`/dashboard/series?search=${encodeURIComponent(c.name)}`}
                     className="px-3.5 py-2.5 glass glass-hover text-white/70 hover:text-white rounded-xl text-xs font-bold transition"
                     title="View all series by this creator"
                   >

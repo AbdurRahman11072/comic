@@ -5,19 +5,19 @@ import Link from "next/link";
 import { seriesService } from "@/services/series.service";
 import { userService } from "@/services/user.service";
 import { siteService } from "@/services/site.service";
-import { DeleteSeriesAction, ToggleFeaturedAction } from "@/actions/series";
+import { DeleteSeriesAction, ToggleFeaturedAction, AdminHideSeriesAction } from "@/actions/series";
 import { RequestFeatureSeriesAction } from "@/actions/creator";
 import { authClient } from "@/lib/auth-client";
 import {
   BookOpen, Search, Filter, Star,
   ExternalLink, Edit2, Loader2,
   RefreshCw, Trash2, BarChart3, Layers, Plus,
-  Sparkles, Eye, Coins, Calendar, Check,
-  TrendingUp, Library
+  Sparkles, Eye, EyeOff, Coins, Calendar, Check,
+  TrendingUp, Library, ShieldAlert
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-export interface CreatorSeriesItem {
+export interface UnifiedSeriesItem {
   id: string;
   title: string;
   slug: string;
@@ -26,50 +26,70 @@ export interface CreatorSeriesItem {
   status: string;
   totalViews: number;
   rating: number;
+  isHidden?: boolean;
+  hiddenReason?: string | null;
   createdAt: string;
   updatedAt: string;
+  creator?: {
+    id: string;
+    name?: string;
+    channelName?: string;
+    email?: string;
+    image?: string | null;
+    profileImage?: string | null;
+  } | null;
   genres: { id: string; name: string }[];
   featured?: { id: string } | null;
   _count?: {
     chapters: number;
+    reports?: number;
     bookmarks?: number;
   };
 }
 
 interface SeriesClientProps {
-  initialSeries: CreatorSeriesItem[];
+  initialSeries: UnifiedSeriesItem[];
+  initialTotal?: number;
   userRole?: string;
   creatorId?: string;
 }
 
 export function SeriesClient({
   initialSeries = [],
+  initialTotal = 0,
   userRole = "creator",
   creatorId,
 }: SeriesClientProps) {
   const { data: session } = authClient.useSession();
-  const [seriesList, setSeriesList] = useState<CreatorSeriesItem[]>(initialSeries);
+  const [seriesList, setSeriesList] = useState<UnifiedSeriesItem[]>(initialSeries);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
+  const [hiddenFilter, setHiddenFilter] = useState("all");
   const [sort, setSort] = useState("latest");
+  const [_total, setTotal] = useState(initialTotal || initialSeries.length);
 
   const role = userRole?.toLowerCase() || (session?.user as any)?.role?.toLowerCase() || "creator";
   const isModOrAdmin = ["admin", "moderator"].includes(role);
   const canCreate = ["creator", "admin"].includes(role);
 
   // Request Feature Modal State for Creators
-  const [requestModalSeries, setRequestModalSeries] = useState<CreatorSeriesItem | null>(null);
+  const [requestModalSeries, setRequestModalSeries] = useState<UnifiedSeriesItem | null>(null);
   const [durationDays, setDurationDays] = useState<number>(7);
   const [pitchNotes, setPitchNotes] = useState<string>("");
   const [submittingRequest, setSubmittingRequest] = useState<boolean>(false);
   const [userPoints, setUserPoints] = useState<number>((session?.user as any)?.points || 0);
   const [baseFee, setBaseFee] = useState<number>(500);
 
+  // Staff Hide Modal State
+  const [selectedSeriesForHide, setSelectedSeriesForHide] = useState<UnifiedSeriesItem | null>(null);
+  const [hideReason, setHideReason] = useState("");
+  const [updatingHide, setUpdatingHide] = useState(false);
+
   // Delete Modal State
-  const [seriesToDelete, setSeriesToDelete] = useState<CreatorSeriesItem | null>(null);
+  const [seriesToDelete, setSeriesToDelete] = useState<UnifiedSeriesItem | null>(null);
   const [deleting, setDeleting] = useState(false);
 
   // Debounce search
@@ -110,20 +130,35 @@ export function SeriesClient({
   const fetchSeries = async () => {
     setLoading(true);
     try {
-      const fetchParams: any = { limit: 100 };
-      if (creatorId) {
-        fetchParams.creatorId = creatorId;
-      }
-      if (statusFilter !== "ALL") fetchParams.status = statusFilter;
-      if (typeFilter !== "ALL") fetchParams.type = typeFilter;
-      if (sort) fetchParams.sort = sort;
-      if (debouncedSearch.trim()) fetchParams.search = debouncedSearch.trim();
+      if (isModOrAdmin) {
+        const params: any = { page: 1, limit: 100, sort };
+        if (debouncedSearch.trim()) params.search = debouncedSearch.trim();
+        if (statusFilter !== "ALL") params.status = statusFilter;
+        if (typeFilter !== "ALL") params.type = typeFilter;
+        if (hiddenFilter !== "all") params.isHidden = hiddenFilter;
 
-      const res = await seriesService.getAllSeries(fetchParams);
-      if (res.success && Array.isArray(res.data)) {
-        setSeriesList(res.data);
+        const data = await seriesService.getAdminAllSeries(params);
+        if (data.success && Array.isArray(data.data)) {
+          setSeriesList(data.data);
+          setTotal(data.pagination?.total || data.meta?.total || data.data.length);
+        } else {
+          toast.error(data.message || "Failed to load series catalog.");
+        }
       } else {
-        toast.error(res.message || "Failed to refresh series list.");
+        const fetchParams: any = { limit: 100 };
+        if (creatorId) fetchParams.creatorId = creatorId;
+        if (statusFilter !== "ALL") fetchParams.status = statusFilter;
+        if (typeFilter !== "ALL") fetchParams.type = typeFilter;
+        if (sort) fetchParams.sort = sort;
+        if (debouncedSearch.trim()) fetchParams.search = debouncedSearch.trim();
+
+        const res = await seriesService.getAllSeries(fetchParams);
+        if (res.success && Array.isArray(res.data)) {
+          setSeriesList(res.data);
+          setTotal(res.pagination?.total || res.meta?.total || res.data.length);
+        } else {
+          toast.error(res.message || "Failed to refresh series list.");
+        }
       }
     } catch (_err) {
       toast.error("Failed to load series catalog.");
@@ -138,7 +173,8 @@ export function SeriesClient({
     const totalChapters = seriesList.reduce((acc, s) => acc + (s._count?.chapters || 0), 0);
     const totalViews = seriesList.reduce((acc, s) => acc + (s.totalViews || 0), 0);
     const ongoingCount = seriesList.filter((s) => s.status === "ONGOING").length;
-    return { totalSeries, totalChapters, totalViews, ongoingCount };
+    const hiddenCount = seriesList.filter((s) => s.isHidden).length;
+    return { totalSeries, totalChapters, totalViews, ongoingCount, hiddenCount };
   }, [seriesList]);
 
   // Filtered & sorted series for view
@@ -148,19 +184,21 @@ export function SeriesClient({
         debouncedSearch === "" ||
         item.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         item.slug.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        item.genres?.some((g) => g.name.toLowerCase().includes(debouncedSearch.toLowerCase()));
+        item.genres?.some((g) => g.name.toLowerCase().includes(debouncedSearch.toLowerCase())) ||
+        (isModOrAdmin && (item.creator?.name?.toLowerCase().includes(debouncedSearch.toLowerCase()) || item.creator?.email?.toLowerCase().includes(debouncedSearch.toLowerCase())));
 
       const matchesStatus = statusFilter === "ALL" || item.status === statusFilter;
       const matchesType = typeFilter === "ALL" || item.type === typeFilter;
+      const matchesHidden = hiddenFilter === "all" || String(!!item.isHidden) === hiddenFilter;
 
-      return matchesSearch && matchesStatus && matchesType;
+      return matchesSearch && matchesStatus && matchesType && matchesHidden;
     }).sort((a, b) => {
       if (sort === "popular") return (b.totalViews || 0) - (a.totalViews || 0);
       if (sort === "rating") return (b.rating || 0) - (a.rating || 0);
       if (sort === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       return new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime();
     });
-  }, [seriesList, debouncedSearch, statusFilter, typeFilter, sort]);
+  }, [seriesList, debouncedSearch, statusFilter, typeFilter, hiddenFilter, sort, isModOrAdmin]);
 
   // Delete Action
   const handleDeleteSeries = async () => {
@@ -182,7 +220,7 @@ export function SeriesClient({
     }
   };
 
-  // Staff Featured Toggle
+  // Staff Featured Toggle (1-click)
   const handleToggleFeatured = async (id: string) => {
     try {
       const data = await ToggleFeaturedAction(id);
@@ -201,6 +239,37 @@ export function SeriesClient({
     }
   };
 
+  // Staff Hide / Restore Action
+  const handleToggleHide = async () => {
+    if (!selectedSeriesForHide) return;
+    setUpdatingHide(true);
+    const newHiddenState = !selectedSeriesForHide.isHidden;
+    const reason = newHiddenState ? (hideReason.trim() || "Hidden by administration") : null;
+
+    try {
+      const data = await AdminHideSeriesAction(selectedSeriesForHide.id, newHiddenState, reason);
+
+      if (data.success) {
+        toast.success(newHiddenState ? "Series hidden from public" : "Series restored to public");
+        setSeriesList((prev) =>
+          prev.map((s) =>
+            s.id === selectedSeriesForHide.id
+              ? { ...s, isHidden: newHiddenState, hiddenReason: data.data?.hiddenReason || reason }
+              : s
+          )
+        );
+        setSelectedSeriesForHide(null);
+        setHideReason("");
+      } else {
+        toast.error(data.message || "Failed to update series visibility.");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to update series visibility.");
+    } finally {
+      setUpdatingHide(false);
+    }
+  };
+
   // Calculate dynamic point cost based on duration
   const getMultiplier = (days: number) => {
     if (days >= 28) return 4;
@@ -209,7 +278,7 @@ export function SeriesClient({
   };
   const totalCost = baseFee * getMultiplier(durationDays);
 
-  // Submit Feature Request Action
+  // Submit Feature Request Action for Creators
   const handleSubmitFeatureRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!requestModalSeries) return;
@@ -249,10 +318,13 @@ export function SeriesClient({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2 text-white">
-            <BookOpen className="w-6 h-6 text-primary" /> Series & Studio Management
+            <BookOpen className="w-6 h-6 text-primary" />
+            {isModOrAdmin ? "Series & Content Moderation" : "My Series & Studio Management"}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Publish, edit, upload chapters, and track engagement across your comic catalog.
+            {isModOrAdmin
+              ? "Manage all platform series, monitor chapter counts, handle copyright/DMCA reports, and moderate content."
+              : "Publish, edit, upload chapters, and track engagement across your comic catalog."}
           </p>
         </div>
 
@@ -261,7 +333,7 @@ export function SeriesClient({
             onClick={() => fetchSeries()}
             disabled={loading}
             className="p-2.5 rounded-xl glass glass-hover text-white/70 hover:text-white border border-white/10 cursor-pointer disabled:opacity-50"
-            title="Refresh Series"
+            title="Refresh Series Catalog"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-primary" : ""}`} />
           </button>
@@ -309,13 +381,27 @@ export function SeriesClient({
         </div>
 
         <div className="glass p-4 rounded-2xl border border-white/5 flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 shrink-0">
-            <TrendingUp className="w-5 h-5" />
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground font-medium">Active / Ongoing</p>
-            <p className="text-xl font-bold text-white tracking-tight">{stats.ongoingCount}</p>
-          </div>
+          {isModOrAdmin ? (
+            <>
+              <div className="w-10 h-10 rounded-xl bg-red-500/10 text-red-400 flex items-center justify-center border border-red-500/20 shrink-0">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground font-medium">Hidden / Flagged</p>
+                <p className="text-xl font-bold text-white tracking-tight">{stats.hiddenCount}</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20 shrink-0">
+                <TrendingUp className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground font-medium">Active / Ongoing</p>
+                <p className="text-xl font-bold text-white tracking-tight">{stats.ongoingCount}</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -328,7 +414,11 @@ export function SeriesClient({
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by series title, slug, or genre..."
+              placeholder={
+                isModOrAdmin
+                  ? "Search by series title, slug, genre, or creator name/email..."
+                  : "Search by series title, slug, or genre..."
+              }
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-primary/50 outline-none placeholder:text-muted-foreground/60"
             />
           </div>
@@ -340,6 +430,19 @@ export function SeriesClient({
             <Filter className="w-3.5 h-3.5" />
             <span>Filters:</span>
           </div>
+
+          {/* Visibility Filter for Staff */}
+          {isModOrAdmin && (
+            <select
+              value={hiddenFilter}
+              onChange={(e) => setHiddenFilter(e.target.value)}
+              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white outline-none cursor-pointer"
+            >
+              <option value="all" className="bg-neutral-900">All Visibility</option>
+              <option value="false" className="bg-neutral-900">Visible Only</option>
+              <option value="true" className="bg-neutral-900">Hidden / Flagged Only</option>
+            </select>
+          )}
 
           {/* Status Filter */}
           <select
@@ -385,7 +488,7 @@ export function SeriesClient({
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 space-y-3">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Loading your series catalog...</p>
+            <p className="text-sm text-muted-foreground">Loading series catalog...</p>
           </div>
         ) : filteredSeries.length > 0 ? (
           <div className="overflow-x-auto">
@@ -393,10 +496,12 @@ export function SeriesClient({
               <thead className="bg-white/[0.03] text-muted-foreground uppercase text-[10px] tracking-wider border-b border-white/10">
                 <tr>
                   <th className="px-5 py-3.5">Series</th>
+                  {isModOrAdmin && <th className="px-4 py-3.5">Creator</th>}
                   <th className="px-4 py-3.5">Chapters</th>
                   <th className="px-4 py-3.5">Views & Rating</th>
                   <th className="px-4 py-3.5">Status</th>
                   <th className="px-4 py-3.5">Promotion</th>
+                  {isModOrAdmin && <th className="px-4 py-3.5">Visibility</th>}
                   <th className="px-5 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
@@ -431,6 +536,24 @@ export function SeriesClient({
                         </div>
                       </div>
                     </td>
+
+                    {/* Creator Info (for Admin / Mod) */}
+                    {isModOrAdmin && (
+                      <td className="px-4 py-3.5 text-muted-foreground">
+                        {item.creator ? (
+                          <div className="max-w-[160px]">
+                            <p className="font-semibold text-white/90 truncate">
+                              {item.creator.channelName || item.creator.name || "Creator"}
+                            </p>
+                            {item.creator.email && (
+                              <p className="text-[10px] text-white/50 truncate font-mono">{item.creator.email}</p>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-white/40 italic">Platform / Official</span>
+                        )}
+                      </td>
+                    )}
 
                     {/* Chapters */}
                     <td className="px-4 py-3.5">
@@ -498,9 +621,49 @@ export function SeriesClient({
                       )}
                     </td>
 
+                    {/* Visibility Column (for Staff) */}
+                    {isModOrAdmin && (
+                      <td className="px-4 py-3.5">
+                        {item.isHidden ? (
+                          <div className="space-y-1">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
+                              <EyeOff className="w-3 h-3" /> HIDDEN
+                            </span>
+                            {item.hiddenReason && (
+                              <p className="text-[10px] text-red-300/80 line-clamp-1 max-w-[140px]" title={item.hiddenReason}>
+                                {item.hiddenReason}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            <Eye className="w-3 h-3" /> Visible
+                          </span>
+                        )}
+                      </td>
+                    )}
+
                     {/* Actions Toolbar */}
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
+                        {/* Staff Hide / Restore Button */}
+                        {isModOrAdmin && (
+                          <button
+                            onClick={() => {
+                              setSelectedSeriesForHide(item);
+                              setHideReason(item.hiddenReason || "");
+                            }}
+                            className={`p-2 rounded-lg transition cursor-pointer ${
+                              item.isHidden
+                                ? "bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400"
+                                : "bg-red-500/20 hover:bg-red-500/30 text-red-400"
+                            }`}
+                            title={item.isHidden ? "Restore / Unhide series" : "Hide series from public"}
+                          >
+                            {item.isHidden ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                          </button>
+                        )}
+
                         <Link
                           href={`/dashboard/chapters/add?seriesId=${item.id}`}
                           className="p-2 rounded-lg glass glass-hover text-emerald-400/80 hover:text-emerald-400 hover:bg-emerald-500/10 transition"
@@ -565,8 +728,10 @@ export function SeriesClient({
             <div>
               <h3 className="text-lg font-bold text-white">No Series Found</h3>
               <p className="text-sm text-muted-foreground max-w-sm mt-1">
-                {search || statusFilter !== "ALL" || typeFilter !== "ALL"
+                {search || statusFilter !== "ALL" || typeFilter !== "ALL" || hiddenFilter !== "all"
                   ? "No titles matched your active filter criteria."
+                  : isModOrAdmin
+                  ? "No series catalog entries exist on the platform yet."
                   : "You haven't published any series yet. Create your first series to get started!"}
               </p>
             </div>
@@ -581,6 +746,92 @@ export function SeriesClient({
           </div>
         )}
       </div>
+
+      {/* Staff Hide / Moderation Modal */}
+      {selectedSeriesForHide && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[150] flex items-center justify-center p-4">
+          <div className="bg-[#13161c] border border-red-500/30 rounded-3xl max-w-lg w-full p-6 space-y-5 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-red-500/20 text-red-400 flex items-center justify-center border border-red-500/30">
+                  {selectedSeriesForHide.isHidden ? <Eye className="w-6 h-6" /> : <EyeOff className="w-6 h-6" />}
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {selectedSeriesForHide.isHidden ? "Restore Series Visibility" : "Hide Series From Platform"}
+                  </h3>
+                  <p className="text-xs text-muted-foreground truncate max-w-[280px]">
+                    {selectedSeriesForHide.title}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedSeriesForHide(null)}
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-white hover:bg-white/10 transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {selectedSeriesForHide.isHidden
+                  ? "Restoring this series will make it immediately visible to all public readers across the catalog and search."
+                  : "Hiding this series will immediately unpublish it from public catalog, latest feeds, and search results."}
+              </p>
+
+              {!selectedSeriesForHide.isHidden && (
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-white/80">
+                    Moderation / Takedown Reason <span className="text-red-400">*</span>
+                  </label>
+                  <textarea
+                    value={hideReason}
+                    onChange={(e) => setHideReason(e.target.value)}
+                    placeholder="e.g. DMCA notice received, copyright violation, broken chapters..."
+                    rows={3}
+                    className="w-full p-3 rounded-xl bg-white/5 border border-white/10 text-white text-xs outline-none focus:border-red-500/50 resize-none placeholder:text-muted-foreground/50"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setSelectedSeriesForHide(null)}
+                className="px-4 py-2.5 rounded-xl border border-white/10 text-white/80 hover:bg-white/5 text-xs font-semibold transition"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleToggleHide}
+                disabled={updatingHide}
+                className={`px-5 py-2.5 rounded-xl font-bold text-xs transition shadow-lg flex items-center gap-2 cursor-pointer ${
+                  selectedSeriesForHide.isHidden
+                    ? "bg-emerald-500 text-white hover:bg-emerald-600 shadow-emerald-500/20"
+                    : "bg-red-500 text-white hover:bg-red-600 shadow-red-500/20"
+                }`}
+              >
+                {updatingHide ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Updating...
+                  </>
+                ) : selectedSeriesForHide.isHidden ? (
+                  <>
+                    <Eye className="w-3.5 h-3.5" /> Restore Series
+                  </>
+                ) : (
+                  <>
+                    <EyeOff className="w-3.5 h-3.5" /> Hide Series
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Creator Request Feature Modal */}
       {requestModalSeries && (

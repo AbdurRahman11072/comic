@@ -27,7 +27,7 @@ pnpm seed         # Seed admin + sample series (requires running backend)
   - **Redux Store**: `readerSlice` in `src/redux/store.ts` exclusively for client-side reader preferences (theme, layout, font-size). Zero RTK Query.
 - **Dashboard Architecture (Phase 2 Convention)**:
   - Every data-driven route under `src/app/dashboard/*` follows this pattern: a thin async Server Component `page.tsx` that performs request-time SSR data fetching, delegating interactive UI, forms, tables, filters, and modal managers to dedicated Client Components under `src/components/dashboard/[feature]/[Feature]Client.tsx`.
-  - A few routes (`cms`, `roles`, `comments`, `cashout`) are simple redirects/re-exports to other dashboard pages and have no Server Component data-fetching of their own.
+  - A few routes (`cms`, `roles`, `comments`, `cashout`, `admin-series`) are simple redirects/re-exports to other dashboard pages and have no Server Component data-fetching of their own.
   - Legacy exception: some dashboard components (`UsersTable`, `SeriesTable`, `ChaptersTable`, `TransactionsTable`, and similar pre-Phase-2 components) live flat under `src/components/dashboard/` rather than in a `[feature]/` subfolder — the nested `[feature]/[Feature]Client.tsx` pattern applies to pages split during Phase 2 specifically.
 - **Public Layout Route Group `(public)`**:
   - All public-facing consumer routes (`/`, `/about`, `/bookmarks`, `/channel/[id]`, `/contact`, `/dmca`, `/history`, `/latest`, `/privacy`, `/profile`, `/rewards`, `/series`, `/series/[slug]`, `/shop`, `/terms`, `/transactions`) reside under `src/app/(public)/`.
