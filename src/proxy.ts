@@ -50,6 +50,7 @@ export default async function proxy(request: NextRequest) {
 
     // Admin Only
     if (
+      path.startsWith('/dashboard/revenue-distribution') ||
       path.startsWith('/dashboard/payments') ||
       path.startsWith('/dashboard/roles') ||
       path.startsWith('/dashboard/settings') ||

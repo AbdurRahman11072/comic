@@ -1,20 +1,34 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import Link from "next/link";
-import { seriesService } from "@/services/series.service";
-import { userService } from "@/services/user.service";
-import { siteService } from "@/services/site.service";
-import { DeleteSeriesAction, ToggleFeaturedAction, AdminHideSeriesAction } from "@/actions/series";
 import { RequestFeatureSeriesAction } from "@/actions/creator";
+import { AdminHideSeriesAction, DeleteSeriesAction, ToggleFeaturedAction } from "@/actions/series";
 import { authClient } from "@/lib/auth-client";
+import { seriesService } from "@/services/series.service";
+import { siteService } from "@/services/site.service";
+import { userService } from "@/services/user.service";
 import {
-  BookOpen, Search, Filter, Star,
-  ExternalLink, Edit2, Loader2,
-  RefreshCw, Trash2, BarChart3, Layers, Plus,
-  Sparkles, Eye, EyeOff, Coins, Calendar, Check,
-  TrendingUp, Library, ShieldAlert
+  BarChart3,
+  BookOpen,
+  Calendar, Check,
+  Coins,
+  Edit2,
+  ExternalLink,
+  Eye, EyeOff,
+  Filter,
+  Layers,
+  Library,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Search,
+  ShieldAlert,
+  Sparkles,
+  Star,
+  Trash2,
+  TrendingUp
 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 
 export interface UnifiedSeriesItem {
@@ -73,7 +87,7 @@ export function SeriesClient({
 
   const role = userRole?.toLowerCase() || (session?.user as any)?.role?.toLowerCase() || "creator";
   const isModOrAdmin = ["admin", "moderator"].includes(role);
-  const canCreate = role === "creator";
+  const canCreate = ["creator", "admin"].includes(role);
 
   // Request Feature Modal State for Creators
   const [requestModalSeries, setRequestModalSeries] = useState<UnifiedSeriesItem | null>(null);
@@ -664,15 +678,13 @@ export function SeriesClient({
                           </button>
                         )}
 
-                        {canCreate && (
-                          <Link
-                            href={`/dashboard/chapters/add?seriesId=${item.id}`}
-                            className="p-2 rounded-lg glass glass-hover text-emerald-400/80 hover:text-emerald-400 hover:bg-emerald-500/10 transition"
-                            title="Add New Chapter"
-                          >
-                            <Plus className="w-3.5 h-3.5" />
-                          </Link>
-                        )}
+                        <Link
+                          href={`/dashboard/chapters/add?seriesId=${item.id}`}
+                          className="p-2 rounded-lg glass glass-hover text-emerald-400/80 hover:text-emerald-400 hover:bg-emerald-500/10 transition"
+                          title="Add New Chapter"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </Link>
 
                         <Link
                           href={`/dashboard/series/${item.id}/analytics`}
@@ -690,15 +702,13 @@ export function SeriesClient({
                           <Layers className="w-3.5 h-3.5" />
                         </Link>
 
-                        {canCreate && (
-                          <Link
-                            href={`/dashboard/series/edit/${item.id}`}
-                            className="p-2 rounded-lg glass glass-hover text-primary/80 hover:text-primary hover:bg-primary/10 transition"
-                            title="Edit Series Details"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </Link>
-                        )}
+                        <Link
+                          href={`/dashboard/series/edit/${item.id}`}
+                          className="p-2 rounded-lg glass glass-hover text-primary/80 hover:text-primary hover:bg-primary/10 transition"
+                          title="Edit Series Details"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </Link>
 
                         <Link
                           href={`/series/${item.slug}`}

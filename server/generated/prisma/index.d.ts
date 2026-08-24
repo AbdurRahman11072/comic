@@ -168,6 +168,21 @@ export type AuditLog = $Result.DefaultSelection<Prisma.$AuditLogPayload>
  * 
  */
 export type ContactMessage = $Result.DefaultSelection<Prisma.$ContactMessagePayload>
+/**
+ * Model ChapterReadEvent
+ * 
+ */
+export type ChapterReadEvent = $Result.DefaultSelection<Prisma.$ChapterReadEventPayload>
+/**
+ * Model RevenueDistributionRun
+ * 
+ */
+export type RevenueDistributionRun = $Result.DefaultSelection<Prisma.$RevenueDistributionRunPayload>
+/**
+ * Model RevenueDistributionPayout
+ * 
+ */
+export type RevenueDistributionPayout = $Result.DefaultSelection<Prisma.$RevenueDistributionPayoutPayload>
 
 /**
  * Enums
@@ -198,10 +213,31 @@ export const TransactionType: {
   BUY_CHAPTER: 'BUY_CHAPTER',
   BUY_POINTS: 'BUY_POINTS',
   WITHDRAWAL: 'WITHDRAWAL',
-  REFERRAL_BONUS: 'REFERRAL_BONUS'
+  REFERRAL_BONUS: 'REFERRAL_BONUS',
+  REVENUE_SHARE: 'REVENUE_SHARE',
+  REVENUE_SHARE_REVERSAL: 'REVENUE_SHARE_REVERSAL',
+  WITHDRAWAL_REFUND: 'WITHDRAWAL_REFUND'
 };
 
 export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
+
+
+export const QualityTier: {
+  BOUNCED: 'BOUNCED',
+  QUALIFIED: 'QUALIFIED',
+  ENGAGED: 'ENGAGED',
+  COMPLETED: 'COMPLETED'
+};
+
+export type QualityTier = (typeof QualityTier)[keyof typeof QualityTier]
+
+
+export const DistributionStatus: {
+  COMPLETED: 'COMPLETED',
+  REVERTED: 'REVERTED'
+};
+
+export type DistributionStatus = (typeof DistributionStatus)[keyof typeof DistributionStatus]
 
 
 export const SeriesType: {
@@ -291,6 +327,14 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type TransactionType = $Enums.TransactionType
 
 export const TransactionType: typeof $Enums.TransactionType
+
+export type QualityTier = $Enums.QualityTier
+
+export const QualityTier: typeof $Enums.QualityTier
+
+export type DistributionStatus = $Enums.DistributionStatus
+
+export const DistributionStatus: typeof $Enums.DistributionStatus
 
 export type SeriesType = $Enums.SeriesType
 
@@ -754,6 +798,36 @@ export class PrismaClient<
     * ```
     */
   get contactMessage(): Prisma.ContactMessageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.chapterReadEvent`: Exposes CRUD operations for the **ChapterReadEvent** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ChapterReadEvents
+    * const chapterReadEvents = await prisma.chapterReadEvent.findMany()
+    * ```
+    */
+  get chapterReadEvent(): Prisma.ChapterReadEventDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.revenueDistributionRun`: Exposes CRUD operations for the **RevenueDistributionRun** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RevenueDistributionRuns
+    * const revenueDistributionRuns = await prisma.revenueDistributionRun.findMany()
+    * ```
+    */
+  get revenueDistributionRun(): Prisma.RevenueDistributionRunDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.revenueDistributionPayout`: Exposes CRUD operations for the **RevenueDistributionPayout** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RevenueDistributionPayouts
+    * const revenueDistributionPayouts = await prisma.revenueDistributionPayout.findMany()
+    * ```
+    */
+  get revenueDistributionPayout(): Prisma.RevenueDistributionPayoutDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1218,7 +1292,10 @@ export namespace Prisma {
     PromoCode: 'PromoCode',
     PromoCodeRedemption: 'PromoCodeRedemption',
     AuditLog: 'AuditLog',
-    ContactMessage: 'ContactMessage'
+    ContactMessage: 'ContactMessage',
+    ChapterReadEvent: 'ChapterReadEvent',
+    RevenueDistributionRun: 'RevenueDistributionRun',
+    RevenueDistributionPayout: 'RevenueDistributionPayout'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1234,7 +1311,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "creatorProfile" | "session" | "account" | "verification" | "series" | "seriesApplication" | "featuredSeries" | "siteConfig" | "genre" | "chapter" | "chapterImage" | "bookmark" | "history" | "pointTransaction" | "chapterPurchase" | "payment" | "pointPackage" | "adRewardConfig" | "customAd" | "withdrawalRequest" | "comment" | "review" | "report" | "featuredRequest" | "chatMessage" | "creatorPost" | "promoCode" | "promoCodeRedemption" | "auditLog" | "contactMessage"
+      modelProps: "user" | "creatorProfile" | "session" | "account" | "verification" | "series" | "seriesApplication" | "featuredSeries" | "siteConfig" | "genre" | "chapter" | "chapterImage" | "bookmark" | "history" | "pointTransaction" | "chapterPurchase" | "payment" | "pointPackage" | "adRewardConfig" | "customAd" | "withdrawalRequest" | "comment" | "review" | "report" | "featuredRequest" | "chatMessage" | "creatorPost" | "promoCode" | "promoCodeRedemption" | "auditLog" | "contactMessage" | "chapterReadEvent" | "revenueDistributionRun" | "revenueDistributionPayout"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3532,6 +3609,228 @@ export namespace Prisma {
           }
         }
       }
+      ChapterReadEvent: {
+        payload: Prisma.$ChapterReadEventPayload<ExtArgs>
+        fields: Prisma.ChapterReadEventFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ChapterReadEventFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ChapterReadEventFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>
+          }
+          findFirst: {
+            args: Prisma.ChapterReadEventFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ChapterReadEventFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>
+          }
+          findMany: {
+            args: Prisma.ChapterReadEventFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>[]
+          }
+          create: {
+            args: Prisma.ChapterReadEventCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>
+          }
+          createMany: {
+            args: Prisma.ChapterReadEventCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ChapterReadEventCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>[]
+          }
+          delete: {
+            args: Prisma.ChapterReadEventDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>
+          }
+          update: {
+            args: Prisma.ChapterReadEventUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>
+          }
+          deleteMany: {
+            args: Prisma.ChapterReadEventDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ChapterReadEventUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ChapterReadEventUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>[]
+          }
+          upsert: {
+            args: Prisma.ChapterReadEventUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ChapterReadEventPayload>
+          }
+          aggregate: {
+            args: Prisma.ChapterReadEventAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateChapterReadEvent>
+          }
+          groupBy: {
+            args: Prisma.ChapterReadEventGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ChapterReadEventGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ChapterReadEventCountArgs<ExtArgs>
+            result: $Utils.Optional<ChapterReadEventCountAggregateOutputType> | number
+          }
+        }
+      }
+      RevenueDistributionRun: {
+        payload: Prisma.$RevenueDistributionRunPayload<ExtArgs>
+        fields: Prisma.RevenueDistributionRunFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RevenueDistributionRunFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RevenueDistributionRunFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>
+          }
+          findFirst: {
+            args: Prisma.RevenueDistributionRunFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RevenueDistributionRunFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>
+          }
+          findMany: {
+            args: Prisma.RevenueDistributionRunFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>[]
+          }
+          create: {
+            args: Prisma.RevenueDistributionRunCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>
+          }
+          createMany: {
+            args: Prisma.RevenueDistributionRunCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RevenueDistributionRunCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>[]
+          }
+          delete: {
+            args: Prisma.RevenueDistributionRunDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>
+          }
+          update: {
+            args: Prisma.RevenueDistributionRunUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>
+          }
+          deleteMany: {
+            args: Prisma.RevenueDistributionRunDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RevenueDistributionRunUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RevenueDistributionRunUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>[]
+          }
+          upsert: {
+            args: Prisma.RevenueDistributionRunUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionRunPayload>
+          }
+          aggregate: {
+            args: Prisma.RevenueDistributionRunAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRevenueDistributionRun>
+          }
+          groupBy: {
+            args: Prisma.RevenueDistributionRunGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RevenueDistributionRunGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RevenueDistributionRunCountArgs<ExtArgs>
+            result: $Utils.Optional<RevenueDistributionRunCountAggregateOutputType> | number
+          }
+        }
+      }
+      RevenueDistributionPayout: {
+        payload: Prisma.$RevenueDistributionPayoutPayload<ExtArgs>
+        fields: Prisma.RevenueDistributionPayoutFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RevenueDistributionPayoutFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RevenueDistributionPayoutFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>
+          }
+          findFirst: {
+            args: Prisma.RevenueDistributionPayoutFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RevenueDistributionPayoutFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>
+          }
+          findMany: {
+            args: Prisma.RevenueDistributionPayoutFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>[]
+          }
+          create: {
+            args: Prisma.RevenueDistributionPayoutCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>
+          }
+          createMany: {
+            args: Prisma.RevenueDistributionPayoutCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RevenueDistributionPayoutCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>[]
+          }
+          delete: {
+            args: Prisma.RevenueDistributionPayoutDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>
+          }
+          update: {
+            args: Prisma.RevenueDistributionPayoutUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>
+          }
+          deleteMany: {
+            args: Prisma.RevenueDistributionPayoutDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RevenueDistributionPayoutUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RevenueDistributionPayoutUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>[]
+          }
+          upsert: {
+            args: Prisma.RevenueDistributionPayoutUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RevenueDistributionPayoutPayload>
+          }
+          aggregate: {
+            args: Prisma.RevenueDistributionPayoutAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRevenueDistributionPayout>
+          }
+          groupBy: {
+            args: Prisma.RevenueDistributionPayoutGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RevenueDistributionPayoutGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RevenueDistributionPayoutCountArgs<ExtArgs>
+            result: $Utils.Optional<RevenueDistributionPayoutCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3671,6 +3970,9 @@ export namespace Prisma {
     promoCodeRedemption?: PromoCodeRedemptionOmit
     auditLog?: AuditLogOmit
     contactMessage?: ContactMessageOmit
+    chapterReadEvent?: ChapterReadEventOmit
+    revenueDistributionRun?: RevenueDistributionRunOmit
+    revenueDistributionPayout?: RevenueDistributionPayoutOmit
   }
 
   /* Types for Logging */
@@ -3770,6 +4072,8 @@ export namespace Prisma {
     auditLogs: number
     promoRedemptions: number
     createdPromoCodes: number
+    chapterReadEvents: number
+    revenueDistributionsCreated: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3792,6 +4096,8 @@ export namespace Prisma {
     auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
     promoRedemptions?: boolean | UserCountOutputTypeCountPromoRedemptionsArgs
     createdPromoCodes?: boolean | UserCountOutputTypeCountCreatedPromoCodesArgs
+    chapterReadEvents?: boolean | UserCountOutputTypeCountChapterReadEventsArgs
+    revenueDistributionsCreated?: boolean | UserCountOutputTypeCountRevenueDistributionsCreatedArgs
   }
 
   // Custom InputTypes
@@ -3938,6 +4244,20 @@ export namespace Prisma {
     where?: PromoCodeWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountChapterReadEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChapterReadEventWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRevenueDistributionsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RevenueDistributionRunWhereInput
+  }
+
 
   /**
    * Count Type CreatorProfileCountOutputType
@@ -3945,10 +4265,14 @@ export namespace Prisma {
 
   export type CreatorProfileCountOutputType = {
     series: number
+    readEvents: number
+    distributionPayouts: number
   }
 
   export type CreatorProfileCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     series?: boolean | CreatorProfileCountOutputTypeCountSeriesArgs
+    readEvents?: boolean | CreatorProfileCountOutputTypeCountReadEventsArgs
+    distributionPayouts?: boolean | CreatorProfileCountOutputTypeCountDistributionPayoutsArgs
   }
 
   // Custom InputTypes
@@ -3969,6 +4293,20 @@ export namespace Prisma {
     where?: SeriesWhereInput
   }
 
+  /**
+   * CreatorProfileCountOutputType without action
+   */
+  export type CreatorProfileCountOutputTypeCountReadEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChapterReadEventWhereInput
+  }
+
+  /**
+   * CreatorProfileCountOutputType without action
+   */
+  export type CreatorProfileCountOutputTypeCountDistributionPayoutsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RevenueDistributionPayoutWhereInput
+  }
+
 
   /**
    * Count Type SeriesCountOutputType
@@ -3982,6 +4320,7 @@ export namespace Prisma {
     reviews: number
     reports: number
     featuredRequests: number
+    readEvents: number
   }
 
   export type SeriesCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3992,6 +4331,7 @@ export namespace Prisma {
     reviews?: boolean | SeriesCountOutputTypeCountReviewsArgs
     reports?: boolean | SeriesCountOutputTypeCountReportsArgs
     featuredRequests?: boolean | SeriesCountOutputTypeCountFeaturedRequestsArgs
+    readEvents?: boolean | SeriesCountOutputTypeCountReadEventsArgs
   }
 
   // Custom InputTypes
@@ -4054,6 +4394,13 @@ export namespace Prisma {
     where?: FeaturedRequestWhereInput
   }
 
+  /**
+   * SeriesCountOutputType without action
+   */
+  export type SeriesCountOutputTypeCountReadEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChapterReadEventWhereInput
+  }
+
 
   /**
    * Count Type GenreCountOutputType
@@ -4095,6 +4442,7 @@ export namespace Prisma {
     history: number
     purchases: number
     comments: number
+    readEvents: number
   }
 
   export type ChapterCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4102,6 +4450,7 @@ export namespace Prisma {
     history?: boolean | ChapterCountOutputTypeCountHistoryArgs
     purchases?: boolean | ChapterCountOutputTypeCountPurchasesArgs
     comments?: boolean | ChapterCountOutputTypeCountCommentsArgs
+    readEvents?: boolean | ChapterCountOutputTypeCountReadEventsArgs
   }
 
   // Custom InputTypes
@@ -4143,6 +4492,13 @@ export namespace Prisma {
     where?: CommentWhereInput
   }
 
+  /**
+   * ChapterCountOutputType without action
+   */
+  export type ChapterCountOutputTypeCountReadEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChapterReadEventWhereInput
+  }
+
 
   /**
    * Count Type PromoCodeCountOutputType
@@ -4172,6 +4528,37 @@ export namespace Prisma {
    */
   export type PromoCodeCountOutputTypeCountRedemptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PromoCodeRedemptionWhereInput
+  }
+
+
+  /**
+   * Count Type RevenueDistributionRunCountOutputType
+   */
+
+  export type RevenueDistributionRunCountOutputType = {
+    creatorPayouts: number
+  }
+
+  export type RevenueDistributionRunCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creatorPayouts?: boolean | RevenueDistributionRunCountOutputTypeCountCreatorPayoutsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * RevenueDistributionRunCountOutputType without action
+   */
+  export type RevenueDistributionRunCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRunCountOutputType
+     */
+    select?: RevenueDistributionRunCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * RevenueDistributionRunCountOutputType without action
+   */
+  export type RevenueDistributionRunCountOutputTypeCountCreatorPayoutsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RevenueDistributionPayoutWhereInput
   }
 
 
@@ -4518,6 +4905,8 @@ export namespace Prisma {
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     promoRedemptions?: boolean | User$promoRedemptionsArgs<ExtArgs>
     createdPromoCodes?: boolean | User$createdPromoCodesArgs<ExtArgs>
+    chapterReadEvents?: boolean | User$chapterReadEventsArgs<ExtArgs>
+    revenueDistributionsCreated?: boolean | User$revenueDistributionsCreatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4612,6 +5001,8 @@ export namespace Prisma {
     auditLogs?: boolean | User$auditLogsArgs<ExtArgs>
     promoRedemptions?: boolean | User$promoRedemptionsArgs<ExtArgs>
     createdPromoCodes?: boolean | User$createdPromoCodesArgs<ExtArgs>
+    chapterReadEvents?: boolean | User$chapterReadEventsArgs<ExtArgs>
+    revenueDistributionsCreated?: boolean | User$revenueDistributionsCreatedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4645,6 +5036,8 @@ export namespace Prisma {
       auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
       promoRedemptions: Prisma.$PromoCodeRedemptionPayload<ExtArgs>[]
       createdPromoCodes: Prisma.$PromoCodePayload<ExtArgs>[]
+      chapterReadEvents: Prisma.$ChapterReadEventPayload<ExtArgs>[]
+      revenueDistributionsCreated: Prisma.$RevenueDistributionRunPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5081,6 +5474,8 @@ export namespace Prisma {
     auditLogs<T extends User$auditLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     promoRedemptions<T extends User$promoRedemptionsArgs<ExtArgs> = {}>(args?: Subset<T, User$promoRedemptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PromoCodeRedemptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdPromoCodes<T extends User$createdPromoCodesArgs<ExtArgs> = {}>(args?: Subset<T, User$createdPromoCodesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PromoCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    chapterReadEvents<T extends User$chapterReadEventsArgs<ExtArgs> = {}>(args?: Subset<T, User$chapterReadEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    revenueDistributionsCreated<T extends User$revenueDistributionsCreatedArgs<ExtArgs> = {}>(args?: Subset<T, User$revenueDistributionsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6024,6 +6419,54 @@ export namespace Prisma {
   }
 
   /**
+   * User.chapterReadEvents
+   */
+  export type User$chapterReadEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    where?: ChapterReadEventWhereInput
+    orderBy?: ChapterReadEventOrderByWithRelationInput | ChapterReadEventOrderByWithRelationInput[]
+    cursor?: ChapterReadEventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChapterReadEventScalarFieldEnum | ChapterReadEventScalarFieldEnum[]
+  }
+
+  /**
+   * User.revenueDistributionsCreated
+   */
+  export type User$revenueDistributionsCreatedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    where?: RevenueDistributionRunWhereInput
+    orderBy?: RevenueDistributionRunOrderByWithRelationInput | RevenueDistributionRunOrderByWithRelationInput[]
+    cursor?: RevenueDistributionRunWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RevenueDistributionRunScalarFieldEnum | RevenueDistributionRunScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6286,6 +6729,8 @@ export namespace Prisma {
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     series?: boolean | CreatorProfile$seriesArgs<ExtArgs>
+    readEvents?: boolean | CreatorProfile$readEventsArgs<ExtArgs>
+    distributionPayouts?: boolean | CreatorProfile$distributionPayoutsArgs<ExtArgs>
     _count?: boolean | CreatorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["creatorProfile"]>
 
@@ -6334,6 +6779,8 @@ export namespace Prisma {
   export type CreatorProfileInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     series?: boolean | CreatorProfile$seriesArgs<ExtArgs>
+    readEvents?: boolean | CreatorProfile$readEventsArgs<ExtArgs>
+    distributionPayouts?: boolean | CreatorProfile$distributionPayoutsArgs<ExtArgs>
     _count?: boolean | CreatorProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CreatorProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6348,6 +6795,8 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       series: Prisma.$SeriesPayload<ExtArgs>[]
+      readEvents: Prisma.$ChapterReadEventPayload<ExtArgs>[]
+      distributionPayouts: Prisma.$RevenueDistributionPayoutPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6756,6 +7205,8 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     series<T extends CreatorProfile$seriesArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$seriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SeriesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    readEvents<T extends CreatorProfile$readEventsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$readEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    distributionPayouts<T extends CreatorProfile$distributionPayoutsArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfile$distributionPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7217,6 +7668,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SeriesScalarFieldEnum | SeriesScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorProfile.readEvents
+   */
+  export type CreatorProfile$readEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    where?: ChapterReadEventWhereInput
+    orderBy?: ChapterReadEventOrderByWithRelationInput | ChapterReadEventOrderByWithRelationInput[]
+    cursor?: ChapterReadEventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChapterReadEventScalarFieldEnum | ChapterReadEventScalarFieldEnum[]
+  }
+
+  /**
+   * CreatorProfile.distributionPayouts
+   */
+  export type CreatorProfile$distributionPayoutsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    where?: RevenueDistributionPayoutWhereInput
+    orderBy?: RevenueDistributionPayoutOrderByWithRelationInput | RevenueDistributionPayoutOrderByWithRelationInput[]
+    cursor?: RevenueDistributionPayoutWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RevenueDistributionPayoutScalarFieldEnum | RevenueDistributionPayoutScalarFieldEnum[]
   }
 
   /**
@@ -10860,6 +11359,7 @@ export namespace Prisma {
     reviews?: boolean | Series$reviewsArgs<ExtArgs>
     reports?: boolean | Series$reportsArgs<ExtArgs>
     featuredRequests?: boolean | Series$featuredRequestsArgs<ExtArgs>
+    readEvents?: boolean | Series$readEventsArgs<ExtArgs>
     _count?: boolean | SeriesCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["series"]>
 
@@ -10942,6 +11442,7 @@ export namespace Prisma {
     reviews?: boolean | Series$reviewsArgs<ExtArgs>
     reports?: boolean | Series$reportsArgs<ExtArgs>
     featuredRequests?: boolean | Series$featuredRequestsArgs<ExtArgs>
+    readEvents?: boolean | Series$readEventsArgs<ExtArgs>
     _count?: boolean | SeriesCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type SeriesIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10963,6 +11464,7 @@ export namespace Prisma {
       reviews: Prisma.$ReviewPayload<ExtArgs>[]
       reports: Prisma.$ReportPayload<ExtArgs>[]
       featuredRequests: Prisma.$FeaturedRequestPayload<ExtArgs>[]
+      readEvents: Prisma.$ChapterReadEventPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11387,6 +11889,7 @@ export namespace Prisma {
     reviews<T extends Series$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, Series$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reports<T extends Series$reportsArgs<ExtArgs> = {}>(args?: Subset<T, Series$reportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     featuredRequests<T extends Series$featuredRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Series$featuredRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeaturedRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    readEvents<T extends Series$readEventsArgs<ExtArgs> = {}>(args?: Subset<T, Series$readEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12039,6 +12542,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: FeaturedRequestScalarFieldEnum | FeaturedRequestScalarFieldEnum[]
+  }
+
+  /**
+   * Series.readEvents
+   */
+  export type Series$readEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    where?: ChapterReadEventWhereInput
+    orderBy?: ChapterReadEventOrderByWithRelationInput | ChapterReadEventOrderByWithRelationInput[]
+    cursor?: ChapterReadEventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChapterReadEventScalarFieldEnum | ChapterReadEventScalarFieldEnum[]
   }
 
   /**
@@ -17051,6 +17578,7 @@ export namespace Prisma {
     history?: boolean | Chapter$historyArgs<ExtArgs>
     purchases?: boolean | Chapter$purchasesArgs<ExtArgs>
     comments?: boolean | Chapter$commentsArgs<ExtArgs>
+    readEvents?: boolean | Chapter$readEventsArgs<ExtArgs>
     _count?: boolean | ChapterCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["chapter"]>
 
@@ -17102,6 +17630,7 @@ export namespace Prisma {
     history?: boolean | Chapter$historyArgs<ExtArgs>
     purchases?: boolean | Chapter$purchasesArgs<ExtArgs>
     comments?: boolean | Chapter$commentsArgs<ExtArgs>
+    readEvents?: boolean | Chapter$readEventsArgs<ExtArgs>
     _count?: boolean | ChapterCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ChapterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -17119,6 +17648,7 @@ export namespace Prisma {
       history: Prisma.$HistoryPayload<ExtArgs>[]
       purchases: Prisma.$ChapterPurchasePayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
+      readEvents: Prisma.$ChapterReadEventPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17530,6 +18060,7 @@ export namespace Prisma {
     history<T extends Chapter$historyArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     purchases<T extends Chapter$purchasesArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$purchasesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterPurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Chapter$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    readEvents<T extends Chapter$readEventsArgs<ExtArgs> = {}>(args?: Subset<T, Chapter$readEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18063,6 +18594,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Chapter.readEvents
+   */
+  export type Chapter$readEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    where?: ChapterReadEventWhereInput
+    orderBy?: ChapterReadEventOrderByWithRelationInput | ChapterReadEventOrderByWithRelationInput[]
+    cursor?: ChapterReadEventWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ChapterReadEventScalarFieldEnum | ChapterReadEventScalarFieldEnum[]
   }
 
   /**
@@ -40325,6 +40880,4013 @@ export namespace Prisma {
 
 
   /**
+   * Model ChapterReadEvent
+   */
+
+  export type AggregateChapterReadEvent = {
+    _count: ChapterReadEventCountAggregateOutputType | null
+    _avg: ChapterReadEventAvgAggregateOutputType | null
+    _sum: ChapterReadEventSumAggregateOutputType | null
+    _min: ChapterReadEventMinAggregateOutputType | null
+    _max: ChapterReadEventMaxAggregateOutputType | null
+  }
+
+  export type ChapterReadEventAvgAggregateOutputType = {
+    durationSeconds: number | null
+    pagesViewed: number | null
+    totalPages: number | null
+    completionPercent: number | null
+    scrollDepthPercent: number | null
+    interactionCount: number | null
+    qualityScore: number | null
+  }
+
+  export type ChapterReadEventSumAggregateOutputType = {
+    durationSeconds: number | null
+    pagesViewed: number | null
+    totalPages: number | null
+    completionPercent: number | null
+    scrollDepthPercent: number | null
+    interactionCount: number | null
+    qualityScore: number | null
+  }
+
+  export type ChapterReadEventMinAggregateOutputType = {
+    id: string | null
+    sessionId: string | null
+    userId: string | null
+    seriesId: string | null
+    chapterId: string | null
+    creatorId: string | null
+    startedAt: Date | null
+    endedAt: Date | null
+    durationSeconds: number | null
+    pagesViewed: number | null
+    totalPages: number | null
+    completionPercent: number | null
+    scrollDepthPercent: number | null
+    interactionCount: number | null
+    qualityTier: $Enums.QualityTier | null
+    qualityScore: number | null
+    isBotLikely: boolean | null
+    botReason: string | null
+    clientIp: string | null
+    userAgent: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ChapterReadEventMaxAggregateOutputType = {
+    id: string | null
+    sessionId: string | null
+    userId: string | null
+    seriesId: string | null
+    chapterId: string | null
+    creatorId: string | null
+    startedAt: Date | null
+    endedAt: Date | null
+    durationSeconds: number | null
+    pagesViewed: number | null
+    totalPages: number | null
+    completionPercent: number | null
+    scrollDepthPercent: number | null
+    interactionCount: number | null
+    qualityTier: $Enums.QualityTier | null
+    qualityScore: number | null
+    isBotLikely: boolean | null
+    botReason: string | null
+    clientIp: string | null
+    userAgent: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ChapterReadEventCountAggregateOutputType = {
+    id: number
+    sessionId: number
+    userId: number
+    seriesId: number
+    chapterId: number
+    creatorId: number
+    startedAt: number
+    endedAt: number
+    durationSeconds: number
+    pagesViewed: number
+    totalPages: number
+    completionPercent: number
+    scrollDepthPercent: number
+    interactionCount: number
+    qualityTier: number
+    qualityScore: number
+    isBotLikely: number
+    botReason: number
+    clientIp: number
+    userAgent: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ChapterReadEventAvgAggregateInputType = {
+    durationSeconds?: true
+    pagesViewed?: true
+    totalPages?: true
+    completionPercent?: true
+    scrollDepthPercent?: true
+    interactionCount?: true
+    qualityScore?: true
+  }
+
+  export type ChapterReadEventSumAggregateInputType = {
+    durationSeconds?: true
+    pagesViewed?: true
+    totalPages?: true
+    completionPercent?: true
+    scrollDepthPercent?: true
+    interactionCount?: true
+    qualityScore?: true
+  }
+
+  export type ChapterReadEventMinAggregateInputType = {
+    id?: true
+    sessionId?: true
+    userId?: true
+    seriesId?: true
+    chapterId?: true
+    creatorId?: true
+    startedAt?: true
+    endedAt?: true
+    durationSeconds?: true
+    pagesViewed?: true
+    totalPages?: true
+    completionPercent?: true
+    scrollDepthPercent?: true
+    interactionCount?: true
+    qualityTier?: true
+    qualityScore?: true
+    isBotLikely?: true
+    botReason?: true
+    clientIp?: true
+    userAgent?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ChapterReadEventMaxAggregateInputType = {
+    id?: true
+    sessionId?: true
+    userId?: true
+    seriesId?: true
+    chapterId?: true
+    creatorId?: true
+    startedAt?: true
+    endedAt?: true
+    durationSeconds?: true
+    pagesViewed?: true
+    totalPages?: true
+    completionPercent?: true
+    scrollDepthPercent?: true
+    interactionCount?: true
+    qualityTier?: true
+    qualityScore?: true
+    isBotLikely?: true
+    botReason?: true
+    clientIp?: true
+    userAgent?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ChapterReadEventCountAggregateInputType = {
+    id?: true
+    sessionId?: true
+    userId?: true
+    seriesId?: true
+    chapterId?: true
+    creatorId?: true
+    startedAt?: true
+    endedAt?: true
+    durationSeconds?: true
+    pagesViewed?: true
+    totalPages?: true
+    completionPercent?: true
+    scrollDepthPercent?: true
+    interactionCount?: true
+    qualityTier?: true
+    qualityScore?: true
+    isBotLikely?: true
+    botReason?: true
+    clientIp?: true
+    userAgent?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ChapterReadEventAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ChapterReadEvent to aggregate.
+     */
+    where?: ChapterReadEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChapterReadEvents to fetch.
+     */
+    orderBy?: ChapterReadEventOrderByWithRelationInput | ChapterReadEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ChapterReadEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChapterReadEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChapterReadEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ChapterReadEvents
+    **/
+    _count?: true | ChapterReadEventCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ChapterReadEventAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ChapterReadEventSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ChapterReadEventMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ChapterReadEventMaxAggregateInputType
+  }
+
+  export type GetChapterReadEventAggregateType<T extends ChapterReadEventAggregateArgs> = {
+        [P in keyof T & keyof AggregateChapterReadEvent]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateChapterReadEvent[P]>
+      : GetScalarType<T[P], AggregateChapterReadEvent[P]>
+  }
+
+
+
+
+  export type ChapterReadEventGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ChapterReadEventWhereInput
+    orderBy?: ChapterReadEventOrderByWithAggregationInput | ChapterReadEventOrderByWithAggregationInput[]
+    by: ChapterReadEventScalarFieldEnum[] | ChapterReadEventScalarFieldEnum
+    having?: ChapterReadEventScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ChapterReadEventCountAggregateInputType | true
+    _avg?: ChapterReadEventAvgAggregateInputType
+    _sum?: ChapterReadEventSumAggregateInputType
+    _min?: ChapterReadEventMinAggregateInputType
+    _max?: ChapterReadEventMaxAggregateInputType
+  }
+
+  export type ChapterReadEventGroupByOutputType = {
+    id: string
+    sessionId: string
+    userId: string | null
+    seriesId: string | null
+    chapterId: string | null
+    creatorId: string | null
+    startedAt: Date
+    endedAt: Date | null
+    durationSeconds: number
+    pagesViewed: number
+    totalPages: number
+    completionPercent: number
+    scrollDepthPercent: number
+    interactionCount: number
+    qualityTier: $Enums.QualityTier
+    qualityScore: number
+    isBotLikely: boolean
+    botReason: string | null
+    clientIp: string | null
+    userAgent: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ChapterReadEventCountAggregateOutputType | null
+    _avg: ChapterReadEventAvgAggregateOutputType | null
+    _sum: ChapterReadEventSumAggregateOutputType | null
+    _min: ChapterReadEventMinAggregateOutputType | null
+    _max: ChapterReadEventMaxAggregateOutputType | null
+  }
+
+  type GetChapterReadEventGroupByPayload<T extends ChapterReadEventGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ChapterReadEventGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ChapterReadEventGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ChapterReadEventGroupByOutputType[P]>
+            : GetScalarType<T[P], ChapterReadEventGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ChapterReadEventSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sessionId?: boolean
+    userId?: boolean
+    seriesId?: boolean
+    chapterId?: boolean
+    creatorId?: boolean
+    startedAt?: boolean
+    endedAt?: boolean
+    durationSeconds?: boolean
+    pagesViewed?: boolean
+    totalPages?: boolean
+    completionPercent?: boolean
+    scrollDepthPercent?: boolean
+    interactionCount?: boolean
+    qualityTier?: boolean
+    qualityScore?: boolean
+    isBotLikely?: boolean
+    botReason?: boolean
+    clientIp?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | ChapterReadEvent$userArgs<ExtArgs>
+    series?: boolean | ChapterReadEvent$seriesArgs<ExtArgs>
+    chapter?: boolean | ChapterReadEvent$chapterArgs<ExtArgs>
+    creator?: boolean | ChapterReadEvent$creatorArgs<ExtArgs>
+  }, ExtArgs["result"]["chapterReadEvent"]>
+
+  export type ChapterReadEventSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sessionId?: boolean
+    userId?: boolean
+    seriesId?: boolean
+    chapterId?: boolean
+    creatorId?: boolean
+    startedAt?: boolean
+    endedAt?: boolean
+    durationSeconds?: boolean
+    pagesViewed?: boolean
+    totalPages?: boolean
+    completionPercent?: boolean
+    scrollDepthPercent?: boolean
+    interactionCount?: boolean
+    qualityTier?: boolean
+    qualityScore?: boolean
+    isBotLikely?: boolean
+    botReason?: boolean
+    clientIp?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | ChapterReadEvent$userArgs<ExtArgs>
+    series?: boolean | ChapterReadEvent$seriesArgs<ExtArgs>
+    chapter?: boolean | ChapterReadEvent$chapterArgs<ExtArgs>
+    creator?: boolean | ChapterReadEvent$creatorArgs<ExtArgs>
+  }, ExtArgs["result"]["chapterReadEvent"]>
+
+  export type ChapterReadEventSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sessionId?: boolean
+    userId?: boolean
+    seriesId?: boolean
+    chapterId?: boolean
+    creatorId?: boolean
+    startedAt?: boolean
+    endedAt?: boolean
+    durationSeconds?: boolean
+    pagesViewed?: boolean
+    totalPages?: boolean
+    completionPercent?: boolean
+    scrollDepthPercent?: boolean
+    interactionCount?: boolean
+    qualityTier?: boolean
+    qualityScore?: boolean
+    isBotLikely?: boolean
+    botReason?: boolean
+    clientIp?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | ChapterReadEvent$userArgs<ExtArgs>
+    series?: boolean | ChapterReadEvent$seriesArgs<ExtArgs>
+    chapter?: boolean | ChapterReadEvent$chapterArgs<ExtArgs>
+    creator?: boolean | ChapterReadEvent$creatorArgs<ExtArgs>
+  }, ExtArgs["result"]["chapterReadEvent"]>
+
+  export type ChapterReadEventSelectScalar = {
+    id?: boolean
+    sessionId?: boolean
+    userId?: boolean
+    seriesId?: boolean
+    chapterId?: boolean
+    creatorId?: boolean
+    startedAt?: boolean
+    endedAt?: boolean
+    durationSeconds?: boolean
+    pagesViewed?: boolean
+    totalPages?: boolean
+    completionPercent?: boolean
+    scrollDepthPercent?: boolean
+    interactionCount?: boolean
+    qualityTier?: boolean
+    qualityScore?: boolean
+    isBotLikely?: boolean
+    botReason?: boolean
+    clientIp?: boolean
+    userAgent?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ChapterReadEventOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sessionId" | "userId" | "seriesId" | "chapterId" | "creatorId" | "startedAt" | "endedAt" | "durationSeconds" | "pagesViewed" | "totalPages" | "completionPercent" | "scrollDepthPercent" | "interactionCount" | "qualityTier" | "qualityScore" | "isBotLikely" | "botReason" | "clientIp" | "userAgent" | "createdAt" | "updatedAt", ExtArgs["result"]["chapterReadEvent"]>
+  export type ChapterReadEventInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | ChapterReadEvent$userArgs<ExtArgs>
+    series?: boolean | ChapterReadEvent$seriesArgs<ExtArgs>
+    chapter?: boolean | ChapterReadEvent$chapterArgs<ExtArgs>
+    creator?: boolean | ChapterReadEvent$creatorArgs<ExtArgs>
+  }
+  export type ChapterReadEventIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | ChapterReadEvent$userArgs<ExtArgs>
+    series?: boolean | ChapterReadEvent$seriesArgs<ExtArgs>
+    chapter?: boolean | ChapterReadEvent$chapterArgs<ExtArgs>
+    creator?: boolean | ChapterReadEvent$creatorArgs<ExtArgs>
+  }
+  export type ChapterReadEventIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | ChapterReadEvent$userArgs<ExtArgs>
+    series?: boolean | ChapterReadEvent$seriesArgs<ExtArgs>
+    chapter?: boolean | ChapterReadEvent$chapterArgs<ExtArgs>
+    creator?: boolean | ChapterReadEvent$creatorArgs<ExtArgs>
+  }
+
+  export type $ChapterReadEventPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ChapterReadEvent"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs> | null
+      series: Prisma.$SeriesPayload<ExtArgs> | null
+      chapter: Prisma.$ChapterPayload<ExtArgs> | null
+      creator: Prisma.$CreatorProfilePayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      sessionId: string
+      userId: string | null
+      seriesId: string | null
+      chapterId: string | null
+      creatorId: string | null
+      startedAt: Date
+      endedAt: Date | null
+      durationSeconds: number
+      pagesViewed: number
+      totalPages: number
+      completionPercent: number
+      scrollDepthPercent: number
+      interactionCount: number
+      qualityTier: $Enums.QualityTier
+      qualityScore: number
+      isBotLikely: boolean
+      botReason: string | null
+      clientIp: string | null
+      userAgent: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["chapterReadEvent"]>
+    composites: {}
+  }
+
+  type ChapterReadEventGetPayload<S extends boolean | null | undefined | ChapterReadEventDefaultArgs> = $Result.GetResult<Prisma.$ChapterReadEventPayload, S>
+
+  type ChapterReadEventCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ChapterReadEventFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ChapterReadEventCountAggregateInputType | true
+    }
+
+  export interface ChapterReadEventDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ChapterReadEvent'], meta: { name: 'ChapterReadEvent' } }
+    /**
+     * Find zero or one ChapterReadEvent that matches the filter.
+     * @param {ChapterReadEventFindUniqueArgs} args - Arguments to find a ChapterReadEvent
+     * @example
+     * // Get one ChapterReadEvent
+     * const chapterReadEvent = await prisma.chapterReadEvent.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ChapterReadEventFindUniqueArgs>(args: SelectSubset<T, ChapterReadEventFindUniqueArgs<ExtArgs>>): Prisma__ChapterReadEventClient<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ChapterReadEvent that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ChapterReadEventFindUniqueOrThrowArgs} args - Arguments to find a ChapterReadEvent
+     * @example
+     * // Get one ChapterReadEvent
+     * const chapterReadEvent = await prisma.chapterReadEvent.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ChapterReadEventFindUniqueOrThrowArgs>(args: SelectSubset<T, ChapterReadEventFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ChapterReadEventClient<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ChapterReadEvent that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChapterReadEventFindFirstArgs} args - Arguments to find a ChapterReadEvent
+     * @example
+     * // Get one ChapterReadEvent
+     * const chapterReadEvent = await prisma.chapterReadEvent.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ChapterReadEventFindFirstArgs>(args?: SelectSubset<T, ChapterReadEventFindFirstArgs<ExtArgs>>): Prisma__ChapterReadEventClient<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ChapterReadEvent that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChapterReadEventFindFirstOrThrowArgs} args - Arguments to find a ChapterReadEvent
+     * @example
+     * // Get one ChapterReadEvent
+     * const chapterReadEvent = await prisma.chapterReadEvent.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ChapterReadEventFindFirstOrThrowArgs>(args?: SelectSubset<T, ChapterReadEventFindFirstOrThrowArgs<ExtArgs>>): Prisma__ChapterReadEventClient<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ChapterReadEvents that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChapterReadEventFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ChapterReadEvents
+     * const chapterReadEvents = await prisma.chapterReadEvent.findMany()
+     * 
+     * // Get first 10 ChapterReadEvents
+     * const chapterReadEvents = await prisma.chapterReadEvent.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const chapterReadEventWithIdOnly = await prisma.chapterReadEvent.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ChapterReadEventFindManyArgs>(args?: SelectSubset<T, ChapterReadEventFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ChapterReadEvent.
+     * @param {ChapterReadEventCreateArgs} args - Arguments to create a ChapterReadEvent.
+     * @example
+     * // Create one ChapterReadEvent
+     * const ChapterReadEvent = await prisma.chapterReadEvent.create({
+     *   data: {
+     *     // ... data to create a ChapterReadEvent
+     *   }
+     * })
+     * 
+     */
+    create<T extends ChapterReadEventCreateArgs>(args: SelectSubset<T, ChapterReadEventCreateArgs<ExtArgs>>): Prisma__ChapterReadEventClient<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ChapterReadEvents.
+     * @param {ChapterReadEventCreateManyArgs} args - Arguments to create many ChapterReadEvents.
+     * @example
+     * // Create many ChapterReadEvents
+     * const chapterReadEvent = await prisma.chapterReadEvent.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ChapterReadEventCreateManyArgs>(args?: SelectSubset<T, ChapterReadEventCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ChapterReadEvents and returns the data saved in the database.
+     * @param {ChapterReadEventCreateManyAndReturnArgs} args - Arguments to create many ChapterReadEvents.
+     * @example
+     * // Create many ChapterReadEvents
+     * const chapterReadEvent = await prisma.chapterReadEvent.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ChapterReadEvents and only return the `id`
+     * const chapterReadEventWithIdOnly = await prisma.chapterReadEvent.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ChapterReadEventCreateManyAndReturnArgs>(args?: SelectSubset<T, ChapterReadEventCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ChapterReadEvent.
+     * @param {ChapterReadEventDeleteArgs} args - Arguments to delete one ChapterReadEvent.
+     * @example
+     * // Delete one ChapterReadEvent
+     * const ChapterReadEvent = await prisma.chapterReadEvent.delete({
+     *   where: {
+     *     // ... filter to delete one ChapterReadEvent
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ChapterReadEventDeleteArgs>(args: SelectSubset<T, ChapterReadEventDeleteArgs<ExtArgs>>): Prisma__ChapterReadEventClient<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ChapterReadEvent.
+     * @param {ChapterReadEventUpdateArgs} args - Arguments to update one ChapterReadEvent.
+     * @example
+     * // Update one ChapterReadEvent
+     * const chapterReadEvent = await prisma.chapterReadEvent.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ChapterReadEventUpdateArgs>(args: SelectSubset<T, ChapterReadEventUpdateArgs<ExtArgs>>): Prisma__ChapterReadEventClient<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ChapterReadEvents.
+     * @param {ChapterReadEventDeleteManyArgs} args - Arguments to filter ChapterReadEvents to delete.
+     * @example
+     * // Delete a few ChapterReadEvents
+     * const { count } = await prisma.chapterReadEvent.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ChapterReadEventDeleteManyArgs>(args?: SelectSubset<T, ChapterReadEventDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ChapterReadEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChapterReadEventUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ChapterReadEvents
+     * const chapterReadEvent = await prisma.chapterReadEvent.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ChapterReadEventUpdateManyArgs>(args: SelectSubset<T, ChapterReadEventUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ChapterReadEvents and returns the data updated in the database.
+     * @param {ChapterReadEventUpdateManyAndReturnArgs} args - Arguments to update many ChapterReadEvents.
+     * @example
+     * // Update many ChapterReadEvents
+     * const chapterReadEvent = await prisma.chapterReadEvent.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ChapterReadEvents and only return the `id`
+     * const chapterReadEventWithIdOnly = await prisma.chapterReadEvent.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ChapterReadEventUpdateManyAndReturnArgs>(args: SelectSubset<T, ChapterReadEventUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ChapterReadEvent.
+     * @param {ChapterReadEventUpsertArgs} args - Arguments to update or create a ChapterReadEvent.
+     * @example
+     * // Update or create a ChapterReadEvent
+     * const chapterReadEvent = await prisma.chapterReadEvent.upsert({
+     *   create: {
+     *     // ... data to create a ChapterReadEvent
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ChapterReadEvent we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ChapterReadEventUpsertArgs>(args: SelectSubset<T, ChapterReadEventUpsertArgs<ExtArgs>>): Prisma__ChapterReadEventClient<$Result.GetResult<Prisma.$ChapterReadEventPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ChapterReadEvents.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChapterReadEventCountArgs} args - Arguments to filter ChapterReadEvents to count.
+     * @example
+     * // Count the number of ChapterReadEvents
+     * const count = await prisma.chapterReadEvent.count({
+     *   where: {
+     *     // ... the filter for the ChapterReadEvents we want to count
+     *   }
+     * })
+    **/
+    count<T extends ChapterReadEventCountArgs>(
+      args?: Subset<T, ChapterReadEventCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ChapterReadEventCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ChapterReadEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChapterReadEventAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ChapterReadEventAggregateArgs>(args: Subset<T, ChapterReadEventAggregateArgs>): Prisma.PrismaPromise<GetChapterReadEventAggregateType<T>>
+
+    /**
+     * Group by ChapterReadEvent.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ChapterReadEventGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ChapterReadEventGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ChapterReadEventGroupByArgs['orderBy'] }
+        : { orderBy?: ChapterReadEventGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ChapterReadEventGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetChapterReadEventGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ChapterReadEvent model
+   */
+  readonly fields: ChapterReadEventFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ChapterReadEvent.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ChapterReadEventClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends ChapterReadEvent$userArgs<ExtArgs> = {}>(args?: Subset<T, ChapterReadEvent$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    series<T extends ChapterReadEvent$seriesArgs<ExtArgs> = {}>(args?: Subset<T, ChapterReadEvent$seriesArgs<ExtArgs>>): Prisma__SeriesClient<$Result.GetResult<Prisma.$SeriesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    chapter<T extends ChapterReadEvent$chapterArgs<ExtArgs> = {}>(args?: Subset<T, ChapterReadEvent$chapterArgs<ExtArgs>>): Prisma__ChapterClient<$Result.GetResult<Prisma.$ChapterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    creator<T extends ChapterReadEvent$creatorArgs<ExtArgs> = {}>(args?: Subset<T, ChapterReadEvent$creatorArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ChapterReadEvent model
+   */
+  interface ChapterReadEventFieldRefs {
+    readonly id: FieldRef<"ChapterReadEvent", 'String'>
+    readonly sessionId: FieldRef<"ChapterReadEvent", 'String'>
+    readonly userId: FieldRef<"ChapterReadEvent", 'String'>
+    readonly seriesId: FieldRef<"ChapterReadEvent", 'String'>
+    readonly chapterId: FieldRef<"ChapterReadEvent", 'String'>
+    readonly creatorId: FieldRef<"ChapterReadEvent", 'String'>
+    readonly startedAt: FieldRef<"ChapterReadEvent", 'DateTime'>
+    readonly endedAt: FieldRef<"ChapterReadEvent", 'DateTime'>
+    readonly durationSeconds: FieldRef<"ChapterReadEvent", 'Int'>
+    readonly pagesViewed: FieldRef<"ChapterReadEvent", 'Int'>
+    readonly totalPages: FieldRef<"ChapterReadEvent", 'Int'>
+    readonly completionPercent: FieldRef<"ChapterReadEvent", 'Float'>
+    readonly scrollDepthPercent: FieldRef<"ChapterReadEvent", 'Float'>
+    readonly interactionCount: FieldRef<"ChapterReadEvent", 'Int'>
+    readonly qualityTier: FieldRef<"ChapterReadEvent", 'QualityTier'>
+    readonly qualityScore: FieldRef<"ChapterReadEvent", 'Float'>
+    readonly isBotLikely: FieldRef<"ChapterReadEvent", 'Boolean'>
+    readonly botReason: FieldRef<"ChapterReadEvent", 'String'>
+    readonly clientIp: FieldRef<"ChapterReadEvent", 'String'>
+    readonly userAgent: FieldRef<"ChapterReadEvent", 'String'>
+    readonly createdAt: FieldRef<"ChapterReadEvent", 'DateTime'>
+    readonly updatedAt: FieldRef<"ChapterReadEvent", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ChapterReadEvent findUnique
+   */
+  export type ChapterReadEventFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * Filter, which ChapterReadEvent to fetch.
+     */
+    where: ChapterReadEventWhereUniqueInput
+  }
+
+  /**
+   * ChapterReadEvent findUniqueOrThrow
+   */
+  export type ChapterReadEventFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * Filter, which ChapterReadEvent to fetch.
+     */
+    where: ChapterReadEventWhereUniqueInput
+  }
+
+  /**
+   * ChapterReadEvent findFirst
+   */
+  export type ChapterReadEventFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * Filter, which ChapterReadEvent to fetch.
+     */
+    where?: ChapterReadEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChapterReadEvents to fetch.
+     */
+    orderBy?: ChapterReadEventOrderByWithRelationInput | ChapterReadEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ChapterReadEvents.
+     */
+    cursor?: ChapterReadEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChapterReadEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChapterReadEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ChapterReadEvents.
+     */
+    distinct?: ChapterReadEventScalarFieldEnum | ChapterReadEventScalarFieldEnum[]
+  }
+
+  /**
+   * ChapterReadEvent findFirstOrThrow
+   */
+  export type ChapterReadEventFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * Filter, which ChapterReadEvent to fetch.
+     */
+    where?: ChapterReadEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChapterReadEvents to fetch.
+     */
+    orderBy?: ChapterReadEventOrderByWithRelationInput | ChapterReadEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ChapterReadEvents.
+     */
+    cursor?: ChapterReadEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChapterReadEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChapterReadEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ChapterReadEvents.
+     */
+    distinct?: ChapterReadEventScalarFieldEnum | ChapterReadEventScalarFieldEnum[]
+  }
+
+  /**
+   * ChapterReadEvent findMany
+   */
+  export type ChapterReadEventFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * Filter, which ChapterReadEvents to fetch.
+     */
+    where?: ChapterReadEventWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ChapterReadEvents to fetch.
+     */
+    orderBy?: ChapterReadEventOrderByWithRelationInput | ChapterReadEventOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ChapterReadEvents.
+     */
+    cursor?: ChapterReadEventWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ChapterReadEvents from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ChapterReadEvents.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ChapterReadEvents.
+     */
+    distinct?: ChapterReadEventScalarFieldEnum | ChapterReadEventScalarFieldEnum[]
+  }
+
+  /**
+   * ChapterReadEvent create
+   */
+  export type ChapterReadEventCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ChapterReadEvent.
+     */
+    data: XOR<ChapterReadEventCreateInput, ChapterReadEventUncheckedCreateInput>
+  }
+
+  /**
+   * ChapterReadEvent createMany
+   */
+  export type ChapterReadEventCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ChapterReadEvents.
+     */
+    data: ChapterReadEventCreateManyInput | ChapterReadEventCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ChapterReadEvent createManyAndReturn
+   */
+  export type ChapterReadEventCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * The data used to create many ChapterReadEvents.
+     */
+    data: ChapterReadEventCreateManyInput | ChapterReadEventCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ChapterReadEvent update
+   */
+  export type ChapterReadEventUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ChapterReadEvent.
+     */
+    data: XOR<ChapterReadEventUpdateInput, ChapterReadEventUncheckedUpdateInput>
+    /**
+     * Choose, which ChapterReadEvent to update.
+     */
+    where: ChapterReadEventWhereUniqueInput
+  }
+
+  /**
+   * ChapterReadEvent updateMany
+   */
+  export type ChapterReadEventUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ChapterReadEvents.
+     */
+    data: XOR<ChapterReadEventUpdateManyMutationInput, ChapterReadEventUncheckedUpdateManyInput>
+    /**
+     * Filter which ChapterReadEvents to update
+     */
+    where?: ChapterReadEventWhereInput
+    /**
+     * Limit how many ChapterReadEvents to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ChapterReadEvent updateManyAndReturn
+   */
+  export type ChapterReadEventUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * The data used to update ChapterReadEvents.
+     */
+    data: XOR<ChapterReadEventUpdateManyMutationInput, ChapterReadEventUncheckedUpdateManyInput>
+    /**
+     * Filter which ChapterReadEvents to update
+     */
+    where?: ChapterReadEventWhereInput
+    /**
+     * Limit how many ChapterReadEvents to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ChapterReadEvent upsert
+   */
+  export type ChapterReadEventUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ChapterReadEvent to update in case it exists.
+     */
+    where: ChapterReadEventWhereUniqueInput
+    /**
+     * In case the ChapterReadEvent found by the `where` argument doesn't exist, create a new ChapterReadEvent with this data.
+     */
+    create: XOR<ChapterReadEventCreateInput, ChapterReadEventUncheckedCreateInput>
+    /**
+     * In case the ChapterReadEvent was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ChapterReadEventUpdateInput, ChapterReadEventUncheckedUpdateInput>
+  }
+
+  /**
+   * ChapterReadEvent delete
+   */
+  export type ChapterReadEventDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+    /**
+     * Filter which ChapterReadEvent to delete.
+     */
+    where: ChapterReadEventWhereUniqueInput
+  }
+
+  /**
+   * ChapterReadEvent deleteMany
+   */
+  export type ChapterReadEventDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ChapterReadEvents to delete
+     */
+    where?: ChapterReadEventWhereInput
+    /**
+     * Limit how many ChapterReadEvents to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ChapterReadEvent.user
+   */
+  export type ChapterReadEvent$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * ChapterReadEvent.series
+   */
+  export type ChapterReadEvent$seriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Series
+     */
+    select?: SeriesSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Series
+     */
+    omit?: SeriesOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SeriesInclude<ExtArgs> | null
+    where?: SeriesWhereInput
+  }
+
+  /**
+   * ChapterReadEvent.chapter
+   */
+  export type ChapterReadEvent$chapterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Chapter
+     */
+    select?: ChapterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Chapter
+     */
+    omit?: ChapterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterInclude<ExtArgs> | null
+    where?: ChapterWhereInput
+  }
+
+  /**
+   * ChapterReadEvent.creator
+   */
+  export type ChapterReadEvent$creatorArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CreatorProfile
+     */
+    select?: CreatorProfileSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CreatorProfile
+     */
+    omit?: CreatorProfileOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CreatorProfileInclude<ExtArgs> | null
+    where?: CreatorProfileWhereInput
+  }
+
+  /**
+   * ChapterReadEvent without action
+   */
+  export type ChapterReadEventDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ChapterReadEvent
+     */
+    select?: ChapterReadEventSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ChapterReadEvent
+     */
+    omit?: ChapterReadEventOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ChapterReadEventInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model RevenueDistributionRun
+   */
+
+  export type AggregateRevenueDistributionRun = {
+    _count: RevenueDistributionRunCountAggregateOutputType | null
+    _avg: RevenueDistributionRunAvgAggregateOutputType | null
+    _sum: RevenueDistributionRunSumAggregateOutputType | null
+    _min: RevenueDistributionRunMinAggregateOutputType | null
+    _max: RevenueDistributionRunMaxAggregateOutputType | null
+  }
+
+  export type RevenueDistributionRunAvgAggregateOutputType = {
+    grossAmountEntered: number | null
+    distributablePool: number | null
+    totalQualityScore: number | null
+    totalQualifiedReads: number | null
+    totalEngagedReads: number | null
+    totalCompletedReads: number | null
+    totalCreatorsCount: number | null
+  }
+
+  export type RevenueDistributionRunSumAggregateOutputType = {
+    grossAmountEntered: number | null
+    distributablePool: number | null
+    totalQualityScore: number | null
+    totalQualifiedReads: number | null
+    totalEngagedReads: number | null
+    totalCompletedReads: number | null
+    totalCreatorsCount: number | null
+  }
+
+  export type RevenueDistributionRunMinAggregateOutputType = {
+    id: string | null
+    adminId: string | null
+    periodStart: Date | null
+    periodEnd: Date | null
+    grossAmountEntered: number | null
+    currency: string | null
+    distributablePool: number | null
+    totalQualityScore: number | null
+    totalQualifiedReads: number | null
+    totalEngagedReads: number | null
+    totalCompletedReads: number | null
+    totalCreatorsCount: number | null
+    status: $Enums.DistributionStatus | null
+    revertedAt: Date | null
+    revertedBy: string | null
+    notes: string | null
+    createdAt: Date | null
+  }
+
+  export type RevenueDistributionRunMaxAggregateOutputType = {
+    id: string | null
+    adminId: string | null
+    periodStart: Date | null
+    periodEnd: Date | null
+    grossAmountEntered: number | null
+    currency: string | null
+    distributablePool: number | null
+    totalQualityScore: number | null
+    totalQualifiedReads: number | null
+    totalEngagedReads: number | null
+    totalCompletedReads: number | null
+    totalCreatorsCount: number | null
+    status: $Enums.DistributionStatus | null
+    revertedAt: Date | null
+    revertedBy: string | null
+    notes: string | null
+    createdAt: Date | null
+  }
+
+  export type RevenueDistributionRunCountAggregateOutputType = {
+    id: number
+    adminId: number
+    periodStart: number
+    periodEnd: number
+    grossAmountEntered: number
+    currency: number
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status: number
+    revertedAt: number
+    revertedBy: number
+    notes: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RevenueDistributionRunAvgAggregateInputType = {
+    grossAmountEntered?: true
+    distributablePool?: true
+    totalQualityScore?: true
+    totalQualifiedReads?: true
+    totalEngagedReads?: true
+    totalCompletedReads?: true
+    totalCreatorsCount?: true
+  }
+
+  export type RevenueDistributionRunSumAggregateInputType = {
+    grossAmountEntered?: true
+    distributablePool?: true
+    totalQualityScore?: true
+    totalQualifiedReads?: true
+    totalEngagedReads?: true
+    totalCompletedReads?: true
+    totalCreatorsCount?: true
+  }
+
+  export type RevenueDistributionRunMinAggregateInputType = {
+    id?: true
+    adminId?: true
+    periodStart?: true
+    periodEnd?: true
+    grossAmountEntered?: true
+    currency?: true
+    distributablePool?: true
+    totalQualityScore?: true
+    totalQualifiedReads?: true
+    totalEngagedReads?: true
+    totalCompletedReads?: true
+    totalCreatorsCount?: true
+    status?: true
+    revertedAt?: true
+    revertedBy?: true
+    notes?: true
+    createdAt?: true
+  }
+
+  export type RevenueDistributionRunMaxAggregateInputType = {
+    id?: true
+    adminId?: true
+    periodStart?: true
+    periodEnd?: true
+    grossAmountEntered?: true
+    currency?: true
+    distributablePool?: true
+    totalQualityScore?: true
+    totalQualifiedReads?: true
+    totalEngagedReads?: true
+    totalCompletedReads?: true
+    totalCreatorsCount?: true
+    status?: true
+    revertedAt?: true
+    revertedBy?: true
+    notes?: true
+    createdAt?: true
+  }
+
+  export type RevenueDistributionRunCountAggregateInputType = {
+    id?: true
+    adminId?: true
+    periodStart?: true
+    periodEnd?: true
+    grossAmountEntered?: true
+    currency?: true
+    distributablePool?: true
+    totalQualityScore?: true
+    totalQualifiedReads?: true
+    totalEngagedReads?: true
+    totalCompletedReads?: true
+    totalCreatorsCount?: true
+    status?: true
+    revertedAt?: true
+    revertedBy?: true
+    notes?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RevenueDistributionRunAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RevenueDistributionRun to aggregate.
+     */
+    where?: RevenueDistributionRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RevenueDistributionRuns to fetch.
+     */
+    orderBy?: RevenueDistributionRunOrderByWithRelationInput | RevenueDistributionRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RevenueDistributionRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RevenueDistributionRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RevenueDistributionRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RevenueDistributionRuns
+    **/
+    _count?: true | RevenueDistributionRunCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RevenueDistributionRunAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RevenueDistributionRunSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RevenueDistributionRunMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RevenueDistributionRunMaxAggregateInputType
+  }
+
+  export type GetRevenueDistributionRunAggregateType<T extends RevenueDistributionRunAggregateArgs> = {
+        [P in keyof T & keyof AggregateRevenueDistributionRun]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRevenueDistributionRun[P]>
+      : GetScalarType<T[P], AggregateRevenueDistributionRun[P]>
+  }
+
+
+
+
+  export type RevenueDistributionRunGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RevenueDistributionRunWhereInput
+    orderBy?: RevenueDistributionRunOrderByWithAggregationInput | RevenueDistributionRunOrderByWithAggregationInput[]
+    by: RevenueDistributionRunScalarFieldEnum[] | RevenueDistributionRunScalarFieldEnum
+    having?: RevenueDistributionRunScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RevenueDistributionRunCountAggregateInputType | true
+    _avg?: RevenueDistributionRunAvgAggregateInputType
+    _sum?: RevenueDistributionRunSumAggregateInputType
+    _min?: RevenueDistributionRunMinAggregateInputType
+    _max?: RevenueDistributionRunMaxAggregateInputType
+  }
+
+  export type RevenueDistributionRunGroupByOutputType = {
+    id: string
+    adminId: string
+    periodStart: Date
+    periodEnd: Date
+    grossAmountEntered: number
+    currency: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status: $Enums.DistributionStatus
+    revertedAt: Date | null
+    revertedBy: string | null
+    notes: string | null
+    createdAt: Date
+    _count: RevenueDistributionRunCountAggregateOutputType | null
+    _avg: RevenueDistributionRunAvgAggregateOutputType | null
+    _sum: RevenueDistributionRunSumAggregateOutputType | null
+    _min: RevenueDistributionRunMinAggregateOutputType | null
+    _max: RevenueDistributionRunMaxAggregateOutputType | null
+  }
+
+  type GetRevenueDistributionRunGroupByPayload<T extends RevenueDistributionRunGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RevenueDistributionRunGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RevenueDistributionRunGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RevenueDistributionRunGroupByOutputType[P]>
+            : GetScalarType<T[P], RevenueDistributionRunGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RevenueDistributionRunSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    adminId?: boolean
+    periodStart?: boolean
+    periodEnd?: boolean
+    grossAmountEntered?: boolean
+    currency?: boolean
+    distributablePool?: boolean
+    totalQualityScore?: boolean
+    totalQualifiedReads?: boolean
+    totalEngagedReads?: boolean
+    totalCompletedReads?: boolean
+    totalCreatorsCount?: boolean
+    status?: boolean
+    revertedAt?: boolean
+    revertedBy?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+    creatorPayouts?: boolean | RevenueDistributionRun$creatorPayoutsArgs<ExtArgs>
+    _count?: boolean | RevenueDistributionRunCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["revenueDistributionRun"]>
+
+  export type RevenueDistributionRunSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    adminId?: boolean
+    periodStart?: boolean
+    periodEnd?: boolean
+    grossAmountEntered?: boolean
+    currency?: boolean
+    distributablePool?: boolean
+    totalQualityScore?: boolean
+    totalQualifiedReads?: boolean
+    totalEngagedReads?: boolean
+    totalCompletedReads?: boolean
+    totalCreatorsCount?: boolean
+    status?: boolean
+    revertedAt?: boolean
+    revertedBy?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["revenueDistributionRun"]>
+
+  export type RevenueDistributionRunSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    adminId?: boolean
+    periodStart?: boolean
+    periodEnd?: boolean
+    grossAmountEntered?: boolean
+    currency?: boolean
+    distributablePool?: boolean
+    totalQualityScore?: boolean
+    totalQualifiedReads?: boolean
+    totalEngagedReads?: boolean
+    totalCompletedReads?: boolean
+    totalCreatorsCount?: boolean
+    status?: boolean
+    revertedAt?: boolean
+    revertedBy?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["revenueDistributionRun"]>
+
+  export type RevenueDistributionRunSelectScalar = {
+    id?: boolean
+    adminId?: boolean
+    periodStart?: boolean
+    periodEnd?: boolean
+    grossAmountEntered?: boolean
+    currency?: boolean
+    distributablePool?: boolean
+    totalQualityScore?: boolean
+    totalQualifiedReads?: boolean
+    totalEngagedReads?: boolean
+    totalCompletedReads?: boolean
+    totalCreatorsCount?: boolean
+    status?: boolean
+    revertedAt?: boolean
+    revertedBy?: boolean
+    notes?: boolean
+    createdAt?: boolean
+  }
+
+  export type RevenueDistributionRunOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "adminId" | "periodStart" | "periodEnd" | "grossAmountEntered" | "currency" | "distributablePool" | "totalQualityScore" | "totalQualifiedReads" | "totalEngagedReads" | "totalCompletedReads" | "totalCreatorsCount" | "status" | "revertedAt" | "revertedBy" | "notes" | "createdAt", ExtArgs["result"]["revenueDistributionRun"]>
+  export type RevenueDistributionRunInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+    creatorPayouts?: boolean | RevenueDistributionRun$creatorPayoutsArgs<ExtArgs>
+    _count?: boolean | RevenueDistributionRunCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type RevenueDistributionRunIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RevenueDistributionRunIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    admin?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $RevenueDistributionRunPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RevenueDistributionRun"
+    objects: {
+      admin: Prisma.$UserPayload<ExtArgs>
+      creatorPayouts: Prisma.$RevenueDistributionPayoutPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      adminId: string
+      periodStart: Date
+      periodEnd: Date
+      grossAmountEntered: number
+      currency: string
+      distributablePool: number
+      totalQualityScore: number
+      totalQualifiedReads: number
+      totalEngagedReads: number
+      totalCompletedReads: number
+      totalCreatorsCount: number
+      status: $Enums.DistributionStatus
+      revertedAt: Date | null
+      revertedBy: string | null
+      notes: string | null
+      createdAt: Date
+    }, ExtArgs["result"]["revenueDistributionRun"]>
+    composites: {}
+  }
+
+  type RevenueDistributionRunGetPayload<S extends boolean | null | undefined | RevenueDistributionRunDefaultArgs> = $Result.GetResult<Prisma.$RevenueDistributionRunPayload, S>
+
+  type RevenueDistributionRunCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RevenueDistributionRunFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RevenueDistributionRunCountAggregateInputType | true
+    }
+
+  export interface RevenueDistributionRunDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RevenueDistributionRun'], meta: { name: 'RevenueDistributionRun' } }
+    /**
+     * Find zero or one RevenueDistributionRun that matches the filter.
+     * @param {RevenueDistributionRunFindUniqueArgs} args - Arguments to find a RevenueDistributionRun
+     * @example
+     * // Get one RevenueDistributionRun
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RevenueDistributionRunFindUniqueArgs>(args: SelectSubset<T, RevenueDistributionRunFindUniqueArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RevenueDistributionRun that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RevenueDistributionRunFindUniqueOrThrowArgs} args - Arguments to find a RevenueDistributionRun
+     * @example
+     * // Get one RevenueDistributionRun
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RevenueDistributionRunFindUniqueOrThrowArgs>(args: SelectSubset<T, RevenueDistributionRunFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RevenueDistributionRun that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionRunFindFirstArgs} args - Arguments to find a RevenueDistributionRun
+     * @example
+     * // Get one RevenueDistributionRun
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RevenueDistributionRunFindFirstArgs>(args?: SelectSubset<T, RevenueDistributionRunFindFirstArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RevenueDistributionRun that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionRunFindFirstOrThrowArgs} args - Arguments to find a RevenueDistributionRun
+     * @example
+     * // Get one RevenueDistributionRun
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RevenueDistributionRunFindFirstOrThrowArgs>(args?: SelectSubset<T, RevenueDistributionRunFindFirstOrThrowArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RevenueDistributionRuns that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionRunFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RevenueDistributionRuns
+     * const revenueDistributionRuns = await prisma.revenueDistributionRun.findMany()
+     * 
+     * // Get first 10 RevenueDistributionRuns
+     * const revenueDistributionRuns = await prisma.revenueDistributionRun.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const revenueDistributionRunWithIdOnly = await prisma.revenueDistributionRun.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RevenueDistributionRunFindManyArgs>(args?: SelectSubset<T, RevenueDistributionRunFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RevenueDistributionRun.
+     * @param {RevenueDistributionRunCreateArgs} args - Arguments to create a RevenueDistributionRun.
+     * @example
+     * // Create one RevenueDistributionRun
+     * const RevenueDistributionRun = await prisma.revenueDistributionRun.create({
+     *   data: {
+     *     // ... data to create a RevenueDistributionRun
+     *   }
+     * })
+     * 
+     */
+    create<T extends RevenueDistributionRunCreateArgs>(args: SelectSubset<T, RevenueDistributionRunCreateArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RevenueDistributionRuns.
+     * @param {RevenueDistributionRunCreateManyArgs} args - Arguments to create many RevenueDistributionRuns.
+     * @example
+     * // Create many RevenueDistributionRuns
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RevenueDistributionRunCreateManyArgs>(args?: SelectSubset<T, RevenueDistributionRunCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RevenueDistributionRuns and returns the data saved in the database.
+     * @param {RevenueDistributionRunCreateManyAndReturnArgs} args - Arguments to create many RevenueDistributionRuns.
+     * @example
+     * // Create many RevenueDistributionRuns
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RevenueDistributionRuns and only return the `id`
+     * const revenueDistributionRunWithIdOnly = await prisma.revenueDistributionRun.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RevenueDistributionRunCreateManyAndReturnArgs>(args?: SelectSubset<T, RevenueDistributionRunCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RevenueDistributionRun.
+     * @param {RevenueDistributionRunDeleteArgs} args - Arguments to delete one RevenueDistributionRun.
+     * @example
+     * // Delete one RevenueDistributionRun
+     * const RevenueDistributionRun = await prisma.revenueDistributionRun.delete({
+     *   where: {
+     *     // ... filter to delete one RevenueDistributionRun
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RevenueDistributionRunDeleteArgs>(args: SelectSubset<T, RevenueDistributionRunDeleteArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RevenueDistributionRun.
+     * @param {RevenueDistributionRunUpdateArgs} args - Arguments to update one RevenueDistributionRun.
+     * @example
+     * // Update one RevenueDistributionRun
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RevenueDistributionRunUpdateArgs>(args: SelectSubset<T, RevenueDistributionRunUpdateArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RevenueDistributionRuns.
+     * @param {RevenueDistributionRunDeleteManyArgs} args - Arguments to filter RevenueDistributionRuns to delete.
+     * @example
+     * // Delete a few RevenueDistributionRuns
+     * const { count } = await prisma.revenueDistributionRun.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RevenueDistributionRunDeleteManyArgs>(args?: SelectSubset<T, RevenueDistributionRunDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RevenueDistributionRuns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionRunUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RevenueDistributionRuns
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RevenueDistributionRunUpdateManyArgs>(args: SelectSubset<T, RevenueDistributionRunUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RevenueDistributionRuns and returns the data updated in the database.
+     * @param {RevenueDistributionRunUpdateManyAndReturnArgs} args - Arguments to update many RevenueDistributionRuns.
+     * @example
+     * // Update many RevenueDistributionRuns
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RevenueDistributionRuns and only return the `id`
+     * const revenueDistributionRunWithIdOnly = await prisma.revenueDistributionRun.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RevenueDistributionRunUpdateManyAndReturnArgs>(args: SelectSubset<T, RevenueDistributionRunUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RevenueDistributionRun.
+     * @param {RevenueDistributionRunUpsertArgs} args - Arguments to update or create a RevenueDistributionRun.
+     * @example
+     * // Update or create a RevenueDistributionRun
+     * const revenueDistributionRun = await prisma.revenueDistributionRun.upsert({
+     *   create: {
+     *     // ... data to create a RevenueDistributionRun
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RevenueDistributionRun we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RevenueDistributionRunUpsertArgs>(args: SelectSubset<T, RevenueDistributionRunUpsertArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RevenueDistributionRuns.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionRunCountArgs} args - Arguments to filter RevenueDistributionRuns to count.
+     * @example
+     * // Count the number of RevenueDistributionRuns
+     * const count = await prisma.revenueDistributionRun.count({
+     *   where: {
+     *     // ... the filter for the RevenueDistributionRuns we want to count
+     *   }
+     * })
+    **/
+    count<T extends RevenueDistributionRunCountArgs>(
+      args?: Subset<T, RevenueDistributionRunCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RevenueDistributionRunCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RevenueDistributionRun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionRunAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RevenueDistributionRunAggregateArgs>(args: Subset<T, RevenueDistributionRunAggregateArgs>): Prisma.PrismaPromise<GetRevenueDistributionRunAggregateType<T>>
+
+    /**
+     * Group by RevenueDistributionRun.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionRunGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RevenueDistributionRunGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RevenueDistributionRunGroupByArgs['orderBy'] }
+        : { orderBy?: RevenueDistributionRunGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RevenueDistributionRunGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRevenueDistributionRunGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RevenueDistributionRun model
+   */
+  readonly fields: RevenueDistributionRunFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RevenueDistributionRun.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RevenueDistributionRunClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    admin<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    creatorPayouts<T extends RevenueDistributionRun$creatorPayoutsArgs<ExtArgs> = {}>(args?: Subset<T, RevenueDistributionRun$creatorPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RevenueDistributionRun model
+   */
+  interface RevenueDistributionRunFieldRefs {
+    readonly id: FieldRef<"RevenueDistributionRun", 'String'>
+    readonly adminId: FieldRef<"RevenueDistributionRun", 'String'>
+    readonly periodStart: FieldRef<"RevenueDistributionRun", 'DateTime'>
+    readonly periodEnd: FieldRef<"RevenueDistributionRun", 'DateTime'>
+    readonly grossAmountEntered: FieldRef<"RevenueDistributionRun", 'Float'>
+    readonly currency: FieldRef<"RevenueDistributionRun", 'String'>
+    readonly distributablePool: FieldRef<"RevenueDistributionRun", 'Int'>
+    readonly totalQualityScore: FieldRef<"RevenueDistributionRun", 'Float'>
+    readonly totalQualifiedReads: FieldRef<"RevenueDistributionRun", 'Int'>
+    readonly totalEngagedReads: FieldRef<"RevenueDistributionRun", 'Int'>
+    readonly totalCompletedReads: FieldRef<"RevenueDistributionRun", 'Int'>
+    readonly totalCreatorsCount: FieldRef<"RevenueDistributionRun", 'Int'>
+    readonly status: FieldRef<"RevenueDistributionRun", 'DistributionStatus'>
+    readonly revertedAt: FieldRef<"RevenueDistributionRun", 'DateTime'>
+    readonly revertedBy: FieldRef<"RevenueDistributionRun", 'String'>
+    readonly notes: FieldRef<"RevenueDistributionRun", 'String'>
+    readonly createdAt: FieldRef<"RevenueDistributionRun", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RevenueDistributionRun findUnique
+   */
+  export type RevenueDistributionRunFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionRun to fetch.
+     */
+    where: RevenueDistributionRunWhereUniqueInput
+  }
+
+  /**
+   * RevenueDistributionRun findUniqueOrThrow
+   */
+  export type RevenueDistributionRunFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionRun to fetch.
+     */
+    where: RevenueDistributionRunWhereUniqueInput
+  }
+
+  /**
+   * RevenueDistributionRun findFirst
+   */
+  export type RevenueDistributionRunFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionRun to fetch.
+     */
+    where?: RevenueDistributionRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RevenueDistributionRuns to fetch.
+     */
+    orderBy?: RevenueDistributionRunOrderByWithRelationInput | RevenueDistributionRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RevenueDistributionRuns.
+     */
+    cursor?: RevenueDistributionRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RevenueDistributionRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RevenueDistributionRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RevenueDistributionRuns.
+     */
+    distinct?: RevenueDistributionRunScalarFieldEnum | RevenueDistributionRunScalarFieldEnum[]
+  }
+
+  /**
+   * RevenueDistributionRun findFirstOrThrow
+   */
+  export type RevenueDistributionRunFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionRun to fetch.
+     */
+    where?: RevenueDistributionRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RevenueDistributionRuns to fetch.
+     */
+    orderBy?: RevenueDistributionRunOrderByWithRelationInput | RevenueDistributionRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RevenueDistributionRuns.
+     */
+    cursor?: RevenueDistributionRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RevenueDistributionRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RevenueDistributionRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RevenueDistributionRuns.
+     */
+    distinct?: RevenueDistributionRunScalarFieldEnum | RevenueDistributionRunScalarFieldEnum[]
+  }
+
+  /**
+   * RevenueDistributionRun findMany
+   */
+  export type RevenueDistributionRunFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionRuns to fetch.
+     */
+    where?: RevenueDistributionRunWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RevenueDistributionRuns to fetch.
+     */
+    orderBy?: RevenueDistributionRunOrderByWithRelationInput | RevenueDistributionRunOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RevenueDistributionRuns.
+     */
+    cursor?: RevenueDistributionRunWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RevenueDistributionRuns from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RevenueDistributionRuns.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RevenueDistributionRuns.
+     */
+    distinct?: RevenueDistributionRunScalarFieldEnum | RevenueDistributionRunScalarFieldEnum[]
+  }
+
+  /**
+   * RevenueDistributionRun create
+   */
+  export type RevenueDistributionRunCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RevenueDistributionRun.
+     */
+    data: XOR<RevenueDistributionRunCreateInput, RevenueDistributionRunUncheckedCreateInput>
+  }
+
+  /**
+   * RevenueDistributionRun createMany
+   */
+  export type RevenueDistributionRunCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RevenueDistributionRuns.
+     */
+    data: RevenueDistributionRunCreateManyInput | RevenueDistributionRunCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RevenueDistributionRun createManyAndReturn
+   */
+  export type RevenueDistributionRunCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * The data used to create many RevenueDistributionRuns.
+     */
+    data: RevenueDistributionRunCreateManyInput | RevenueDistributionRunCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RevenueDistributionRun update
+   */
+  export type RevenueDistributionRunUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RevenueDistributionRun.
+     */
+    data: XOR<RevenueDistributionRunUpdateInput, RevenueDistributionRunUncheckedUpdateInput>
+    /**
+     * Choose, which RevenueDistributionRun to update.
+     */
+    where: RevenueDistributionRunWhereUniqueInput
+  }
+
+  /**
+   * RevenueDistributionRun updateMany
+   */
+  export type RevenueDistributionRunUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RevenueDistributionRuns.
+     */
+    data: XOR<RevenueDistributionRunUpdateManyMutationInput, RevenueDistributionRunUncheckedUpdateManyInput>
+    /**
+     * Filter which RevenueDistributionRuns to update
+     */
+    where?: RevenueDistributionRunWhereInput
+    /**
+     * Limit how many RevenueDistributionRuns to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RevenueDistributionRun updateManyAndReturn
+   */
+  export type RevenueDistributionRunUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * The data used to update RevenueDistributionRuns.
+     */
+    data: XOR<RevenueDistributionRunUpdateManyMutationInput, RevenueDistributionRunUncheckedUpdateManyInput>
+    /**
+     * Filter which RevenueDistributionRuns to update
+     */
+    where?: RevenueDistributionRunWhereInput
+    /**
+     * Limit how many RevenueDistributionRuns to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RevenueDistributionRun upsert
+   */
+  export type RevenueDistributionRunUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RevenueDistributionRun to update in case it exists.
+     */
+    where: RevenueDistributionRunWhereUniqueInput
+    /**
+     * In case the RevenueDistributionRun found by the `where` argument doesn't exist, create a new RevenueDistributionRun with this data.
+     */
+    create: XOR<RevenueDistributionRunCreateInput, RevenueDistributionRunUncheckedCreateInput>
+    /**
+     * In case the RevenueDistributionRun was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RevenueDistributionRunUpdateInput, RevenueDistributionRunUncheckedUpdateInput>
+  }
+
+  /**
+   * RevenueDistributionRun delete
+   */
+  export type RevenueDistributionRunDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+    /**
+     * Filter which RevenueDistributionRun to delete.
+     */
+    where: RevenueDistributionRunWhereUniqueInput
+  }
+
+  /**
+   * RevenueDistributionRun deleteMany
+   */
+  export type RevenueDistributionRunDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RevenueDistributionRuns to delete
+     */
+    where?: RevenueDistributionRunWhereInput
+    /**
+     * Limit how many RevenueDistributionRuns to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RevenueDistributionRun.creatorPayouts
+   */
+  export type RevenueDistributionRun$creatorPayoutsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    where?: RevenueDistributionPayoutWhereInput
+    orderBy?: RevenueDistributionPayoutOrderByWithRelationInput | RevenueDistributionPayoutOrderByWithRelationInput[]
+    cursor?: RevenueDistributionPayoutWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RevenueDistributionPayoutScalarFieldEnum | RevenueDistributionPayoutScalarFieldEnum[]
+  }
+
+  /**
+   * RevenueDistributionRun without action
+   */
+  export type RevenueDistributionRunDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionRun
+     */
+    select?: RevenueDistributionRunSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionRun
+     */
+    omit?: RevenueDistributionRunOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionRunInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model RevenueDistributionPayout
+   */
+
+  export type AggregateRevenueDistributionPayout = {
+    _count: RevenueDistributionPayoutCountAggregateOutputType | null
+    _avg: RevenueDistributionPayoutAvgAggregateOutputType | null
+    _sum: RevenueDistributionPayoutSumAggregateOutputType | null
+    _min: RevenueDistributionPayoutMinAggregateOutputType | null
+    _max: RevenueDistributionPayoutMaxAggregateOutputType | null
+  }
+
+  export type RevenueDistributionPayoutAvgAggregateOutputType = {
+    qualityScore: number | null
+    scorePercentage: number | null
+    qualifiedReadsCount: number | null
+    engagedReadsCount: number | null
+    completedReadsCount: number | null
+    totalReadsCount: number | null
+    pointsAwarded: number | null
+    fiatEquivalent: number | null
+    revertedPoints: number | null
+    shortfallPoints: number | null
+  }
+
+  export type RevenueDistributionPayoutSumAggregateOutputType = {
+    qualityScore: number | null
+    scorePercentage: number | null
+    qualifiedReadsCount: number | null
+    engagedReadsCount: number | null
+    completedReadsCount: number | null
+    totalReadsCount: number | null
+    pointsAwarded: number | null
+    fiatEquivalent: number | null
+    revertedPoints: number | null
+    shortfallPoints: number | null
+  }
+
+  export type RevenueDistributionPayoutMinAggregateOutputType = {
+    id: string | null
+    distributionRunId: string | null
+    creatorId: string | null
+    qualityScore: number | null
+    scorePercentage: number | null
+    qualifiedReadsCount: number | null
+    engagedReadsCount: number | null
+    completedReadsCount: number | null
+    totalReadsCount: number | null
+    pointsAwarded: number | null
+    fiatEquivalent: number | null
+    revertedPoints: number | null
+    shortfallPoints: number | null
+    createdAt: Date | null
+  }
+
+  export type RevenueDistributionPayoutMaxAggregateOutputType = {
+    id: string | null
+    distributionRunId: string | null
+    creatorId: string | null
+    qualityScore: number | null
+    scorePercentage: number | null
+    qualifiedReadsCount: number | null
+    engagedReadsCount: number | null
+    completedReadsCount: number | null
+    totalReadsCount: number | null
+    pointsAwarded: number | null
+    fiatEquivalent: number | null
+    revertedPoints: number | null
+    shortfallPoints: number | null
+    createdAt: Date | null
+  }
+
+  export type RevenueDistributionPayoutCountAggregateOutputType = {
+    id: number
+    distributionRunId: number
+    creatorId: number
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount: number
+    engagedReadsCount: number
+    completedReadsCount: number
+    totalReadsCount: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints: number
+    shortfallPoints: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RevenueDistributionPayoutAvgAggregateInputType = {
+    qualityScore?: true
+    scorePercentage?: true
+    qualifiedReadsCount?: true
+    engagedReadsCount?: true
+    completedReadsCount?: true
+    totalReadsCount?: true
+    pointsAwarded?: true
+    fiatEquivalent?: true
+    revertedPoints?: true
+    shortfallPoints?: true
+  }
+
+  export type RevenueDistributionPayoutSumAggregateInputType = {
+    qualityScore?: true
+    scorePercentage?: true
+    qualifiedReadsCount?: true
+    engagedReadsCount?: true
+    completedReadsCount?: true
+    totalReadsCount?: true
+    pointsAwarded?: true
+    fiatEquivalent?: true
+    revertedPoints?: true
+    shortfallPoints?: true
+  }
+
+  export type RevenueDistributionPayoutMinAggregateInputType = {
+    id?: true
+    distributionRunId?: true
+    creatorId?: true
+    qualityScore?: true
+    scorePercentage?: true
+    qualifiedReadsCount?: true
+    engagedReadsCount?: true
+    completedReadsCount?: true
+    totalReadsCount?: true
+    pointsAwarded?: true
+    fiatEquivalent?: true
+    revertedPoints?: true
+    shortfallPoints?: true
+    createdAt?: true
+  }
+
+  export type RevenueDistributionPayoutMaxAggregateInputType = {
+    id?: true
+    distributionRunId?: true
+    creatorId?: true
+    qualityScore?: true
+    scorePercentage?: true
+    qualifiedReadsCount?: true
+    engagedReadsCount?: true
+    completedReadsCount?: true
+    totalReadsCount?: true
+    pointsAwarded?: true
+    fiatEquivalent?: true
+    revertedPoints?: true
+    shortfallPoints?: true
+    createdAt?: true
+  }
+
+  export type RevenueDistributionPayoutCountAggregateInputType = {
+    id?: true
+    distributionRunId?: true
+    creatorId?: true
+    qualityScore?: true
+    scorePercentage?: true
+    qualifiedReadsCount?: true
+    engagedReadsCount?: true
+    completedReadsCount?: true
+    totalReadsCount?: true
+    pointsAwarded?: true
+    fiatEquivalent?: true
+    revertedPoints?: true
+    shortfallPoints?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RevenueDistributionPayoutAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RevenueDistributionPayout to aggregate.
+     */
+    where?: RevenueDistributionPayoutWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RevenueDistributionPayouts to fetch.
+     */
+    orderBy?: RevenueDistributionPayoutOrderByWithRelationInput | RevenueDistributionPayoutOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RevenueDistributionPayoutWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RevenueDistributionPayouts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RevenueDistributionPayouts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RevenueDistributionPayouts
+    **/
+    _count?: true | RevenueDistributionPayoutCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RevenueDistributionPayoutAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RevenueDistributionPayoutSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RevenueDistributionPayoutMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RevenueDistributionPayoutMaxAggregateInputType
+  }
+
+  export type GetRevenueDistributionPayoutAggregateType<T extends RevenueDistributionPayoutAggregateArgs> = {
+        [P in keyof T & keyof AggregateRevenueDistributionPayout]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRevenueDistributionPayout[P]>
+      : GetScalarType<T[P], AggregateRevenueDistributionPayout[P]>
+  }
+
+
+
+
+  export type RevenueDistributionPayoutGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RevenueDistributionPayoutWhereInput
+    orderBy?: RevenueDistributionPayoutOrderByWithAggregationInput | RevenueDistributionPayoutOrderByWithAggregationInput[]
+    by: RevenueDistributionPayoutScalarFieldEnum[] | RevenueDistributionPayoutScalarFieldEnum
+    having?: RevenueDistributionPayoutScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RevenueDistributionPayoutCountAggregateInputType | true
+    _avg?: RevenueDistributionPayoutAvgAggregateInputType
+    _sum?: RevenueDistributionPayoutSumAggregateInputType
+    _min?: RevenueDistributionPayoutMinAggregateInputType
+    _max?: RevenueDistributionPayoutMaxAggregateInputType
+  }
+
+  export type RevenueDistributionPayoutGroupByOutputType = {
+    id: string
+    distributionRunId: string
+    creatorId: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount: number
+    engagedReadsCount: number
+    completedReadsCount: number
+    totalReadsCount: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints: number
+    shortfallPoints: number
+    createdAt: Date
+    _count: RevenueDistributionPayoutCountAggregateOutputType | null
+    _avg: RevenueDistributionPayoutAvgAggregateOutputType | null
+    _sum: RevenueDistributionPayoutSumAggregateOutputType | null
+    _min: RevenueDistributionPayoutMinAggregateOutputType | null
+    _max: RevenueDistributionPayoutMaxAggregateOutputType | null
+  }
+
+  type GetRevenueDistributionPayoutGroupByPayload<T extends RevenueDistributionPayoutGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RevenueDistributionPayoutGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RevenueDistributionPayoutGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RevenueDistributionPayoutGroupByOutputType[P]>
+            : GetScalarType<T[P], RevenueDistributionPayoutGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RevenueDistributionPayoutSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    distributionRunId?: boolean
+    creatorId?: boolean
+    qualityScore?: boolean
+    scorePercentage?: boolean
+    qualifiedReadsCount?: boolean
+    engagedReadsCount?: boolean
+    completedReadsCount?: boolean
+    totalReadsCount?: boolean
+    pointsAwarded?: boolean
+    fiatEquivalent?: boolean
+    revertedPoints?: boolean
+    shortfallPoints?: boolean
+    createdAt?: boolean
+    distributionRun?: boolean | RevenueDistributionRunDefaultArgs<ExtArgs>
+    creator?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["revenueDistributionPayout"]>
+
+  export type RevenueDistributionPayoutSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    distributionRunId?: boolean
+    creatorId?: boolean
+    qualityScore?: boolean
+    scorePercentage?: boolean
+    qualifiedReadsCount?: boolean
+    engagedReadsCount?: boolean
+    completedReadsCount?: boolean
+    totalReadsCount?: boolean
+    pointsAwarded?: boolean
+    fiatEquivalent?: boolean
+    revertedPoints?: boolean
+    shortfallPoints?: boolean
+    createdAt?: boolean
+    distributionRun?: boolean | RevenueDistributionRunDefaultArgs<ExtArgs>
+    creator?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["revenueDistributionPayout"]>
+
+  export type RevenueDistributionPayoutSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    distributionRunId?: boolean
+    creatorId?: boolean
+    qualityScore?: boolean
+    scorePercentage?: boolean
+    qualifiedReadsCount?: boolean
+    engagedReadsCount?: boolean
+    completedReadsCount?: boolean
+    totalReadsCount?: boolean
+    pointsAwarded?: boolean
+    fiatEquivalent?: boolean
+    revertedPoints?: boolean
+    shortfallPoints?: boolean
+    createdAt?: boolean
+    distributionRun?: boolean | RevenueDistributionRunDefaultArgs<ExtArgs>
+    creator?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["revenueDistributionPayout"]>
+
+  export type RevenueDistributionPayoutSelectScalar = {
+    id?: boolean
+    distributionRunId?: boolean
+    creatorId?: boolean
+    qualityScore?: boolean
+    scorePercentage?: boolean
+    qualifiedReadsCount?: boolean
+    engagedReadsCount?: boolean
+    completedReadsCount?: boolean
+    totalReadsCount?: boolean
+    pointsAwarded?: boolean
+    fiatEquivalent?: boolean
+    revertedPoints?: boolean
+    shortfallPoints?: boolean
+    createdAt?: boolean
+  }
+
+  export type RevenueDistributionPayoutOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "distributionRunId" | "creatorId" | "qualityScore" | "scorePercentage" | "qualifiedReadsCount" | "engagedReadsCount" | "completedReadsCount" | "totalReadsCount" | "pointsAwarded" | "fiatEquivalent" | "revertedPoints" | "shortfallPoints" | "createdAt", ExtArgs["result"]["revenueDistributionPayout"]>
+  export type RevenueDistributionPayoutInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    distributionRun?: boolean | RevenueDistributionRunDefaultArgs<ExtArgs>
+    creator?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+  export type RevenueDistributionPayoutIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    distributionRun?: boolean | RevenueDistributionRunDefaultArgs<ExtArgs>
+    creator?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+  export type RevenueDistributionPayoutIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    distributionRun?: boolean | RevenueDistributionRunDefaultArgs<ExtArgs>
+    creator?: boolean | CreatorProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $RevenueDistributionPayoutPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RevenueDistributionPayout"
+    objects: {
+      distributionRun: Prisma.$RevenueDistributionRunPayload<ExtArgs>
+      creator: Prisma.$CreatorProfilePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      distributionRunId: string
+      creatorId: string
+      qualityScore: number
+      scorePercentage: number
+      qualifiedReadsCount: number
+      engagedReadsCount: number
+      completedReadsCount: number
+      totalReadsCount: number
+      pointsAwarded: number
+      fiatEquivalent: number
+      revertedPoints: number
+      shortfallPoints: number
+      createdAt: Date
+    }, ExtArgs["result"]["revenueDistributionPayout"]>
+    composites: {}
+  }
+
+  type RevenueDistributionPayoutGetPayload<S extends boolean | null | undefined | RevenueDistributionPayoutDefaultArgs> = $Result.GetResult<Prisma.$RevenueDistributionPayoutPayload, S>
+
+  type RevenueDistributionPayoutCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RevenueDistributionPayoutFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RevenueDistributionPayoutCountAggregateInputType | true
+    }
+
+  export interface RevenueDistributionPayoutDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RevenueDistributionPayout'], meta: { name: 'RevenueDistributionPayout' } }
+    /**
+     * Find zero or one RevenueDistributionPayout that matches the filter.
+     * @param {RevenueDistributionPayoutFindUniqueArgs} args - Arguments to find a RevenueDistributionPayout
+     * @example
+     * // Get one RevenueDistributionPayout
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RevenueDistributionPayoutFindUniqueArgs>(args: SelectSubset<T, RevenueDistributionPayoutFindUniqueArgs<ExtArgs>>): Prisma__RevenueDistributionPayoutClient<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RevenueDistributionPayout that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RevenueDistributionPayoutFindUniqueOrThrowArgs} args - Arguments to find a RevenueDistributionPayout
+     * @example
+     * // Get one RevenueDistributionPayout
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RevenueDistributionPayoutFindUniqueOrThrowArgs>(args: SelectSubset<T, RevenueDistributionPayoutFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RevenueDistributionPayoutClient<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RevenueDistributionPayout that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionPayoutFindFirstArgs} args - Arguments to find a RevenueDistributionPayout
+     * @example
+     * // Get one RevenueDistributionPayout
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RevenueDistributionPayoutFindFirstArgs>(args?: SelectSubset<T, RevenueDistributionPayoutFindFirstArgs<ExtArgs>>): Prisma__RevenueDistributionPayoutClient<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RevenueDistributionPayout that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionPayoutFindFirstOrThrowArgs} args - Arguments to find a RevenueDistributionPayout
+     * @example
+     * // Get one RevenueDistributionPayout
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RevenueDistributionPayoutFindFirstOrThrowArgs>(args?: SelectSubset<T, RevenueDistributionPayoutFindFirstOrThrowArgs<ExtArgs>>): Prisma__RevenueDistributionPayoutClient<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RevenueDistributionPayouts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionPayoutFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RevenueDistributionPayouts
+     * const revenueDistributionPayouts = await prisma.revenueDistributionPayout.findMany()
+     * 
+     * // Get first 10 RevenueDistributionPayouts
+     * const revenueDistributionPayouts = await prisma.revenueDistributionPayout.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const revenueDistributionPayoutWithIdOnly = await prisma.revenueDistributionPayout.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RevenueDistributionPayoutFindManyArgs>(args?: SelectSubset<T, RevenueDistributionPayoutFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RevenueDistributionPayout.
+     * @param {RevenueDistributionPayoutCreateArgs} args - Arguments to create a RevenueDistributionPayout.
+     * @example
+     * // Create one RevenueDistributionPayout
+     * const RevenueDistributionPayout = await prisma.revenueDistributionPayout.create({
+     *   data: {
+     *     // ... data to create a RevenueDistributionPayout
+     *   }
+     * })
+     * 
+     */
+    create<T extends RevenueDistributionPayoutCreateArgs>(args: SelectSubset<T, RevenueDistributionPayoutCreateArgs<ExtArgs>>): Prisma__RevenueDistributionPayoutClient<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RevenueDistributionPayouts.
+     * @param {RevenueDistributionPayoutCreateManyArgs} args - Arguments to create many RevenueDistributionPayouts.
+     * @example
+     * // Create many RevenueDistributionPayouts
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RevenueDistributionPayoutCreateManyArgs>(args?: SelectSubset<T, RevenueDistributionPayoutCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RevenueDistributionPayouts and returns the data saved in the database.
+     * @param {RevenueDistributionPayoutCreateManyAndReturnArgs} args - Arguments to create many RevenueDistributionPayouts.
+     * @example
+     * // Create many RevenueDistributionPayouts
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RevenueDistributionPayouts and only return the `id`
+     * const revenueDistributionPayoutWithIdOnly = await prisma.revenueDistributionPayout.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RevenueDistributionPayoutCreateManyAndReturnArgs>(args?: SelectSubset<T, RevenueDistributionPayoutCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RevenueDistributionPayout.
+     * @param {RevenueDistributionPayoutDeleteArgs} args - Arguments to delete one RevenueDistributionPayout.
+     * @example
+     * // Delete one RevenueDistributionPayout
+     * const RevenueDistributionPayout = await prisma.revenueDistributionPayout.delete({
+     *   where: {
+     *     // ... filter to delete one RevenueDistributionPayout
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RevenueDistributionPayoutDeleteArgs>(args: SelectSubset<T, RevenueDistributionPayoutDeleteArgs<ExtArgs>>): Prisma__RevenueDistributionPayoutClient<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RevenueDistributionPayout.
+     * @param {RevenueDistributionPayoutUpdateArgs} args - Arguments to update one RevenueDistributionPayout.
+     * @example
+     * // Update one RevenueDistributionPayout
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RevenueDistributionPayoutUpdateArgs>(args: SelectSubset<T, RevenueDistributionPayoutUpdateArgs<ExtArgs>>): Prisma__RevenueDistributionPayoutClient<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RevenueDistributionPayouts.
+     * @param {RevenueDistributionPayoutDeleteManyArgs} args - Arguments to filter RevenueDistributionPayouts to delete.
+     * @example
+     * // Delete a few RevenueDistributionPayouts
+     * const { count } = await prisma.revenueDistributionPayout.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RevenueDistributionPayoutDeleteManyArgs>(args?: SelectSubset<T, RevenueDistributionPayoutDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RevenueDistributionPayouts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionPayoutUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RevenueDistributionPayouts
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RevenueDistributionPayoutUpdateManyArgs>(args: SelectSubset<T, RevenueDistributionPayoutUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RevenueDistributionPayouts and returns the data updated in the database.
+     * @param {RevenueDistributionPayoutUpdateManyAndReturnArgs} args - Arguments to update many RevenueDistributionPayouts.
+     * @example
+     * // Update many RevenueDistributionPayouts
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RevenueDistributionPayouts and only return the `id`
+     * const revenueDistributionPayoutWithIdOnly = await prisma.revenueDistributionPayout.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RevenueDistributionPayoutUpdateManyAndReturnArgs>(args: SelectSubset<T, RevenueDistributionPayoutUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RevenueDistributionPayout.
+     * @param {RevenueDistributionPayoutUpsertArgs} args - Arguments to update or create a RevenueDistributionPayout.
+     * @example
+     * // Update or create a RevenueDistributionPayout
+     * const revenueDistributionPayout = await prisma.revenueDistributionPayout.upsert({
+     *   create: {
+     *     // ... data to create a RevenueDistributionPayout
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RevenueDistributionPayout we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RevenueDistributionPayoutUpsertArgs>(args: SelectSubset<T, RevenueDistributionPayoutUpsertArgs<ExtArgs>>): Prisma__RevenueDistributionPayoutClient<$Result.GetResult<Prisma.$RevenueDistributionPayoutPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RevenueDistributionPayouts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionPayoutCountArgs} args - Arguments to filter RevenueDistributionPayouts to count.
+     * @example
+     * // Count the number of RevenueDistributionPayouts
+     * const count = await prisma.revenueDistributionPayout.count({
+     *   where: {
+     *     // ... the filter for the RevenueDistributionPayouts we want to count
+     *   }
+     * })
+    **/
+    count<T extends RevenueDistributionPayoutCountArgs>(
+      args?: Subset<T, RevenueDistributionPayoutCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RevenueDistributionPayoutCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RevenueDistributionPayout.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionPayoutAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RevenueDistributionPayoutAggregateArgs>(args: Subset<T, RevenueDistributionPayoutAggregateArgs>): Prisma.PrismaPromise<GetRevenueDistributionPayoutAggregateType<T>>
+
+    /**
+     * Group by RevenueDistributionPayout.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RevenueDistributionPayoutGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RevenueDistributionPayoutGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RevenueDistributionPayoutGroupByArgs['orderBy'] }
+        : { orderBy?: RevenueDistributionPayoutGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RevenueDistributionPayoutGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRevenueDistributionPayoutGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RevenueDistributionPayout model
+   */
+  readonly fields: RevenueDistributionPayoutFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RevenueDistributionPayout.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RevenueDistributionPayoutClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    distributionRun<T extends RevenueDistributionRunDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RevenueDistributionRunDefaultArgs<ExtArgs>>): Prisma__RevenueDistributionRunClient<$Result.GetResult<Prisma.$RevenueDistributionRunPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    creator<T extends CreatorProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CreatorProfileDefaultArgs<ExtArgs>>): Prisma__CreatorProfileClient<$Result.GetResult<Prisma.$CreatorProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RevenueDistributionPayout model
+   */
+  interface RevenueDistributionPayoutFieldRefs {
+    readonly id: FieldRef<"RevenueDistributionPayout", 'String'>
+    readonly distributionRunId: FieldRef<"RevenueDistributionPayout", 'String'>
+    readonly creatorId: FieldRef<"RevenueDistributionPayout", 'String'>
+    readonly qualityScore: FieldRef<"RevenueDistributionPayout", 'Float'>
+    readonly scorePercentage: FieldRef<"RevenueDistributionPayout", 'Float'>
+    readonly qualifiedReadsCount: FieldRef<"RevenueDistributionPayout", 'Int'>
+    readonly engagedReadsCount: FieldRef<"RevenueDistributionPayout", 'Int'>
+    readonly completedReadsCount: FieldRef<"RevenueDistributionPayout", 'Int'>
+    readonly totalReadsCount: FieldRef<"RevenueDistributionPayout", 'Int'>
+    readonly pointsAwarded: FieldRef<"RevenueDistributionPayout", 'Int'>
+    readonly fiatEquivalent: FieldRef<"RevenueDistributionPayout", 'Float'>
+    readonly revertedPoints: FieldRef<"RevenueDistributionPayout", 'Int'>
+    readonly shortfallPoints: FieldRef<"RevenueDistributionPayout", 'Int'>
+    readonly createdAt: FieldRef<"RevenueDistributionPayout", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RevenueDistributionPayout findUnique
+   */
+  export type RevenueDistributionPayoutFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionPayout to fetch.
+     */
+    where: RevenueDistributionPayoutWhereUniqueInput
+  }
+
+  /**
+   * RevenueDistributionPayout findUniqueOrThrow
+   */
+  export type RevenueDistributionPayoutFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionPayout to fetch.
+     */
+    where: RevenueDistributionPayoutWhereUniqueInput
+  }
+
+  /**
+   * RevenueDistributionPayout findFirst
+   */
+  export type RevenueDistributionPayoutFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionPayout to fetch.
+     */
+    where?: RevenueDistributionPayoutWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RevenueDistributionPayouts to fetch.
+     */
+    orderBy?: RevenueDistributionPayoutOrderByWithRelationInput | RevenueDistributionPayoutOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RevenueDistributionPayouts.
+     */
+    cursor?: RevenueDistributionPayoutWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RevenueDistributionPayouts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RevenueDistributionPayouts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RevenueDistributionPayouts.
+     */
+    distinct?: RevenueDistributionPayoutScalarFieldEnum | RevenueDistributionPayoutScalarFieldEnum[]
+  }
+
+  /**
+   * RevenueDistributionPayout findFirstOrThrow
+   */
+  export type RevenueDistributionPayoutFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionPayout to fetch.
+     */
+    where?: RevenueDistributionPayoutWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RevenueDistributionPayouts to fetch.
+     */
+    orderBy?: RevenueDistributionPayoutOrderByWithRelationInput | RevenueDistributionPayoutOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RevenueDistributionPayouts.
+     */
+    cursor?: RevenueDistributionPayoutWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RevenueDistributionPayouts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RevenueDistributionPayouts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RevenueDistributionPayouts.
+     */
+    distinct?: RevenueDistributionPayoutScalarFieldEnum | RevenueDistributionPayoutScalarFieldEnum[]
+  }
+
+  /**
+   * RevenueDistributionPayout findMany
+   */
+  export type RevenueDistributionPayoutFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * Filter, which RevenueDistributionPayouts to fetch.
+     */
+    where?: RevenueDistributionPayoutWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RevenueDistributionPayouts to fetch.
+     */
+    orderBy?: RevenueDistributionPayoutOrderByWithRelationInput | RevenueDistributionPayoutOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RevenueDistributionPayouts.
+     */
+    cursor?: RevenueDistributionPayoutWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RevenueDistributionPayouts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RevenueDistributionPayouts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RevenueDistributionPayouts.
+     */
+    distinct?: RevenueDistributionPayoutScalarFieldEnum | RevenueDistributionPayoutScalarFieldEnum[]
+  }
+
+  /**
+   * RevenueDistributionPayout create
+   */
+  export type RevenueDistributionPayoutCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RevenueDistributionPayout.
+     */
+    data: XOR<RevenueDistributionPayoutCreateInput, RevenueDistributionPayoutUncheckedCreateInput>
+  }
+
+  /**
+   * RevenueDistributionPayout createMany
+   */
+  export type RevenueDistributionPayoutCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RevenueDistributionPayouts.
+     */
+    data: RevenueDistributionPayoutCreateManyInput | RevenueDistributionPayoutCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RevenueDistributionPayout createManyAndReturn
+   */
+  export type RevenueDistributionPayoutCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * The data used to create many RevenueDistributionPayouts.
+     */
+    data: RevenueDistributionPayoutCreateManyInput | RevenueDistributionPayoutCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RevenueDistributionPayout update
+   */
+  export type RevenueDistributionPayoutUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RevenueDistributionPayout.
+     */
+    data: XOR<RevenueDistributionPayoutUpdateInput, RevenueDistributionPayoutUncheckedUpdateInput>
+    /**
+     * Choose, which RevenueDistributionPayout to update.
+     */
+    where: RevenueDistributionPayoutWhereUniqueInput
+  }
+
+  /**
+   * RevenueDistributionPayout updateMany
+   */
+  export type RevenueDistributionPayoutUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RevenueDistributionPayouts.
+     */
+    data: XOR<RevenueDistributionPayoutUpdateManyMutationInput, RevenueDistributionPayoutUncheckedUpdateManyInput>
+    /**
+     * Filter which RevenueDistributionPayouts to update
+     */
+    where?: RevenueDistributionPayoutWhereInput
+    /**
+     * Limit how many RevenueDistributionPayouts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RevenueDistributionPayout updateManyAndReturn
+   */
+  export type RevenueDistributionPayoutUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * The data used to update RevenueDistributionPayouts.
+     */
+    data: XOR<RevenueDistributionPayoutUpdateManyMutationInput, RevenueDistributionPayoutUncheckedUpdateManyInput>
+    /**
+     * Filter which RevenueDistributionPayouts to update
+     */
+    where?: RevenueDistributionPayoutWhereInput
+    /**
+     * Limit how many RevenueDistributionPayouts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RevenueDistributionPayout upsert
+   */
+  export type RevenueDistributionPayoutUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RevenueDistributionPayout to update in case it exists.
+     */
+    where: RevenueDistributionPayoutWhereUniqueInput
+    /**
+     * In case the RevenueDistributionPayout found by the `where` argument doesn't exist, create a new RevenueDistributionPayout with this data.
+     */
+    create: XOR<RevenueDistributionPayoutCreateInput, RevenueDistributionPayoutUncheckedCreateInput>
+    /**
+     * In case the RevenueDistributionPayout was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RevenueDistributionPayoutUpdateInput, RevenueDistributionPayoutUncheckedUpdateInput>
+  }
+
+  /**
+   * RevenueDistributionPayout delete
+   */
+  export type RevenueDistributionPayoutDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+    /**
+     * Filter which RevenueDistributionPayout to delete.
+     */
+    where: RevenueDistributionPayoutWhereUniqueInput
+  }
+
+  /**
+   * RevenueDistributionPayout deleteMany
+   */
+  export type RevenueDistributionPayoutDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RevenueDistributionPayouts to delete
+     */
+    where?: RevenueDistributionPayoutWhereInput
+    /**
+     * Limit how many RevenueDistributionPayouts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RevenueDistributionPayout without action
+   */
+  export type RevenueDistributionPayoutDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RevenueDistributionPayout
+     */
+    select?: RevenueDistributionPayoutSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RevenueDistributionPayout
+     */
+    omit?: RevenueDistributionPayoutOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RevenueDistributionPayoutInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -40821,6 +45383,77 @@ export namespace Prisma {
   export type ContactMessageScalarFieldEnum = (typeof ContactMessageScalarFieldEnum)[keyof typeof ContactMessageScalarFieldEnum]
 
 
+  export const ChapterReadEventScalarFieldEnum: {
+    id: 'id',
+    sessionId: 'sessionId',
+    userId: 'userId',
+    seriesId: 'seriesId',
+    chapterId: 'chapterId',
+    creatorId: 'creatorId',
+    startedAt: 'startedAt',
+    endedAt: 'endedAt',
+    durationSeconds: 'durationSeconds',
+    pagesViewed: 'pagesViewed',
+    totalPages: 'totalPages',
+    completionPercent: 'completionPercent',
+    scrollDepthPercent: 'scrollDepthPercent',
+    interactionCount: 'interactionCount',
+    qualityTier: 'qualityTier',
+    qualityScore: 'qualityScore',
+    isBotLikely: 'isBotLikely',
+    botReason: 'botReason',
+    clientIp: 'clientIp',
+    userAgent: 'userAgent',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ChapterReadEventScalarFieldEnum = (typeof ChapterReadEventScalarFieldEnum)[keyof typeof ChapterReadEventScalarFieldEnum]
+
+
+  export const RevenueDistributionRunScalarFieldEnum: {
+    id: 'id',
+    adminId: 'adminId',
+    periodStart: 'periodStart',
+    periodEnd: 'periodEnd',
+    grossAmountEntered: 'grossAmountEntered',
+    currency: 'currency',
+    distributablePool: 'distributablePool',
+    totalQualityScore: 'totalQualityScore',
+    totalQualifiedReads: 'totalQualifiedReads',
+    totalEngagedReads: 'totalEngagedReads',
+    totalCompletedReads: 'totalCompletedReads',
+    totalCreatorsCount: 'totalCreatorsCount',
+    status: 'status',
+    revertedAt: 'revertedAt',
+    revertedBy: 'revertedBy',
+    notes: 'notes',
+    createdAt: 'createdAt'
+  };
+
+  export type RevenueDistributionRunScalarFieldEnum = (typeof RevenueDistributionRunScalarFieldEnum)[keyof typeof RevenueDistributionRunScalarFieldEnum]
+
+
+  export const RevenueDistributionPayoutScalarFieldEnum: {
+    id: 'id',
+    distributionRunId: 'distributionRunId',
+    creatorId: 'creatorId',
+    qualityScore: 'qualityScore',
+    scorePercentage: 'scorePercentage',
+    qualifiedReadsCount: 'qualifiedReadsCount',
+    engagedReadsCount: 'engagedReadsCount',
+    completedReadsCount: 'completedReadsCount',
+    totalReadsCount: 'totalReadsCount',
+    pointsAwarded: 'pointsAwarded',
+    fiatEquivalent: 'fiatEquivalent',
+    revertedPoints: 'revertedPoints',
+    shortfallPoints: 'shortfallPoints',
+    createdAt: 'createdAt'
+  };
+
+  export type RevenueDistributionPayoutScalarFieldEnum = (typeof RevenueDistributionPayoutScalarFieldEnum)[keyof typeof RevenueDistributionPayoutScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -41096,6 +45729,34 @@ export namespace Prisma {
    */
   export type ListEnumFeaturedRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeaturedRequestStatus[]'>
     
+
+
+  /**
+   * Reference to a field of type 'QualityTier'
+   */
+  export type EnumQualityTierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QualityTier'>
+    
+
+
+  /**
+   * Reference to a field of type 'QualityTier[]'
+   */
+  export type ListEnumQualityTierFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QualityTier[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'DistributionStatus'
+   */
+  export type EnumDistributionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DistributionStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'DistributionStatus[]'
+   */
+  export type ListEnumDistributionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DistributionStatus[]'>
+    
   /**
    * Deep Input Types
    */
@@ -41145,6 +45806,8 @@ export namespace Prisma {
     auditLogs?: AuditLogListRelationFilter
     promoRedemptions?: PromoCodeRedemptionListRelationFilter
     createdPromoCodes?: PromoCodeListRelationFilter
+    chapterReadEvents?: ChapterReadEventListRelationFilter
+    revenueDistributionsCreated?: RevenueDistributionRunListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -41188,6 +45851,8 @@ export namespace Prisma {
     auditLogs?: AuditLogOrderByRelationAggregateInput
     promoRedemptions?: PromoCodeRedemptionOrderByRelationAggregateInput
     createdPromoCodes?: PromoCodeOrderByRelationAggregateInput
+    chapterReadEvents?: ChapterReadEventOrderByRelationAggregateInput
+    revenueDistributionsCreated?: RevenueDistributionRunOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -41234,6 +45899,8 @@ export namespace Prisma {
     auditLogs?: AuditLogListRelationFilter
     promoRedemptions?: PromoCodeRedemptionListRelationFilter
     createdPromoCodes?: PromoCodeListRelationFilter
+    chapterReadEvents?: ChapterReadEventListRelationFilter
+    revenueDistributionsCreated?: RevenueDistributionRunListRelationFilter
   }, "id" | "email" | "referralCode">
 
   export type UserOrderByWithAggregationInput = {
@@ -41304,6 +45971,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     series?: SeriesListRelationFilter
+    readEvents?: ChapterReadEventListRelationFilter
+    distributionPayouts?: RevenueDistributionPayoutListRelationFilter
   }
 
   export type CreatorProfileOrderByWithRelationInput = {
@@ -41319,6 +45988,8 @@ export namespace Prisma {
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
     series?: SeriesOrderByRelationAggregateInput
+    readEvents?: ChapterReadEventOrderByRelationAggregateInput
+    distributionPayouts?: RevenueDistributionPayoutOrderByRelationAggregateInput
   }
 
   export type CreatorProfileWhereUniqueInput = Prisma.AtLeast<{
@@ -41337,6 +46008,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"CreatorProfile"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     series?: SeriesListRelationFilter
+    readEvents?: ChapterReadEventListRelationFilter
+    distributionPayouts?: RevenueDistributionPayoutListRelationFilter
   }, "id" | "userId">
 
   export type CreatorProfileOrderByWithAggregationInput = {
@@ -41632,6 +46305,7 @@ export namespace Prisma {
     reviews?: ReviewListRelationFilter
     reports?: ReportListRelationFilter
     featuredRequests?: FeaturedRequestListRelationFilter
+    readEvents?: ChapterReadEventListRelationFilter
   }
 
   export type SeriesOrderByWithRelationInput = {
@@ -41663,6 +46337,7 @@ export namespace Prisma {
     reviews?: ReviewOrderByRelationAggregateInput
     reports?: ReportOrderByRelationAggregateInput
     featuredRequests?: FeaturedRequestOrderByRelationAggregateInput
+    readEvents?: ChapterReadEventOrderByRelationAggregateInput
   }
 
   export type SeriesWhereUniqueInput = Prisma.AtLeast<{
@@ -41697,6 +46372,7 @@ export namespace Prisma {
     reviews?: ReviewListRelationFilter
     reports?: ReportListRelationFilter
     featuredRequests?: FeaturedRequestListRelationFilter
+    readEvents?: ChapterReadEventListRelationFilter
   }, "id" | "slug">
 
   export type SeriesOrderByWithAggregationInput = {
@@ -42166,6 +46842,7 @@ export namespace Prisma {
     history?: HistoryListRelationFilter
     purchases?: ChapterPurchaseListRelationFilter
     comments?: CommentListRelationFilter
+    readEvents?: ChapterReadEventListRelationFilter
   }
 
   export type ChapterOrderByWithRelationInput = {
@@ -42184,6 +46861,7 @@ export namespace Prisma {
     history?: HistoryOrderByRelationAggregateInput
     purchases?: ChapterPurchaseOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
+    readEvents?: ChapterReadEventOrderByRelationAggregateInput
   }
 
   export type ChapterWhereUniqueInput = Prisma.AtLeast<{
@@ -42206,6 +46884,7 @@ export namespace Prisma {
     history?: HistoryListRelationFilter
     purchases?: ChapterPurchaseListRelationFilter
     comments?: CommentListRelationFilter
+    readEvents?: ChapterReadEventListRelationFilter
   }, "id" | "seriesId_number">
 
   export type ChapterOrderByWithAggregationInput = {
@@ -43664,6 +48343,384 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"ContactMessage"> | Date | string
   }
 
+  export type ChapterReadEventWhereInput = {
+    AND?: ChapterReadEventWhereInput | ChapterReadEventWhereInput[]
+    OR?: ChapterReadEventWhereInput[]
+    NOT?: ChapterReadEventWhereInput | ChapterReadEventWhereInput[]
+    id?: StringFilter<"ChapterReadEvent"> | string
+    sessionId?: StringFilter<"ChapterReadEvent"> | string
+    userId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    seriesId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    chapterId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    creatorId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    startedAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+    endedAt?: DateTimeNullableFilter<"ChapterReadEvent"> | Date | string | null
+    durationSeconds?: IntFilter<"ChapterReadEvent"> | number
+    pagesViewed?: IntFilter<"ChapterReadEvent"> | number
+    totalPages?: IntFilter<"ChapterReadEvent"> | number
+    completionPercent?: FloatFilter<"ChapterReadEvent"> | number
+    scrollDepthPercent?: FloatFilter<"ChapterReadEvent"> | number
+    interactionCount?: IntFilter<"ChapterReadEvent"> | number
+    qualityTier?: EnumQualityTierFilter<"ChapterReadEvent"> | $Enums.QualityTier
+    qualityScore?: FloatFilter<"ChapterReadEvent"> | number
+    isBotLikely?: BoolFilter<"ChapterReadEvent"> | boolean
+    botReason?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    clientIp?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    userAgent?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    createdAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+    updatedAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    series?: XOR<SeriesNullableScalarRelationFilter, SeriesWhereInput> | null
+    chapter?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
+    creator?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
+  }
+
+  export type ChapterReadEventOrderByWithRelationInput = {
+    id?: SortOrder
+    sessionId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    seriesId?: SortOrderInput | SortOrder
+    chapterId?: SortOrderInput | SortOrder
+    creatorId?: SortOrderInput | SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrderInput | SortOrder
+    durationSeconds?: SortOrder
+    pagesViewed?: SortOrder
+    totalPages?: SortOrder
+    completionPercent?: SortOrder
+    scrollDepthPercent?: SortOrder
+    interactionCount?: SortOrder
+    qualityTier?: SortOrder
+    qualityScore?: SortOrder
+    isBotLikely?: SortOrder
+    botReason?: SortOrderInput | SortOrder
+    clientIp?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    series?: SeriesOrderByWithRelationInput
+    chapter?: ChapterOrderByWithRelationInput
+    creator?: CreatorProfileOrderByWithRelationInput
+  }
+
+  export type ChapterReadEventWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    sessionId_chapterId?: ChapterReadEventSessionIdChapterIdCompoundUniqueInput
+    AND?: ChapterReadEventWhereInput | ChapterReadEventWhereInput[]
+    OR?: ChapterReadEventWhereInput[]
+    NOT?: ChapterReadEventWhereInput | ChapterReadEventWhereInput[]
+    sessionId?: StringFilter<"ChapterReadEvent"> | string
+    userId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    seriesId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    chapterId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    creatorId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    startedAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+    endedAt?: DateTimeNullableFilter<"ChapterReadEvent"> | Date | string | null
+    durationSeconds?: IntFilter<"ChapterReadEvent"> | number
+    pagesViewed?: IntFilter<"ChapterReadEvent"> | number
+    totalPages?: IntFilter<"ChapterReadEvent"> | number
+    completionPercent?: FloatFilter<"ChapterReadEvent"> | number
+    scrollDepthPercent?: FloatFilter<"ChapterReadEvent"> | number
+    interactionCount?: IntFilter<"ChapterReadEvent"> | number
+    qualityTier?: EnumQualityTierFilter<"ChapterReadEvent"> | $Enums.QualityTier
+    qualityScore?: FloatFilter<"ChapterReadEvent"> | number
+    isBotLikely?: BoolFilter<"ChapterReadEvent"> | boolean
+    botReason?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    clientIp?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    userAgent?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    createdAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+    updatedAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    series?: XOR<SeriesNullableScalarRelationFilter, SeriesWhereInput> | null
+    chapter?: XOR<ChapterNullableScalarRelationFilter, ChapterWhereInput> | null
+    creator?: XOR<CreatorProfileNullableScalarRelationFilter, CreatorProfileWhereInput> | null
+  }, "id" | "sessionId_chapterId">
+
+  export type ChapterReadEventOrderByWithAggregationInput = {
+    id?: SortOrder
+    sessionId?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    seriesId?: SortOrderInput | SortOrder
+    chapterId?: SortOrderInput | SortOrder
+    creatorId?: SortOrderInput | SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrderInput | SortOrder
+    durationSeconds?: SortOrder
+    pagesViewed?: SortOrder
+    totalPages?: SortOrder
+    completionPercent?: SortOrder
+    scrollDepthPercent?: SortOrder
+    interactionCount?: SortOrder
+    qualityTier?: SortOrder
+    qualityScore?: SortOrder
+    isBotLikely?: SortOrder
+    botReason?: SortOrderInput | SortOrder
+    clientIp?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ChapterReadEventCountOrderByAggregateInput
+    _avg?: ChapterReadEventAvgOrderByAggregateInput
+    _max?: ChapterReadEventMaxOrderByAggregateInput
+    _min?: ChapterReadEventMinOrderByAggregateInput
+    _sum?: ChapterReadEventSumOrderByAggregateInput
+  }
+
+  export type ChapterReadEventScalarWhereWithAggregatesInput = {
+    AND?: ChapterReadEventScalarWhereWithAggregatesInput | ChapterReadEventScalarWhereWithAggregatesInput[]
+    OR?: ChapterReadEventScalarWhereWithAggregatesInput[]
+    NOT?: ChapterReadEventScalarWhereWithAggregatesInput | ChapterReadEventScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ChapterReadEvent"> | string
+    sessionId?: StringWithAggregatesFilter<"ChapterReadEvent"> | string
+    userId?: StringNullableWithAggregatesFilter<"ChapterReadEvent"> | string | null
+    seriesId?: StringNullableWithAggregatesFilter<"ChapterReadEvent"> | string | null
+    chapterId?: StringNullableWithAggregatesFilter<"ChapterReadEvent"> | string | null
+    creatorId?: StringNullableWithAggregatesFilter<"ChapterReadEvent"> | string | null
+    startedAt?: DateTimeWithAggregatesFilter<"ChapterReadEvent"> | Date | string
+    endedAt?: DateTimeNullableWithAggregatesFilter<"ChapterReadEvent"> | Date | string | null
+    durationSeconds?: IntWithAggregatesFilter<"ChapterReadEvent"> | number
+    pagesViewed?: IntWithAggregatesFilter<"ChapterReadEvent"> | number
+    totalPages?: IntWithAggregatesFilter<"ChapterReadEvent"> | number
+    completionPercent?: FloatWithAggregatesFilter<"ChapterReadEvent"> | number
+    scrollDepthPercent?: FloatWithAggregatesFilter<"ChapterReadEvent"> | number
+    interactionCount?: IntWithAggregatesFilter<"ChapterReadEvent"> | number
+    qualityTier?: EnumQualityTierWithAggregatesFilter<"ChapterReadEvent"> | $Enums.QualityTier
+    qualityScore?: FloatWithAggregatesFilter<"ChapterReadEvent"> | number
+    isBotLikely?: BoolWithAggregatesFilter<"ChapterReadEvent"> | boolean
+    botReason?: StringNullableWithAggregatesFilter<"ChapterReadEvent"> | string | null
+    clientIp?: StringNullableWithAggregatesFilter<"ChapterReadEvent"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"ChapterReadEvent"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ChapterReadEvent"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ChapterReadEvent"> | Date | string
+  }
+
+  export type RevenueDistributionRunWhereInput = {
+    AND?: RevenueDistributionRunWhereInput | RevenueDistributionRunWhereInput[]
+    OR?: RevenueDistributionRunWhereInput[]
+    NOT?: RevenueDistributionRunWhereInput | RevenueDistributionRunWhereInput[]
+    id?: StringFilter<"RevenueDistributionRun"> | string
+    adminId?: StringFilter<"RevenueDistributionRun"> | string
+    periodStart?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+    periodEnd?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+    grossAmountEntered?: FloatFilter<"RevenueDistributionRun"> | number
+    currency?: StringFilter<"RevenueDistributionRun"> | string
+    distributablePool?: IntFilter<"RevenueDistributionRun"> | number
+    totalQualityScore?: FloatFilter<"RevenueDistributionRun"> | number
+    totalQualifiedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalEngagedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalCompletedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalCreatorsCount?: IntFilter<"RevenueDistributionRun"> | number
+    status?: EnumDistributionStatusFilter<"RevenueDistributionRun"> | $Enums.DistributionStatus
+    revertedAt?: DateTimeNullableFilter<"RevenueDistributionRun"> | Date | string | null
+    revertedBy?: StringNullableFilter<"RevenueDistributionRun"> | string | null
+    notes?: StringNullableFilter<"RevenueDistributionRun"> | string | null
+    createdAt?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+    creatorPayouts?: RevenueDistributionPayoutListRelationFilter
+  }
+
+  export type RevenueDistributionRunOrderByWithRelationInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    periodStart?: SortOrder
+    periodEnd?: SortOrder
+    grossAmountEntered?: SortOrder
+    currency?: SortOrder
+    distributablePool?: SortOrder
+    totalQualityScore?: SortOrder
+    totalQualifiedReads?: SortOrder
+    totalEngagedReads?: SortOrder
+    totalCompletedReads?: SortOrder
+    totalCreatorsCount?: SortOrder
+    status?: SortOrder
+    revertedAt?: SortOrderInput | SortOrder
+    revertedBy?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    admin?: UserOrderByWithRelationInput
+    creatorPayouts?: RevenueDistributionPayoutOrderByRelationAggregateInput
+  }
+
+  export type RevenueDistributionRunWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: RevenueDistributionRunWhereInput | RevenueDistributionRunWhereInput[]
+    OR?: RevenueDistributionRunWhereInput[]
+    NOT?: RevenueDistributionRunWhereInput | RevenueDistributionRunWhereInput[]
+    adminId?: StringFilter<"RevenueDistributionRun"> | string
+    periodStart?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+    periodEnd?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+    grossAmountEntered?: FloatFilter<"RevenueDistributionRun"> | number
+    currency?: StringFilter<"RevenueDistributionRun"> | string
+    distributablePool?: IntFilter<"RevenueDistributionRun"> | number
+    totalQualityScore?: FloatFilter<"RevenueDistributionRun"> | number
+    totalQualifiedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalEngagedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalCompletedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalCreatorsCount?: IntFilter<"RevenueDistributionRun"> | number
+    status?: EnumDistributionStatusFilter<"RevenueDistributionRun"> | $Enums.DistributionStatus
+    revertedAt?: DateTimeNullableFilter<"RevenueDistributionRun"> | Date | string | null
+    revertedBy?: StringNullableFilter<"RevenueDistributionRun"> | string | null
+    notes?: StringNullableFilter<"RevenueDistributionRun"> | string | null
+    createdAt?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+    admin?: XOR<UserScalarRelationFilter, UserWhereInput>
+    creatorPayouts?: RevenueDistributionPayoutListRelationFilter
+  }, "id">
+
+  export type RevenueDistributionRunOrderByWithAggregationInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    periodStart?: SortOrder
+    periodEnd?: SortOrder
+    grossAmountEntered?: SortOrder
+    currency?: SortOrder
+    distributablePool?: SortOrder
+    totalQualityScore?: SortOrder
+    totalQualifiedReads?: SortOrder
+    totalEngagedReads?: SortOrder
+    totalCompletedReads?: SortOrder
+    totalCreatorsCount?: SortOrder
+    status?: SortOrder
+    revertedAt?: SortOrderInput | SortOrder
+    revertedBy?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    _count?: RevenueDistributionRunCountOrderByAggregateInput
+    _avg?: RevenueDistributionRunAvgOrderByAggregateInput
+    _max?: RevenueDistributionRunMaxOrderByAggregateInput
+    _min?: RevenueDistributionRunMinOrderByAggregateInput
+    _sum?: RevenueDistributionRunSumOrderByAggregateInput
+  }
+
+  export type RevenueDistributionRunScalarWhereWithAggregatesInput = {
+    AND?: RevenueDistributionRunScalarWhereWithAggregatesInput | RevenueDistributionRunScalarWhereWithAggregatesInput[]
+    OR?: RevenueDistributionRunScalarWhereWithAggregatesInput[]
+    NOT?: RevenueDistributionRunScalarWhereWithAggregatesInput | RevenueDistributionRunScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"RevenueDistributionRun"> | string
+    adminId?: StringWithAggregatesFilter<"RevenueDistributionRun"> | string
+    periodStart?: DateTimeWithAggregatesFilter<"RevenueDistributionRun"> | Date | string
+    periodEnd?: DateTimeWithAggregatesFilter<"RevenueDistributionRun"> | Date | string
+    grossAmountEntered?: FloatWithAggregatesFilter<"RevenueDistributionRun"> | number
+    currency?: StringWithAggregatesFilter<"RevenueDistributionRun"> | string
+    distributablePool?: IntWithAggregatesFilter<"RevenueDistributionRun"> | number
+    totalQualityScore?: FloatWithAggregatesFilter<"RevenueDistributionRun"> | number
+    totalQualifiedReads?: IntWithAggregatesFilter<"RevenueDistributionRun"> | number
+    totalEngagedReads?: IntWithAggregatesFilter<"RevenueDistributionRun"> | number
+    totalCompletedReads?: IntWithAggregatesFilter<"RevenueDistributionRun"> | number
+    totalCreatorsCount?: IntWithAggregatesFilter<"RevenueDistributionRun"> | number
+    status?: EnumDistributionStatusWithAggregatesFilter<"RevenueDistributionRun"> | $Enums.DistributionStatus
+    revertedAt?: DateTimeNullableWithAggregatesFilter<"RevenueDistributionRun"> | Date | string | null
+    revertedBy?: StringNullableWithAggregatesFilter<"RevenueDistributionRun"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"RevenueDistributionRun"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"RevenueDistributionRun"> | Date | string
+  }
+
+  export type RevenueDistributionPayoutWhereInput = {
+    AND?: RevenueDistributionPayoutWhereInput | RevenueDistributionPayoutWhereInput[]
+    OR?: RevenueDistributionPayoutWhereInput[]
+    NOT?: RevenueDistributionPayoutWhereInput | RevenueDistributionPayoutWhereInput[]
+    id?: StringFilter<"RevenueDistributionPayout"> | string
+    distributionRunId?: StringFilter<"RevenueDistributionPayout"> | string
+    creatorId?: StringFilter<"RevenueDistributionPayout"> | string
+    qualityScore?: FloatFilter<"RevenueDistributionPayout"> | number
+    scorePercentage?: FloatFilter<"RevenueDistributionPayout"> | number
+    qualifiedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    engagedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    completedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    totalReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    pointsAwarded?: IntFilter<"RevenueDistributionPayout"> | number
+    fiatEquivalent?: FloatFilter<"RevenueDistributionPayout"> | number
+    revertedPoints?: IntFilter<"RevenueDistributionPayout"> | number
+    shortfallPoints?: IntFilter<"RevenueDistributionPayout"> | number
+    createdAt?: DateTimeFilter<"RevenueDistributionPayout"> | Date | string
+    distributionRun?: XOR<RevenueDistributionRunScalarRelationFilter, RevenueDistributionRunWhereInput>
+    creator?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
+  }
+
+  export type RevenueDistributionPayoutOrderByWithRelationInput = {
+    id?: SortOrder
+    distributionRunId?: SortOrder
+    creatorId?: SortOrder
+    qualityScore?: SortOrder
+    scorePercentage?: SortOrder
+    qualifiedReadsCount?: SortOrder
+    engagedReadsCount?: SortOrder
+    completedReadsCount?: SortOrder
+    totalReadsCount?: SortOrder
+    pointsAwarded?: SortOrder
+    fiatEquivalent?: SortOrder
+    revertedPoints?: SortOrder
+    shortfallPoints?: SortOrder
+    createdAt?: SortOrder
+    distributionRun?: RevenueDistributionRunOrderByWithRelationInput
+    creator?: CreatorProfileOrderByWithRelationInput
+  }
+
+  export type RevenueDistributionPayoutWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    distributionRunId_creatorId?: RevenueDistributionPayoutDistributionRunIdCreatorIdCompoundUniqueInput
+    AND?: RevenueDistributionPayoutWhereInput | RevenueDistributionPayoutWhereInput[]
+    OR?: RevenueDistributionPayoutWhereInput[]
+    NOT?: RevenueDistributionPayoutWhereInput | RevenueDistributionPayoutWhereInput[]
+    distributionRunId?: StringFilter<"RevenueDistributionPayout"> | string
+    creatorId?: StringFilter<"RevenueDistributionPayout"> | string
+    qualityScore?: FloatFilter<"RevenueDistributionPayout"> | number
+    scorePercentage?: FloatFilter<"RevenueDistributionPayout"> | number
+    qualifiedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    engagedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    completedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    totalReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    pointsAwarded?: IntFilter<"RevenueDistributionPayout"> | number
+    fiatEquivalent?: FloatFilter<"RevenueDistributionPayout"> | number
+    revertedPoints?: IntFilter<"RevenueDistributionPayout"> | number
+    shortfallPoints?: IntFilter<"RevenueDistributionPayout"> | number
+    createdAt?: DateTimeFilter<"RevenueDistributionPayout"> | Date | string
+    distributionRun?: XOR<RevenueDistributionRunScalarRelationFilter, RevenueDistributionRunWhereInput>
+    creator?: XOR<CreatorProfileScalarRelationFilter, CreatorProfileWhereInput>
+  }, "id" | "distributionRunId_creatorId">
+
+  export type RevenueDistributionPayoutOrderByWithAggregationInput = {
+    id?: SortOrder
+    distributionRunId?: SortOrder
+    creatorId?: SortOrder
+    qualityScore?: SortOrder
+    scorePercentage?: SortOrder
+    qualifiedReadsCount?: SortOrder
+    engagedReadsCount?: SortOrder
+    completedReadsCount?: SortOrder
+    totalReadsCount?: SortOrder
+    pointsAwarded?: SortOrder
+    fiatEquivalent?: SortOrder
+    revertedPoints?: SortOrder
+    shortfallPoints?: SortOrder
+    createdAt?: SortOrder
+    _count?: RevenueDistributionPayoutCountOrderByAggregateInput
+    _avg?: RevenueDistributionPayoutAvgOrderByAggregateInput
+    _max?: RevenueDistributionPayoutMaxOrderByAggregateInput
+    _min?: RevenueDistributionPayoutMinOrderByAggregateInput
+    _sum?: RevenueDistributionPayoutSumOrderByAggregateInput
+  }
+
+  export type RevenueDistributionPayoutScalarWhereWithAggregatesInput = {
+    AND?: RevenueDistributionPayoutScalarWhereWithAggregatesInput | RevenueDistributionPayoutScalarWhereWithAggregatesInput[]
+    OR?: RevenueDistributionPayoutScalarWhereWithAggregatesInput[]
+    NOT?: RevenueDistributionPayoutScalarWhereWithAggregatesInput | RevenueDistributionPayoutScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"RevenueDistributionPayout"> | string
+    distributionRunId?: StringWithAggregatesFilter<"RevenueDistributionPayout"> | string
+    creatorId?: StringWithAggregatesFilter<"RevenueDistributionPayout"> | string
+    qualityScore?: FloatWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    scorePercentage?: FloatWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    qualifiedReadsCount?: IntWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    engagedReadsCount?: IntWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    completedReadsCount?: IntWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    totalReadsCount?: IntWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    pointsAwarded?: IntWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    fiatEquivalent?: FloatWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    revertedPoints?: IntWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    shortfallPoints?: IntWithAggregatesFilter<"RevenueDistributionPayout"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"RevenueDistributionPayout"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     name: string
@@ -43704,6 +48761,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -43746,6 +48805,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserUpdateInput = {
@@ -43788,6 +48849,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -43830,6 +48893,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -43909,6 +48974,8 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutCreatorProfileInput
     series?: SeriesCreateNestedManyWithoutCreatorInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutCreatorInput
+    distributionPayouts?: RevenueDistributionPayoutCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileUncheckedCreateInput = {
@@ -43923,6 +48990,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutCreatorInput
+    distributionPayouts?: RevenueDistributionPayoutUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileUpdateInput = {
@@ -43937,6 +49006,8 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
     series?: SeriesUpdateManyWithoutCreatorNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutCreatorNestedInput
+    distributionPayouts?: RevenueDistributionPayoutUpdateManyWithoutCreatorNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateInput = {
@@ -43951,6 +49022,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutCreatorNestedInput
+    distributionPayouts?: RevenueDistributionPayoutUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type CreatorProfileCreateManyInput = {
@@ -44276,6 +49349,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateInput = {
@@ -44306,6 +49380,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUpdateInput = {
@@ -44336,6 +49411,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateInput = {
@@ -44366,6 +49442,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesCreateManyInput = {
@@ -44919,6 +49996,7 @@ export namespace Prisma {
     history?: HistoryCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseCreateNestedManyWithoutChapterInput
     comments?: CommentCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterUncheckedCreateInput = {
@@ -44936,6 +50014,7 @@ export namespace Prisma {
     history?: HistoryUncheckedCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutChapterInput
     comments?: CommentUncheckedCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterUpdateInput = {
@@ -44953,6 +50032,7 @@ export namespace Prisma {
     history?: HistoryUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUpdateManyWithoutChapterNestedInput
     comments?: CommentUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterUncheckedUpdateInput = {
@@ -44970,6 +50050,7 @@ export namespace Prisma {
     history?: HistoryUncheckedUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUncheckedUpdateManyWithoutChapterNestedInput
     comments?: CommentUncheckedUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterCreateManyInput = {
@@ -46501,6 +51582,437 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ChapterReadEventCreateInput = {
+    id?: string
+    sessionId: string
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutChapterReadEventsInput
+    series?: SeriesCreateNestedOneWithoutReadEventsInput
+    chapter?: ChapterCreateNestedOneWithoutReadEventsInput
+    creator?: CreatorProfileCreateNestedOneWithoutReadEventsInput
+  }
+
+  export type ChapterReadEventUncheckedCreateInput = {
+    id?: string
+    sessionId: string
+    userId?: string | null
+    seriesId?: string | null
+    chapterId?: string | null
+    creatorId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ChapterReadEventUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutChapterReadEventsNestedInput
+    series?: SeriesUpdateOneWithoutReadEventsNestedInput
+    chapter?: ChapterUpdateOneWithoutReadEventsNestedInput
+    creator?: CreatorProfileUpdateOneWithoutReadEventsNestedInput
+  }
+
+  export type ChapterReadEventUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    seriesId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChapterReadEventCreateManyInput = {
+    id?: string
+    sessionId: string
+    userId?: string | null
+    seriesId?: string | null
+    chapterId?: string | null
+    creatorId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ChapterReadEventUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChapterReadEventUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    seriesId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionRunCreateInput = {
+    id?: string
+    periodStart: Date | string
+    periodEnd: Date | string
+    grossAmountEntered: number
+    currency?: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status?: $Enums.DistributionStatus
+    revertedAt?: Date | string | null
+    revertedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    admin: UserCreateNestedOneWithoutRevenueDistributionsCreatedInput
+    creatorPayouts?: RevenueDistributionPayoutCreateNestedManyWithoutDistributionRunInput
+  }
+
+  export type RevenueDistributionRunUncheckedCreateInput = {
+    id?: string
+    adminId: string
+    periodStart: Date | string
+    periodEnd: Date | string
+    grossAmountEntered: number
+    currency?: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status?: $Enums.DistributionStatus
+    revertedAt?: Date | string | null
+    revertedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    creatorPayouts?: RevenueDistributionPayoutUncheckedCreateNestedManyWithoutDistributionRunInput
+  }
+
+  export type RevenueDistributionRunUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admin?: UserUpdateOneRequiredWithoutRevenueDistributionsCreatedNestedInput
+    creatorPayouts?: RevenueDistributionPayoutUpdateManyWithoutDistributionRunNestedInput
+  }
+
+  export type RevenueDistributionRunUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    adminId?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorPayouts?: RevenueDistributionPayoutUncheckedUpdateManyWithoutDistributionRunNestedInput
+  }
+
+  export type RevenueDistributionRunCreateManyInput = {
+    id?: string
+    adminId: string
+    periodStart: Date | string
+    periodEnd: Date | string
+    grossAmountEntered: number
+    currency?: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status?: $Enums.DistributionStatus
+    revertedAt?: Date | string | null
+    revertedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type RevenueDistributionRunUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionRunUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    adminId?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionPayoutCreateInput = {
+    id?: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
+    distributionRun: RevenueDistributionRunCreateNestedOneWithoutCreatorPayoutsInput
+    creator: CreatorProfileCreateNestedOneWithoutDistributionPayoutsInput
+  }
+
+  export type RevenueDistributionPayoutUncheckedCreateInput = {
+    id?: string
+    distributionRunId: string
+    creatorId: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
+  }
+
+  export type RevenueDistributionPayoutUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    distributionRun?: RevenueDistributionRunUpdateOneRequiredWithoutCreatorPayoutsNestedInput
+    creator?: CreatorProfileUpdateOneRequiredWithoutDistributionPayoutsNestedInput
+  }
+
+  export type RevenueDistributionPayoutUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    distributionRunId?: StringFieldUpdateOperationsInput | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionPayoutCreateManyInput = {
+    id?: string
+    distributionRunId: string
+    creatorId: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
+  }
+
+  export type RevenueDistributionPayoutUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionPayoutUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    distributionRunId?: StringFieldUpdateOperationsInput | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -46700,6 +52212,18 @@ export namespace Prisma {
     none?: PromoCodeWhereInput
   }
 
+  export type ChapterReadEventListRelationFilter = {
+    every?: ChapterReadEventWhereInput
+    some?: ChapterReadEventWhereInput
+    none?: ChapterReadEventWhereInput
+  }
+
+  export type RevenueDistributionRunListRelationFilter = {
+    every?: RevenueDistributionRunWhereInput
+    some?: RevenueDistributionRunWhereInput
+    none?: RevenueDistributionRunWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -46778,6 +52302,14 @@ export namespace Prisma {
   }
 
   export type PromoCodeOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ChapterReadEventOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RevenueDistributionRunOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -46968,7 +52500,17 @@ export namespace Prisma {
     none?: SeriesWhereInput
   }
 
+  export type RevenueDistributionPayoutListRelationFilter = {
+    every?: RevenueDistributionPayoutWhereInput
+    some?: RevenueDistributionPayoutWhereInput
+    none?: RevenueDistributionPayoutWhereInput
+  }
+
   export type SeriesOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RevenueDistributionPayoutOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -48560,6 +54102,317 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type EnumQualityTierFilter<$PrismaModel = never> = {
+    equals?: $Enums.QualityTier | EnumQualityTierFieldRefInput<$PrismaModel>
+    in?: $Enums.QualityTier[] | ListEnumQualityTierFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QualityTier[] | ListEnumQualityTierFieldRefInput<$PrismaModel>
+    not?: NestedEnumQualityTierFilter<$PrismaModel> | $Enums.QualityTier
+  }
+
+  export type ChapterNullableScalarRelationFilter = {
+    is?: ChapterWhereInput | null
+    isNot?: ChapterWhereInput | null
+  }
+
+  export type ChapterReadEventSessionIdChapterIdCompoundUniqueInput = {
+    sessionId: string
+    chapterId: string
+  }
+
+  export type ChapterReadEventCountOrderByAggregateInput = {
+    id?: SortOrder
+    sessionId?: SortOrder
+    userId?: SortOrder
+    seriesId?: SortOrder
+    chapterId?: SortOrder
+    creatorId?: SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrder
+    durationSeconds?: SortOrder
+    pagesViewed?: SortOrder
+    totalPages?: SortOrder
+    completionPercent?: SortOrder
+    scrollDepthPercent?: SortOrder
+    interactionCount?: SortOrder
+    qualityTier?: SortOrder
+    qualityScore?: SortOrder
+    isBotLikely?: SortOrder
+    botReason?: SortOrder
+    clientIp?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ChapterReadEventAvgOrderByAggregateInput = {
+    durationSeconds?: SortOrder
+    pagesViewed?: SortOrder
+    totalPages?: SortOrder
+    completionPercent?: SortOrder
+    scrollDepthPercent?: SortOrder
+    interactionCount?: SortOrder
+    qualityScore?: SortOrder
+  }
+
+  export type ChapterReadEventMaxOrderByAggregateInput = {
+    id?: SortOrder
+    sessionId?: SortOrder
+    userId?: SortOrder
+    seriesId?: SortOrder
+    chapterId?: SortOrder
+    creatorId?: SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrder
+    durationSeconds?: SortOrder
+    pagesViewed?: SortOrder
+    totalPages?: SortOrder
+    completionPercent?: SortOrder
+    scrollDepthPercent?: SortOrder
+    interactionCount?: SortOrder
+    qualityTier?: SortOrder
+    qualityScore?: SortOrder
+    isBotLikely?: SortOrder
+    botReason?: SortOrder
+    clientIp?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ChapterReadEventMinOrderByAggregateInput = {
+    id?: SortOrder
+    sessionId?: SortOrder
+    userId?: SortOrder
+    seriesId?: SortOrder
+    chapterId?: SortOrder
+    creatorId?: SortOrder
+    startedAt?: SortOrder
+    endedAt?: SortOrder
+    durationSeconds?: SortOrder
+    pagesViewed?: SortOrder
+    totalPages?: SortOrder
+    completionPercent?: SortOrder
+    scrollDepthPercent?: SortOrder
+    interactionCount?: SortOrder
+    qualityTier?: SortOrder
+    qualityScore?: SortOrder
+    isBotLikely?: SortOrder
+    botReason?: SortOrder
+    clientIp?: SortOrder
+    userAgent?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ChapterReadEventSumOrderByAggregateInput = {
+    durationSeconds?: SortOrder
+    pagesViewed?: SortOrder
+    totalPages?: SortOrder
+    completionPercent?: SortOrder
+    scrollDepthPercent?: SortOrder
+    interactionCount?: SortOrder
+    qualityScore?: SortOrder
+  }
+
+  export type EnumQualityTierWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.QualityTier | EnumQualityTierFieldRefInput<$PrismaModel>
+    in?: $Enums.QualityTier[] | ListEnumQualityTierFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QualityTier[] | ListEnumQualityTierFieldRefInput<$PrismaModel>
+    not?: NestedEnumQualityTierWithAggregatesFilter<$PrismaModel> | $Enums.QualityTier
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumQualityTierFilter<$PrismaModel>
+    _max?: NestedEnumQualityTierFilter<$PrismaModel>
+  }
+
+  export type EnumDistributionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DistributionStatus | EnumDistributionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DistributionStatus[] | ListEnumDistributionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DistributionStatus[] | ListEnumDistributionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDistributionStatusFilter<$PrismaModel> | $Enums.DistributionStatus
+  }
+
+  export type RevenueDistributionRunCountOrderByAggregateInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    periodStart?: SortOrder
+    periodEnd?: SortOrder
+    grossAmountEntered?: SortOrder
+    currency?: SortOrder
+    distributablePool?: SortOrder
+    totalQualityScore?: SortOrder
+    totalQualifiedReads?: SortOrder
+    totalEngagedReads?: SortOrder
+    totalCompletedReads?: SortOrder
+    totalCreatorsCount?: SortOrder
+    status?: SortOrder
+    revertedAt?: SortOrder
+    revertedBy?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RevenueDistributionRunAvgOrderByAggregateInput = {
+    grossAmountEntered?: SortOrder
+    distributablePool?: SortOrder
+    totalQualityScore?: SortOrder
+    totalQualifiedReads?: SortOrder
+    totalEngagedReads?: SortOrder
+    totalCompletedReads?: SortOrder
+    totalCreatorsCount?: SortOrder
+  }
+
+  export type RevenueDistributionRunMaxOrderByAggregateInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    periodStart?: SortOrder
+    periodEnd?: SortOrder
+    grossAmountEntered?: SortOrder
+    currency?: SortOrder
+    distributablePool?: SortOrder
+    totalQualityScore?: SortOrder
+    totalQualifiedReads?: SortOrder
+    totalEngagedReads?: SortOrder
+    totalCompletedReads?: SortOrder
+    totalCreatorsCount?: SortOrder
+    status?: SortOrder
+    revertedAt?: SortOrder
+    revertedBy?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RevenueDistributionRunMinOrderByAggregateInput = {
+    id?: SortOrder
+    adminId?: SortOrder
+    periodStart?: SortOrder
+    periodEnd?: SortOrder
+    grossAmountEntered?: SortOrder
+    currency?: SortOrder
+    distributablePool?: SortOrder
+    totalQualityScore?: SortOrder
+    totalQualifiedReads?: SortOrder
+    totalEngagedReads?: SortOrder
+    totalCompletedReads?: SortOrder
+    totalCreatorsCount?: SortOrder
+    status?: SortOrder
+    revertedAt?: SortOrder
+    revertedBy?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RevenueDistributionRunSumOrderByAggregateInput = {
+    grossAmountEntered?: SortOrder
+    distributablePool?: SortOrder
+    totalQualityScore?: SortOrder
+    totalQualifiedReads?: SortOrder
+    totalEngagedReads?: SortOrder
+    totalCompletedReads?: SortOrder
+    totalCreatorsCount?: SortOrder
+  }
+
+  export type EnumDistributionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DistributionStatus | EnumDistributionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DistributionStatus[] | ListEnumDistributionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DistributionStatus[] | ListEnumDistributionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDistributionStatusWithAggregatesFilter<$PrismaModel> | $Enums.DistributionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDistributionStatusFilter<$PrismaModel>
+    _max?: NestedEnumDistributionStatusFilter<$PrismaModel>
+  }
+
+  export type RevenueDistributionRunScalarRelationFilter = {
+    is?: RevenueDistributionRunWhereInput
+    isNot?: RevenueDistributionRunWhereInput
+  }
+
+  export type CreatorProfileScalarRelationFilter = {
+    is?: CreatorProfileWhereInput
+    isNot?: CreatorProfileWhereInput
+  }
+
+  export type RevenueDistributionPayoutDistributionRunIdCreatorIdCompoundUniqueInput = {
+    distributionRunId: string
+    creatorId: string
+  }
+
+  export type RevenueDistributionPayoutCountOrderByAggregateInput = {
+    id?: SortOrder
+    distributionRunId?: SortOrder
+    creatorId?: SortOrder
+    qualityScore?: SortOrder
+    scorePercentage?: SortOrder
+    qualifiedReadsCount?: SortOrder
+    engagedReadsCount?: SortOrder
+    completedReadsCount?: SortOrder
+    totalReadsCount?: SortOrder
+    pointsAwarded?: SortOrder
+    fiatEquivalent?: SortOrder
+    revertedPoints?: SortOrder
+    shortfallPoints?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RevenueDistributionPayoutAvgOrderByAggregateInput = {
+    qualityScore?: SortOrder
+    scorePercentage?: SortOrder
+    qualifiedReadsCount?: SortOrder
+    engagedReadsCount?: SortOrder
+    completedReadsCount?: SortOrder
+    totalReadsCount?: SortOrder
+    pointsAwarded?: SortOrder
+    fiatEquivalent?: SortOrder
+    revertedPoints?: SortOrder
+    shortfallPoints?: SortOrder
+  }
+
+  export type RevenueDistributionPayoutMaxOrderByAggregateInput = {
+    id?: SortOrder
+    distributionRunId?: SortOrder
+    creatorId?: SortOrder
+    qualityScore?: SortOrder
+    scorePercentage?: SortOrder
+    qualifiedReadsCount?: SortOrder
+    engagedReadsCount?: SortOrder
+    completedReadsCount?: SortOrder
+    totalReadsCount?: SortOrder
+    pointsAwarded?: SortOrder
+    fiatEquivalent?: SortOrder
+    revertedPoints?: SortOrder
+    shortfallPoints?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RevenueDistributionPayoutMinOrderByAggregateInput = {
+    id?: SortOrder
+    distributionRunId?: SortOrder
+    creatorId?: SortOrder
+    qualityScore?: SortOrder
+    scorePercentage?: SortOrder
+    qualifiedReadsCount?: SortOrder
+    engagedReadsCount?: SortOrder
+    completedReadsCount?: SortOrder
+    totalReadsCount?: SortOrder
+    pointsAwarded?: SortOrder
+    fiatEquivalent?: SortOrder
+    revertedPoints?: SortOrder
+    shortfallPoints?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RevenueDistributionPayoutSumOrderByAggregateInput = {
+    qualityScore?: SortOrder
+    scorePercentage?: SortOrder
+    qualifiedReadsCount?: SortOrder
+    engagedReadsCount?: SortOrder
+    completedReadsCount?: SortOrder
+    totalReadsCount?: SortOrder
+    pointsAwarded?: SortOrder
+    fiatEquivalent?: SortOrder
+    revertedPoints?: SortOrder
+    shortfallPoints?: SortOrder
+  }
+
   export type UserCreateNestedOneWithoutReferralsInput = {
     create?: XOR<UserCreateWithoutReferralsInput, UserUncheckedCreateWithoutReferralsInput>
     connectOrCreate?: UserCreateOrConnectWithoutReferralsInput
@@ -48705,6 +54558,20 @@ export namespace Prisma {
     connect?: PromoCodeWhereUniqueInput | PromoCodeWhereUniqueInput[]
   }
 
+  export type ChapterReadEventCreateNestedManyWithoutUserInput = {
+    create?: XOR<ChapterReadEventCreateWithoutUserInput, ChapterReadEventUncheckedCreateWithoutUserInput> | ChapterReadEventCreateWithoutUserInput[] | ChapterReadEventUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutUserInput | ChapterReadEventCreateOrConnectWithoutUserInput[]
+    createMany?: ChapterReadEventCreateManyUserInputEnvelope
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+  }
+
+  export type RevenueDistributionRunCreateNestedManyWithoutAdminInput = {
+    create?: XOR<RevenueDistributionRunCreateWithoutAdminInput, RevenueDistributionRunUncheckedCreateWithoutAdminInput> | RevenueDistributionRunCreateWithoutAdminInput[] | RevenueDistributionRunUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: RevenueDistributionRunCreateOrConnectWithoutAdminInput | RevenueDistributionRunCreateOrConnectWithoutAdminInput[]
+    createMany?: RevenueDistributionRunCreateManyAdminInputEnvelope
+    connect?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+  }
+
   export type UserUncheckedCreateNestedManyWithoutReferredByInput = {
     create?: XOR<UserCreateWithoutReferredByInput, UserUncheckedCreateWithoutReferredByInput> | UserCreateWithoutReferredByInput[] | UserUncheckedCreateWithoutReferredByInput[]
     connectOrCreate?: UserCreateOrConnectWithoutReferredByInput | UserCreateOrConnectWithoutReferredByInput[]
@@ -48842,6 +54709,20 @@ export namespace Prisma {
     connectOrCreate?: PromoCodeCreateOrConnectWithoutCreatorInput | PromoCodeCreateOrConnectWithoutCreatorInput[]
     createMany?: PromoCodeCreateManyCreatorInputEnvelope
     connect?: PromoCodeWhereUniqueInput | PromoCodeWhereUniqueInput[]
+  }
+
+  export type ChapterReadEventUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ChapterReadEventCreateWithoutUserInput, ChapterReadEventUncheckedCreateWithoutUserInput> | ChapterReadEventCreateWithoutUserInput[] | ChapterReadEventUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutUserInput | ChapterReadEventCreateOrConnectWithoutUserInput[]
+    createMany?: ChapterReadEventCreateManyUserInputEnvelope
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+  }
+
+  export type RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput = {
+    create?: XOR<RevenueDistributionRunCreateWithoutAdminInput, RevenueDistributionRunUncheckedCreateWithoutAdminInput> | RevenueDistributionRunCreateWithoutAdminInput[] | RevenueDistributionRunUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: RevenueDistributionRunCreateOrConnectWithoutAdminInput | RevenueDistributionRunCreateOrConnectWithoutAdminInput[]
+    createMany?: RevenueDistributionRunCreateManyAdminInputEnvelope
+    connect?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -49162,6 +55043,34 @@ export namespace Prisma {
     deleteMany?: PromoCodeScalarWhereInput | PromoCodeScalarWhereInput[]
   }
 
+  export type ChapterReadEventUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ChapterReadEventCreateWithoutUserInput, ChapterReadEventUncheckedCreateWithoutUserInput> | ChapterReadEventCreateWithoutUserInput[] | ChapterReadEventUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutUserInput | ChapterReadEventCreateOrConnectWithoutUserInput[]
+    upsert?: ChapterReadEventUpsertWithWhereUniqueWithoutUserInput | ChapterReadEventUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ChapterReadEventCreateManyUserInputEnvelope
+    set?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    disconnect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    delete?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    update?: ChapterReadEventUpdateWithWhereUniqueWithoutUserInput | ChapterReadEventUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ChapterReadEventUpdateManyWithWhereWithoutUserInput | ChapterReadEventUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
+  }
+
+  export type RevenueDistributionRunUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<RevenueDistributionRunCreateWithoutAdminInput, RevenueDistributionRunUncheckedCreateWithoutAdminInput> | RevenueDistributionRunCreateWithoutAdminInput[] | RevenueDistributionRunUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: RevenueDistributionRunCreateOrConnectWithoutAdminInput | RevenueDistributionRunCreateOrConnectWithoutAdminInput[]
+    upsert?: RevenueDistributionRunUpsertWithWhereUniqueWithoutAdminInput | RevenueDistributionRunUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: RevenueDistributionRunCreateManyAdminInputEnvelope
+    set?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+    disconnect?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+    delete?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+    connect?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+    update?: RevenueDistributionRunUpdateWithWhereUniqueWithoutAdminInput | RevenueDistributionRunUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: RevenueDistributionRunUpdateManyWithWhereWithoutAdminInput | RevenueDistributionRunUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: RevenueDistributionRunScalarWhereInput | RevenueDistributionRunScalarWhereInput[]
+  }
+
   export type UserUncheckedUpdateManyWithoutReferredByNestedInput = {
     create?: XOR<UserCreateWithoutReferredByInput, UserUncheckedCreateWithoutReferredByInput> | UserCreateWithoutReferredByInput[] | UserUncheckedCreateWithoutReferredByInput[]
     connectOrCreate?: UserCreateOrConnectWithoutReferredByInput | UserCreateOrConnectWithoutReferredByInput[]
@@ -49438,6 +55347,34 @@ export namespace Prisma {
     deleteMany?: PromoCodeScalarWhereInput | PromoCodeScalarWhereInput[]
   }
 
+  export type ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ChapterReadEventCreateWithoutUserInput, ChapterReadEventUncheckedCreateWithoutUserInput> | ChapterReadEventCreateWithoutUserInput[] | ChapterReadEventUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutUserInput | ChapterReadEventCreateOrConnectWithoutUserInput[]
+    upsert?: ChapterReadEventUpsertWithWhereUniqueWithoutUserInput | ChapterReadEventUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ChapterReadEventCreateManyUserInputEnvelope
+    set?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    disconnect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    delete?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    update?: ChapterReadEventUpdateWithWhereUniqueWithoutUserInput | ChapterReadEventUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ChapterReadEventUpdateManyWithWhereWithoutUserInput | ChapterReadEventUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
+  }
+
+  export type RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput = {
+    create?: XOR<RevenueDistributionRunCreateWithoutAdminInput, RevenueDistributionRunUncheckedCreateWithoutAdminInput> | RevenueDistributionRunCreateWithoutAdminInput[] | RevenueDistributionRunUncheckedCreateWithoutAdminInput[]
+    connectOrCreate?: RevenueDistributionRunCreateOrConnectWithoutAdminInput | RevenueDistributionRunCreateOrConnectWithoutAdminInput[]
+    upsert?: RevenueDistributionRunUpsertWithWhereUniqueWithoutAdminInput | RevenueDistributionRunUpsertWithWhereUniqueWithoutAdminInput[]
+    createMany?: RevenueDistributionRunCreateManyAdminInputEnvelope
+    set?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+    disconnect?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+    delete?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+    connect?: RevenueDistributionRunWhereUniqueInput | RevenueDistributionRunWhereUniqueInput[]
+    update?: RevenueDistributionRunUpdateWithWhereUniqueWithoutAdminInput | RevenueDistributionRunUpdateWithWhereUniqueWithoutAdminInput[]
+    updateMany?: RevenueDistributionRunUpdateManyWithWhereWithoutAdminInput | RevenueDistributionRunUpdateManyWithWhereWithoutAdminInput[]
+    deleteMany?: RevenueDistributionRunScalarWhereInput | RevenueDistributionRunScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutCreatorProfileInput = {
     create?: XOR<UserCreateWithoutCreatorProfileInput, UserUncheckedCreateWithoutCreatorProfileInput>
     connectOrCreate?: UserCreateOrConnectWithoutCreatorProfileInput
@@ -49451,11 +55388,39 @@ export namespace Prisma {
     connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
   }
 
+  export type ChapterReadEventCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<ChapterReadEventCreateWithoutCreatorInput, ChapterReadEventUncheckedCreateWithoutCreatorInput> | ChapterReadEventCreateWithoutCreatorInput[] | ChapterReadEventUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutCreatorInput | ChapterReadEventCreateOrConnectWithoutCreatorInput[]
+    createMany?: ChapterReadEventCreateManyCreatorInputEnvelope
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+  }
+
+  export type RevenueDistributionPayoutCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<RevenueDistributionPayoutCreateWithoutCreatorInput, RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput> | RevenueDistributionPayoutCreateWithoutCreatorInput[] | RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput | RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput[]
+    createMany?: RevenueDistributionPayoutCreateManyCreatorInputEnvelope
+    connect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+  }
+
   export type SeriesUncheckedCreateNestedManyWithoutCreatorInput = {
     create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
     createMany?: SeriesCreateManyCreatorInputEnvelope
     connect?: SeriesWhereUniqueInput | SeriesWhereUniqueInput[]
+  }
+
+  export type ChapterReadEventUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<ChapterReadEventCreateWithoutCreatorInput, ChapterReadEventUncheckedCreateWithoutCreatorInput> | ChapterReadEventCreateWithoutCreatorInput[] | ChapterReadEventUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutCreatorInput | ChapterReadEventCreateOrConnectWithoutCreatorInput[]
+    createMany?: ChapterReadEventCreateManyCreatorInputEnvelope
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+  }
+
+  export type RevenueDistributionPayoutUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<RevenueDistributionPayoutCreateWithoutCreatorInput, RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput> | RevenueDistributionPayoutCreateWithoutCreatorInput[] | RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput | RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput[]
+    createMany?: RevenueDistributionPayoutCreateManyCreatorInputEnvelope
+    connect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
   }
 
   export type UserUpdateOneRequiredWithoutCreatorProfileNestedInput = {
@@ -49480,6 +55445,34 @@ export namespace Prisma {
     deleteMany?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
   }
 
+  export type ChapterReadEventUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<ChapterReadEventCreateWithoutCreatorInput, ChapterReadEventUncheckedCreateWithoutCreatorInput> | ChapterReadEventCreateWithoutCreatorInput[] | ChapterReadEventUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutCreatorInput | ChapterReadEventCreateOrConnectWithoutCreatorInput[]
+    upsert?: ChapterReadEventUpsertWithWhereUniqueWithoutCreatorInput | ChapterReadEventUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: ChapterReadEventCreateManyCreatorInputEnvelope
+    set?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    disconnect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    delete?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    update?: ChapterReadEventUpdateWithWhereUniqueWithoutCreatorInput | ChapterReadEventUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: ChapterReadEventUpdateManyWithWhereWithoutCreatorInput | ChapterReadEventUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
+  }
+
+  export type RevenueDistributionPayoutUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<RevenueDistributionPayoutCreateWithoutCreatorInput, RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput> | RevenueDistributionPayoutCreateWithoutCreatorInput[] | RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput | RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput[]
+    upsert?: RevenueDistributionPayoutUpsertWithWhereUniqueWithoutCreatorInput | RevenueDistributionPayoutUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: RevenueDistributionPayoutCreateManyCreatorInputEnvelope
+    set?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    disconnect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    delete?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    connect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    update?: RevenueDistributionPayoutUpdateWithWhereUniqueWithoutCreatorInput | RevenueDistributionPayoutUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: RevenueDistributionPayoutUpdateManyWithWhereWithoutCreatorInput | RevenueDistributionPayoutUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: RevenueDistributionPayoutScalarWhereInput | RevenueDistributionPayoutScalarWhereInput[]
+  }
+
   export type SeriesUncheckedUpdateManyWithoutCreatorNestedInput = {
     create?: XOR<SeriesCreateWithoutCreatorInput, SeriesUncheckedCreateWithoutCreatorInput> | SeriesCreateWithoutCreatorInput[] | SeriesUncheckedCreateWithoutCreatorInput[]
     connectOrCreate?: SeriesCreateOrConnectWithoutCreatorInput | SeriesCreateOrConnectWithoutCreatorInput[]
@@ -49492,6 +55485,34 @@ export namespace Prisma {
     update?: SeriesUpdateWithWhereUniqueWithoutCreatorInput | SeriesUpdateWithWhereUniqueWithoutCreatorInput[]
     updateMany?: SeriesUpdateManyWithWhereWithoutCreatorInput | SeriesUpdateManyWithWhereWithoutCreatorInput[]
     deleteMany?: SeriesScalarWhereInput | SeriesScalarWhereInput[]
+  }
+
+  export type ChapterReadEventUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<ChapterReadEventCreateWithoutCreatorInput, ChapterReadEventUncheckedCreateWithoutCreatorInput> | ChapterReadEventCreateWithoutCreatorInput[] | ChapterReadEventUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutCreatorInput | ChapterReadEventCreateOrConnectWithoutCreatorInput[]
+    upsert?: ChapterReadEventUpsertWithWhereUniqueWithoutCreatorInput | ChapterReadEventUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: ChapterReadEventCreateManyCreatorInputEnvelope
+    set?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    disconnect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    delete?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    update?: ChapterReadEventUpdateWithWhereUniqueWithoutCreatorInput | ChapterReadEventUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: ChapterReadEventUpdateManyWithWhereWithoutCreatorInput | ChapterReadEventUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
+  }
+
+  export type RevenueDistributionPayoutUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<RevenueDistributionPayoutCreateWithoutCreatorInput, RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput> | RevenueDistributionPayoutCreateWithoutCreatorInput[] | RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput | RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput[]
+    upsert?: RevenueDistributionPayoutUpsertWithWhereUniqueWithoutCreatorInput | RevenueDistributionPayoutUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: RevenueDistributionPayoutCreateManyCreatorInputEnvelope
+    set?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    disconnect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    delete?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    connect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    update?: RevenueDistributionPayoutUpdateWithWhereUniqueWithoutCreatorInput | RevenueDistributionPayoutUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: RevenueDistributionPayoutUpdateManyWithWhereWithoutCreatorInput | RevenueDistributionPayoutUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: RevenueDistributionPayoutScalarWhereInput | RevenueDistributionPayoutScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSessionsInput = {
@@ -49582,6 +55603,13 @@ export namespace Prisma {
     connect?: FeaturedRequestWhereUniqueInput | FeaturedRequestWhereUniqueInput[]
   }
 
+  export type ChapterReadEventCreateNestedManyWithoutSeriesInput = {
+    create?: XOR<ChapterReadEventCreateWithoutSeriesInput, ChapterReadEventUncheckedCreateWithoutSeriesInput> | ChapterReadEventCreateWithoutSeriesInput[] | ChapterReadEventUncheckedCreateWithoutSeriesInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutSeriesInput | ChapterReadEventCreateOrConnectWithoutSeriesInput[]
+    createMany?: ChapterReadEventCreateManySeriesInputEnvelope
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+  }
+
   export type GenreUncheckedCreateNestedManyWithoutSeriesInput = {
     create?: XOR<GenreCreateWithoutSeriesInput, GenreUncheckedCreateWithoutSeriesInput> | GenreCreateWithoutSeriesInput[] | GenreUncheckedCreateWithoutSeriesInput[]
     connectOrCreate?: GenreCreateOrConnectWithoutSeriesInput | GenreCreateOrConnectWithoutSeriesInput[]
@@ -49634,6 +55662,13 @@ export namespace Prisma {
     connectOrCreate?: FeaturedRequestCreateOrConnectWithoutSeriesInput | FeaturedRequestCreateOrConnectWithoutSeriesInput[]
     createMany?: FeaturedRequestCreateManySeriesInputEnvelope
     connect?: FeaturedRequestWhereUniqueInput | FeaturedRequestWhereUniqueInput[]
+  }
+
+  export type ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput = {
+    create?: XOR<ChapterReadEventCreateWithoutSeriesInput, ChapterReadEventUncheckedCreateWithoutSeriesInput> | ChapterReadEventCreateWithoutSeriesInput[] | ChapterReadEventUncheckedCreateWithoutSeriesInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutSeriesInput | ChapterReadEventCreateOrConnectWithoutSeriesInput[]
+    createMany?: ChapterReadEventCreateManySeriesInputEnvelope
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
   }
 
   export type EnumSeriesTypeFieldUpdateOperationsInput = {
@@ -49769,6 +55804,20 @@ export namespace Prisma {
     deleteMany?: FeaturedRequestScalarWhereInput | FeaturedRequestScalarWhereInput[]
   }
 
+  export type ChapterReadEventUpdateManyWithoutSeriesNestedInput = {
+    create?: XOR<ChapterReadEventCreateWithoutSeriesInput, ChapterReadEventUncheckedCreateWithoutSeriesInput> | ChapterReadEventCreateWithoutSeriesInput[] | ChapterReadEventUncheckedCreateWithoutSeriesInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutSeriesInput | ChapterReadEventCreateOrConnectWithoutSeriesInput[]
+    upsert?: ChapterReadEventUpsertWithWhereUniqueWithoutSeriesInput | ChapterReadEventUpsertWithWhereUniqueWithoutSeriesInput[]
+    createMany?: ChapterReadEventCreateManySeriesInputEnvelope
+    set?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    disconnect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    delete?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    update?: ChapterReadEventUpdateWithWhereUniqueWithoutSeriesInput | ChapterReadEventUpdateWithWhereUniqueWithoutSeriesInput[]
+    updateMany?: ChapterReadEventUpdateManyWithWhereWithoutSeriesInput | ChapterReadEventUpdateManyWithWhereWithoutSeriesInput[]
+    deleteMany?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
+  }
+
   export type GenreUncheckedUpdateManyWithoutSeriesNestedInput = {
     create?: XOR<GenreCreateWithoutSeriesInput, GenreUncheckedCreateWithoutSeriesInput> | GenreCreateWithoutSeriesInput[] | GenreUncheckedCreateWithoutSeriesInput[]
     connectOrCreate?: GenreCreateOrConnectWithoutSeriesInput | GenreCreateOrConnectWithoutSeriesInput[]
@@ -49874,6 +55923,20 @@ export namespace Prisma {
     update?: FeaturedRequestUpdateWithWhereUniqueWithoutSeriesInput | FeaturedRequestUpdateWithWhereUniqueWithoutSeriesInput[]
     updateMany?: FeaturedRequestUpdateManyWithWhereWithoutSeriesInput | FeaturedRequestUpdateManyWithWhereWithoutSeriesInput[]
     deleteMany?: FeaturedRequestScalarWhereInput | FeaturedRequestScalarWhereInput[]
+  }
+
+  export type ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput = {
+    create?: XOR<ChapterReadEventCreateWithoutSeriesInput, ChapterReadEventUncheckedCreateWithoutSeriesInput> | ChapterReadEventCreateWithoutSeriesInput[] | ChapterReadEventUncheckedCreateWithoutSeriesInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutSeriesInput | ChapterReadEventCreateOrConnectWithoutSeriesInput[]
+    upsert?: ChapterReadEventUpsertWithWhereUniqueWithoutSeriesInput | ChapterReadEventUpsertWithWhereUniqueWithoutSeriesInput[]
+    createMany?: ChapterReadEventCreateManySeriesInputEnvelope
+    set?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    disconnect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    delete?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    update?: ChapterReadEventUpdateWithWhereUniqueWithoutSeriesInput | ChapterReadEventUpdateWithWhereUniqueWithoutSeriesInput[]
+    updateMany?: ChapterReadEventUpdateManyWithWhereWithoutSeriesInput | ChapterReadEventUpdateManyWithWhereWithoutSeriesInput[]
+    deleteMany?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutSeriesApplicationsInput = {
@@ -49989,6 +56052,13 @@ export namespace Prisma {
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
+  export type ChapterReadEventCreateNestedManyWithoutChapterInput = {
+    create?: XOR<ChapterReadEventCreateWithoutChapterInput, ChapterReadEventUncheckedCreateWithoutChapterInput> | ChapterReadEventCreateWithoutChapterInput[] | ChapterReadEventUncheckedCreateWithoutChapterInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutChapterInput | ChapterReadEventCreateOrConnectWithoutChapterInput[]
+    createMany?: ChapterReadEventCreateManyChapterInputEnvelope
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+  }
+
   export type ChapterImageUncheckedCreateNestedManyWithoutChapterInput = {
     create?: XOR<ChapterImageCreateWithoutChapterInput, ChapterImageUncheckedCreateWithoutChapterInput> | ChapterImageCreateWithoutChapterInput[] | ChapterImageUncheckedCreateWithoutChapterInput[]
     connectOrCreate?: ChapterImageCreateOrConnectWithoutChapterInput | ChapterImageCreateOrConnectWithoutChapterInput[]
@@ -50015,6 +56085,13 @@ export namespace Prisma {
     connectOrCreate?: CommentCreateOrConnectWithoutChapterInput | CommentCreateOrConnectWithoutChapterInput[]
     createMany?: CommentCreateManyChapterInputEnvelope
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type ChapterReadEventUncheckedCreateNestedManyWithoutChapterInput = {
+    create?: XOR<ChapterReadEventCreateWithoutChapterInput, ChapterReadEventUncheckedCreateWithoutChapterInput> | ChapterReadEventCreateWithoutChapterInput[] | ChapterReadEventUncheckedCreateWithoutChapterInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutChapterInput | ChapterReadEventCreateOrConnectWithoutChapterInput[]
+    createMany?: ChapterReadEventCreateManyChapterInputEnvelope
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
   }
 
   export type SeriesUpdateOneRequiredWithoutChaptersNestedInput = {
@@ -50081,6 +56158,20 @@ export namespace Prisma {
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
+  export type ChapterReadEventUpdateManyWithoutChapterNestedInput = {
+    create?: XOR<ChapterReadEventCreateWithoutChapterInput, ChapterReadEventUncheckedCreateWithoutChapterInput> | ChapterReadEventCreateWithoutChapterInput[] | ChapterReadEventUncheckedCreateWithoutChapterInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutChapterInput | ChapterReadEventCreateOrConnectWithoutChapterInput[]
+    upsert?: ChapterReadEventUpsertWithWhereUniqueWithoutChapterInput | ChapterReadEventUpsertWithWhereUniqueWithoutChapterInput[]
+    createMany?: ChapterReadEventCreateManyChapterInputEnvelope
+    set?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    disconnect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    delete?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    update?: ChapterReadEventUpdateWithWhereUniqueWithoutChapterInput | ChapterReadEventUpdateWithWhereUniqueWithoutChapterInput[]
+    updateMany?: ChapterReadEventUpdateManyWithWhereWithoutChapterInput | ChapterReadEventUpdateManyWithWhereWithoutChapterInput[]
+    deleteMany?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
+  }
+
   export type ChapterImageUncheckedUpdateManyWithoutChapterNestedInput = {
     create?: XOR<ChapterImageCreateWithoutChapterInput, ChapterImageUncheckedCreateWithoutChapterInput> | ChapterImageCreateWithoutChapterInput[] | ChapterImageUncheckedCreateWithoutChapterInput[]
     connectOrCreate?: ChapterImageCreateOrConnectWithoutChapterInput | ChapterImageCreateOrConnectWithoutChapterInput[]
@@ -50135,6 +56226,20 @@ export namespace Prisma {
     update?: CommentUpdateWithWhereUniqueWithoutChapterInput | CommentUpdateWithWhereUniqueWithoutChapterInput[]
     updateMany?: CommentUpdateManyWithWhereWithoutChapterInput | CommentUpdateManyWithWhereWithoutChapterInput[]
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type ChapterReadEventUncheckedUpdateManyWithoutChapterNestedInput = {
+    create?: XOR<ChapterReadEventCreateWithoutChapterInput, ChapterReadEventUncheckedCreateWithoutChapterInput> | ChapterReadEventCreateWithoutChapterInput[] | ChapterReadEventUncheckedCreateWithoutChapterInput[]
+    connectOrCreate?: ChapterReadEventCreateOrConnectWithoutChapterInput | ChapterReadEventCreateOrConnectWithoutChapterInput[]
+    upsert?: ChapterReadEventUpsertWithWhereUniqueWithoutChapterInput | ChapterReadEventUpsertWithWhereUniqueWithoutChapterInput[]
+    createMany?: ChapterReadEventCreateManyChapterInputEnvelope
+    set?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    disconnect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    delete?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    connect?: ChapterReadEventWhereUniqueInput | ChapterReadEventWhereUniqueInput[]
+    update?: ChapterReadEventUpdateWithWhereUniqueWithoutChapterInput | ChapterReadEventUpdateWithWhereUniqueWithoutChapterInput[]
+    updateMany?: ChapterReadEventUpdateManyWithWhereWithoutChapterInput | ChapterReadEventUpdateManyWithWhereWithoutChapterInput[]
+    deleteMany?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
   }
 
   export type ChapterCreateNestedOneWithoutImagesInput = {
@@ -50579,6 +56684,162 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuditLogsInput, UserUpdateWithoutAuditLogsInput>, UserUncheckedUpdateWithoutAuditLogsInput>
   }
 
+  export type UserCreateNestedOneWithoutChapterReadEventsInput = {
+    create?: XOR<UserCreateWithoutChapterReadEventsInput, UserUncheckedCreateWithoutChapterReadEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChapterReadEventsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type SeriesCreateNestedOneWithoutReadEventsInput = {
+    create?: XOR<SeriesCreateWithoutReadEventsInput, SeriesUncheckedCreateWithoutReadEventsInput>
+    connectOrCreate?: SeriesCreateOrConnectWithoutReadEventsInput
+    connect?: SeriesWhereUniqueInput
+  }
+
+  export type ChapterCreateNestedOneWithoutReadEventsInput = {
+    create?: XOR<ChapterCreateWithoutReadEventsInput, ChapterUncheckedCreateWithoutReadEventsInput>
+    connectOrCreate?: ChapterCreateOrConnectWithoutReadEventsInput
+    connect?: ChapterWhereUniqueInput
+  }
+
+  export type CreatorProfileCreateNestedOneWithoutReadEventsInput = {
+    create?: XOR<CreatorProfileCreateWithoutReadEventsInput, CreatorProfileUncheckedCreateWithoutReadEventsInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutReadEventsInput
+    connect?: CreatorProfileWhereUniqueInput
+  }
+
+  export type EnumQualityTierFieldUpdateOperationsInput = {
+    set?: $Enums.QualityTier
+  }
+
+  export type UserUpdateOneWithoutChapterReadEventsNestedInput = {
+    create?: XOR<UserCreateWithoutChapterReadEventsInput, UserUncheckedCreateWithoutChapterReadEventsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutChapterReadEventsInput
+    upsert?: UserUpsertWithoutChapterReadEventsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutChapterReadEventsInput, UserUpdateWithoutChapterReadEventsInput>, UserUncheckedUpdateWithoutChapterReadEventsInput>
+  }
+
+  export type SeriesUpdateOneWithoutReadEventsNestedInput = {
+    create?: XOR<SeriesCreateWithoutReadEventsInput, SeriesUncheckedCreateWithoutReadEventsInput>
+    connectOrCreate?: SeriesCreateOrConnectWithoutReadEventsInput
+    upsert?: SeriesUpsertWithoutReadEventsInput
+    disconnect?: SeriesWhereInput | boolean
+    delete?: SeriesWhereInput | boolean
+    connect?: SeriesWhereUniqueInput
+    update?: XOR<XOR<SeriesUpdateToOneWithWhereWithoutReadEventsInput, SeriesUpdateWithoutReadEventsInput>, SeriesUncheckedUpdateWithoutReadEventsInput>
+  }
+
+  export type ChapterUpdateOneWithoutReadEventsNestedInput = {
+    create?: XOR<ChapterCreateWithoutReadEventsInput, ChapterUncheckedCreateWithoutReadEventsInput>
+    connectOrCreate?: ChapterCreateOrConnectWithoutReadEventsInput
+    upsert?: ChapterUpsertWithoutReadEventsInput
+    disconnect?: ChapterWhereInput | boolean
+    delete?: ChapterWhereInput | boolean
+    connect?: ChapterWhereUniqueInput
+    update?: XOR<XOR<ChapterUpdateToOneWithWhereWithoutReadEventsInput, ChapterUpdateWithoutReadEventsInput>, ChapterUncheckedUpdateWithoutReadEventsInput>
+  }
+
+  export type CreatorProfileUpdateOneWithoutReadEventsNestedInput = {
+    create?: XOR<CreatorProfileCreateWithoutReadEventsInput, CreatorProfileUncheckedCreateWithoutReadEventsInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutReadEventsInput
+    upsert?: CreatorProfileUpsertWithoutReadEventsInput
+    disconnect?: CreatorProfileWhereInput | boolean
+    delete?: CreatorProfileWhereInput | boolean
+    connect?: CreatorProfileWhereUniqueInput
+    update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutReadEventsInput, CreatorProfileUpdateWithoutReadEventsInput>, CreatorProfileUncheckedUpdateWithoutReadEventsInput>
+  }
+
+  export type UserCreateNestedOneWithoutRevenueDistributionsCreatedInput = {
+    create?: XOR<UserCreateWithoutRevenueDistributionsCreatedInput, UserUncheckedCreateWithoutRevenueDistributionsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRevenueDistributionsCreatedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type RevenueDistributionPayoutCreateNestedManyWithoutDistributionRunInput = {
+    create?: XOR<RevenueDistributionPayoutCreateWithoutDistributionRunInput, RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput> | RevenueDistributionPayoutCreateWithoutDistributionRunInput[] | RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput[]
+    connectOrCreate?: RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput | RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput[]
+    createMany?: RevenueDistributionPayoutCreateManyDistributionRunInputEnvelope
+    connect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+  }
+
+  export type RevenueDistributionPayoutUncheckedCreateNestedManyWithoutDistributionRunInput = {
+    create?: XOR<RevenueDistributionPayoutCreateWithoutDistributionRunInput, RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput> | RevenueDistributionPayoutCreateWithoutDistributionRunInput[] | RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput[]
+    connectOrCreate?: RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput | RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput[]
+    createMany?: RevenueDistributionPayoutCreateManyDistributionRunInputEnvelope
+    connect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+  }
+
+  export type EnumDistributionStatusFieldUpdateOperationsInput = {
+    set?: $Enums.DistributionStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutRevenueDistributionsCreatedNestedInput = {
+    create?: XOR<UserCreateWithoutRevenueDistributionsCreatedInput, UserUncheckedCreateWithoutRevenueDistributionsCreatedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRevenueDistributionsCreatedInput
+    upsert?: UserUpsertWithoutRevenueDistributionsCreatedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRevenueDistributionsCreatedInput, UserUpdateWithoutRevenueDistributionsCreatedInput>, UserUncheckedUpdateWithoutRevenueDistributionsCreatedInput>
+  }
+
+  export type RevenueDistributionPayoutUpdateManyWithoutDistributionRunNestedInput = {
+    create?: XOR<RevenueDistributionPayoutCreateWithoutDistributionRunInput, RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput> | RevenueDistributionPayoutCreateWithoutDistributionRunInput[] | RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput[]
+    connectOrCreate?: RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput | RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput[]
+    upsert?: RevenueDistributionPayoutUpsertWithWhereUniqueWithoutDistributionRunInput | RevenueDistributionPayoutUpsertWithWhereUniqueWithoutDistributionRunInput[]
+    createMany?: RevenueDistributionPayoutCreateManyDistributionRunInputEnvelope
+    set?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    disconnect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    delete?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    connect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    update?: RevenueDistributionPayoutUpdateWithWhereUniqueWithoutDistributionRunInput | RevenueDistributionPayoutUpdateWithWhereUniqueWithoutDistributionRunInput[]
+    updateMany?: RevenueDistributionPayoutUpdateManyWithWhereWithoutDistributionRunInput | RevenueDistributionPayoutUpdateManyWithWhereWithoutDistributionRunInput[]
+    deleteMany?: RevenueDistributionPayoutScalarWhereInput | RevenueDistributionPayoutScalarWhereInput[]
+  }
+
+  export type RevenueDistributionPayoutUncheckedUpdateManyWithoutDistributionRunNestedInput = {
+    create?: XOR<RevenueDistributionPayoutCreateWithoutDistributionRunInput, RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput> | RevenueDistributionPayoutCreateWithoutDistributionRunInput[] | RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput[]
+    connectOrCreate?: RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput | RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput[]
+    upsert?: RevenueDistributionPayoutUpsertWithWhereUniqueWithoutDistributionRunInput | RevenueDistributionPayoutUpsertWithWhereUniqueWithoutDistributionRunInput[]
+    createMany?: RevenueDistributionPayoutCreateManyDistributionRunInputEnvelope
+    set?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    disconnect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    delete?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    connect?: RevenueDistributionPayoutWhereUniqueInput | RevenueDistributionPayoutWhereUniqueInput[]
+    update?: RevenueDistributionPayoutUpdateWithWhereUniqueWithoutDistributionRunInput | RevenueDistributionPayoutUpdateWithWhereUniqueWithoutDistributionRunInput[]
+    updateMany?: RevenueDistributionPayoutUpdateManyWithWhereWithoutDistributionRunInput | RevenueDistributionPayoutUpdateManyWithWhereWithoutDistributionRunInput[]
+    deleteMany?: RevenueDistributionPayoutScalarWhereInput | RevenueDistributionPayoutScalarWhereInput[]
+  }
+
+  export type RevenueDistributionRunCreateNestedOneWithoutCreatorPayoutsInput = {
+    create?: XOR<RevenueDistributionRunCreateWithoutCreatorPayoutsInput, RevenueDistributionRunUncheckedCreateWithoutCreatorPayoutsInput>
+    connectOrCreate?: RevenueDistributionRunCreateOrConnectWithoutCreatorPayoutsInput
+    connect?: RevenueDistributionRunWhereUniqueInput
+  }
+
+  export type CreatorProfileCreateNestedOneWithoutDistributionPayoutsInput = {
+    create?: XOR<CreatorProfileCreateWithoutDistributionPayoutsInput, CreatorProfileUncheckedCreateWithoutDistributionPayoutsInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutDistributionPayoutsInput
+    connect?: CreatorProfileWhereUniqueInput
+  }
+
+  export type RevenueDistributionRunUpdateOneRequiredWithoutCreatorPayoutsNestedInput = {
+    create?: XOR<RevenueDistributionRunCreateWithoutCreatorPayoutsInput, RevenueDistributionRunUncheckedCreateWithoutCreatorPayoutsInput>
+    connectOrCreate?: RevenueDistributionRunCreateOrConnectWithoutCreatorPayoutsInput
+    upsert?: RevenueDistributionRunUpsertWithoutCreatorPayoutsInput
+    connect?: RevenueDistributionRunWhereUniqueInput
+    update?: XOR<XOR<RevenueDistributionRunUpdateToOneWithWhereWithoutCreatorPayoutsInput, RevenueDistributionRunUpdateWithoutCreatorPayoutsInput>, RevenueDistributionRunUncheckedUpdateWithoutCreatorPayoutsInput>
+  }
+
+  export type CreatorProfileUpdateOneRequiredWithoutDistributionPayoutsNestedInput = {
+    create?: XOR<CreatorProfileCreateWithoutDistributionPayoutsInput, CreatorProfileUncheckedCreateWithoutDistributionPayoutsInput>
+    connectOrCreate?: CreatorProfileCreateOrConnectWithoutDistributionPayoutsInput
+    upsert?: CreatorProfileUpsertWithoutDistributionPayoutsInput
+    connect?: CreatorProfileWhereUniqueInput
+    update?: XOR<XOR<CreatorProfileUpdateToOneWithWhereWithoutDistributionPayoutsInput, CreatorProfileUpdateWithoutDistributionPayoutsInput>, CreatorProfileUncheckedUpdateWithoutDistributionPayoutsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -50979,6 +57240,40 @@ export namespace Prisma {
     _max?: NestedEnumFeaturedRequestStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumQualityTierFilter<$PrismaModel = never> = {
+    equals?: $Enums.QualityTier | EnumQualityTierFieldRefInput<$PrismaModel>
+    in?: $Enums.QualityTier[] | ListEnumQualityTierFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QualityTier[] | ListEnumQualityTierFieldRefInput<$PrismaModel>
+    not?: NestedEnumQualityTierFilter<$PrismaModel> | $Enums.QualityTier
+  }
+
+  export type NestedEnumQualityTierWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.QualityTier | EnumQualityTierFieldRefInput<$PrismaModel>
+    in?: $Enums.QualityTier[] | ListEnumQualityTierFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QualityTier[] | ListEnumQualityTierFieldRefInput<$PrismaModel>
+    not?: NestedEnumQualityTierWithAggregatesFilter<$PrismaModel> | $Enums.QualityTier
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumQualityTierFilter<$PrismaModel>
+    _max?: NestedEnumQualityTierFilter<$PrismaModel>
+  }
+
+  export type NestedEnumDistributionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.DistributionStatus | EnumDistributionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DistributionStatus[] | ListEnumDistributionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DistributionStatus[] | ListEnumDistributionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDistributionStatusFilter<$PrismaModel> | $Enums.DistributionStatus
+  }
+
+  export type NestedEnumDistributionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.DistributionStatus | EnumDistributionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.DistributionStatus[] | ListEnumDistributionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.DistributionStatus[] | ListEnumDistributionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumDistributionStatusWithAggregatesFilter<$PrismaModel> | $Enums.DistributionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDistributionStatusFilter<$PrismaModel>
+    _max?: NestedEnumDistributionStatusFilter<$PrismaModel>
+  }
+
   export type UserCreateWithoutReferralsInput = {
     id?: string
     name: string
@@ -51018,6 +57313,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutReferralsInput = {
@@ -51059,6 +57356,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutReferralsInput = {
@@ -51105,6 +57404,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutReferredByInput = {
@@ -51146,6 +57447,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutReferredByInput = {
@@ -51373,6 +57676,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     series?: SeriesCreateNestedManyWithoutCreatorInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutCreatorInput
+    distributionPayouts?: RevenueDistributionPayoutCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileUncheckedCreateWithoutUserInput = {
@@ -51386,6 +57691,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutCreatorInput
+    distributionPayouts?: RevenueDistributionPayoutUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutUserInput = {
@@ -51717,6 +58024,114 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ChapterReadEventCreateWithoutUserInput = {
+    id?: string
+    sessionId: string
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    series?: SeriesCreateNestedOneWithoutReadEventsInput
+    chapter?: ChapterCreateNestedOneWithoutReadEventsInput
+    creator?: CreatorProfileCreateNestedOneWithoutReadEventsInput
+  }
+
+  export type ChapterReadEventUncheckedCreateWithoutUserInput = {
+    id?: string
+    sessionId: string
+    seriesId?: string | null
+    chapterId?: string | null
+    creatorId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ChapterReadEventCreateOrConnectWithoutUserInput = {
+    where: ChapterReadEventWhereUniqueInput
+    create: XOR<ChapterReadEventCreateWithoutUserInput, ChapterReadEventUncheckedCreateWithoutUserInput>
+  }
+
+  export type ChapterReadEventCreateManyUserInputEnvelope = {
+    data: ChapterReadEventCreateManyUserInput | ChapterReadEventCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RevenueDistributionRunCreateWithoutAdminInput = {
+    id?: string
+    periodStart: Date | string
+    periodEnd: Date | string
+    grossAmountEntered: number
+    currency?: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status?: $Enums.DistributionStatus
+    revertedAt?: Date | string | null
+    revertedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    creatorPayouts?: RevenueDistributionPayoutCreateNestedManyWithoutDistributionRunInput
+  }
+
+  export type RevenueDistributionRunUncheckedCreateWithoutAdminInput = {
+    id?: string
+    periodStart: Date | string
+    periodEnd: Date | string
+    grossAmountEntered: number
+    currency?: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status?: $Enums.DistributionStatus
+    revertedAt?: Date | string | null
+    revertedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    creatorPayouts?: RevenueDistributionPayoutUncheckedCreateNestedManyWithoutDistributionRunInput
+  }
+
+  export type RevenueDistributionRunCreateOrConnectWithoutAdminInput = {
+    where: RevenueDistributionRunWhereUniqueInput
+    create: XOR<RevenueDistributionRunCreateWithoutAdminInput, RevenueDistributionRunUncheckedCreateWithoutAdminInput>
+  }
+
+  export type RevenueDistributionRunCreateManyAdminInputEnvelope = {
+    data: RevenueDistributionRunCreateManyAdminInput | RevenueDistributionRunCreateManyAdminInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutReferralsInput = {
     update: XOR<UserUpdateWithoutReferralsInput, UserUncheckedUpdateWithoutReferralsInput>
     create: XOR<UserCreateWithoutReferralsInput, UserUncheckedCreateWithoutReferralsInput>
@@ -51767,6 +58182,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferralsInput = {
@@ -51808,6 +58225,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUpsertWithWhereUniqueWithoutReferredByInput = {
@@ -52080,6 +58499,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     series?: SeriesUpdateManyWithoutCreatorNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutCreatorNestedInput
+    distributionPayouts?: RevenueDistributionPayoutUpdateManyWithoutCreatorNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateWithoutUserInput = {
@@ -52093,6 +58514,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutCreatorNestedInput
+    distributionPayouts?: RevenueDistributionPayoutUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type SeriesApplicationUpsertWithWhereUniqueWithoutCreatorInput = {
@@ -52421,6 +58844,89 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"PromoCode"> | Date | string
   }
 
+  export type ChapterReadEventUpsertWithWhereUniqueWithoutUserInput = {
+    where: ChapterReadEventWhereUniqueInput
+    update: XOR<ChapterReadEventUpdateWithoutUserInput, ChapterReadEventUncheckedUpdateWithoutUserInput>
+    create: XOR<ChapterReadEventCreateWithoutUserInput, ChapterReadEventUncheckedCreateWithoutUserInput>
+  }
+
+  export type ChapterReadEventUpdateWithWhereUniqueWithoutUserInput = {
+    where: ChapterReadEventWhereUniqueInput
+    data: XOR<ChapterReadEventUpdateWithoutUserInput, ChapterReadEventUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ChapterReadEventUpdateManyWithWhereWithoutUserInput = {
+    where: ChapterReadEventScalarWhereInput
+    data: XOR<ChapterReadEventUpdateManyMutationInput, ChapterReadEventUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ChapterReadEventScalarWhereInput = {
+    AND?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
+    OR?: ChapterReadEventScalarWhereInput[]
+    NOT?: ChapterReadEventScalarWhereInput | ChapterReadEventScalarWhereInput[]
+    id?: StringFilter<"ChapterReadEvent"> | string
+    sessionId?: StringFilter<"ChapterReadEvent"> | string
+    userId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    seriesId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    chapterId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    creatorId?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    startedAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+    endedAt?: DateTimeNullableFilter<"ChapterReadEvent"> | Date | string | null
+    durationSeconds?: IntFilter<"ChapterReadEvent"> | number
+    pagesViewed?: IntFilter<"ChapterReadEvent"> | number
+    totalPages?: IntFilter<"ChapterReadEvent"> | number
+    completionPercent?: FloatFilter<"ChapterReadEvent"> | number
+    scrollDepthPercent?: FloatFilter<"ChapterReadEvent"> | number
+    interactionCount?: IntFilter<"ChapterReadEvent"> | number
+    qualityTier?: EnumQualityTierFilter<"ChapterReadEvent"> | $Enums.QualityTier
+    qualityScore?: FloatFilter<"ChapterReadEvent"> | number
+    isBotLikely?: BoolFilter<"ChapterReadEvent"> | boolean
+    botReason?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    clientIp?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    userAgent?: StringNullableFilter<"ChapterReadEvent"> | string | null
+    createdAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+    updatedAt?: DateTimeFilter<"ChapterReadEvent"> | Date | string
+  }
+
+  export type RevenueDistributionRunUpsertWithWhereUniqueWithoutAdminInput = {
+    where: RevenueDistributionRunWhereUniqueInput
+    update: XOR<RevenueDistributionRunUpdateWithoutAdminInput, RevenueDistributionRunUncheckedUpdateWithoutAdminInput>
+    create: XOR<RevenueDistributionRunCreateWithoutAdminInput, RevenueDistributionRunUncheckedCreateWithoutAdminInput>
+  }
+
+  export type RevenueDistributionRunUpdateWithWhereUniqueWithoutAdminInput = {
+    where: RevenueDistributionRunWhereUniqueInput
+    data: XOR<RevenueDistributionRunUpdateWithoutAdminInput, RevenueDistributionRunUncheckedUpdateWithoutAdminInput>
+  }
+
+  export type RevenueDistributionRunUpdateManyWithWhereWithoutAdminInput = {
+    where: RevenueDistributionRunScalarWhereInput
+    data: XOR<RevenueDistributionRunUpdateManyMutationInput, RevenueDistributionRunUncheckedUpdateManyWithoutAdminInput>
+  }
+
+  export type RevenueDistributionRunScalarWhereInput = {
+    AND?: RevenueDistributionRunScalarWhereInput | RevenueDistributionRunScalarWhereInput[]
+    OR?: RevenueDistributionRunScalarWhereInput[]
+    NOT?: RevenueDistributionRunScalarWhereInput | RevenueDistributionRunScalarWhereInput[]
+    id?: StringFilter<"RevenueDistributionRun"> | string
+    adminId?: StringFilter<"RevenueDistributionRun"> | string
+    periodStart?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+    periodEnd?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+    grossAmountEntered?: FloatFilter<"RevenueDistributionRun"> | number
+    currency?: StringFilter<"RevenueDistributionRun"> | string
+    distributablePool?: IntFilter<"RevenueDistributionRun"> | number
+    totalQualityScore?: FloatFilter<"RevenueDistributionRun"> | number
+    totalQualifiedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalEngagedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalCompletedReads?: IntFilter<"RevenueDistributionRun"> | number
+    totalCreatorsCount?: IntFilter<"RevenueDistributionRun"> | number
+    status?: EnumDistributionStatusFilter<"RevenueDistributionRun"> | $Enums.DistributionStatus
+    revertedAt?: DateTimeNullableFilter<"RevenueDistributionRun"> | Date | string | null
+    revertedBy?: StringNullableFilter<"RevenueDistributionRun"> | string | null
+    notes?: StringNullableFilter<"RevenueDistributionRun"> | string | null
+    createdAt?: DateTimeFilter<"RevenueDistributionRun"> | Date | string
+  }
+
   export type UserCreateWithoutCreatorProfileInput = {
     id?: string
     name: string
@@ -52460,6 +58966,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutCreatorProfileInput = {
@@ -52501,6 +59009,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutCreatorProfileInput = {
@@ -52535,6 +59045,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutCreatorInput = {
@@ -52564,6 +59075,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutCreatorInput = {
@@ -52573,6 +59085,106 @@ export namespace Prisma {
 
   export type SeriesCreateManyCreatorInputEnvelope = {
     data: SeriesCreateManyCreatorInput | SeriesCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ChapterReadEventCreateWithoutCreatorInput = {
+    id?: string
+    sessionId: string
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutChapterReadEventsInput
+    series?: SeriesCreateNestedOneWithoutReadEventsInput
+    chapter?: ChapterCreateNestedOneWithoutReadEventsInput
+  }
+
+  export type ChapterReadEventUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    sessionId: string
+    userId?: string | null
+    seriesId?: string | null
+    chapterId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ChapterReadEventCreateOrConnectWithoutCreatorInput = {
+    where: ChapterReadEventWhereUniqueInput
+    create: XOR<ChapterReadEventCreateWithoutCreatorInput, ChapterReadEventUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type ChapterReadEventCreateManyCreatorInputEnvelope = {
+    data: ChapterReadEventCreateManyCreatorInput | ChapterReadEventCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RevenueDistributionPayoutCreateWithoutCreatorInput = {
+    id?: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
+    distributionRun: RevenueDistributionRunCreateNestedOneWithoutCreatorPayoutsInput
+  }
+
+  export type RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    distributionRunId: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
+  }
+
+  export type RevenueDistributionPayoutCreateOrConnectWithoutCreatorInput = {
+    where: RevenueDistributionPayoutWhereUniqueInput
+    create: XOR<RevenueDistributionPayoutCreateWithoutCreatorInput, RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type RevenueDistributionPayoutCreateManyCreatorInputEnvelope = {
+    data: RevenueDistributionPayoutCreateManyCreatorInput | RevenueDistributionPayoutCreateManyCreatorInput[]
     skipDuplicates?: boolean
   }
 
@@ -52626,6 +59238,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatorProfileInput = {
@@ -52667,6 +59281,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type SeriesUpsertWithWhereUniqueWithoutCreatorInput = {
@@ -52710,6 +59326,58 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Series"> | Date | string
   }
 
+  export type ChapterReadEventUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: ChapterReadEventWhereUniqueInput
+    update: XOR<ChapterReadEventUpdateWithoutCreatorInput, ChapterReadEventUncheckedUpdateWithoutCreatorInput>
+    create: XOR<ChapterReadEventCreateWithoutCreatorInput, ChapterReadEventUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type ChapterReadEventUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: ChapterReadEventWhereUniqueInput
+    data: XOR<ChapterReadEventUpdateWithoutCreatorInput, ChapterReadEventUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type ChapterReadEventUpdateManyWithWhereWithoutCreatorInput = {
+    where: ChapterReadEventScalarWhereInput
+    data: XOR<ChapterReadEventUpdateManyMutationInput, ChapterReadEventUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type RevenueDistributionPayoutUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: RevenueDistributionPayoutWhereUniqueInput
+    update: XOR<RevenueDistributionPayoutUpdateWithoutCreatorInput, RevenueDistributionPayoutUncheckedUpdateWithoutCreatorInput>
+    create: XOR<RevenueDistributionPayoutCreateWithoutCreatorInput, RevenueDistributionPayoutUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type RevenueDistributionPayoutUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: RevenueDistributionPayoutWhereUniqueInput
+    data: XOR<RevenueDistributionPayoutUpdateWithoutCreatorInput, RevenueDistributionPayoutUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type RevenueDistributionPayoutUpdateManyWithWhereWithoutCreatorInput = {
+    where: RevenueDistributionPayoutScalarWhereInput
+    data: XOR<RevenueDistributionPayoutUpdateManyMutationInput, RevenueDistributionPayoutUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type RevenueDistributionPayoutScalarWhereInput = {
+    AND?: RevenueDistributionPayoutScalarWhereInput | RevenueDistributionPayoutScalarWhereInput[]
+    OR?: RevenueDistributionPayoutScalarWhereInput[]
+    NOT?: RevenueDistributionPayoutScalarWhereInput | RevenueDistributionPayoutScalarWhereInput[]
+    id?: StringFilter<"RevenueDistributionPayout"> | string
+    distributionRunId?: StringFilter<"RevenueDistributionPayout"> | string
+    creatorId?: StringFilter<"RevenueDistributionPayout"> | string
+    qualityScore?: FloatFilter<"RevenueDistributionPayout"> | number
+    scorePercentage?: FloatFilter<"RevenueDistributionPayout"> | number
+    qualifiedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    engagedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    completedReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    totalReadsCount?: IntFilter<"RevenueDistributionPayout"> | number
+    pointsAwarded?: IntFilter<"RevenueDistributionPayout"> | number
+    fiatEquivalent?: FloatFilter<"RevenueDistributionPayout"> | number
+    revertedPoints?: IntFilter<"RevenueDistributionPayout"> | number
+    shortfallPoints?: IntFilter<"RevenueDistributionPayout"> | number
+    createdAt?: DateTimeFilter<"RevenueDistributionPayout"> | Date | string
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     name: string
@@ -52749,6 +59417,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -52790,6 +59460,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -52847,6 +59519,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -52888,6 +59562,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -52929,6 +59605,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -52970,6 +59648,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -53027,6 +59707,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -53068,6 +59750,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type CreatorProfileCreateWithoutSeriesInput = {
@@ -53081,6 +59765,8 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutCreatorProfileInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutCreatorInput
+    distributionPayouts?: RevenueDistributionPayoutCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileUncheckedCreateWithoutSeriesInput = {
@@ -53094,6 +59780,8 @@ export namespace Prisma {
     withdrawnAmount?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutCreatorInput
+    distributionPayouts?: RevenueDistributionPayoutUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type CreatorProfileCreateOrConnectWithoutSeriesInput = {
@@ -53130,6 +59818,7 @@ export namespace Prisma {
     history?: HistoryCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseCreateNestedManyWithoutChapterInput
     comments?: CommentCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterUncheckedCreateWithoutSeriesInput = {
@@ -53146,6 +59835,7 @@ export namespace Prisma {
     history?: HistoryUncheckedCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutChapterInput
     comments?: CommentUncheckedCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterCreateOrConnectWithoutSeriesInput = {
@@ -53309,6 +59999,64 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ChapterReadEventCreateWithoutSeriesInput = {
+    id?: string
+    sessionId: string
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutChapterReadEventsInput
+    chapter?: ChapterCreateNestedOneWithoutReadEventsInput
+    creator?: CreatorProfileCreateNestedOneWithoutReadEventsInput
+  }
+
+  export type ChapterReadEventUncheckedCreateWithoutSeriesInput = {
+    id?: string
+    sessionId: string
+    userId?: string | null
+    chapterId?: string | null
+    creatorId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ChapterReadEventCreateOrConnectWithoutSeriesInput = {
+    where: ChapterReadEventWhereUniqueInput
+    create: XOR<ChapterReadEventCreateWithoutSeriesInput, ChapterReadEventUncheckedCreateWithoutSeriesInput>
+  }
+
+  export type ChapterReadEventCreateManySeriesInputEnvelope = {
+    data: ChapterReadEventCreateManySeriesInput | ChapterReadEventCreateManySeriesInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CreatorProfileUpsertWithoutSeriesInput = {
     update: XOR<CreatorProfileUpdateWithoutSeriesInput, CreatorProfileUncheckedUpdateWithoutSeriesInput>
     create: XOR<CreatorProfileCreateWithoutSeriesInput, CreatorProfileUncheckedCreateWithoutSeriesInput>
@@ -53331,6 +60079,8 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutCreatorNestedInput
+    distributionPayouts?: RevenueDistributionPayoutUpdateManyWithoutCreatorNestedInput
   }
 
   export type CreatorProfileUncheckedUpdateWithoutSeriesInput = {
@@ -53344,6 +60094,8 @@ export namespace Prisma {
     withdrawnAmount?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutCreatorNestedInput
+    distributionPayouts?: RevenueDistributionPayoutUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type GenreUpsertWithWhereUniqueWithoutSeriesInput = {
@@ -53505,6 +60257,22 @@ export namespace Prisma {
     data: XOR<FeaturedRequestUpdateManyMutationInput, FeaturedRequestUncheckedUpdateManyWithoutSeriesInput>
   }
 
+  export type ChapterReadEventUpsertWithWhereUniqueWithoutSeriesInput = {
+    where: ChapterReadEventWhereUniqueInput
+    update: XOR<ChapterReadEventUpdateWithoutSeriesInput, ChapterReadEventUncheckedUpdateWithoutSeriesInput>
+    create: XOR<ChapterReadEventCreateWithoutSeriesInput, ChapterReadEventUncheckedCreateWithoutSeriesInput>
+  }
+
+  export type ChapterReadEventUpdateWithWhereUniqueWithoutSeriesInput = {
+    where: ChapterReadEventWhereUniqueInput
+    data: XOR<ChapterReadEventUpdateWithoutSeriesInput, ChapterReadEventUncheckedUpdateWithoutSeriesInput>
+  }
+
+  export type ChapterReadEventUpdateManyWithWhereWithoutSeriesInput = {
+    where: ChapterReadEventScalarWhereInput
+    data: XOR<ChapterReadEventUpdateManyMutationInput, ChapterReadEventUncheckedUpdateManyWithoutSeriesInput>
+  }
+
   export type UserCreateWithoutSeriesApplicationsInput = {
     id?: string
     name: string
@@ -53544,6 +60312,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutSeriesApplicationsInput = {
@@ -53585,6 +60355,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutSeriesApplicationsInput = {
@@ -53642,6 +60414,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSeriesApplicationsInput = {
@@ -53683,6 +60457,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type SeriesCreateWithoutFeaturedInput = {
@@ -53712,6 +60488,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutFeaturedInput = {
@@ -53741,6 +60518,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutFeaturedInput = {
@@ -53786,6 +60564,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutFeaturedInput = {
@@ -53815,6 +60594,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesCreateWithoutGenresInput = {
@@ -53844,6 +60624,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutGenresInput = {
@@ -53873,6 +60654,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutGenresInput = {
@@ -53923,6 +60705,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutChaptersInput = {
@@ -53952,6 +60735,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutChaptersInput = {
@@ -54055,6 +60839,64 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ChapterReadEventCreateWithoutChapterInput = {
+    id?: string
+    sessionId: string
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutChapterReadEventsInput
+    series?: SeriesCreateNestedOneWithoutReadEventsInput
+    creator?: CreatorProfileCreateNestedOneWithoutReadEventsInput
+  }
+
+  export type ChapterReadEventUncheckedCreateWithoutChapterInput = {
+    id?: string
+    sessionId: string
+    userId?: string | null
+    seriesId?: string | null
+    creatorId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ChapterReadEventCreateOrConnectWithoutChapterInput = {
+    where: ChapterReadEventWhereUniqueInput
+    create: XOR<ChapterReadEventCreateWithoutChapterInput, ChapterReadEventUncheckedCreateWithoutChapterInput>
+  }
+
+  export type ChapterReadEventCreateManyChapterInputEnvelope = {
+    data: ChapterReadEventCreateManyChapterInput | ChapterReadEventCreateManyChapterInput[]
+    skipDuplicates?: boolean
+  }
+
   export type SeriesUpsertWithoutChaptersInput = {
     update: XOR<SeriesUpdateWithoutChaptersInput, SeriesUncheckedUpdateWithoutChaptersInput>
     create: XOR<SeriesCreateWithoutChaptersInput, SeriesUncheckedCreateWithoutChaptersInput>
@@ -54093,6 +60935,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutChaptersInput = {
@@ -54122,6 +60965,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type ChapterImageUpsertWithWhereUniqueWithoutChapterInput = {
@@ -54198,6 +61042,22 @@ export namespace Prisma {
     data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutChapterInput>
   }
 
+  export type ChapterReadEventUpsertWithWhereUniqueWithoutChapterInput = {
+    where: ChapterReadEventWhereUniqueInput
+    update: XOR<ChapterReadEventUpdateWithoutChapterInput, ChapterReadEventUncheckedUpdateWithoutChapterInput>
+    create: XOR<ChapterReadEventCreateWithoutChapterInput, ChapterReadEventUncheckedCreateWithoutChapterInput>
+  }
+
+  export type ChapterReadEventUpdateWithWhereUniqueWithoutChapterInput = {
+    where: ChapterReadEventWhereUniqueInput
+    data: XOR<ChapterReadEventUpdateWithoutChapterInput, ChapterReadEventUncheckedUpdateWithoutChapterInput>
+  }
+
+  export type ChapterReadEventUpdateManyWithWhereWithoutChapterInput = {
+    where: ChapterReadEventScalarWhereInput
+    data: XOR<ChapterReadEventUpdateManyMutationInput, ChapterReadEventUncheckedUpdateManyWithoutChapterInput>
+  }
+
   export type ChapterCreateWithoutImagesInput = {
     id?: string
     number: number
@@ -54212,6 +61072,7 @@ export namespace Prisma {
     history?: HistoryCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseCreateNestedManyWithoutChapterInput
     comments?: CommentCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterUncheckedCreateWithoutImagesInput = {
@@ -54228,6 +61089,7 @@ export namespace Prisma {
     history?: HistoryUncheckedCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutChapterInput
     comments?: CommentUncheckedCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterCreateOrConnectWithoutImagesInput = {
@@ -54260,6 +61122,7 @@ export namespace Prisma {
     history?: HistoryUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUpdateManyWithoutChapterNestedInput
     comments?: CommentUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutImagesInput = {
@@ -54276,6 +61139,7 @@ export namespace Prisma {
     history?: HistoryUncheckedUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUncheckedUpdateManyWithoutChapterNestedInput
     comments?: CommentUncheckedUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type UserCreateWithoutBookmarksInput = {
@@ -54317,6 +61181,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutBookmarksInput = {
@@ -54358,6 +61224,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutBookmarksInput = {
@@ -54392,6 +61260,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutBookmarksInput = {
@@ -54421,6 +61290,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutBookmarksInput = {
@@ -54478,6 +61348,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookmarksInput = {
@@ -54519,6 +61391,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type SeriesUpsertWithoutBookmarksInput = {
@@ -54559,6 +61433,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutBookmarksInput = {
@@ -54588,6 +61463,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type UserCreateWithoutHistoryInput = {
@@ -54629,6 +61505,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutHistoryInput = {
@@ -54670,6 +61548,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutHistoryInput = {
@@ -54704,6 +61584,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutHistoryInput = {
@@ -54733,6 +61614,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutHistoryInput = {
@@ -54754,6 +61636,7 @@ export namespace Prisma {
     images?: ChapterImageCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseCreateNestedManyWithoutChapterInput
     comments?: CommentCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterUncheckedCreateWithoutHistoryInput = {
@@ -54770,6 +61653,7 @@ export namespace Prisma {
     images?: ChapterImageUncheckedCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutChapterInput
     comments?: CommentUncheckedCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterCreateOrConnectWithoutHistoryInput = {
@@ -54827,6 +61711,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutHistoryInput = {
@@ -54868,6 +61754,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type SeriesUpsertWithoutHistoryInput = {
@@ -54908,6 +61796,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutHistoryInput = {
@@ -54937,6 +61826,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type ChapterUpsertWithoutHistoryInput = {
@@ -54964,6 +61854,7 @@ export namespace Prisma {
     images?: ChapterImageUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUpdateManyWithoutChapterNestedInput
     comments?: CommentUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutHistoryInput = {
@@ -54980,6 +61871,7 @@ export namespace Prisma {
     images?: ChapterImageUncheckedUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUncheckedUpdateManyWithoutChapterNestedInput
     comments?: CommentUncheckedUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type UserCreateWithoutPointTransactionsInput = {
@@ -55021,6 +61913,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutPointTransactionsInput = {
@@ -55062,6 +61956,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutPointTransactionsInput = {
@@ -55119,6 +62015,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPointTransactionsInput = {
@@ -55160,6 +62058,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateWithoutChapterPurchasesInput = {
@@ -55201,6 +62101,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutChapterPurchasesInput = {
@@ -55242,6 +62144,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutChapterPurchasesInput = {
@@ -55263,6 +62167,7 @@ export namespace Prisma {
     images?: ChapterImageCreateNestedManyWithoutChapterInput
     history?: HistoryCreateNestedManyWithoutChapterInput
     comments?: CommentCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterUncheckedCreateWithoutPurchasesInput = {
@@ -55279,6 +62184,7 @@ export namespace Prisma {
     images?: ChapterImageUncheckedCreateNestedManyWithoutChapterInput
     history?: HistoryUncheckedCreateNestedManyWithoutChapterInput
     comments?: CommentUncheckedCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterCreateOrConnectWithoutPurchasesInput = {
@@ -55336,6 +62242,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChapterPurchasesInput = {
@@ -55377,6 +62285,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type ChapterUpsertWithoutPurchasesInput = {
@@ -55404,6 +62314,7 @@ export namespace Prisma {
     images?: ChapterImageUpdateManyWithoutChapterNestedInput
     history?: HistoryUpdateManyWithoutChapterNestedInput
     comments?: CommentUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutPurchasesInput = {
@@ -55420,6 +62331,7 @@ export namespace Prisma {
     images?: ChapterImageUncheckedUpdateManyWithoutChapterNestedInput
     history?: HistoryUncheckedUpdateManyWithoutChapterNestedInput
     comments?: CommentUncheckedUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type UserCreateWithoutPaymentsInput = {
@@ -55461,6 +62373,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -55502,6 +62416,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -55559,6 +62475,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -55600,6 +62518,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateWithoutWithdrawalsInput = {
@@ -55641,6 +62561,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutWithdrawalsInput = {
@@ -55682,6 +62604,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutWithdrawalsInput = {
@@ -55739,6 +62663,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutWithdrawalsInput = {
@@ -55780,6 +62706,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateWithoutCommentsInput = {
@@ -55821,6 +62749,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -55862,6 +62792,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -55883,6 +62815,7 @@ export namespace Prisma {
     images?: ChapterImageCreateNestedManyWithoutChapterInput
     history?: HistoryCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterUncheckedCreateWithoutCommentsInput = {
@@ -55899,6 +62832,7 @@ export namespace Prisma {
     images?: ChapterImageUncheckedCreateNestedManyWithoutChapterInput
     history?: HistoryUncheckedCreateNestedManyWithoutChapterInput
     purchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutChapterInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutChapterInput
   }
 
   export type ChapterCreateOrConnectWithoutCommentsInput = {
@@ -55956,6 +62890,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -55997,6 +62933,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type ChapterUpsertWithoutCommentsInput = {
@@ -56024,6 +62962,7 @@ export namespace Prisma {
     images?: ChapterImageUpdateManyWithoutChapterNestedInput
     history?: HistoryUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutCommentsInput = {
@@ -56040,6 +62979,7 @@ export namespace Prisma {
     images?: ChapterImageUncheckedUpdateManyWithoutChapterNestedInput
     history?: HistoryUncheckedUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUncheckedUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type UserCreateWithoutReviewsInput = {
@@ -56081,6 +63021,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
@@ -56122,6 +63064,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutReviewsInput = {
@@ -56156,6 +63100,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesCreateNestedOneWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutReviewsInput = {
@@ -56185,6 +63130,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUncheckedCreateNestedOneWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutReviewsInput = {
@@ -56242,6 +63188,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -56283,6 +63231,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type SeriesUpsertWithoutReviewsInput = {
@@ -56323,6 +63273,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUpdateOneWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutReviewsInput = {
@@ -56352,6 +63303,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUncheckedUpdateOneWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type UserCreateWithoutReportsInput = {
@@ -56393,6 +63345,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutReportsInput = {
@@ -56434,6 +63388,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutReportsInput = {
@@ -56468,6 +63424,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesCreateNestedOneWithoutSeriesInput
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutReportsInput = {
@@ -56497,6 +63454,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUncheckedCreateNestedOneWithoutSeriesInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutReportsInput = {
@@ -56554,6 +63512,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReportsInput = {
@@ -56595,6 +63555,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type SeriesUpsertWithoutReportsInput = {
@@ -56635,6 +63597,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUpdateOneWithoutSeriesNestedInput
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutReportsInput = {
@@ -56664,6 +63627,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUncheckedUpdateOneWithoutSeriesNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesCreateWithoutFeaturedRequestsInput = {
@@ -56693,6 +63657,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesCreateNestedOneWithoutSeriesInput
     reviews?: ReviewCreateNestedManyWithoutSeriesInput
     reports?: ReportCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesUncheckedCreateWithoutFeaturedRequestsInput = {
@@ -56722,6 +63687,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUncheckedCreateNestedOneWithoutSeriesInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
     reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutSeriesInput
   }
 
   export type SeriesCreateOrConnectWithoutFeaturedRequestsInput = {
@@ -56768,6 +63734,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutFeaturedRequestsInput = {
@@ -56809,6 +63777,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutFeaturedRequestsInput = {
@@ -56854,6 +63824,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUpdateOneWithoutSeriesNestedInput
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutFeaturedRequestsInput = {
@@ -56883,6 +63854,7 @@ export namespace Prisma {
     featured?: FeaturedSeriesUncheckedUpdateOneWithoutSeriesNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type UserUpsertWithoutFeaturedRequestsInput = {
@@ -56935,6 +63907,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFeaturedRequestsInput = {
@@ -56976,6 +63950,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateWithoutChatMessagesInput = {
@@ -57017,6 +63993,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutChatMessagesInput = {
@@ -57058,6 +64036,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutChatMessagesInput = {
@@ -57115,6 +64095,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatMessagesInput = {
@@ -57156,6 +64138,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateWithoutCreatorPostsInput = {
@@ -57197,6 +64181,8 @@ export namespace Prisma {
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutCreatorPostsInput = {
@@ -57238,6 +64224,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutCreatorPostsInput = {
@@ -57295,6 +64283,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatorPostsInput = {
@@ -57336,6 +64326,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateWithoutCreatedPromoCodesInput = {
@@ -57377,6 +64369,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostCreateNestedManyWithoutCreatorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutCreatedPromoCodesInput = {
@@ -57418,6 +64412,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUncheckedCreateNestedManyWithoutCreatorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutCreatedPromoCodesInput = {
@@ -57497,6 +64493,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUpdateManyWithoutCreatorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedPromoCodesInput = {
@@ -57538,6 +64536,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUncheckedUpdateManyWithoutCreatorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type PromoCodeRedemptionUpsertWithWhereUniqueWithoutPromoCodeInput = {
@@ -57630,6 +64630,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostCreateNestedManyWithoutCreatorInput
     auditLogs?: AuditLogCreateNestedManyWithoutActorInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutPromoRedemptionsInput = {
@@ -57671,6 +64673,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUncheckedCreateNestedManyWithoutCreatorInput
     auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutPromoRedemptionsInput = {
@@ -57769,6 +64773,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUpdateManyWithoutCreatorNestedInput
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPromoRedemptionsInput = {
@@ -57810,6 +64816,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUncheckedUpdateManyWithoutCreatorNestedInput
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserCreateWithoutAuditLogsInput = {
@@ -57851,6 +64859,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostCreateNestedManyWithoutCreatorInput
     promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
   }
 
   export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -57892,6 +64902,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUncheckedCreateNestedManyWithoutCreatorInput
     promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
     createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
   }
 
   export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -57949,6 +64961,8 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUpdateManyWithoutCreatorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -57990,6 +65004,910 @@ export namespace Prisma {
     creatorPosts?: CreatorPostUncheckedUpdateManyWithoutCreatorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
+  }
+
+  export type UserCreateWithoutChapterReadEventsInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    role?: $Enums.Role
+    banned?: boolean
+    banReason?: string | null
+    banExpires?: Date | string | null
+    points?: number
+    transactionsFrozen?: boolean
+    mutedUntil?: Date | string | null
+    referralCode?: string | null
+    dailyAdViews?: number
+    dailyAdPointsEarned?: number
+    lastAdWatchDate?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    referredBy?: UserCreateNestedOneWithoutReferralsInput
+    referrals?: UserCreateNestedManyWithoutReferredByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    bookmarks?: BookmarkCreateNestedManyWithoutUserInput
+    history?: HistoryCreateNestedManyWithoutUserInput
+    pointTransactions?: PointTransactionCreateNestedManyWithoutUserInput
+    chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
+    payments?: PaymentCreateNestedManyWithoutUserInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutUserInput
+    reports?: ReportCreateNestedManyWithoutReporterInput
+    featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
+    chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
+    creatorPosts?: CreatorPostCreateNestedManyWithoutCreatorInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
+    createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    revenueDistributionsCreated?: RevenueDistributionRunCreateNestedManyWithoutAdminInput
+  }
+
+  export type UserUncheckedCreateWithoutChapterReadEventsInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    role?: $Enums.Role
+    banned?: boolean
+    banReason?: string | null
+    banExpires?: Date | string | null
+    points?: number
+    transactionsFrozen?: boolean
+    mutedUntil?: Date | string | null
+    referralCode?: string | null
+    referredById?: string | null
+    dailyAdViews?: number
+    dailyAdPointsEarned?: number
+    lastAdWatchDate?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
+    history?: HistoryUncheckedCreateNestedManyWithoutUserInput
+    pointTransactions?: PointTransactionUncheckedCreateNestedManyWithoutUserInput
+    chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
+    featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
+    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
+    creatorPosts?: CreatorPostUncheckedCreateNestedManyWithoutCreatorInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
+    createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedCreateNestedManyWithoutAdminInput
+  }
+
+  export type UserCreateOrConnectWithoutChapterReadEventsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutChapterReadEventsInput, UserUncheckedCreateWithoutChapterReadEventsInput>
+  }
+
+  export type SeriesCreateWithoutReadEventsInput = {
+    id?: string
+    title: string
+    slug: string
+    altTitles?: string | null
+    description?: string | null
+    coverUrl?: string | null
+    bgUrl?: string | null
+    type?: $Enums.SeriesType
+    status?: $Enums.SeriesStatus
+    rating?: number
+    favorites?: number
+    totalViews?: number
+    isPinned?: boolean
+    isHidden?: boolean
+    hiddenReason?: string | null
+    discount?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    creator?: CreatorProfileCreateNestedOneWithoutSeriesInput
+    genres?: GenreCreateNestedManyWithoutSeriesInput
+    chapters?: ChapterCreateNestedManyWithoutSeriesInput
+    bookmarks?: BookmarkCreateNestedManyWithoutSeriesInput
+    history?: HistoryCreateNestedManyWithoutSeriesInput
+    featured?: FeaturedSeriesCreateNestedOneWithoutSeriesInput
+    reviews?: ReviewCreateNestedManyWithoutSeriesInput
+    reports?: ReportCreateNestedManyWithoutSeriesInput
+    featuredRequests?: FeaturedRequestCreateNestedManyWithoutSeriesInput
+  }
+
+  export type SeriesUncheckedCreateWithoutReadEventsInput = {
+    id?: string
+    creatorId?: string | null
+    title: string
+    slug: string
+    altTitles?: string | null
+    description?: string | null
+    coverUrl?: string | null
+    bgUrl?: string | null
+    type?: $Enums.SeriesType
+    status?: $Enums.SeriesStatus
+    rating?: number
+    favorites?: number
+    totalViews?: number
+    isPinned?: boolean
+    isHidden?: boolean
+    hiddenReason?: string | null
+    discount?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    genres?: GenreUncheckedCreateNestedManyWithoutSeriesInput
+    chapters?: ChapterUncheckedCreateNestedManyWithoutSeriesInput
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutSeriesInput
+    history?: HistoryUncheckedCreateNestedManyWithoutSeriesInput
+    featured?: FeaturedSeriesUncheckedCreateNestedOneWithoutSeriesInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutSeriesInput
+    reports?: ReportUncheckedCreateNestedManyWithoutSeriesInput
+    featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutSeriesInput
+  }
+
+  export type SeriesCreateOrConnectWithoutReadEventsInput = {
+    where: SeriesWhereUniqueInput
+    create: XOR<SeriesCreateWithoutReadEventsInput, SeriesUncheckedCreateWithoutReadEventsInput>
+  }
+
+  export type ChapterCreateWithoutReadEventsInput = {
+    id?: string
+    number: number
+    title?: string | null
+    isLocked?: boolean
+    coinCost?: number
+    isFastPass?: boolean
+    publishAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    series: SeriesCreateNestedOneWithoutChaptersInput
+    images?: ChapterImageCreateNestedManyWithoutChapterInput
+    history?: HistoryCreateNestedManyWithoutChapterInput
+    purchases?: ChapterPurchaseCreateNestedManyWithoutChapterInput
+    comments?: CommentCreateNestedManyWithoutChapterInput
+  }
+
+  export type ChapterUncheckedCreateWithoutReadEventsInput = {
+    id?: string
+    seriesId: string
+    number: number
+    title?: string | null
+    isLocked?: boolean
+    coinCost?: number
+    isFastPass?: boolean
+    publishAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    images?: ChapterImageUncheckedCreateNestedManyWithoutChapterInput
+    history?: HistoryUncheckedCreateNestedManyWithoutChapterInput
+    purchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutChapterInput
+    comments?: CommentUncheckedCreateNestedManyWithoutChapterInput
+  }
+
+  export type ChapterCreateOrConnectWithoutReadEventsInput = {
+    where: ChapterWhereUniqueInput
+    create: XOR<ChapterCreateWithoutReadEventsInput, ChapterUncheckedCreateWithoutReadEventsInput>
+  }
+
+  export type CreatorProfileCreateWithoutReadEventsInput = {
+    id?: string
+    channelName: string
+    description?: string | null
+    bannerUrl?: string | null
+    profileImage?: string | null
+    totalEarnings?: number
+    withdrawnAmount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutCreatorProfileInput
+    series?: SeriesCreateNestedManyWithoutCreatorInput
+    distributionPayouts?: RevenueDistributionPayoutCreateNestedManyWithoutCreatorInput
+  }
+
+  export type CreatorProfileUncheckedCreateWithoutReadEventsInput = {
+    id?: string
+    userId: string
+    channelName: string
+    description?: string | null
+    bannerUrl?: string | null
+    profileImage?: string | null
+    totalEarnings?: number
+    withdrawnAmount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
+    distributionPayouts?: RevenueDistributionPayoutUncheckedCreateNestedManyWithoutCreatorInput
+  }
+
+  export type CreatorProfileCreateOrConnectWithoutReadEventsInput = {
+    where: CreatorProfileWhereUniqueInput
+    create: XOR<CreatorProfileCreateWithoutReadEventsInput, CreatorProfileUncheckedCreateWithoutReadEventsInput>
+  }
+
+  export type UserUpsertWithoutChapterReadEventsInput = {
+    update: XOR<UserUpdateWithoutChapterReadEventsInput, UserUncheckedUpdateWithoutChapterReadEventsInput>
+    create: XOR<UserCreateWithoutChapterReadEventsInput, UserUncheckedCreateWithoutChapterReadEventsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutChapterReadEventsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutChapterReadEventsInput, UserUncheckedUpdateWithoutChapterReadEventsInput>
+  }
+
+  export type UserUpdateWithoutChapterReadEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    banExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    transactionsFrozen?: BoolFieldUpdateOperationsInput | boolean
+    mutedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
+    dailyAdViews?: IntFieldUpdateOperationsInput | number
+    dailyAdPointsEarned?: IntFieldUpdateOperationsInput | number
+    lastAdWatchDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    referredBy?: UserUpdateOneWithoutReferralsNestedInput
+    referrals?: UserUpdateManyWithoutReferredByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
+    history?: HistoryUpdateManyWithoutUserNestedInput
+    pointTransactions?: PointTransactionUpdateManyWithoutUserNestedInput
+    chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutUserNestedInput
+    reports?: ReportUpdateManyWithoutReporterNestedInput
+    featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
+    chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
+    creatorPosts?: CreatorPostUpdateManyWithoutCreatorNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
+    createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutChapterReadEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    banExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    transactionsFrozen?: BoolFieldUpdateOperationsInput | boolean
+    mutedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
+    referredById?: NullableStringFieldUpdateOperationsInput | string | null
+    dailyAdViews?: IntFieldUpdateOperationsInput | number
+    dailyAdPointsEarned?: IntFieldUpdateOperationsInput | number
+    lastAdWatchDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutUserNestedInput
+    pointTransactions?: PointTransactionUncheckedUpdateManyWithoutUserNestedInput
+    chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
+    featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
+    chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
+    creatorPosts?: CreatorPostUncheckedUpdateManyWithoutCreatorNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
+    createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
+  }
+
+  export type SeriesUpsertWithoutReadEventsInput = {
+    update: XOR<SeriesUpdateWithoutReadEventsInput, SeriesUncheckedUpdateWithoutReadEventsInput>
+    create: XOR<SeriesCreateWithoutReadEventsInput, SeriesUncheckedCreateWithoutReadEventsInput>
+    where?: SeriesWhereInput
+  }
+
+  export type SeriesUpdateToOneWithWhereWithoutReadEventsInput = {
+    where?: SeriesWhereInput
+    data: XOR<SeriesUpdateWithoutReadEventsInput, SeriesUncheckedUpdateWithoutReadEventsInput>
+  }
+
+  export type SeriesUpdateWithoutReadEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    altTitles?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    coverUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bgUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumSeriesTypeFieldUpdateOperationsInput | $Enums.SeriesType
+    status?: EnumSeriesStatusFieldUpdateOperationsInput | $Enums.SeriesStatus
+    rating?: FloatFieldUpdateOperationsInput | number
+    favorites?: IntFieldUpdateOperationsInput | number
+    totalViews?: IntFieldUpdateOperationsInput | number
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    hiddenReason?: NullableStringFieldUpdateOperationsInput | string | null
+    discount?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: CreatorProfileUpdateOneWithoutSeriesNestedInput
+    genres?: GenreUpdateManyWithoutSeriesNestedInput
+    chapters?: ChapterUpdateManyWithoutSeriesNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutSeriesNestedInput
+    history?: HistoryUpdateManyWithoutSeriesNestedInput
+    featured?: FeaturedSeriesUpdateOneWithoutSeriesNestedInput
+    reviews?: ReviewUpdateManyWithoutSeriesNestedInput
+    reports?: ReportUpdateManyWithoutSeriesNestedInput
+    featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+  }
+
+  export type SeriesUncheckedUpdateWithoutReadEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    altTitles?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    coverUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bgUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumSeriesTypeFieldUpdateOperationsInput | $Enums.SeriesType
+    status?: EnumSeriesStatusFieldUpdateOperationsInput | $Enums.SeriesStatus
+    rating?: FloatFieldUpdateOperationsInput | number
+    favorites?: IntFieldUpdateOperationsInput | number
+    totalViews?: IntFieldUpdateOperationsInput | number
+    isPinned?: BoolFieldUpdateOperationsInput | boolean
+    isHidden?: BoolFieldUpdateOperationsInput | boolean
+    hiddenReason?: NullableStringFieldUpdateOperationsInput | string | null
+    discount?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    genres?: GenreUncheckedUpdateManyWithoutSeriesNestedInput
+    chapters?: ChapterUncheckedUpdateManyWithoutSeriesNestedInput
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutSeriesNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutSeriesNestedInput
+    featured?: FeaturedSeriesUncheckedUpdateOneWithoutSeriesNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
+    reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
+    featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+  }
+
+  export type ChapterUpsertWithoutReadEventsInput = {
+    update: XOR<ChapterUpdateWithoutReadEventsInput, ChapterUncheckedUpdateWithoutReadEventsInput>
+    create: XOR<ChapterCreateWithoutReadEventsInput, ChapterUncheckedCreateWithoutReadEventsInput>
+    where?: ChapterWhereInput
+  }
+
+  export type ChapterUpdateToOneWithWhereWithoutReadEventsInput = {
+    where?: ChapterWhereInput
+    data: XOR<ChapterUpdateWithoutReadEventsInput, ChapterUncheckedUpdateWithoutReadEventsInput>
+  }
+
+  export type ChapterUpdateWithoutReadEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: FloatFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    coinCost?: IntFieldUpdateOperationsInput | number
+    isFastPass?: BoolFieldUpdateOperationsInput | boolean
+    publishAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    series?: SeriesUpdateOneRequiredWithoutChaptersNestedInput
+    images?: ChapterImageUpdateManyWithoutChapterNestedInput
+    history?: HistoryUpdateManyWithoutChapterNestedInput
+    purchases?: ChapterPurchaseUpdateManyWithoutChapterNestedInput
+    comments?: CommentUpdateManyWithoutChapterNestedInput
+  }
+
+  export type ChapterUncheckedUpdateWithoutReadEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    seriesId?: StringFieldUpdateOperationsInput | string
+    number?: FloatFieldUpdateOperationsInput | number
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    coinCost?: IntFieldUpdateOperationsInput | number
+    isFastPass?: BoolFieldUpdateOperationsInput | boolean
+    publishAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    images?: ChapterImageUncheckedUpdateManyWithoutChapterNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutChapterNestedInput
+    purchases?: ChapterPurchaseUncheckedUpdateManyWithoutChapterNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutChapterNestedInput
+  }
+
+  export type CreatorProfileUpsertWithoutReadEventsInput = {
+    update: XOR<CreatorProfileUpdateWithoutReadEventsInput, CreatorProfileUncheckedUpdateWithoutReadEventsInput>
+    create: XOR<CreatorProfileCreateWithoutReadEventsInput, CreatorProfileUncheckedCreateWithoutReadEventsInput>
+    where?: CreatorProfileWhereInput
+  }
+
+  export type CreatorProfileUpdateToOneWithWhereWithoutReadEventsInput = {
+    where?: CreatorProfileWhereInput
+    data: XOR<CreatorProfileUpdateWithoutReadEventsInput, CreatorProfileUncheckedUpdateWithoutReadEventsInput>
+  }
+
+  export type CreatorProfileUpdateWithoutReadEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channelName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    totalEarnings?: IntFieldUpdateOperationsInput | number
+    withdrawnAmount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    series?: SeriesUpdateManyWithoutCreatorNestedInput
+    distributionPayouts?: RevenueDistributionPayoutUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type CreatorProfileUncheckedUpdateWithoutReadEventsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    channelName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    totalEarnings?: IntFieldUpdateOperationsInput | number
+    withdrawnAmount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
+    distributionPayouts?: RevenueDistributionPayoutUncheckedUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type UserCreateWithoutRevenueDistributionsCreatedInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    role?: $Enums.Role
+    banned?: boolean
+    banReason?: string | null
+    banExpires?: Date | string | null
+    points?: number
+    transactionsFrozen?: boolean
+    mutedUntil?: Date | string | null
+    referralCode?: string | null
+    dailyAdViews?: number
+    dailyAdPointsEarned?: number
+    lastAdWatchDate?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    referredBy?: UserCreateNestedOneWithoutReferralsInput
+    referrals?: UserCreateNestedManyWithoutReferredByInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    bookmarks?: BookmarkCreateNestedManyWithoutUserInput
+    history?: HistoryCreateNestedManyWithoutUserInput
+    pointTransactions?: PointTransactionCreateNestedManyWithoutUserInput
+    chapterPurchases?: ChapterPurchaseCreateNestedManyWithoutUserInput
+    payments?: PaymentCreateNestedManyWithoutUserInput
+    creatorProfile?: CreatorProfileCreateNestedOneWithoutUserInput
+    seriesApplications?: SeriesApplicationCreateNestedManyWithoutCreatorInput
+    withdrawals?: WithdrawalRequestCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    reviews?: ReviewCreateNestedManyWithoutUserInput
+    reports?: ReportCreateNestedManyWithoutReporterInput
+    featuredRequests?: FeaturedRequestCreateNestedManyWithoutCreatorInput
+    chatMessages?: ChatMessageCreateNestedManyWithoutUserInput
+    creatorPosts?: CreatorPostCreateNestedManyWithoutCreatorInput
+    auditLogs?: AuditLogCreateNestedManyWithoutActorInput
+    promoRedemptions?: PromoCodeRedemptionCreateNestedManyWithoutUserInput
+    createdPromoCodes?: PromoCodeCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutRevenueDistributionsCreatedInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    role?: $Enums.Role
+    banned?: boolean
+    banReason?: string | null
+    banExpires?: Date | string | null
+    points?: number
+    transactionsFrozen?: boolean
+    mutedUntil?: Date | string | null
+    referralCode?: string | null
+    referredById?: string | null
+    dailyAdViews?: number
+    dailyAdPointsEarned?: number
+    lastAdWatchDate?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    referrals?: UserUncheckedCreateNestedManyWithoutReferredByInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
+    history?: HistoryUncheckedCreateNestedManyWithoutUserInput
+    pointTransactions?: PointTransactionUncheckedCreateNestedManyWithoutUserInput
+    chapterPurchases?: ChapterPurchaseUncheckedCreateNestedManyWithoutUserInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+    creatorProfile?: CreatorProfileUncheckedCreateNestedOneWithoutUserInput
+    seriesApplications?: SeriesApplicationUncheckedCreateNestedManyWithoutCreatorInput
+    withdrawals?: WithdrawalRequestUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutUserInput
+    reports?: ReportUncheckedCreateNestedManyWithoutReporterInput
+    featuredRequests?: FeaturedRequestUncheckedCreateNestedManyWithoutCreatorInput
+    chatMessages?: ChatMessageUncheckedCreateNestedManyWithoutUserInput
+    creatorPosts?: CreatorPostUncheckedCreateNestedManyWithoutCreatorInput
+    auditLogs?: AuditLogUncheckedCreateNestedManyWithoutActorInput
+    promoRedemptions?: PromoCodeRedemptionUncheckedCreateNestedManyWithoutUserInput
+    createdPromoCodes?: PromoCodeUncheckedCreateNestedManyWithoutCreatorInput
+    chapterReadEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutRevenueDistributionsCreatedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRevenueDistributionsCreatedInput, UserUncheckedCreateWithoutRevenueDistributionsCreatedInput>
+  }
+
+  export type RevenueDistributionPayoutCreateWithoutDistributionRunInput = {
+    id?: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
+    creator: CreatorProfileCreateNestedOneWithoutDistributionPayoutsInput
+  }
+
+  export type RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput = {
+    id?: string
+    creatorId: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
+  }
+
+  export type RevenueDistributionPayoutCreateOrConnectWithoutDistributionRunInput = {
+    where: RevenueDistributionPayoutWhereUniqueInput
+    create: XOR<RevenueDistributionPayoutCreateWithoutDistributionRunInput, RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput>
+  }
+
+  export type RevenueDistributionPayoutCreateManyDistributionRunInputEnvelope = {
+    data: RevenueDistributionPayoutCreateManyDistributionRunInput | RevenueDistributionPayoutCreateManyDistributionRunInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type UserUpsertWithoutRevenueDistributionsCreatedInput = {
+    update: XOR<UserUpdateWithoutRevenueDistributionsCreatedInput, UserUncheckedUpdateWithoutRevenueDistributionsCreatedInput>
+    create: XOR<UserCreateWithoutRevenueDistributionsCreatedInput, UserUncheckedCreateWithoutRevenueDistributionsCreatedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutRevenueDistributionsCreatedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutRevenueDistributionsCreatedInput, UserUncheckedUpdateWithoutRevenueDistributionsCreatedInput>
+  }
+
+  export type UserUpdateWithoutRevenueDistributionsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    banExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    transactionsFrozen?: BoolFieldUpdateOperationsInput | boolean
+    mutedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
+    dailyAdViews?: IntFieldUpdateOperationsInput | number
+    dailyAdPointsEarned?: IntFieldUpdateOperationsInput | number
+    lastAdWatchDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    referredBy?: UserUpdateOneWithoutReferralsNestedInput
+    referrals?: UserUpdateManyWithoutReferredByNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
+    history?: HistoryUpdateManyWithoutUserNestedInput
+    pointTransactions?: PointTransactionUpdateManyWithoutUserNestedInput
+    chapterPurchases?: ChapterPurchaseUpdateManyWithoutUserNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
+    creatorProfile?: CreatorProfileUpdateOneWithoutUserNestedInput
+    seriesApplications?: SeriesApplicationUpdateManyWithoutCreatorNestedInput
+    withdrawals?: WithdrawalRequestUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUpdateManyWithoutUserNestedInput
+    reports?: ReportUpdateManyWithoutReporterNestedInput
+    featuredRequests?: FeaturedRequestUpdateManyWithoutCreatorNestedInput
+    chatMessages?: ChatMessageUpdateManyWithoutUserNestedInput
+    creatorPosts?: CreatorPostUpdateManyWithoutCreatorNestedInput
+    auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
+    promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
+    createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRevenueDistributionsCreatedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    banned?: BoolFieldUpdateOperationsInput | boolean
+    banReason?: NullableStringFieldUpdateOperationsInput | string | null
+    banExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    transactionsFrozen?: BoolFieldUpdateOperationsInput | boolean
+    mutedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    referralCode?: NullableStringFieldUpdateOperationsInput | string | null
+    referredById?: NullableStringFieldUpdateOperationsInput | string | null
+    dailyAdViews?: IntFieldUpdateOperationsInput | number
+    dailyAdPointsEarned?: IntFieldUpdateOperationsInput | number
+    lastAdWatchDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    referrals?: UserUncheckedUpdateManyWithoutReferredByNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutUserNestedInput
+    pointTransactions?: PointTransactionUncheckedUpdateManyWithoutUserNestedInput
+    chapterPurchases?: ChapterPurchaseUncheckedUpdateManyWithoutUserNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+    creatorProfile?: CreatorProfileUncheckedUpdateOneWithoutUserNestedInput
+    seriesApplications?: SeriesApplicationUncheckedUpdateManyWithoutCreatorNestedInput
+    withdrawals?: WithdrawalRequestUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutUserNestedInput
+    reports?: ReportUncheckedUpdateManyWithoutReporterNestedInput
+    featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutCreatorNestedInput
+    chatMessages?: ChatMessageUncheckedUpdateManyWithoutUserNestedInput
+    creatorPosts?: CreatorPostUncheckedUpdateManyWithoutCreatorNestedInput
+    auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
+    promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
+    createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type RevenueDistributionPayoutUpsertWithWhereUniqueWithoutDistributionRunInput = {
+    where: RevenueDistributionPayoutWhereUniqueInput
+    update: XOR<RevenueDistributionPayoutUpdateWithoutDistributionRunInput, RevenueDistributionPayoutUncheckedUpdateWithoutDistributionRunInput>
+    create: XOR<RevenueDistributionPayoutCreateWithoutDistributionRunInput, RevenueDistributionPayoutUncheckedCreateWithoutDistributionRunInput>
+  }
+
+  export type RevenueDistributionPayoutUpdateWithWhereUniqueWithoutDistributionRunInput = {
+    where: RevenueDistributionPayoutWhereUniqueInput
+    data: XOR<RevenueDistributionPayoutUpdateWithoutDistributionRunInput, RevenueDistributionPayoutUncheckedUpdateWithoutDistributionRunInput>
+  }
+
+  export type RevenueDistributionPayoutUpdateManyWithWhereWithoutDistributionRunInput = {
+    where: RevenueDistributionPayoutScalarWhereInput
+    data: XOR<RevenueDistributionPayoutUpdateManyMutationInput, RevenueDistributionPayoutUncheckedUpdateManyWithoutDistributionRunInput>
+  }
+
+  export type RevenueDistributionRunCreateWithoutCreatorPayoutsInput = {
+    id?: string
+    periodStart: Date | string
+    periodEnd: Date | string
+    grossAmountEntered: number
+    currency?: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status?: $Enums.DistributionStatus
+    revertedAt?: Date | string | null
+    revertedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    admin: UserCreateNestedOneWithoutRevenueDistributionsCreatedInput
+  }
+
+  export type RevenueDistributionRunUncheckedCreateWithoutCreatorPayoutsInput = {
+    id?: string
+    adminId: string
+    periodStart: Date | string
+    periodEnd: Date | string
+    grossAmountEntered: number
+    currency?: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status?: $Enums.DistributionStatus
+    revertedAt?: Date | string | null
+    revertedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
+  export type RevenueDistributionRunCreateOrConnectWithoutCreatorPayoutsInput = {
+    where: RevenueDistributionRunWhereUniqueInput
+    create: XOR<RevenueDistributionRunCreateWithoutCreatorPayoutsInput, RevenueDistributionRunUncheckedCreateWithoutCreatorPayoutsInput>
+  }
+
+  export type CreatorProfileCreateWithoutDistributionPayoutsInput = {
+    id?: string
+    channelName: string
+    description?: string | null
+    bannerUrl?: string | null
+    profileImage?: string | null
+    totalEarnings?: number
+    withdrawnAmount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutCreatorProfileInput
+    series?: SeriesCreateNestedManyWithoutCreatorInput
+    readEvents?: ChapterReadEventCreateNestedManyWithoutCreatorInput
+  }
+
+  export type CreatorProfileUncheckedCreateWithoutDistributionPayoutsInput = {
+    id?: string
+    userId: string
+    channelName: string
+    description?: string | null
+    bannerUrl?: string | null
+    profileImage?: string | null
+    totalEarnings?: number
+    withdrawnAmount?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    series?: SeriesUncheckedCreateNestedManyWithoutCreatorInput
+    readEvents?: ChapterReadEventUncheckedCreateNestedManyWithoutCreatorInput
+  }
+
+  export type CreatorProfileCreateOrConnectWithoutDistributionPayoutsInput = {
+    where: CreatorProfileWhereUniqueInput
+    create: XOR<CreatorProfileCreateWithoutDistributionPayoutsInput, CreatorProfileUncheckedCreateWithoutDistributionPayoutsInput>
+  }
+
+  export type RevenueDistributionRunUpsertWithoutCreatorPayoutsInput = {
+    update: XOR<RevenueDistributionRunUpdateWithoutCreatorPayoutsInput, RevenueDistributionRunUncheckedUpdateWithoutCreatorPayoutsInput>
+    create: XOR<RevenueDistributionRunCreateWithoutCreatorPayoutsInput, RevenueDistributionRunUncheckedCreateWithoutCreatorPayoutsInput>
+    where?: RevenueDistributionRunWhereInput
+  }
+
+  export type RevenueDistributionRunUpdateToOneWithWhereWithoutCreatorPayoutsInput = {
+    where?: RevenueDistributionRunWhereInput
+    data: XOR<RevenueDistributionRunUpdateWithoutCreatorPayoutsInput, RevenueDistributionRunUncheckedUpdateWithoutCreatorPayoutsInput>
+  }
+
+  export type RevenueDistributionRunUpdateWithoutCreatorPayoutsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    admin?: UserUpdateOneRequiredWithoutRevenueDistributionsCreatedNestedInput
+  }
+
+  export type RevenueDistributionRunUncheckedUpdateWithoutCreatorPayoutsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    adminId?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CreatorProfileUpsertWithoutDistributionPayoutsInput = {
+    update: XOR<CreatorProfileUpdateWithoutDistributionPayoutsInput, CreatorProfileUncheckedUpdateWithoutDistributionPayoutsInput>
+    create: XOR<CreatorProfileCreateWithoutDistributionPayoutsInput, CreatorProfileUncheckedCreateWithoutDistributionPayoutsInput>
+    where?: CreatorProfileWhereInput
+  }
+
+  export type CreatorProfileUpdateToOneWithWhereWithoutDistributionPayoutsInput = {
+    where?: CreatorProfileWhereInput
+    data: XOR<CreatorProfileUpdateWithoutDistributionPayoutsInput, CreatorProfileUncheckedUpdateWithoutDistributionPayoutsInput>
+  }
+
+  export type CreatorProfileUpdateWithoutDistributionPayoutsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    channelName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    totalEarnings?: IntFieldUpdateOperationsInput | number
+    withdrawnAmount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutCreatorProfileNestedInput
+    series?: SeriesUpdateManyWithoutCreatorNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type CreatorProfileUncheckedUpdateWithoutDistributionPayoutsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    channelName?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    totalEarnings?: IntFieldUpdateOperationsInput | number
+    withdrawnAmount?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    series?: SeriesUncheckedUpdateManyWithoutCreatorNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type UserCreateManyReferredByInput = {
@@ -58186,6 +66104,49 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ChapterReadEventCreateManyUserInput = {
+    id?: string
+    sessionId: string
+    seriesId?: string | null
+    chapterId?: string | null
+    creatorId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RevenueDistributionRunCreateManyAdminInput = {
+    id?: string
+    periodStart: Date | string
+    periodEnd: Date | string
+    grossAmountEntered: number
+    currency?: string
+    distributablePool: number
+    totalQualityScore: number
+    totalQualifiedReads: number
+    totalEngagedReads: number
+    totalCompletedReads: number
+    totalCreatorsCount: number
+    status?: $Enums.DistributionStatus
+    revertedAt?: Date | string | null
+    revertedBy?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+  }
+
   export type UserUpdateWithoutReferredByInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -58225,6 +66186,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReferredByInput = {
@@ -58266,6 +66229,8 @@ export namespace Prisma {
     auditLogs?: AuditLogUncheckedUpdateManyWithoutActorNestedInput
     promoRedemptions?: PromoCodeRedemptionUncheckedUpdateManyWithoutUserNestedInput
     createdPromoCodes?: PromoCodeUncheckedUpdateManyWithoutCreatorNestedInput
+    chapterReadEvents?: ChapterReadEventUncheckedUpdateManyWithoutUserNestedInput
+    revenueDistributionsCreated?: RevenueDistributionRunUncheckedUpdateManyWithoutAdminNestedInput
   }
 
   export type UserUncheckedUpdateManyWithoutReferredByInput = {
@@ -58810,6 +66775,137 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ChapterReadEventUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    series?: SeriesUpdateOneWithoutReadEventsNestedInput
+    chapter?: ChapterUpdateOneWithoutReadEventsNestedInput
+    creator?: CreatorProfileUpdateOneWithoutReadEventsNestedInput
+  }
+
+  export type ChapterReadEventUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    seriesId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChapterReadEventUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    seriesId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionRunUpdateWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorPayouts?: RevenueDistributionPayoutUpdateManyWithoutDistributionRunNestedInput
+  }
+
+  export type RevenueDistributionRunUncheckedUpdateWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creatorPayouts?: RevenueDistributionPayoutUncheckedUpdateManyWithoutDistributionRunNestedInput
+  }
+
+  export type RevenueDistributionRunUncheckedUpdateManyWithoutAdminInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    periodStart?: DateTimeFieldUpdateOperationsInput | Date | string
+    periodEnd?: DateTimeFieldUpdateOperationsInput | Date | string
+    grossAmountEntered?: FloatFieldUpdateOperationsInput | number
+    currency?: StringFieldUpdateOperationsInput | string
+    distributablePool?: IntFieldUpdateOperationsInput | number
+    totalQualityScore?: FloatFieldUpdateOperationsInput | number
+    totalQualifiedReads?: IntFieldUpdateOperationsInput | number
+    totalEngagedReads?: IntFieldUpdateOperationsInput | number
+    totalCompletedReads?: IntFieldUpdateOperationsInput | number
+    totalCreatorsCount?: IntFieldUpdateOperationsInput | number
+    status?: EnumDistributionStatusFieldUpdateOperationsInput | $Enums.DistributionStatus
+    revertedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    revertedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SeriesCreateManyCreatorInput = {
     id?: string
     title: string
@@ -58829,6 +66925,46 @@ export namespace Prisma {
     discount?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type ChapterReadEventCreateManyCreatorInput = {
+    id?: string
+    sessionId: string
+    userId?: string | null
+    seriesId?: string | null
+    chapterId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RevenueDistributionPayoutCreateManyCreatorInput = {
+    id?: string
+    distributionRunId: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
   }
 
   export type SeriesUpdateWithoutCreatorInput = {
@@ -58858,6 +66994,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutCreatorInput = {
@@ -58887,6 +67024,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateManyWithoutCreatorInput = {
@@ -58908,6 +67046,126 @@ export namespace Prisma {
     discount?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChapterReadEventUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutChapterReadEventsNestedInput
+    series?: SeriesUpdateOneWithoutReadEventsNestedInput
+    chapter?: ChapterUpdateOneWithoutReadEventsNestedInput
+  }
+
+  export type ChapterReadEventUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    seriesId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChapterReadEventUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    seriesId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionPayoutUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    distributionRun?: RevenueDistributionRunUpdateOneRequiredWithoutCreatorPayoutsNestedInput
+  }
+
+  export type RevenueDistributionPayoutUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    distributionRunId?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionPayoutUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    distributionRunId?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ChapterCreateManySeriesInput = {
@@ -58964,6 +67222,30 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ChapterReadEventCreateManySeriesInput = {
+    id?: string
+    sessionId: string
+    userId?: string | null
+    chapterId?: string | null
+    creatorId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type GenreUpdateWithoutSeriesInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -58993,6 +67275,7 @@ export namespace Prisma {
     history?: HistoryUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUpdateManyWithoutChapterNestedInput
     comments?: CommentUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterUncheckedUpdateWithoutSeriesInput = {
@@ -59009,6 +67292,7 @@ export namespace Prisma {
     history?: HistoryUncheckedUpdateManyWithoutChapterNestedInput
     purchases?: ChapterPurchaseUncheckedUpdateManyWithoutChapterNestedInput
     comments?: CommentUncheckedUpdateManyWithoutChapterNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type ChapterUncheckedUpdateManyWithoutSeriesInput = {
@@ -59149,6 +67433,78 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ChapterReadEventUpdateWithoutSeriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutChapterReadEventsNestedInput
+    chapter?: ChapterUpdateOneWithoutReadEventsNestedInput
+    creator?: CreatorProfileUpdateOneWithoutReadEventsNestedInput
+  }
+
+  export type ChapterReadEventUncheckedUpdateWithoutSeriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChapterReadEventUncheckedUpdateManyWithoutSeriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    chapterId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SeriesUpdateWithoutGenresInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -59176,6 +67532,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutSeriesNestedInput
     reports?: ReportUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateWithoutGenresInput = {
@@ -59205,6 +67562,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutSeriesNestedInput
     reports?: ReportUncheckedUpdateManyWithoutSeriesNestedInput
     featuredRequests?: FeaturedRequestUncheckedUpdateManyWithoutSeriesNestedInput
+    readEvents?: ChapterReadEventUncheckedUpdateManyWithoutSeriesNestedInput
   }
 
   export type SeriesUncheckedUpdateManyWithoutGenresInput = {
@@ -59253,6 +67611,30 @@ export namespace Prisma {
     id?: string
     userId: string
     content: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ChapterReadEventCreateManyChapterInput = {
+    id?: string
+    sessionId: string
+    userId?: string | null
+    seriesId?: string | null
+    creatorId?: string | null
+    startedAt?: Date | string
+    endedAt?: Date | string | null
+    durationSeconds?: number
+    pagesViewed?: number
+    totalPages?: number
+    completionPercent?: number
+    scrollDepthPercent?: number
+    interactionCount?: number
+    qualityTier?: $Enums.QualityTier
+    qualityScore?: number
+    isBotLikely?: boolean
+    botReason?: string | null
+    clientIp?: string | null
+    userAgent?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -59341,6 +67723,78 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ChapterReadEventUpdateWithoutChapterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutChapterReadEventsNestedInput
+    series?: SeriesUpdateOneWithoutReadEventsNestedInput
+    creator?: CreatorProfileUpdateOneWithoutReadEventsNestedInput
+  }
+
+  export type ChapterReadEventUncheckedUpdateWithoutChapterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    seriesId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ChapterReadEventUncheckedUpdateManyWithoutChapterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sessionId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    seriesId?: NullableStringFieldUpdateOperationsInput | string | null
+    creatorId?: NullableStringFieldUpdateOperationsInput | string | null
+    startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    durationSeconds?: IntFieldUpdateOperationsInput | number
+    pagesViewed?: IntFieldUpdateOperationsInput | number
+    totalPages?: IntFieldUpdateOperationsInput | number
+    completionPercent?: FloatFieldUpdateOperationsInput | number
+    scrollDepthPercent?: FloatFieldUpdateOperationsInput | number
+    interactionCount?: IntFieldUpdateOperationsInput | number
+    qualityTier?: EnumQualityTierFieldUpdateOperationsInput | $Enums.QualityTier
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    isBotLikely?: BoolFieldUpdateOperationsInput | boolean
+    botReason?: NullableStringFieldUpdateOperationsInput | string | null
+    clientIp?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type PromoCodeRedemptionCreateManyPromoCodeInput = {
     id?: string
     userId: string
@@ -59362,6 +67816,70 @@ export namespace Prisma {
   export type PromoCodeRedemptionUncheckedUpdateManyWithoutPromoCodeInput = {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionPayoutCreateManyDistributionRunInput = {
+    id?: string
+    creatorId: string
+    qualityScore: number
+    scorePercentage: number
+    qualifiedReadsCount?: number
+    engagedReadsCount?: number
+    completedReadsCount?: number
+    totalReadsCount?: number
+    pointsAwarded: number
+    fiatEquivalent: number
+    revertedPoints?: number
+    shortfallPoints?: number
+    createdAt?: Date | string
+  }
+
+  export type RevenueDistributionPayoutUpdateWithoutDistributionRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: CreatorProfileUpdateOneRequiredWithoutDistributionPayoutsNestedInput
+  }
+
+  export type RevenueDistributionPayoutUncheckedUpdateWithoutDistributionRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RevenueDistributionPayoutUncheckedUpdateManyWithoutDistributionRunInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    creatorId?: StringFieldUpdateOperationsInput | string
+    qualityScore?: FloatFieldUpdateOperationsInput | number
+    scorePercentage?: FloatFieldUpdateOperationsInput | number
+    qualifiedReadsCount?: IntFieldUpdateOperationsInput | number
+    engagedReadsCount?: IntFieldUpdateOperationsInput | number
+    completedReadsCount?: IntFieldUpdateOperationsInput | number
+    totalReadsCount?: IntFieldUpdateOperationsInput | number
+    pointsAwarded?: IntFieldUpdateOperationsInput | number
+    fiatEquivalent?: FloatFieldUpdateOperationsInput | number
+    revertedPoints?: IntFieldUpdateOperationsInput | number
+    shortfallPoints?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

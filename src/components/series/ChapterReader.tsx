@@ -15,6 +15,8 @@ import { BuyChapterAction } from "@/actions/points";
 import { usePoints } from "@/providers/PointsProvider";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { setImageWidth, setReaderMode, setReaderTheme } from "@/redux/slices/readerSlice";
+import { adRevenueService } from "@/services/adRevenue.service";
+
 
 interface ChapterReaderProps {
   slug: string;
@@ -131,6 +133,104 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
       UpdateHistoryAction(chapter.seriesId, chapter.id).catch(console.error);
     }
   }, [session, chapter?.seriesId, chapter?.id]);
+
+  // --- Real-time Read Session Telemetry & Heartbeat (15s) ---
+  const [sessionId] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    let sId = sessionStorage.getItem("comic_reading_session_id");
+    if (!sId) {
+      sId = crypto.randomUUID();
+      sessionStorage.setItem("comic_reading_session_id", sId);
+    }
+    return sId;
+  });
+
+  useEffect(() => {
+    if (!chapter?.id || !chapter?.seriesId || !sessionId) return;
+
+    let activeDurationSeconds = 0;
+    let interactionCount = 0;
+    let maxScrollDepth = 0;
+    const viewedPages = new Set<number>([0]);
+    const totalPages = chapter.images?.length || 1;
+
+    // Track user interactions (mouse move, scroll, keydown, touch)
+    const onUserInteraction = () => {
+      interactionCount++;
+    };
+
+    const onScroll = () => {
+      interactionCount++;
+      const scrollY = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        const depth = Math.min(100, Math.round((scrollY / scrollHeight) * 100));
+        if (depth > maxScrollDepth) {
+          maxScrollDepth = depth;
+          const estimatedPage = Math.min(totalPages - 1, Math.floor((depth / 100) * totalPages));
+          for (let i = 0; i <= estimatedPage; i++) {
+            viewedPages.add(i);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("click", onUserInteraction, { passive: true });
+    window.addEventListener("keydown", onUserInteraction, { passive: true });
+    window.addEventListener("touchmove", onUserInteraction, { passive: true });
+
+    // Active duration timer (pauses when tab is hidden)
+    const secondTimer = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        activeDurationSeconds += 1;
+      }
+    }, 1000);
+
+    const getPayload = () => {
+      const pagesCount = Math.max(1, viewedPages.size);
+      const completionPercent = Math.min(100, Math.round((pagesCount / totalPages) * 100));
+      return {
+        sessionId,
+        seriesId: chapter.seriesId,
+        chapterId: chapter.id,
+        durationSeconds: activeDurationSeconds,
+        pagesViewed: pagesCount,
+        totalPages,
+        completionPercent,
+        scrollDepthPercent: maxScrollDepth,
+        interactionCount,
+      };
+    };
+
+    // Initial ping on chapter load
+    adRevenueService.trackProgress(getPayload());
+
+    // Periodic Heartbeat every 15 seconds
+    const heartbeatTimer = setInterval(() => {
+      adRevenueService.trackProgress(getPayload());
+    }, 15000);
+
+    // Exit beacon on unload or unmount
+    const handleExit = () => {
+      adRevenueService.sendExitBeacon(getPayload());
+    };
+
+    window.addEventListener("pagehide", handleExit);
+    window.addEventListener("beforeunload", handleExit);
+
+    return () => {
+      clearInterval(secondTimer);
+      clearInterval(heartbeatTimer);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("click", onUserInteraction);
+      window.removeEventListener("keydown", onUserInteraction);
+      window.removeEventListener("touchmove", onUserInteraction);
+      window.removeEventListener("pagehide", handleExit);
+      window.removeEventListener("beforeunload", handleExit);
+      handleExit();
+    };
+  }, [chapter?.id, chapter?.seriesId, chapter?.images?.length, sessionId]);
 
   // Points balance & insufficient points modal
   const { points: userPoints, refreshPoints, updateBalance } = usePoints();

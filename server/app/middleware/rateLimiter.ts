@@ -54,3 +54,19 @@ export const authLimiter = rateLimit({
     });
   },
 });
+
+// Reader session heartbeat rate limiter: Max 30 requests per minute per IP (disabled in dev)
+export const readTrackLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: isDev ? 5000 : 30,
+  skip: () => isDev,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res, next, options) => {
+    res.status(options.statusCode).json({
+      success: false,
+      message: 'Reading session tracking rate exceeded. Please slow down.',
+    });
+  },
+});
+

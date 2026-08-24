@@ -57,6 +57,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { label: "Custom Ads", href: "/dashboard/ads", icon: Megaphone, roles: ["moderator", "admin"] },
 
   // Admin exclusive items
+  { label: "Revenue Distribution", href: "/dashboard/revenue-distribution", icon: DollarSign, roles: ["admin"] },
   { label: "Payments", href: "/dashboard/payments", icon: CreditCard, roles: ["admin"] },
   { label: "Database Backup", href: "/dashboard/backup", icon: Database, roles: ["admin"] },
   { label: "Staff Audit Logs", href: "/dashboard/audit", icon: Shield, roles: ["admin"] },

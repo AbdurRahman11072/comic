@@ -27,6 +27,21 @@ enum TransactionType {
   BUY_POINTS
   WITHDRAWAL
   REFERRAL_BONUS
+  REVENUE_SHARE
+  REVENUE_SHARE_REVERSAL
+  WITHDRAWAL_REFUND
+}
+
+enum QualityTier {
+  BOUNCED
+  QUALIFIED
+  ENGAGED
+  COMPLETED
+}
+
+enum DistributionStatus {
+  COMPLETED
+  REVERTED
 }
 
 enum SeriesType {
@@ -89,18 +104,20 @@ model User {
   chapterPurchases  ChapterPurchase[]
   payments          Payment[]
 
-  creatorProfile     CreatorProfile?
-  seriesApplications SeriesApplication[]
-  withdrawals        WithdrawalRequest[]
-  comments           Comment[]
-  reviews            Review[]
-  reports            Report[]
-  featuredRequests   FeaturedRequest[]
-  chatMessages       ChatMessage[]
-  creatorPosts       CreatorPost[]
-  auditLogs          AuditLog[]
-  promoRedemptions   PromoCodeRedemption[]
-  createdPromoCodes  PromoCode[]
+  creatorProfile              CreatorProfile?
+  seriesApplications          SeriesApplication[]
+  withdrawals                 WithdrawalRequest[]
+  comments                    Comment[]
+  reviews                     Review[]
+  reports                     Report[]
+  featuredRequests            FeaturedRequest[]
+  chatMessages                ChatMessage[]
+  creatorPosts                CreatorPost[]
+  auditLogs                   AuditLog[]
+  promoRedemptions            PromoCodeRedemption[]
+  createdPromoCodes           PromoCode[]
+  chapterReadEvents           ChapterReadEvent[]
+  revenueDistributionsCreated RevenueDistributionRun[] @relation("AdminDistributionRuns")
 
   @@map("user")
 }
@@ -116,7 +133,9 @@ model CreatorProfile {
   totalEarnings   Int     @default(0)
   withdrawnAmount Int     @default(0)
 
-  series Series[]
+  series              Series[]
+  readEvents          ChapterReadEvent[]
+  distributionPayouts RevenueDistributionPayout[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -199,6 +218,7 @@ model Series {
   reviews          Review[]
   reports          Report[]
   featuredRequests FeaturedRequest[]
+  readEvents       ChapterReadEvent[]
 
   @@map("series")
 }
@@ -300,10 +320,11 @@ model Chapter {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  images    ChapterImage[]
-  history   History[]
-  purchases ChapterPurchase[]
-  comments  Comment[]
+  images     ChapterImage[]
+  history    History[]
+  purchases  ChapterPurchase[]
+  comments   Comment[]
+  readEvents ChapterReadEvent[]
 
   @@unique([seriesId, number])
   @@map("chapter")
@@ -630,4 +651,106 @@ model ContactMessage {
   createdAt DateTime @default(now())
 
   @@map("contact_messages")
+}
+
+model ChapterReadEvent {
+  id        String          @id @default(uuid())
+  sessionId String
+  userId    String?
+  user      User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  seriesId  String?
+  series    Series?         @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  chapterId String?
+  chapter   Chapter?        @relation(fields: [chapterId], references: [id], onDelete: SetNull)
+  creatorId String?
+  creator   CreatorProfile? @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+
+  startedAt          DateTime  @default(now())
+  endedAt            DateTime?
+  durationSeconds    Int       @default(0)
+  pagesViewed        Int       @default(0)
+  totalPages         Int       @default(1)
+  completionPercent  Float     @default(0.0)
+  scrollDepthPercent Float     @default(0.0)
+  interactionCount   Int       @default(0)
+
+  qualityTier  QualityTier @default(BOUNCED)
+  qualityScore Float       @default(0.0)
+
+  isBotLikely Boolean @default(false)
+  botReason   String?
+  clientIp    String?
+  userAgent   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([sessionId, chapterId])
+  @@index([createdAt])
+  @@index([creatorId, createdAt])
+  @@index([seriesId, createdAt])
+  @@index([chapterId, createdAt])
+  @@index([clientIp, createdAt])
+  @@map("chapter_read_event")
+}
+
+model RevenueDistributionRun {
+  id      String @id @default(uuid())
+  adminId String
+  admin   User   @relation("AdminDistributionRuns", fields: [adminId], references: [id])
+
+  periodStart DateTime
+  periodEnd   DateTime
+
+  grossAmountEntered Float // Exact amount input by Admin (100% creator pool)
+  currency           String @default("USD") // "USD" | "POINTS"
+  distributablePool  Int // Final points pool distributed
+
+  totalQualityScore   Float
+  totalQualifiedReads Int
+  totalEngagedReads   Int
+  totalCompletedReads Int
+  totalCreatorsCount  Int
+
+  status     DistributionStatus @default(COMPLETED)
+  revertedAt DateTime?
+  revertedBy String? // Admin ID who reverted
+  notes      String?
+
+  createdAt DateTime @default(now())
+
+  creatorPayouts RevenueDistributionPayout[]
+
+  @@index([periodStart, periodEnd])
+  @@index([status, periodStart, periodEnd])
+  @@map("revenue_distribution_run")
+}
+
+model RevenueDistributionPayout {
+  id                String                 @id @default(uuid())
+  distributionRunId String
+  distributionRun   RevenueDistributionRun @relation(fields: [distributionRunId], references: [id], onDelete: Cascade)
+
+  creatorId String
+  creator   CreatorProfile @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  qualityScore    Float
+  scorePercentage Float // % of total platform quality
+
+  qualifiedReadsCount Int @default(0)
+  engagedReadsCount   Int @default(0)
+  completedReadsCount Int @default(0)
+  totalReadsCount     Int @default(0)
+
+  pointsAwarded  Int
+  fiatEquivalent Float // points * pointToFiatRate
+
+  revertedPoints  Int @default(0)
+  shortfallPoints Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@unique([distributionRunId, creatorId])
+  @@index([creatorId])
+  @@map("revenue_distribution_payout")
 }

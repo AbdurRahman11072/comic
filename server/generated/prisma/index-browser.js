@@ -510,6 +510,68 @@ exports.Prisma.ContactMessageScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.ChapterReadEventScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  userId: 'userId',
+  seriesId: 'seriesId',
+  chapterId: 'chapterId',
+  creatorId: 'creatorId',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  durationSeconds: 'durationSeconds',
+  pagesViewed: 'pagesViewed',
+  totalPages: 'totalPages',
+  completionPercent: 'completionPercent',
+  scrollDepthPercent: 'scrollDepthPercent',
+  interactionCount: 'interactionCount',
+  qualityTier: 'qualityTier',
+  qualityScore: 'qualityScore',
+  isBotLikely: 'isBotLikely',
+  botReason: 'botReason',
+  clientIp: 'clientIp',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RevenueDistributionRunScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  grossAmountEntered: 'grossAmountEntered',
+  currency: 'currency',
+  distributablePool: 'distributablePool',
+  totalQualityScore: 'totalQualityScore',
+  totalQualifiedReads: 'totalQualifiedReads',
+  totalEngagedReads: 'totalEngagedReads',
+  totalCompletedReads: 'totalCompletedReads',
+  totalCreatorsCount: 'totalCreatorsCount',
+  status: 'status',
+  revertedAt: 'revertedAt',
+  revertedBy: 'revertedBy',
+  notes: 'notes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RevenueDistributionPayoutScalarFieldEnum = {
+  id: 'id',
+  distributionRunId: 'distributionRunId',
+  creatorId: 'creatorId',
+  qualityScore: 'qualityScore',
+  scorePercentage: 'scorePercentage',
+  qualifiedReadsCount: 'qualifiedReadsCount',
+  engagedReadsCount: 'engagedReadsCount',
+  completedReadsCount: 'completedReadsCount',
+  totalReadsCount: 'totalReadsCount',
+  pointsAwarded: 'pointsAwarded',
+  fiatEquivalent: 'fiatEquivalent',
+  revertedPoints: 'revertedPoints',
+  shortfallPoints: 'shortfallPoints',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -567,7 +629,10 @@ exports.TransactionType = exports.$Enums.TransactionType = {
   BUY_CHAPTER: 'BUY_CHAPTER',
   BUY_POINTS: 'BUY_POINTS',
   WITHDRAWAL: 'WITHDRAWAL',
-  REFERRAL_BONUS: 'REFERRAL_BONUS'
+  REFERRAL_BONUS: 'REFERRAL_BONUS',
+  REVENUE_SHARE: 'REVENUE_SHARE',
+  REVENUE_SHARE_REVERSAL: 'REVENUE_SHARE_REVERSAL',
+  WITHDRAWAL_REFUND: 'WITHDRAWAL_REFUND'
 };
 
 exports.PaymentStatus = exports.$Enums.PaymentStatus = {
@@ -608,6 +673,18 @@ exports.FeaturedRequestStatus = exports.$Enums.FeaturedRequestStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.QualityTier = exports.$Enums.QualityTier = {
+  BOUNCED: 'BOUNCED',
+  QUALIFIED: 'QUALIFIED',
+  ENGAGED: 'ENGAGED',
+  COMPLETED: 'COMPLETED'
+};
+
+exports.DistributionStatus = exports.$Enums.DistributionStatus = {
+  COMPLETED: 'COMPLETED',
+  REVERTED: 'REVERTED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   CreatorProfile: 'CreatorProfile',
@@ -639,7 +716,10 @@ exports.Prisma.ModelName = {
   PromoCode: 'PromoCode',
   PromoCodeRedemption: 'PromoCodeRedemption',
   AuditLog: 'AuditLog',
-  ContactMessage: 'ContactMessage'
+  ContactMessage: 'ContactMessage',
+  ChapterReadEvent: 'ChapterReadEvent',
+  RevenueDistributionRun: 'RevenueDistributionRun',
+  RevenueDistributionPayout: 'RevenueDistributionPayout'
 };
 
 /**

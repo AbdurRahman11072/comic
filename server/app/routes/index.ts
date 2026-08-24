@@ -17,11 +17,16 @@ import { PromoRoutes } from '../modules/promo/promo.routes';
 import { AuditRoutes } from '../modules/audit/audit.routes';
 import { BackupRoutes } from '../modules/admin/backup.routes';
 import { ReferralRoutes } from '../modules/referral/referral.routes';
+import { AdRevenueRoutes } from '../modules/adRevenue/adRevenue.routes';
 import { HealthRoutes } from './health.routes';
 
 const router = Router();
 
 const moduleRoutes = [
+  {
+    path: '/ad-revenue',
+    route: AdRevenueRoutes,
+  },
   {
     path: '/referrals',
     route: ReferralRoutes,
