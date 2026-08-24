@@ -1,54 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSession } from "@/lib/auth-client";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 import { toast } from "react-hot-toast";
-import {
-  Loader2, Play, Gift, AlertCircle,
-  X, ExternalLink, CheckCircle2, Sparkles, Coins, Flame, Users, Copy, Check
-} from "lucide-react";
-import Link from "next/link";
+import { Coins, Flame } from "lucide-react";
 import { adService, CustomAdItem } from "@/services/ad.service";
-import { referralService, ReferralStatsData } from "@/services/referral.service";
-import { RedeemPromoCodeAction } from "@/actions/promo";
 import { EarnFromAdAction } from "@/actions/points";
 import { usePoints } from "@/providers/PointsProvider";
 import { LoginDialog } from "@/components/home/LoginDialog";
 
-const YoutubeIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25a29 29 0 0 0-.46-5.33z"/>
-    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
-  </svg>
-);
-
-const InstagramIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-  </svg>
-);
-
-const FacebookIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-  </svg>
-);
-
-interface CustomAd {
-  id: string;
-  title: string;
-  imageUrl: string;
-  linkUrl: string;
-  videoUrl?: string;
-  adType: "BANNER" | "VIDEO" | "SOCIAL";
-  socialPlatform?: string;
-  socialActionUrl?: string;
-  points: number;
-}
+import { AdPackCard } from "./AdPackCard";
+import { PromoRedeemBox } from "./PromoRedeemBox";
+import { ReferralRewardsCard } from "./ReferralRewardsCard";
 
 export function RewardsClient() {
   return (
@@ -95,12 +59,16 @@ function RewardsContent() {
 
   // Custom Ad
   const [customAd, setCustomAd] = useState<CustomAdItem | null>(null);
-  const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
 
   // Helper to persist current pack progress in localStorage
   const persistPack = useCallback(
-    (newWatched: number, newTarget: number = targetAds, newPackId: number = packId, isClaiming: boolean = claiming) => {
+    (
+      newWatched: number,
+      newTarget: number = targetAds,
+      newPackId: number = packId,
+      isClaiming: boolean = claiming
+    ) => {
       try {
         localStorage.setItem(
           storageKey,
@@ -205,58 +173,16 @@ function RewardsContent() {
     }, interval);
   };
 
-  // Verification Timer
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (verifying && verificationTimeLeft > 0) {
-      timer = setInterval(() => setVerificationTimeLeft((p) => p - 1), 1000);
-    } else if (verifying && verificationTimeLeft === 0) {
-      completeReward();
-    }
-    return () => clearInterval(timer);
-  }, [verifying, verificationTimeLeft]);
-
-  const handleClaimClick = () => {
-    persistPack(watchedAds, targetAds, packId, true);
-    if (customAd) {
-      if (customAd.adType === "VIDEO" && customAd.videoUrl) {
-        setVideoModalOpen(true);
-      } else if (customAd.adType === "SOCIAL" && customAd.linkUrl) {
-        window.open(customAd.linkUrl, "_blank");
-        startVerification();
-      } else {
-        setClaiming(true);
-      }
-    } else {
-      setClaiming(true);
-    }
-  };
-
-  const startVerification = () => {
-    const randomWait = Math.floor(Math.random() * 51) + 10; // 10-60s
-    setVerificationTimeLeft(randomWait);
-    setVerifying(true);
-    setClaiming(false);
-    setVideoModalOpen(false);
-    toast("Verifying your visit... Please wait.", { icon: "⏳", duration: 4000 });
-  };
-
-  const handleFinalAdClick = () => {
-    const adLink = customAd?.linkUrl || "https://example.com/sponsor";
-    window.open(adLink, "_blank");
-    startVerification();
-  };
-
-  const handleVideoWatched = () => {
-    setVideoModalOpen(false);
-    startVerification();
-  };
-
   const completeReward = async () => {
     setVerifying(false);
-    const adBonus = (customAd && typeof customAd.points === "number" && !isNaN(customAd.points)) ? customAd.points : 0;
+    const adBonus =
+      customAd && typeof customAd.points === "number" && !isNaN(customAd.points)
+        ? customAd.points
+        : 0;
     const basePoints = (Number(targetAds) || 5) * 10;
-    const totalPoints = Number.isFinite(basePoints + adBonus) ? Math.min(basePoints + adBonus, 150) : 50;
+    const totalPoints = Number.isFinite(basePoints + adBonus)
+      ? Math.min(basePoints + adBonus, 150)
+      : 50;
 
     try {
       const res = await EarnFromAdAction({ amount: totalPoints, adsCount: targetAds });
@@ -270,7 +196,7 @@ function RewardsContent() {
 
       setPointsEarned(totalPoints);
       setDone(true);
-      
+
       // Clear completed pack from local storage
       try {
         localStorage.removeItem(storageKey);
@@ -282,6 +208,41 @@ function RewardsContent() {
       toast.error(error?.message || "Error earning points. Please try again.");
       setDone(false);
     }
+  };
+
+  // Verification Timer
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (verifying && verificationTimeLeft > 0) {
+      timer = setInterval(() => setVerificationTimeLeft((p) => p - 1), 1000);
+    } else if (verifying && verificationTimeLeft === 0) {
+      completeReward();
+    }
+    return () => clearInterval(timer);
+  }, [verifying, verificationTimeLeft]);
+
+  const startVerification = () => {
+    const randomWait = Math.floor(Math.random() * 51) + 10; // 10-60s
+    setVerificationTimeLeft(randomWait);
+    setVerifying(true);
+    setClaiming(false);
+    toast("Verifying your visit... Please wait.", { icon: "⏳", duration: 4000 });
+  };
+
+  const handleClaimClick = () => {
+    persistPack(watchedAds, targetAds, packId, true);
+    if (customAd && customAd.adType === "SOCIAL" && customAd.linkUrl) {
+      window.open(customAd.linkUrl, "_blank");
+      startVerification();
+    } else {
+      setClaiming(true);
+    }
+  };
+
+  const handleFinalAdClick = () => {
+    const adLink = customAd?.linkUrl || "https://example.com/sponsor";
+    window.open(adLink, "_blank");
+    startVerification();
   };
 
   const resetFlow = () => {
@@ -299,22 +260,6 @@ function RewardsContent() {
   };
 
   if (isPending) return null;
-
-  const isReadyToClaim = watchedAds >= targetAds;
-
-  const socialIcon = (platform?: string) => {
-    if (platform === "youtube") return <YoutubeIcon className="w-5 h-5" />;
-    if (platform === "instagram") return <InstagramIcon className="w-5 h-5" />;
-    if (platform === "facebook") return <FacebookIcon className="w-5 h-5" />;
-    return <ExternalLink className="w-5 h-5" />;
-  };
-
-  const socialActionLabel = (platform?: string) => {
-    if (platform === "youtube") return "Subscribe on YouTube";
-    if (platform === "instagram") return "Follow on Instagram";
-    if (platform === "facebook") return "Follow on Facebook";
-    return "Complete Action";
-  };
 
   return (
     <div className="relative overflow-hidden w-full">
@@ -338,168 +283,34 @@ function RewardsContent() {
               <span className="text-white/20">•</span>
               <span className="flex items-center gap-1.5 text-emerald-400">
                 <Flame className="w-4 h-4" />
-                <span>Today: {totalDailyViews} Ads Watched ({totalDailyPoints} P earned)</span>
+                <span>
+                  Today: {totalDailyViews} Ads Watched ({totalDailyPoints} P earned)
+                </span>
               </span>
             </div>
           )}
         </div>
 
         {/* Dynamic Ad Pack Card */}
-        <div className="w-full max-w-lg glass p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-primary/20 blur-[60px] pointer-events-none" />
-
-          {!session ? (
-            <div className="flex flex-col items-center text-center space-y-6 py-6">
-              <div className="w-20 h-20 rounded-3xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-xl">
-                <Gift className="w-10 h-10 animate-pulse" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Sign in to Earn Points</h2>
-                <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-                  Watch quick interactive ads and complete sponsored packs to earn free points for your favorite series.
-                </p>
-              </div>
-              <button
-                onClick={() => setLoginOpen(true)}
-                className="w-full max-w-xs py-3.5 bg-primary text-white rounded-2xl font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/25 cursor-pointer"
-              >
-                Log In / Register
-              </button>
-            </div>
-          ) : done ? (
-            <div className="flex flex-col items-center text-center space-y-6 py-4">
-              <CheckCircle2 className="w-20 h-20 text-emerald-400" />
-              <div>
-                <h2 className="text-3xl font-black text-emerald-400">+{Number(pointsEarned) || 50} Points!</h2>
-                <p className="text-muted-foreground mt-2">Points have been added to your account.</p>
-              </div>
-              <button
-                onClick={resetFlow}
-                className="px-8 py-3 bg-primary text-white rounded-2xl font-bold hover:opacity-90 transition-all shadow-lg shadow-primary/20 cursor-pointer"
-              >
-                Watch Another Pack
-              </button>
-            </div>
-          ) : claiming ? (
-            <div className="flex flex-col items-center text-center space-y-6">
-              <Gift className="w-16 h-16 text-yellow-500 animate-bounce" />
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Final Step!</h2>
-                <p className="text-muted-foreground text-sm">
-                  Click the sponsored banner below to claim your {(Number(targetAds) || 5) * 10 + (Number(customAd?.points) || 0)} points.
-                </p>
-              </div>
-
-              {customAd && customAd.imageUrl ? (
-                <button
-                  onClick={handleFinalAdClick}
-                  className="w-full aspect-video rounded-xl overflow-hidden relative group border-2 border-primary/30 hover:border-primary transition-colors"
-                >
-                  <img
-                    src={customAd.imageUrl}
-                    alt={customAd.title || "Sponsored"}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                    <span className="bg-primary text-white font-bold px-6 py-3 rounded-full shadow-xl shadow-black/50 transform group-hover:scale-110 transition-transform">
-                      Click to Claim Reward
-                    </span>
-                  </div>
-                  <div className="absolute bottom-2 left-2 bg-black/80 px-2 py-1 rounded text-[10px] text-white/70 uppercase">
-                    Sponsored
-                  </div>
-                </button>
-              ) : (
-                <button
-                  onClick={handleFinalAdClick}
-                  className="w-full py-4 rounded-2xl border-2 border-primary/30 hover:border-primary text-primary font-bold flex items-center justify-center gap-2 transition-all hover:bg-primary/5 cursor-pointer"
-                >
-                  <ExternalLink className="w-5 h-5" /> Visit Sponsor & Claim
-                </button>
-              )}
-            </div>
-          ) : verifying ? (
-            <div className="flex flex-col items-center text-center space-y-8 py-8">
-              <div className="relative">
-                <Loader2 className="w-20 h-20 text-primary animate-spin" />
-                <div className="absolute inset-0 flex items-center justify-center font-bold text-xl">
-                  {verificationTimeLeft}s
-                </div>
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Verifying Visit</h2>
-                <p className="text-muted-foreground text-sm max-w-xs">
-                  Please stay on the sponsor page or wait here for the timer to finish...
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-col items-center space-y-8">
-              <div className="text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-3">
-                  Ad Pack #{packId}
-                </div>
-                <h3 className="text-2xl font-bold text-white">Watch {targetAds} Short Ads</h3>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Earn up to {(Number(targetAds) || 5) * 10 + (Number(customAd?.points) || 0)} points upon completion!
-                </p>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="w-full space-y-2">
-                <div className="flex justify-between text-xs font-semibold">
-                  <span className="text-muted-foreground">Pack Progress</span>
-                  <span className="text-primary font-mono">{watchedAds} / {targetAds} Ads</span>
-                </div>
-                <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden border border-white/10 p-0.5">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary to-purple-500 rounded-full transition-all duration-500"
-                    style={{ width: `${(watchedAds / targetAds) * 100}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Watch Action */}
-              <div className="w-full flex flex-col items-center gap-4">
-                {isReadyToClaim ? (
-                  <button
-                    onClick={handleClaimClick}
-                    className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black text-base rounded-2xl transition-all shadow-xl shadow-emerald-500/25 flex items-center justify-center gap-2 animate-bounce cursor-pointer"
-                  >
-                    <Gift className="w-5 h-5" /> Claim Points Now!
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleWatchAd}
-                    disabled={watching}
-                    className="w-full py-4 bg-primary hover:bg-primary/90 text-white font-bold text-base rounded-2xl transition-all shadow-xl shadow-primary/25 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
-                  >
-                    {watching ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Watching Ad ({Math.round(progress)}%)...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-5 h-5 fill-current" />
-                        Watch Ad {watchedAds + 1} of {targetAds}
-                      </>
-                    )}
-                  </button>
-                )}
-
-                {watching && (
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary transition-all duration-75"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
+        <AdPackCard
+          session={session}
+          done={done}
+          claiming={claiming}
+          verifying={verifying}
+          watching={watching}
+          packId={packId}
+          targetAds={targetAds}
+          watchedAds={watchedAds}
+          progress={progress}
+          verificationTimeLeft={verificationTimeLeft}
+          pointsEarned={pointsEarned}
+          customAd={customAd}
+          onOpenLogin={() => setLoginOpen(true)}
+          onWatchAd={handleWatchAd}
+          onClaimClick={handleClaimClick}
+          onFinalAdClick={handleFinalAdClick}
+          onResetFlow={resetFlow}
+        />
 
         {/* Bottom Reward Options (Promo Code & Referral Program) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mt-8">
@@ -517,162 +328,3 @@ function RewardsContent() {
     </div>
   );
 }
-
-function PromoRedeemBox() {
-  const [code, setCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleRedeem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!code.trim()) return;
-
-    setIsLoading(true);
-    try {
-      const res = await RedeemPromoCodeAction({ code: code.trim() });
-      if (res.success) {
-        const pts = res.data?.pointsAwarded ?? 0;
-        toast.success(`🎉 Code redeemed! You got ${pts} points.`);
-        setCode("");
-      } else {
-        toast.error(res.message || "Invalid or expired promo code.");
-      }
-    } catch (_err) {
-      toast.error("Invalid or expired promo code.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="w-full glass p-6 rounded-2xl border border-white/10 space-y-4">
-      <div className="flex items-center gap-2">
-        <Gift className="w-5 h-5 text-amber-400" />
-        <h3 className="text-base font-bold text-white">Have a Promo Code?</h3>
-      </div>
-      <p className="text-xs text-muted-foreground">
-        Redeem codes from creators or special events to get instant free coins.
-      </p>
-      <form onSubmit={handleRedeem} className="flex gap-2">
-        <input
-          type="text"
-          value={code}
-          onChange={(e) => setCode(e.target.value.toUpperCase())}
-          placeholder="ENTER PROMO CODE"
-          className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/50 outline-none text-white font-mono font-bold uppercase text-xs tracking-wider"
-        />
-        <button
-          type="submit"
-          disabled={isLoading || !code.trim()}
-          className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs rounded-xl transition disabled:opacity-50 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20 cursor-pointer"
-        >
-          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Redeem"}
-        </button>
-      </form>
-    </div>
-  );
-}
-
-function ReferralRewardsCard({ onOpenLogin }: { onOpenLogin: () => void }) {
-  const { data: session } = useSession();
-  const user = session?.user;
-  const [referralStats, setReferralStats] = useState<ReferralStatsData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!user) {
-      setReferralStats(null);
-      setIsLoading(false);
-      return;
-    }
-    let isMounted = true;
-    setIsLoading(true);
-    referralService.getReferralStats().then((res) => {
-      if (isMounted) {
-        if (res.success && res.data) {
-          setReferralStats(res.data);
-        }
-        setIsLoading(false);
-      }
-    });
-    return () => {
-      isMounted = false;
-    };
-  }, [user]);
-
-  const referralCode = referralStats?.referralCode || (user as any)?.referralCode || "";
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://comicbd.com";
-  const shareableUrl = referralCode ? `${origin}/?ref=${referralCode}` : `${origin}/?ref=...`;
-
-  const copyLink = () => {
-    if (!user) {
-      onOpenLogin();
-      return;
-    }
-    if (!referralCode) {
-      toast.error("Generating your referral link...");
-      return;
-    }
-    navigator.clipboard.writeText(`${origin}/?ref=${referralCode}`);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-    toast.success("Referral link copied!");
-  };
-
-  return (
-    <div className="w-full glass p-6 rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-950/20 to-popover space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-purple-400" />
-          <h3 className="text-base font-bold text-white">Refer Friends & Earn 10%</h3>
-        </div>
-        <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
-          +{referralStats?.referralSignupBonus || 50} Pts Welcome
-        </span>
-      </div>
-
-      <p className="text-xs text-muted-foreground">
-        Earn <strong className="text-purple-300">{referralStats?.referralBonusPercent || 10}% of all ad points</strong> your invited friends earn for {referralStats?.referralActiveMonths || 3} months, plus an instant <strong className="text-emerald-300">+{referralStats?.referralSignupBonus || 50} points</strong> welcome reward!
-      </p>
-
-      {user ? (
-        <div className="space-y-2.5 pt-1">
-          <div className="flex gap-2">
-            <input
-              type="text"
-              readOnly
-              value={isLoading ? "Loading your referral link..." : shareableUrl}
-              className="flex-1 px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-muted-foreground font-mono text-xs truncate select-all"
-            />
-            <button
-              type="button"
-              onClick={copyLink}
-              disabled={isLoading || !referralCode}
-              className="px-4 py-2.5 bg-primary hover:bg-primary/90 text-white font-bold text-xs rounded-xl transition flex items-center gap-1.5 shrink-0 shadow-lg shadow-primary/20 cursor-pointer disabled:opacity-50"
-            >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
-              {copied ? "Copied" : "Copy Link"}
-            </button>
-          </div>
-          <div className="flex justify-end">
-            <Link
-              href="/profile"
-              className="text-[11px] text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1 transition-colors"
-            >
-              View Full Referral Hub & Stats →
-            </Link>
-          </div>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={onOpenLogin}
-          className="w-full py-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-200 text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <Users className="w-4 h-4" /> Sign In to Get Your Referral Link
-        </button>
-      )}
-    </div>
-  );
-}
-
