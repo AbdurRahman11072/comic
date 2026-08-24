@@ -1,20 +1,80 @@
-
 interface SendEmailParams {
   to: string;
   subject: string;
   html: string;
   text?: string;
+  name?: string;
+  actionUrl?: string;
+  templateId?: string;
 }
 
 /**
- * Universal Email Dispatcher using HTTPS REST API (Resend / EmailJS / Console Fallback)
- * Works 100% in production serverless & cloud environments without SMTP socket blocks.
+ * Universal Email Dispatcher via EmailJS REST API (with Resend and Dev Console Fallback)
+ * Works seamlessly in serverless, cloud (Vercel, Render), and local environments.
  */
-export const sendEmail = async ({ to, subject, html, text }: SendEmailParams): Promise<boolean> => {
+export const sendEmail = async ({
+  to,
+  subject,
+  html,
+  text,
+  name,
+  actionUrl,
+  templateId,
+}: SendEmailParams): Promise<boolean> => {
+  const emailJsServiceId = process.env.EMAILJS_SERVICE_ID;
+  const emailJsPublicKey = process.env.EMAILJS_PUBLIC_KEY || process.env.EMAILJS_USER_ID;
+  const emailJsPrivateKey = process.env.EMAILJS_PRIVATE_KEY;
+  const defaultTemplateId = process.env.EMAILJS_TEMPLATE_ID;
+  const effectiveTemplateId = templateId || defaultTemplateId;
+
+  // 1. Production Mode A: EmailJS REST API (https://api.emailjs.com/api/v1.0/email/send)
+  if (emailJsServiceId && emailJsPublicKey && effectiveTemplateId) {
+    try {
+      const payload: Record<string, any> = {
+        service_id: emailJsServiceId,
+        template_id: effectiveTemplateId,
+        user_id: emailJsPublicKey,
+        template_params: {
+          to_email: to,
+          to_name: name || 'Valued Reader',
+          email: to,
+          recipient: to,
+          subject: subject,
+          message: text || html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
+          html_content: html,
+          action_url: actionUrl || '',
+          link: actionUrl || '',
+          app_name: 'Comic BD',
+        },
+      };
+
+      if (emailJsPrivateKey) {
+        payload.accessToken = emailJsPrivateKey;
+      }
+
+      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.error('[EmailService:EmailJS] API Error:', errText);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error('[EmailService:EmailJS] Request failed:', err);
+      return false;
+    }
+  }
+
+  // 2. Production Mode B: Resend REST API (if configured)
   const resendApiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.EMAIL_FROM || 'Comic BD <no-reply@comicbd.com>';
-
-  // 1. Production Mode: Resend REST API (over HTTPS Port 443)
   if (resendApiKey) {
     try {
       const response = await fetch('https://api.resend.com/emails', {
@@ -34,20 +94,23 @@ export const sendEmail = async ({ to, subject, html, text }: SendEmailParams): P
 
       const data = await response.json();
       if (!response.ok) {
-        console.error('[EmailService] Resend API Error:', data);
+        console.error('[EmailService:Resend] API Error:', data);
         return false;
       }
       return true;
     } catch (err) {
-      console.error('[EmailService] Failed to send email via Resend:', err);
+      console.error('[EmailService:Resend] Request failed:', err);
       return false;
     }
   }
 
-  // 2. Development / Fallback Mode: Prominent formatted console notification
+  // 3. Development / Fallback Mode: Clean, formatted terminal notification
   console.log('\n==================== 📧 [EMAIL DISPATCH] ====================');
-  console.log(`To:      ${to}`);
-  console.log(`Subject: ${subject}`);
+  console.log(`To:         ${to}`);
+  console.log(`Subject:    ${subject}`);
+  if (actionUrl) {
+    console.log(`Action URL: ${actionUrl}`);
+  }
   console.log('------------------------------------------------------------');
   if (text) {
     console.log(text);
@@ -96,9 +159,12 @@ export const sendPasswordResetEmail = async ({
 
   return await sendEmail({
     to,
+    name,
     subject,
     html,
     text: `Reset your Comic BD password by clicking this link: ${resetUrl}`,
+    actionUrl: resetUrl,
+    templateId: process.env.EMAILJS_RESET_TEMPLATE_ID,
   });
 };
 
@@ -138,8 +204,11 @@ export const sendVerificationEmail = async ({
 
   return await sendEmail({
     to,
+    name,
     subject,
     html,
     text: `Verify your email address on Comic BD by clicking this link: ${verificationUrl}`,
+    actionUrl: verificationUrl,
+    templateId: process.env.EMAILJS_VERIFY_TEMPLATE_ID,
   });
 };
