@@ -189,6 +189,25 @@ export const seriesService = {
     } catch (_error) {
       return { success: false, data: null };
     }
-  }
+  },
+
+  getTop50Series: async (
+    period: "today" | "weekly" | "monthly" = "today"
+  ): Promise<ServiceResponse<any[]>> => {
+    try {
+      const res = await fetch(
+        `${env.NEXT_PUBLIC_API_URL}/api/v1/series/top-50?period=${period}`,
+        {
+          next: { tags: ["Top50Series"] },
+          cache: "no-store",
+        }
+      );
+      if (!res.ok) return { success: false, data: [] };
+      const data = await res.json();
+      return { success: true, data: data?.data ?? [] };
+    } catch (_error) {
+      return { success: false, data: [] };
+    }
+  },
 };
 

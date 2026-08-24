@@ -10,6 +10,7 @@ import { PosterCard } from "@/components/home/PosterCard";
 import { SectionHeader } from "@/components/home/SectionHeader";
 import { SocialRow } from "@/components/home/SocialRow";
 import { AdBanner } from "@/components/ads/AdBanner";
+import { Top50Section } from "@/components/home/Top50Section";
 import { type Series } from "@/types";
 import { seriesService } from "@/services/series.service";
 
@@ -130,6 +131,9 @@ export function HomeClient() {
             )}
           </div>
         </section>
+
+        {/* ── TOP 50 SERIES LEADERBOARD (Auto-Slide & Today/Weekly/Monthly Filters) ── */}
+        <Top50Section />
 
         {/* ── RECENTLY ADDED ── */}
         {recentlyAdded.length > 0 && (

@@ -19,6 +19,7 @@ router.put(
 router.get('/pinned', cacheResponse(600, 'series'), SeriesController.getPinnedSeries);
 router.get('/featured', cacheResponse(600, 'series'), SeriesController.getFeaturedSeries);
 router.get('/discounted', cacheResponse(600, 'series'), SeriesController.getDiscountedSeries);
+router.get('/top-50', cacheResponse(300, 'series'), SeriesController.getTop50Series);
 router.get('/:slug', optionalAuthMiddleware, SeriesController.getSeriesBySlug);
 router.get('/id/:id', SeriesController.getSeriesById);
 router.post(

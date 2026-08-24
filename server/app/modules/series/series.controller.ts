@@ -146,6 +146,18 @@ const getFeaturedSeries = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+const getTop50Series = asyncHandler(async (req: Request, res: Response) => {
+  const period = ((req.query.period as string) || 'today') as 'today' | 'weekly' | 'monthly';
+  const result = await SeriesService.getTop50Series(period);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Top 50 series fetched successfully',
+    data: result,
+  });
+});
+
 export const SeriesController = {
   getAllSeries,
   getAdminSeriesList,
@@ -159,4 +171,6 @@ export const SeriesController = {
   deleteSeries,
   toggleFeatured,
   getSeriesById,
+  getTop50Series,
 };
+
