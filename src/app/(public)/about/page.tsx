@@ -60,7 +60,7 @@ export default async function AboutUsPage() {
                 </div>
                 <h3 className="text-base font-bold text-white">Creator Studio First</h3>
                 <p className="text-xs text-muted-foreground">
-                  Empowering independent scanlation groups, artists, and creators with transparent 100& revenue share.
+                  Empowering independent scanlation groups, artists, and creators with transparent 100% revenue share.
                 </p>
               </div>
 

@@ -3,17 +3,17 @@
 import { LoginDialog } from "@/components/home/LoginDialog";
 import { useSession } from "@/lib/auth-client";
 import {
-    ArrowRight,
-    BarChart3,
-    CheckCircle2,
-    DollarSign,
-    Flame,
-    HelpCircle,
-    Megaphone,
-    Palette,
-    Sparkles,
-    Wallet,
-    Zap
+  ArrowRight,
+  BarChart3,
+  CheckCircle2,
+  DollarSign,
+  Flame,
+  HelpCircle,
+  Megaphone,
+  Palette,
+  Sparkles,
+  Wallet,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -42,8 +42,8 @@ export function CreatorBenefitsClient() {
 
   const benefits = [
     {
-      title: "100& Direct Revenue Share",
-      desc: "Earn the industry-leading 100& payout on every coin unlocked by fans on your premium chapters.",
+      title: "100% Direct Revenue Share",
+      desc: "Earn the industry-leading 100% payout on every coin unlocked by fans on your premium chapters.",
       icon: DollarSign,
       color: "text-emerald-400",
       bg: "bg-emerald-400/10",
@@ -171,7 +171,7 @@ export function CreatorBenefitsClient() {
 
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto font-medium">
             Join hundreds of creators publishing Manhwa, Manga, and Webtoons. Monetize your stories
-            with 100& direct revenue share, quality ad pools, and built-in fan communities.
+            with 100% direct revenue share, quality ad pools, and built-in fan communities.
           </p>
 
           {/* Call to Actions with Glass & Neon Glow */}
@@ -197,7 +197,7 @@ export function CreatorBenefitsClient() {
           {/* Quick Credibility Badges */}
           <div className="pt-4 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground font-semibold">
             <span className="flex items-center gap-1.5 text-white/80">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 100& Revenue Share
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" /> 100% Revenue Share
             </span>
             <span className="flex items-center gap-1.5 text-white/80">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Fast Local Cashouts
@@ -300,7 +300,7 @@ export function CreatorBenefitsClient() {
               </span>
               <h4 className="text-sm font-bold text-white">Earn & Cash Out</h4>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Receive 100& coin unlock shares and cash out directly to bKash, Nagad, or Bank.
+                Receive 100% coin unlock shares and cash out directly to bKash, Nagad, or Bank.
               </p>
             </div>
           </div>

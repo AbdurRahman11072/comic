@@ -185,7 +185,7 @@ export function ContactClient({ config }: ContactClientProps) {
               <h3 className="text-base font-bold text-white">Creator Publishing</h3>
               <p className="text-xs text-muted-foreground mt-0.5">Serialize your manga or webcomic</p>
             </div>
-            <p className="text-xs text-muted-foreground">Monetize chapters & keep 100& revenue</p>
+            <p className="text-xs text-muted-foreground">Monetize chapters & keep 100% revenue</p>
           </div>
           <div className="pt-2">
             <Link

@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 export async function generateMetadata(): Promise<Metadata> {
   return constructMetadata({
     title: "Join as a Creator | Comic BD Creator Program",
-    description: "Monetize your comics and webtoons with 100& direct revenue share, quality ad pools, and built-in fan communities.",
+    description: "Monetize your comics and webtoons with 100% direct revenue share, quality ad pools, and built-in fan communities.",
   });
 }
 

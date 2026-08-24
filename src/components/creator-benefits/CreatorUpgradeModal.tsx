@@ -76,7 +76,7 @@ export function CreatorUpgradeModal({ open, onClose }: CreatorUpgradeModalProps)
               <DollarSign className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-white">100& Direct Revenue Share</p>
+              <p className="text-xs font-bold text-white">100% Direct Revenue Share</p>
               <p className="text-[10px] text-muted-foreground">Keep the lion's share of reader chapter coin unlocks.</p>
             </div>
           </div>

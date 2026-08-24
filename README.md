@@ -5,7 +5,7 @@ A full-stack comic/manga/manhwa reading platform with creator monetization, poin
 ## Features
 
 - **Reading Experience** — Vertical scroll reader, bookmarks, reading history, chapter fast-pass
-- **Creator Studio** — Series publishing, chapter management, analytics, 100& revenue share
+- **Creator Studio** — Series publishing, chapter management, analytics, 100% revenue share
 - **Points Economy** — Earn points by watching ads, buy via Stripe, unlock premium chapters
 - **Community** — Chapter comments, series reviews, global chat, creator posts
 - **Admin Dashboard** — User/creator management, role control, moderation, reports, backups
