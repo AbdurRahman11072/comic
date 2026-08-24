@@ -129,7 +129,7 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
     }
   }, [session, chapter?.seriesId, chapter?.id]);
 
-  // --- Real-time Read Session Telemetry & Heartbeat (15s) ---
+  // --- Optimized In-Memory Reading Telemetry (Milestone & Exit Beacon Only) ---
   const [sessionId] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     let sId = sessionStorage.getItem("comic_reading_session_id");
@@ -146,39 +146,14 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
     let activeDurationSeconds = 0;
     let interactionCount = 0;
     let maxScrollDepth = 0;
+    let hasReportedCompletion = false;
+    let lastExitPayloadSentAt = 0;
     const viewedPages = new Set<number>([0]);
     const totalPages = chapter.images?.length || 1;
 
     const onUserInteraction = () => {
       interactionCount++;
     };
-
-    const onScroll = () => {
-      interactionCount++;
-      const scrollY = window.scrollY;
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      if (scrollHeight > 0) {
-        const depth = Math.min(100, Math.round((scrollY / scrollHeight) * 100));
-        if (depth > maxScrollDepth) {
-          maxScrollDepth = depth;
-          const estimatedPage = Math.min(totalPages - 1, Math.floor((depth / 100) * totalPages));
-          for (let i = 0; i <= estimatedPage; i++) {
-            viewedPages.add(i);
-          }
-        }
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("click", onUserInteraction, { passive: true });
-    window.addEventListener("keydown", onUserInteraction, { passive: true });
-    window.addEventListener("touchmove", onUserInteraction, { passive: true });
-
-    const secondTimer = setInterval(() => {
-      if (document.visibilityState === "visible") {
-        activeDurationSeconds += 1;
-      }
-    }, 1000);
 
     const getPayload = () => {
       const pagesCount = Math.max(1, viewedPages.size);
@@ -196,28 +171,75 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
       };
     };
 
-    adRevenueService.trackProgress(getPayload());
+    const checkCompletionMilestone = () => {
+      if (hasReportedCompletion) return;
+      const pagesCount = viewedPages.size;
+      const completionPercent = Math.min(100, Math.round((pagesCount / totalPages) * 100));
+      
+      // If user read 90%+ of pages or reached 90%+ scroll depth
+      if (completionPercent >= 90 || maxScrollDepth >= 90) {
+        hasReportedCompletion = true;
+        adRevenueService.trackProgress(getPayload());
+      }
+    };
 
-    const heartbeatTimer = setInterval(() => {
-      adRevenueService.trackProgress(getPayload());
-    }, 15000);
+    const onScroll = () => {
+      interactionCount++;
+      const scrollY = window.scrollY;
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight > 0) {
+        const depth = Math.min(100, Math.round((scrollY / scrollHeight) * 100));
+        if (depth > maxScrollDepth) {
+          maxScrollDepth = depth;
+          const estimatedPage = Math.min(totalPages - 1, Math.floor((depth / 100) * totalPages));
+          for (let i = 0; i <= estimatedPage; i++) {
+            viewedPages.add(i);
+          }
+          checkCompletionMilestone();
+        }
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("click", onUserInteraction, { passive: true });
+    window.addEventListener("keydown", onUserInteraction, { passive: true });
+    window.addEventListener("touchmove", onUserInteraction, { passive: true });
+
+    // Active reading timer (runs in browser memory only, 0 network requests)
+    const secondTimer = setInterval(() => {
+      if (document.visibilityState === "visible") {
+        activeDurationSeconds += 1;
+      }
+    }, 1000);
 
     const handleExit = () => {
-      adRevenueService.sendExitBeacon(getPayload());
+      const now = Date.now();
+      // Throttle exit beacons to avoid duplicate triggers within 2 seconds
+      if (now - lastExitPayloadSentAt > 2000 && activeDurationSeconds >= 2) {
+        lastExitPayloadSentAt = now;
+        adRevenueService.sendExitBeacon(getPayload());
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        handleExit();
+      }
     };
 
     window.addEventListener("pagehide", handleExit);
     window.addEventListener("beforeunload", handleExit);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       clearInterval(secondTimer);
-      clearInterval(heartbeatTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("click", onUserInteraction);
       window.removeEventListener("keydown", onUserInteraction);
       window.removeEventListener("touchmove", onUserInteraction);
       window.removeEventListener("pagehide", handleExit);
       window.removeEventListener("beforeunload", handleExit);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       handleExit();
     };
   }, [chapter?.id, chapter?.seriesId, chapter?.images?.length, sessionId]);
