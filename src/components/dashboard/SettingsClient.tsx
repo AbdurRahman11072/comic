@@ -15,101 +15,84 @@ interface SettingsClientProps {
   initialConfig?: any;
 }
 
+function normalizeConfig(data: any = {}) {
+  return {
+    // System & Access
+    isMaintenanceMode: data.isMaintenanceMode ?? false,
+    maintenanceMessage: data.maintenanceMessage ?? "",
+    allowNewRegistrations: data.allowNewRegistrations ?? true,
+    allowCreatorApplications: data.allowCreatorApplications ?? true,
+    enableGlobalChat: data.enableGlobalChat ?? true,
+    enableStripePayment: data.enableStripePayment ?? true,
+    enableCashOut: data.enableCashOut ?? true,
+    enablePremiumChapters: data.enablePremiumChapters ?? true,
+
+    // Branding & Copy
+    appName: data.appName ?? "Genz Toon",
+    appTagline: data.appTagline ?? "Read Trending Webtoons, Manga & Comics",
+    appLogoUrl: data.appLogoUrl ?? "",
+    heroHeadline: data.heroHeadline ?? "Discover Unlimited Stories & Comics",
+    heroSubtitle: data.heroSubtitle ?? "Read high quality manhwa, manga and manhua translated with lightning speed.",
+
+    // Announcement
+    announceText: data.announceText ?? "",
+    announceLink: data.announceLink ?? "",
+
+    // Socials
+    discord: data.discord ?? "",
+    twitter: data.twitter ?? "",
+    telegram: data.telegram ?? "",
+    youtube: data.youtube ?? "",
+    instagram: data.instagram ?? "",
+    facebook: data.facebook ?? "",
+    reddit: data.reddit ?? "",
+
+    // Economy & Payout Rules
+    pointToFiatRate: data.pointToFiatRate ?? 0.01,
+    minWithdrawalPoints: data.minWithdrawalPoints ?? 1000,
+    creatorRevenueSharePercent: data.creatorRevenueSharePercent ?? 70,
+    maxDailyAdPoints: data.maxDailyAdPoints ?? 1000,
+    featuredRequestFee: data.featuredRequestFee ?? 500,
+    referralBonusPercent: data.referralBonusPercent ?? 10,
+    referralActiveMonths: data.referralActiveMonths ?? 3,
+    referralSignupBonus: data.referralSignupBonus ?? 50,
+    payoutMethods: Array.isArray(data.payoutMethods) && data.payoutMethods.length > 0
+      ? data.payoutMethods
+      : ["bKash", "Nagad", "Rocket", "Bank Transfer"],
+    customAdScript: data.customAdScript ?? "",
+
+    // SEO & Tracking
+    seoTitle: data.seoTitle ?? "Genz Toon - Read Free Manga, Manhwa & Webtoons",
+    seoDescription: data.seoDescription ?? "Read high quality webtoons, manga, and manhwa online for free.",
+    seoKeywords: data.seoKeywords ?? "manga, manhwa, webtoon, comics, read manga online",
+    ogImageUrl: data.ogImageUrl ?? "",
+    gaTrackingId: data.gaTrackingId ?? "",
+    adClient: data.adClient ?? "",
+
+    // Mobile Apps
+    playStoreUrl: data.playStoreUrl ?? "",
+    appStoreUrl: data.appStoreUrl ?? "",
+
+    // Legal & Contact
+    aboutUs: data.aboutUs ?? "",
+    termsOfService: data.termsOfService ?? "",
+    privacyPolicy: data.privacyPolicy ?? "",
+    dmcaEmail: data.dmcaEmail ?? "",
+    contactEmail: data.contactEmail ?? "support@comicbd.com",
+  };
+}
+
 export function SettingsClient({ initialConfig }: SettingsClientProps) {
   const { config: globalConfig, updateConfig } = useSiteConfig();
   const [saving, setSaving] = useState(false);
 
   const [activeTab, setActiveTab] = useState<"system" | "branding" | "announcement" | "socials" | "economy" | "seo" | "mobile" | "legal">("system");
 
-  const configData = globalConfig || initialConfig || {};
-
-  const [form, setForm] = useState({
-    // System & Access
-    isMaintenanceMode: configData.isMaintenanceMode ?? false,
-    maintenanceMessage: configData.maintenanceMessage ?? "",
-    allowNewRegistrations: configData.allowNewRegistrations ?? true,
-    allowCreatorApplications: configData.allowCreatorApplications ?? true,
-    enableGlobalChat: configData.enableGlobalChat ?? true,
-    enableStripePayment: configData.enableStripePayment ?? true,
-    enableCashOut: configData.enableCashOut ?? true,
-    enablePremiumChapters: configData.enablePremiumChapters ?? true,
-
-    // Branding & Copy
-    appName: configData.appName ?? "Genz Toon",
-    appTagline: configData.appTagline ?? "Read Trending Webtoons, Manga & Comics",
-    appLogoUrl: configData.appLogoUrl ?? "",
-    heroHeadline: configData.heroHeadline ?? "Discover Unlimited Stories & Comics",
-    heroSubtitle: configData.heroSubtitle ?? "Read high quality manhwa, manga and manhua translated with lightning speed.",
-
-    // Announcement
-    announceText: configData.announceText ?? "",
-    announceLink: configData.announceLink ?? "",
-
-    // Socials
-    discord: configData.discord ?? "",
-    twitter: configData.twitter ?? "",
-    telegram: configData.telegram ?? "",
-    youtube: configData.youtube ?? "",
-    instagram: configData.instagram ?? "",
-    facebook: configData.facebook ?? "",
-    reddit: configData.reddit ?? "",
-
-    // Economy & Payout Rules
-    pointToFiatRate: configData.pointToFiatRate ?? 0.01,
-    minWithdrawalPoints: configData.minWithdrawalPoints ?? 1000,
-    creatorRevenueSharePercent: configData.creatorRevenueSharePercent ?? 70,
-    maxDailyAdPoints: configData.maxDailyAdPoints ?? 1000,
-    featuredRequestFee: configData.featuredRequestFee ?? 500,
-    referralBonusPercent: configData.referralBonusPercent ?? 10,
-    referralActiveMonths: configData.referralActiveMonths ?? 3,
-    referralSignupBonus: configData.referralSignupBonus ?? 50,
-    payoutMethods: configData.payoutMethods ?? ["bKash", "Nagad", "Rocket", "Bank Transfer"],
-    customAdScript: configData.customAdScript ?? "",
-
-    // SEO & Tracking
-    seoTitle: configData.seoTitle ?? "Genz Toon - Read Free Manga, Manhwa & Webtoons",
-    seoDescription: configData.seoDescription ?? "Read high quality webtoons, manga, and manhwa online for free.",
-    seoKeywords: configData.seoKeywords ?? "manga, manhwa, webtoon, comics, read manga online",
-    ogImageUrl: configData.ogImageUrl ?? "",
-    gaTrackingId: configData.gaTrackingId ?? "",
-    adClient: configData.adClient ?? "",
-
-    // Mobile Apps
-    playStoreUrl: configData.playStoreUrl ?? "",
-    appStoreUrl: configData.appStoreUrl ?? "",
-
-    // Legal & Contact
-    aboutUs: configData.aboutUs ?? "",
-    termsOfService: configData.termsOfService ?? "",
-    privacyPolicy: configData.privacyPolicy ?? "",
-    dmcaEmail: configData.dmcaEmail ?? "",
-    contactEmail: configData.contactEmail ?? "support@comicbd.com",
-  });
+  const [form, setForm] = useState(() => normalizeConfig(globalConfig || initialConfig));
 
   useEffect(() => {
     if (globalConfig) {
-      const d: any = globalConfig;
-      setForm((prev) => ({
-        ...prev,
-        ...d,
-        isMaintenanceMode: d.isMaintenanceMode ?? false,
-        maintenanceMessage: d.maintenanceMessage ?? "",
-        allowNewRegistrations: d.allowNewRegistrations ?? true,
-        allowCreatorApplications: d.allowCreatorApplications ?? true,
-        enableGlobalChat: d.enableGlobalChat ?? true,
-        enableStripePayment: d.enableStripePayment ?? true,
-        enableCashOut: d.enableCashOut ?? true,
-        enablePremiumChapters: d.enablePremiumChapters ?? true,
-        pointToFiatRate: d.pointToFiatRate ?? 0.01,
-        minWithdrawalPoints: d.minWithdrawalPoints ?? 1000,
-        creatorRevenueSharePercent: d.creatorRevenueSharePercent ?? 70,
-        maxDailyAdPoints: d.maxDailyAdPoints ?? 1000,
-        featuredRequestFee: d.featuredRequestFee ?? 500,
-        referralBonusPercent: d.referralBonusPercent ?? 10,
-        referralActiveMonths: d.referralActiveMonths ?? 3,
-        referralSignupBonus: d.referralSignupBonus ?? 50,
-        payoutMethods: d.payoutMethods && Array.isArray(d.payoutMethods) && d.payoutMethods.length > 0 ? d.payoutMethods : ["bKash", "Nagad", "Rocket", "Bank Transfer"],
-      }));
+      setForm(normalizeConfig(globalConfig));
     }
   }, [globalConfig]);
 
