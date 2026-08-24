@@ -48,6 +48,7 @@ const ALL_NAV_ITEMS: NavItem[] = [
   { label: "Featured Requests", href: "/dashboard/featured-requests", icon: Sparkles, roles: ["creator", "moderator", "admin"] },
 
   // Moderator & Admin items
+  { label: "Platform Analytics", href: "/dashboard/analytics", icon: BarChart3, roles: ["moderator", "admin"] },
   { label: "All Series & Content", href: "/dashboard/series", icon: BookOpen, roles: ["moderator", "admin"] },
   { label: "Creators & Studios", href: "/dashboard/creators", icon: Palette, roles: ["moderator", "admin"] },
   { label: "Users & Roles", href: "/dashboard/users", icon: Users, roles: ["moderator", "admin"] },

@@ -10,4 +10,10 @@ router.get(
   StatsController.getDashboardStats
 );
 
+router.get(
+  '/admin-analytics',
+  authMiddleware(['admin', 'moderator']),
+  StatsController.getAdminAnalytics
+);
+
 export const StatsRoutes = router;
