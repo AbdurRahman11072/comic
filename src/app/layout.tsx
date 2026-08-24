@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import { siteService } from "@/services/site.service";
-import { ReduxProvider } from "@/providers/ReduxProvider";
+import { ReaderProvider } from "@/providers/ReaderProvider";
 import { PointsProvider } from "@/providers/PointsProvider";
 import { SiteConfigProvider } from "@/providers/SiteConfigProvider";
 import { constructMetadata } from "@/lib/metadata";
@@ -38,7 +38,7 @@ export default async function RootLayout({
             crossOrigin="anonymous"
           />
         )}
-        <ReduxProvider>
+        <ReaderProvider>
           <SiteConfigProvider initialConfig={config}>
             <PointsProvider>
               <ReferralCapture />
@@ -46,7 +46,7 @@ export default async function RootLayout({
               <CookieConsent />
             </PointsProvider>
           </SiteConfigProvider>
-        </ReduxProvider>
+        </ReaderProvider>
         <Toaster position="bottom-right" />
         {customAdScript && (
           <div dangerouslySetInnerHTML={{ __html: customAdScript }} />

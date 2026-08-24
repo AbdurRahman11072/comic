@@ -13,8 +13,7 @@ import { toast } from "react-hot-toast";
 import { InsufficientPointsModal } from "@/components/ui/InsufficientPointsModal";
 import { BuyChapterAction } from "@/actions/points";
 import { usePoints } from "@/providers/PointsProvider";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { setImageWidth, setReaderMode, setReaderTheme } from "@/redux/slices/readerSlice";
+import { useReader } from "@/providers/ReaderProvider";
 import { adRevenueService } from "@/services/adRevenue.service";
 
 
@@ -25,12 +24,11 @@ interface ChapterReaderProps {
 
 export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const { data: session } = useSession();
   const [chapter, setChapter] = useState(initialChapter);
 
-  // Redux Reader Settings State
-  const { mode: readerMode, theme: readerTheme, imageWidth } = useAppSelector((state) => state.reader);
+  // Reader Settings (Context-backed, persisted to localStorage)
+  const { mode: readerMode, theme: readerTheme, imageWidth, setMode, setTheme, setImageWidth: setWidth } = useReader();
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [showHeader, setShowHeader] = useState<boolean>(true);
@@ -117,15 +115,15 @@ export function ChapterReader({ slug, initialChapter }: ChapterReaderProps) {
   }, [readerMode, chapter?.images?.length]);
 
   const handleSetReaderMode = (val: "scroll" | "page") => {
-    dispatch(setReaderMode(val));
+    setMode(val);
   };
 
   const handleSetReaderTheme = (val: "dark" | "light" | "sepia" | "amoled") => {
-    dispatch(setReaderTheme(val));
+    setTheme(val);
   };
 
   const handleSetImageWidth = (val: number) => {
-    dispatch(setImageWidth(val));
+    setWidth(val);
   };
 
   useEffect(() => {
