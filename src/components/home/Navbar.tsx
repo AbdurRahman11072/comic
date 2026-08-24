@@ -63,8 +63,24 @@ export function Navbar() {
   const { points, isLoading: isPointsLoading, refreshPoints } = usePoints();
 
   const handleSignOut = async () => {
-    await signOut();
     setUserMenuOpen(false);
+    await signOut();
+    const protectedPrefixes = [
+      '/profile',
+      '/bookmarks',
+      '/history',
+      '/transactions',
+      '/dashboard',
+      '/stripe-sandbox',
+    ];
+    const isCurrentProtected = protectedPrefixes.some((p) =>
+      window.location.pathname.startsWith(p)
+    );
+    if (isCurrentProtected) {
+      window.location.href = '/';
+    } else {
+      router.refresh();
+    }
   };
 
   const isLoggedIn = !isPending && !!session?.user;

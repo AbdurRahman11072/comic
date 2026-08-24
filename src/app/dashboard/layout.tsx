@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/dashboard/Sidebar";
+import { RouteAuthGuard } from "@/components/common/RouteAuthGuard";
 import { userService } from "@/services/user.service";
 import { redirect } from "next/navigation";
 
@@ -20,6 +21,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a] text-white">
+      <RouteAuthGuard />
       {/* Background atmosphere */}
       <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
