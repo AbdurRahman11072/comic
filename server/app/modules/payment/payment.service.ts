@@ -1,8 +1,8 @@
-import Stripe from 'stripe';
-import { envConfig } from '../../config/envConfig';
-import { prisma } from '../../../lib/prisma';
-import AppError from '../../error/AppError';
 import httpStatus from 'http-status';
+import Stripe from 'stripe';
+import { prisma } from '../../../lib/prisma';
+import { envConfig } from '../../config/envConfig';
+import AppError from '../../error/AppError';
 
 const stripe = new Stripe(envConfig.STRIPE_SECRET_KEY as string);
 
@@ -39,7 +39,7 @@ const createCheckoutSession = async (userId: string, packageId: string, userEmai
           currency: 'usd',
           product_data: {
             name: pkg.name,
-            description: `Purchase ${pkg.points} points for Genz Toon`,
+            description: `Purchase ${pkg.points} points for Comic BD`,
           },
           unit_amount: Math.round(pkg.price * 100), // Stripe expects cents
         },

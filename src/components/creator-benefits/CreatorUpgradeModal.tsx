@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
-import {
-  CheckCircle2,
-  DollarSign,
-  LayoutDashboard,
-  Palette,
-  Sparkles,
-  TrendingUp,
-  X,
-} from "lucide-react";
 import { UpdateCreatorProfileAction } from "@/actions/creator";
+import {
+    DollarSign,
+    LayoutDashboard,
+    Palette,
+    Sparkles,
+    TrendingUp,
+    X
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 interface CreatorUpgradeModalProps {
   open: boolean;
@@ -77,7 +76,7 @@ export function CreatorUpgradeModal({ open, onClose }: CreatorUpgradeModalProps)
               <DollarSign className="w-4 h-4" />
             </div>
             <div>
-              <p className="text-xs font-bold text-white">70% Direct Revenue Share</p>
+              <p className="text-xs font-bold text-white">100& Direct Revenue Share</p>
               <p className="text-[10px] text-muted-foreground">Keep the lion's share of reader chapter coin unlocks.</p>
             </div>
           </div>

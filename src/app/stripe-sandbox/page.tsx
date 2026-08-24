@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
 import { DemoPayWebhookAction } from "@/actions/payment";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Shield, ArrowLeft, Loader2, Landmark, CheckCircle, Info } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
+import { ArrowLeft, CheckCircle, CreditCard, Info, Landmark, Loader2, Shield } from "lucide-react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 
 const POINT_PACKAGES = [
   { id: 'pkg_1', points: 100, price: 1.00, name: '100 Points Starter' },
@@ -107,11 +107,11 @@ function SandboxContent() {
               <Link href="/shop" className="p-2 hover:bg-white/5 rounded-full transition-colors text-slate-400 hover:text-white">
                 <ArrowLeft className="w-5 h-5" />
               </Link>
-              <span className="text-sm font-semibold tracking-wider uppercase text-rose-500">Genz Toon Sandbox</span>
+              <span className="text-sm font-semibold tracking-wider uppercase text-rose-500">Comic BD Sandbox</span>
             </div>
 
             <div className="space-y-4">
-              <div className="text-slate-400 text-sm font-medium">Pay Genz Toon</div>
+              <div className="text-slate-400 text-sm font-medium">Pay Comic BD</div>
               <div className="text-4xl font-extrabold text-white tracking-tight">
                 ${pkg.price.toFixed(2)}
               </div>

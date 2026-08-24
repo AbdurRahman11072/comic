@@ -1,20 +1,20 @@
 "use client";
 
-import { StatCard } from "@/components/dashboard/StatCard";
-import { OverviewCharts } from "@/components/dashboard/OverviewCharts";
 import { DataTable } from "@/components/dashboard/DataTable";
+import { OverviewCharts } from "@/components/dashboard/OverviewCharts";
+import { StatCard } from "@/components/dashboard/StatCard";
+import { authClient } from "@/lib/auth-client";
+import { DashboardStatsResponse } from "@/services/stats.service";
 import {
-  Users,
-  BookOpen,
-  TrendingUp,
-  DollarSign,
-  ArrowUpRight,
-  Bookmark,
-  Sparkles,
+    ArrowUpRight,
+    Bookmark,
+    BookOpen,
+    DollarSign,
+    Sparkles,
+    TrendingUp,
+    Users,
 } from "lucide-react";
 import Link from "next/link";
-import { DashboardStatsResponse } from "@/services/stats.service";
-import { authClient } from "@/lib/auth-client";
 
 interface DashboardOverviewClientProps {
   initialStats?: DashboardStatsResponse | null;
@@ -57,7 +57,7 @@ export function DashboardOverviewClient({
           <p className="text-muted-foreground text-sm">
             {isCreatorScope
               ? `Welcome back, ${displayName}. Here is your live series and performance analytics.`
-              : `Welcome back, ${displayName}. Here's what's happening with Genz Toon today.`}
+              : `Welcome back, ${displayName}. Here's what's happening with Comic BD today.`}
           </p>
         </div>
         <div className="flex items-center gap-3">

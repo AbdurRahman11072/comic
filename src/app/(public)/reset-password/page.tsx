@@ -1,13 +1,13 @@
-import { Suspense } from "react";
-import type { Metadata } from "next";
-import { Loader2 } from "lucide-react";
 import { ResetPasswordClient } from "@/components/auth/ResetPasswordClient";
 import { constructMetadata } from "@/lib/metadata";
+import { Loader2 } from "lucide-react";
+import type { Metadata } from "next";
+import { Suspense } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   return constructMetadata({
-    title: "Reset Password | Genz Toon",
-    description: "Choose a new secure password for your Genz Toon account.",
+    title: "Reset Password | Comic BD",
+    description: "Choose a new secure password for your Comic BD account.",
   });
 }
 

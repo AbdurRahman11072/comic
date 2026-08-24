@@ -10,11 +10,11 @@ const getConfig = async () => {
     config = await prisma.siteConfig.create({
       data: {
         id: 'global',
-        appName: 'Genz Toon',
+        appName: 'Comic BD',
         appTagline: 'Read Trending Webtoons, Manga & Comics',
         heroHeadline: 'Discover Unlimited Stories & Comics',
         heroSubtitle: 'Read high quality manhwa, manga and manhua translated with lightning speed.',
-        announceText: 'Welcome to Genz Toon! Enjoy our latest manhwa and manga collection.',
+        announceText: 'Welcome to Comic BD! Enjoy our latest manhwa and manga collection.',
         announceLink: '/series',
         socialLinks: {
           facebook: '',

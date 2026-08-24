@@ -249,7 +249,7 @@ model FeaturedSeries {
 
 model SiteConfig {
   id             String  @id @default("global")
-  appName        String  @default("Genz Toon")
+  appName        String  @default("Comic BD")
   appTagline     String?
   appLogoUrl     String?
   heroHeadline   String?

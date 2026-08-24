@@ -1,9 +1,9 @@
+import { DashboardOverviewClient } from "@/components/dashboard/overview/DashboardOverviewClient";
 import { statsService } from "@/services/stats.service";
 import { userService } from "@/services/user.service";
-import { DashboardOverviewClient } from "@/components/dashboard/overview/DashboardOverviewClient";
 
 export const metadata = {
-  title: "Dashboard Overview | Genz Toon",
+  title: "Dashboard Overview | Comic BD",
   description: "Live system overview, statistics, and platform analytics.",
 };
 

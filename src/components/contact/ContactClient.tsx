@@ -1,26 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Mail,
-  MessageSquare,
-  Sparkles,
-  Send,
-  Loader2,
-  CheckCircle2,
-  Copy,
-  Check,
-  ShieldAlert,
-  HelpCircle,
-  Clock,
-  ChevronDown,
-  Palette,
-  ExternalLink
-} from "lucide-react";
-import Link from "next/link";
-import { toast } from "react-hot-toast";
 import { SendContactMessageAction } from "@/actions/site";
 import { SiteConfigData } from "@/services/site.service";
+import {
+    Check,
+    CheckCircle2,
+    ChevronDown,
+    Clock,
+    Copy,
+    HelpCircle,
+    Loader2,
+    Mail,
+    MessageSquare,
+    Palette,
+    Send,
+    ShieldAlert,
+    Sparkles
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 interface ContactClientProps {
   config: Partial<SiteConfigData>;
@@ -186,7 +185,7 @@ export function ContactClient({ config }: ContactClientProps) {
               <h3 className="text-base font-bold text-white">Creator Publishing</h3>
               <p className="text-xs text-muted-foreground mt-0.5">Serialize your manga or webcomic</p>
             </div>
-            <p className="text-xs text-muted-foreground">Monetize chapters & keep 70% revenue</p>
+            <p className="text-xs text-muted-foreground">Monetize chapters & keep 100& revenue</p>
           </div>
           <div className="pt-2">
             <Link

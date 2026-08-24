@@ -1,7 +1,7 @@
 import { siteService } from "@/services/site.service";
-import { Sparkles, BookOpen, Users, HeartHandshake, ShieldCheck, Mail } from "lucide-react";
-import Link from "next/link";
+import { BookOpen, HeartHandshake, Mail, Sparkles, Users } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +60,7 @@ export default async function AboutUsPage() {
                 </div>
                 <h3 className="text-base font-bold text-white">Creator Studio First</h3>
                 <p className="text-xs text-muted-foreground">
-                  Empowering independent scanlation groups, artists, and creators with transparent 70% revenue share.
+                  Empowering independent scanlation groups, artists, and creators with transparent 100& revenue share.
                 </p>
               </div>
 

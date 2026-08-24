@@ -1,13 +1,13 @@
-import { Suspense } from "react";
-import type { Metadata } from "next";
-import { Loader2 } from "lucide-react";
 import { VerifyEmailClient } from "@/components/auth/VerifyEmailClient";
 import { constructMetadata } from "@/lib/metadata";
+import { Loader2 } from "lucide-react";
+import type { Metadata } from "next";
+import { Suspense } from "react";
 
 export async function generateMetadata(): Promise<Metadata> {
   return constructMetadata({
-    title: "Verify Email Address | Genz Toon",
-    description: "Verify your email address to activate your Genz Toon account and rewards.",
+    title: "Verify Email Address | Comic BD",
+    description: "Verify your email address to activate your Comic BD account and rewards.",
   });
 }
 

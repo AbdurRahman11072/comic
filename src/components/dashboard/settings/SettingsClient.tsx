@@ -1,20 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Globe, Loader2, Save } from "lucide-react";
-import { toast } from "react-hot-toast";
-import { useSiteConfig } from "@/providers/SiteConfigProvider";
 import { UpdateSiteConfigAction } from "@/actions/site";
+import { useSiteConfig } from "@/providers/SiteConfigProvider";
+import { Globe, Loader2, Save } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
-import { SettingsTabNav, SettingsTabId } from "./SettingsTabNav";
-import { SystemSettingsSection } from "./SystemSettingsSection";
-import { BrandingSettingsSection } from "./BrandingSettingsSection";
 import { AnnouncementSection } from "./AnnouncementSection";
-import { SocialsSection } from "./SocialsSection";
+import { BrandingSettingsSection } from "./BrandingSettingsSection";
 import { EconomySection } from "./EconomySection";
-import { SeoTrackingSection } from "./SeoTrackingSection";
-import { MobileAppSection } from "./MobileAppSection";
 import { LegalSettingsSection } from "./LegalSettingsSection";
+import { MobileAppSection } from "./MobileAppSection";
+import { SeoTrackingSection } from "./SeoTrackingSection";
+import { SettingsTabId, SettingsTabNav } from "./SettingsTabNav";
+import { SocialsSection } from "./SocialsSection";
+import { SystemSettingsSection } from "./SystemSettingsSection";
 
 export interface SettingsClientProps {
   initialConfig?: any;
@@ -33,7 +33,7 @@ function normalizeConfig(data: any = {}) {
     enablePremiumChapters: data.enablePremiumChapters ?? true,
 
     // Branding & Copy
-    appName: data.appName ?? "Genz Toon",
+    appName: data.appName ?? "Comic BD",
     appTagline: data.appTagline ?? "Read Trending Webtoons, Manga & Comics",
     appLogoUrl: data.appLogoUrl ?? "",
     heroHeadline: data.heroHeadline ?? "Discover Unlimited Stories & Comics",
@@ -70,7 +70,7 @@ function normalizeConfig(data: any = {}) {
     customAdScript: data.customAdScript ?? "",
 
     // SEO & Tracking
-    seoTitle: data.seoTitle ?? "Genz Toon - Read Free Manga, Manhwa & Webtoons",
+    seoTitle: data.seoTitle ?? "Comic BD - Read Free Manga, Manhwa & Webtoons",
     seoDescription:
       data.seoDescription ??
       "Read high quality webtoons, manga, and manhwa online for free.",

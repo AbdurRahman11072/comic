@@ -1,11 +1,11 @@
-# Genz Toon — Comic Reading Platform
+# Comic BD — Comic Reading Platform
 
 A full-stack comic/manga/manhwa reading platform with creator monetization, points economy, Stripe payments, and ad revenue sharing. Built with Next.js 16 (App Router) + Express hybrid architecture.
 
 ## Features
 
 - **Reading Experience** — Vertical scroll reader, bookmarks, reading history, chapter fast-pass
-- **Creator Studio** — Series publishing, chapter management, analytics, 70% revenue share
+- **Creator Studio** — Series publishing, chapter management, analytics, 100& revenue share
 - **Points Economy** — Earn points by watching ads, buy via Stripe, unlock premium chapters
 - **Community** — Chapter comments, series reviews, global chat, creator posts
 - **Admin Dashboard** — User/creator management, role control, moderation, reports, backups

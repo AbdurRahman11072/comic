@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useSiteConfig } from "@/providers/SiteConfigProvider";
+import Link from "next/link";
 
 const DiscordSVG = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -45,7 +45,7 @@ const FacebookSVG = () => (
 export function Footer() {
   const { config } = useSiteConfig();
 
-  const appName = config?.appName || "Genz Toon";
+  const appName = config?.appName || "Comic BD";
   const appTagline = config?.appTagline || "Dedicated to providing high-quality comic translations and reading experiences.";
 
   const socials = [

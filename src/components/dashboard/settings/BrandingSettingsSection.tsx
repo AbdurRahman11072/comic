@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Sparkles } from "lucide-react";
 
 interface BrandingSettingsSectionProps {
@@ -24,7 +23,7 @@ export function BrandingSettingsSection({ form, updateField }: BrandingSettingsS
             type="text"
             value={form.appName}
             onChange={(e) => updateField("appName", e.target.value)}
-            placeholder="Genz Toon"
+            placeholder="Comic BD"
             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white font-medium focus:border-primary/50 outline-none"
           />
         </div>

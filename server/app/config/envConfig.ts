@@ -34,6 +34,6 @@ export const envConfig = {
   AUTO_PING_ENABLED: process.env.AUTO_PING_ENABLED === 'true' || process.env.NODE_ENV === 'production' || !!process.env.RENDER || !!process.env.RENDER_EXTERNAL_URL,
 
   RESEND_API_KEY: process.env.RESEND_API_KEY,
-  EMAIL_FROM: process.env.EMAIL_FROM || 'Genz Toon <no-reply@comicbd.com>',
+  EMAIL_FROM: process.env.EMAIL_FROM || 'Comic BD <no-reply@comicbd.com>',
 };
 

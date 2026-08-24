@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
-import { PaymentService, POINT_PACKAGES } from './payment.service';
+import { envConfig } from '../../config/envConfig';
 import asyncHandler from '../../utils/asyncHandler';
 import sendResponse from '../../utils/sendResponse';
-import { envConfig } from '../../config/envConfig';
+import { PaymentService, POINT_PACKAGES } from './payment.service';
 
 const getPackages = asyncHandler(async (req: Request, res: Response) => {
   sendResponse(res, {
@@ -66,7 +66,7 @@ const paymentSuccess = async (req: Request, res: Response) => {
       <div class="container">
         <div class="icon">🌹</div>
         <h1>Payment Successful!</h1>
-        <p>Thank you for your purchase. Your payment was processed successfully, and points have been added to your Genz Toon account.</p>
+        <p>Thank you for your purchase. Your payment was processed successfully, and points have been added to your Comic BD account.</p>
         <a href="${frontendUrl}/shop?success=true" class="btn">Return to Shop</a>
       </div>
     </body>
