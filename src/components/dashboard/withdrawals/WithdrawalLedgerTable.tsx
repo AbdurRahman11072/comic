@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FinancialHistoryData } from "./WithdrawalUtils";
+import type { FinancialHistoryData } from "./WithdrawalUtils";
 
 interface WithdrawalLedgerTableProps {
   historyData: FinancialHistoryData | null;

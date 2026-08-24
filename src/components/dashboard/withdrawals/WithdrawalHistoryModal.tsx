@@ -1,8 +1,8 @@
 "use client";
 
 import { Check, Loader2, Lock, Unlock, X } from "lucide-react";
-import { WithdrawalRequest } from "@/services/withdrawal.service";
-import { FinancialHistoryData } from "./WithdrawalUtils";
+import type { WithdrawalRequest } from "@/services/withdrawal.service";
+import type { FinancialHistoryData } from "./WithdrawalUtils";
 
 import { WithdrawalSummaryHeader } from "./WithdrawalSummaryHeader";
 import { WithdrawalLedgerTable } from "./WithdrawalLedgerTable";

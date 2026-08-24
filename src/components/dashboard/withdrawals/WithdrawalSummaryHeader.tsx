@@ -10,11 +10,11 @@ import {
   Unlock,
 } from "lucide-react";
 import {
-  FinancialHistoryData,
   parsePayoutDetails,
   getPlatformBadgeStyle,
 } from "./WithdrawalUtils";
-import { WithdrawalRequest } from "@/services/withdrawal.service";
+import type { FinancialHistoryData } from "./WithdrawalUtils";
+import type { WithdrawalRequest } from "@/services/withdrawal.service";
 
 interface WithdrawalSummaryHeaderProps {
   selectedRequest: WithdrawalRequest;

@@ -3,10 +3,10 @@
 import React from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import {
-  FinancialHistoryData,
   parsePayoutDetails,
   getPlatformBadgeStyle,
 } from "./WithdrawalUtils";
+import type { FinancialHistoryData } from "./WithdrawalUtils";
 
 interface WithdrawalAccordionListProps {
   historyData: FinancialHistoryData | null;
