@@ -211,28 +211,16 @@ export function Navbar() {
                         My Profile
                       </Link>
                       {userRole === 'user' && config?.allowCreatorApplications !== false && (
-                        <button
-                          onClick={async () => {
-                            setUserMenuOpen(false);
-                            try {
-                              const res = await UpdateCreatorProfileAction({});
-                              if (res.success) {
-                                toast.success("You are now a Creator!");
-                                window.location.href = '/dashboard/channel';
-                              } else {
-                                toast.error(res.message || "Failed to become a creator");
-                              }
-                            } catch (_err) {
-                              toast.error("Failed to become a creator");
-                            }
-                          }}
+                        <Link
+                          href="/creator-benefits"
+                          onClick={() => setUserMenuOpen(false)}
                           className="flex items-center gap-2.5 px-4 py-3 text-[13px] hover:bg-white/5 transition-colors text-emerald-400 font-bold w-full text-left"
                         >
                           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" className="w-4 h-4">
                             <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                           </svg>
                           Be Creator
-                        </button>
+                        </Link>
                       )}
                       {isStaff && (
                         <Link

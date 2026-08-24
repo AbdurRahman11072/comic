@@ -4,6 +4,7 @@ import { admin } from 'better-auth/plugins';
 import { prisma } from './prisma';
 import { envConfig } from '../app/config/envConfig';
 import { generateUniqueReferralCode } from '../app/utils/referralCode';
+import { sendPasswordResetEmail, sendVerificationEmail } from '../app/utils/emailService';
 
 const additionalOrigins = process.env.ADDITIONAL_ORIGINS
   ? process.env.ADDITIONAL_ORIGINS.split(',').map((o) => o.trim())
@@ -120,6 +121,22 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    async sendResetPassword(data) {
+      await sendPasswordResetEmail({
+        to: data.user.email,
+        name: data.user.name,
+        resetUrl: data.url,
+      });
+    },
+  },
+  emailVerification: {
+    async sendVerificationEmail(data) {
+      await sendVerificationEmail({
+        to: data.user.email,
+        name: data.user.name,
+        verificationUrl: data.url,
+      });
+    },
   },
   plugins: [admin()],
 });
