@@ -8,6 +8,7 @@ import { siteService } from "@/services/site.service";
 import { userService } from "@/services/user.service";
 import { BookOpen, Loader2, Plus, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -62,15 +63,27 @@ export function SeriesClient({
   creatorId,
 }: SeriesClientProps) {
   const { data: session } = authClient.useSession();
+  const searchParams = useSearchParams();
+  const initialSearchParam = searchParams.get("search") || "";
+
   const [seriesList, setSeriesList] = useState<UnifiedSeriesItem[]>(initialSeries);
   const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [search, setSearch] = useState(initialSearchParam);
+  const [debouncedSearch, setDebouncedSearch] = useState(initialSearchParam);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [hiddenFilter, setHiddenFilter] = useState("all");
   const [sort, setSort] = useState("latest");
   const [_total, setTotal] = useState(initialTotal || initialSeries.length);
+
+  // Sync URL search param changes
+  useEffect(() => {
+    const query = searchParams.get("search");
+    if (query !== null && query !== search) {
+      setSearch(query);
+      setDebouncedSearch(query);
+    }
+  }, [searchParams]);
 
   const role = userRole?.toLowerCase() || (session?.user as any)?.role?.toLowerCase() || "creator";
   const isModOrAdmin = ["admin", "moderator"].includes(role);

@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/dashboard/Sidebar";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { RouteAuthGuard } from "@/components/common/RouteAuthGuard";
 import { userService } from "@/services/user.service";
 import { redirect } from "next/navigation";
@@ -29,13 +30,7 @@ export default async function DashboardLayout({
       <Sidebar />
 
       <main className="flex-1 md:ml-64 relative min-h-screen flex flex-col">
-        {/* Top bar */}
-        <header className="h-16 border-b border-white/5 flex items-center justify-between px-6 sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-xl z-[90]">
-          <div className="text-sm text-muted-foreground font-medium">
-            Dashboard
-          </div>
-        </header>
-
+        <DashboardHeader />
         {/* Content */}
         <div className="p-6 md:p-8 flex-1">{children}</div>
       </main>
