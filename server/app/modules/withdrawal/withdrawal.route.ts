@@ -4,7 +4,7 @@ import authMiddleware from '../../middleware/authMiddleware';
 
 const router = express.Router();
 
-router.post('/', authMiddleware(['user', 'creator', 'moderator', 'admin']), WithdrawalController.requestWithdrawal);
+router.post('/', authMiddleware(['creator']), WithdrawalController.requestWithdrawal);
 router.get('/my-requests', authMiddleware(['user', 'creator', 'moderator', 'admin']), WithdrawalController.getMyRequests);
 
 export const WithdrawalRoutes = router;

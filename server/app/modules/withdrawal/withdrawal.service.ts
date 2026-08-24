@@ -20,6 +20,10 @@ const requestWithdrawal = async (userId: string, payload: any) => {
 
     if (!user) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
     
+    if (user.role !== 'creator') {
+      throw new AppError(httpStatus.FORBIDDEN, 'Only creators are eligible to request cashout withdrawals.');
+    }
+
     if (user.transactionsFrozen) {
       throw new AppError(httpStatus.FORBIDDEN, 'Your transactions are currently frozen. Please contact support.');
     }

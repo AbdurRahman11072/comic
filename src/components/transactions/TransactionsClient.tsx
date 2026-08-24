@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import { LoginDialog } from "@/components/home/LoginDialog";
 import {
@@ -35,9 +36,13 @@ export function TransactionsClient() {
   const { data: session, isPending: sessionLoading } = useSession();
   const [loginOpen, setLoginOpen] = useState(false);
 
+  const userRole = ((session?.user as any)?.role || "user").toLowerCase();
+  const isCreator = userRole === "creator";
+
   const [balance, setBalance] = useState(0);
   const [isFrozen, setIsFrozen] = useState(false);
   const [isCashOutDisabled, setIsCashOutDisabled] = useState(false);
+  const [allowCreatorApplications, setAllowCreatorApplications] = useState(true);
   const [pointRate, setPointRate] = useState(0.01);
   const [minPoints, setMinPoints] = useState(1000);
   const [payoutMethods, setPayoutMethods] = useState<string[]>(["bKash", "Nagad", "Rocket", "Bank Transfer"]);
@@ -86,6 +91,7 @@ export function TransactionsClient() {
       if (configRes?.success && configRes?.data) {
         const c = configRes.data;
         if (c.enableCashOut !== undefined) setIsCashOutDisabled(!c.enableCashOut);
+        if (c.allowCreatorApplications !== undefined) setAllowCreatorApplications(c.allowCreatorApplications);
         if (c.pointToFiatRate) setPointRate(c.pointToFiatRate);
         if (c.minWithdrawalPoints) setMinPoints(c.minWithdrawalPoints);
         if (c.payoutMethods && Array.isArray(c.payoutMethods) && c.payoutMethods.length > 0) {
@@ -119,7 +125,7 @@ export function TransactionsClient() {
     ? bankDetails.trim().length >= 5
     : phoneNumber.trim().length > 0 || bankDetails.trim().length > 0;
 
-  const canSubmit = numPoints >= minPoints && numPoints <= balance && hasValidDestination;
+  const canSubmit = isCreator && numPoints >= minPoints && numPoints <= balance && hasValidDestination;
 
   const handleQuickPercent = (pct: number) => {
     const calculated = Math.floor(balance * pct);
@@ -128,6 +134,10 @@ export function TransactionsClient() {
 
   const handleWithdrawalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isCreator) {
+      toast.error("Only creators can withdraw money.");
+      return;
+    }
     if (!canSubmit) {
       if (numPoints < minPoints) {
         toast.error(`Minimum withdrawal is ${minPoints.toLocaleString()} points.`);
@@ -236,6 +246,33 @@ export function TransactionsClient() {
                   </p>
                 </div>
               </div>
+            ) : !isCreator ? (
+              <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-white/[0.02] to-transparent border border-emerald-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-lg shadow-emerald-500/5 animate-in fade-in">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow-md">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                      Creator Cashout Only
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                        Creator Feature
+                      </span>
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Only verified creators can withdraw points for fiat currency. Readers can use points to read locked premium chapters and claim rewards.
+                    </p>
+                  </div>
+                </div>
+                {allowCreatorApplications && userRole === "user" && (
+                  <Link
+                    href="/dashboard/channel"
+                    className="px-5 py-2.5 rounded-xl bg-emerald-500 text-black font-bold text-xs hover:bg-emerald-400 transition shrink-0 whitespace-nowrap shadow-md flex items-center justify-center gap-1.5"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" /> Become a Creator
+                  </Link>
+                )}
+              </div>
             ) : null}
 
             {/* Header & Balance Banner */}
@@ -286,6 +323,28 @@ export function TransactionsClient() {
                     <Lock className="w-4 h-4" />
                     Cashout Is Turned Off
                   </button>
+                ) : !isCreator ? (
+                  <div className="flex items-center gap-2">
+                    {allowCreatorApplications && userRole === "user" ? (
+                      <Link
+                        href="/dashboard/channel"
+                        className="px-6 py-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 font-bold text-xs flex items-center gap-2 transition shadow-xl shadow-emerald-500/10 cursor-pointer"
+                        title="Become a Creator to unlock cashout withdrawals"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        Be Creator to Cash Out
+                      </Link>
+                    ) : (
+                      <button
+                        disabled
+                        className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 text-muted-foreground font-bold text-xs flex items-center gap-2 cursor-not-allowed opacity-75"
+                        title="Only creators are eligible to withdraw money"
+                      >
+                        <Lock className="w-4 h-4" />
+                        Cashout (Creators Only)
+                      </button>
+                    )}
+                  </div>
                 ) : (
                   <button
                     id="request-cashout-btn"
@@ -450,18 +509,40 @@ export function TransactionsClient() {
               </p>
             </div>
 
-            <form onSubmit={handleWithdrawalSubmit} className="space-y-5">
-              {/* Balance Summary Pill */}
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
-                <div>
-                  <span className="text-[11px] text-muted-foreground block">Available Balance</span>
-                  <span className="text-lg font-bold text-coin">{balance.toLocaleString()} pts</span>
+            {!isCreator ? (
+              <div className="text-center py-6 space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto shadow-lg">
+                  <Lock className="w-7 h-7" />
                 </div>
-                <div className="text-right">
-                  <span className="text-[11px] text-muted-foreground block">Conversion Rate</span>
-                  <span className="text-xs font-mono text-emerald-400 font-bold">1 pt = ${pointRate} USD</span>
+                <div className="space-y-1.5">
+                  <h3 className="text-lg font-bold text-white">Creator Access Only</h3>
+                  <p className="text-xs text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                    Points cashouts and manual withdrawals are exclusively available to verified Creators. Readers can spend points on chapters and reward features.
+                  </p>
                 </div>
+                {allowCreatorApplications && userRole === "user" && (
+                  <Link
+                    href="/dashboard/channel"
+                    onClick={() => setIsModalOpen(false)}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-500 text-black font-bold text-xs shadow-lg shadow-emerald-500/20 hover:bg-emerald-400 transition"
+                  >
+                    <Sparkles className="w-4 h-4" /> Become a Creator
+                  </Link>
+                )}
               </div>
+            ) : (
+              <form onSubmit={handleWithdrawalSubmit} className="space-y-5">
+                {/* Balance Summary Pill */}
+                <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between">
+                  <div>
+                    <span className="text-[11px] text-muted-foreground block">Available Balance</span>
+                    <span className="text-lg font-bold text-coin">{balance.toLocaleString()} pts</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[11px] text-muted-foreground block">Conversion Rate</span>
+                    <span className="text-xs font-mono text-emerald-400 font-bold">1 pt = ${pointRate} USD</span>
+                  </div>
+                </div>
 
               {/* Points Input */}
               <div className="space-y-1.5">
@@ -673,6 +754,7 @@ export function TransactionsClient() {
                 )}
               </button>
             </form>
+          )}
           </div>
         </div>
       )}
