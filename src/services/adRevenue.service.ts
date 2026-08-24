@@ -36,6 +36,9 @@ export interface DistributionPreviewData {
   grossAmountEntered: number;
   currency: 'USD' | 'POINTS';
   pointRate: number;
+  grossDistributablePool?: number;
+  creatorWalletReserve?: number;
+  netDistributablePool?: number;
   distributablePool: number;
   totalPlatformQualityScore: number;
   totalQualifiedReads: number;

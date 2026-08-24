@@ -332,13 +332,22 @@ const getDistributionPreview = async (
     },
   });
 
-  // 3. Fetch config for fiat rate
+  // 3. Fetch config for fiat rate and calculate gross vs net pool
   const config = await prisma.siteConfig.findUnique({ where: { id: 'global' } });
   const pointRate = config?.pointToFiatRate || 0.01;
-  const distributablePool =
+  const grossDistributablePool =
     currency === 'USD'
       ? Math.floor(amount / pointRate)
       : Math.floor(amount);
+
+  // 3b. Query sum of all current creator wallet balances (Liability Reserve)
+  const creatorWalletsAgg = await prisma.user.aggregate({
+    where: { role: 'creator' },
+    _sum: { points: true },
+  });
+  const creatorWalletReserve = creatorWalletsAgg._sum.points || 0;
+  const netDistributablePool = Math.max(0, grossDistributablePool - creatorWalletReserve);
+  const distributablePool = netDistributablePool;
 
   // 4. Query telemetry overview (raw, bots, guests)
   const [totalRawEvents, totalBotEvents, totalGuestEvents] = await Promise.all([
@@ -505,7 +514,10 @@ const getDistributionPreview = async (
     grossAmountEntered: amount,
     currency,
     pointRate,
-    distributablePool,
+    grossDistributablePool,
+    creatorWalletReserve,
+    netDistributablePool,
+    distributablePool: netDistributablePool,
     totalPlatformQualityScore: Number(totalPlatformQualityScore.toFixed(2)),
     totalQualifiedReads,
     totalEngagedReads,
@@ -558,13 +570,21 @@ const executeDistribution = async (
       );
     }
 
-    // 2. Fetch point to fiat conversion rate
+    // 2. Fetch point to fiat conversion rate and compute Net Pool after Creator Wallet Reserve
     const config = await tx.siteConfig.findUnique({ where: { id: 'global' } });
     const pointRate = config?.pointToFiatRate || 0.01;
-    const distributablePool =
+    const grossDistributablePool =
       currency === 'USD'
         ? Math.floor(amount / pointRate)
         : Math.floor(amount);
+
+    const creatorWalletsAgg = await tx.user.aggregate({
+      where: { role: 'creator' },
+      _sum: { points: true },
+    });
+    const creatorWalletReserve = creatorWalletsAgg._sum.points || 0;
+    const netDistributablePool = Math.max(0, grossDistributablePool - creatorWalletReserve);
+    const distributablePool = netDistributablePool;
 
     // 3. Query and deduplicate qualifying events
     const qualifyingEvents = await tx.chapterReadEvent.findMany({
@@ -662,6 +682,15 @@ const executeDistribution = async (
       );
     }
 
+    const runNotes = [
+      notes,
+      `Gross: ${grossDistributablePool.toLocaleString()} pts`,
+      `Reserve: ${creatorWalletReserve.toLocaleString()} pts`,
+      `Net Pool: ${netDistributablePool.toLocaleString()} pts`,
+    ]
+      .filter(Boolean)
+      .join(' | ');
+
     // 6. Create RevenueDistributionRun
     const run = await tx.revenueDistributionRun.create({
       data: {
@@ -670,14 +699,14 @@ const executeDistribution = async (
         periodEnd,
         grossAmountEntered: amount,
         currency,
-        distributablePool,
+        distributablePool: netDistributablePool,
         totalQualityScore: totalPlatformScore,
         totalQualifiedReads: totalQualified,
         totalEngagedReads: totalEngaged,
         totalCompletedReads: totalCompleted,
         totalCreatorsCount: creatorsList.length,
         status: DistributionStatus.COMPLETED,
-        notes: notes || null,
+        notes: runNotes || null,
       },
     });
 
