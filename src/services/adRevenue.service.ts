@@ -113,6 +113,21 @@ export interface DistributionRunItem {
   }>;
 }
 
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  try {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    const cookieString = cookieStore.toString();
+    if (cookieString) {
+      headers['Cookie'] = cookieString;
+    }
+  } catch (_e) {
+    // Client-side execution
+  }
+  return headers;
+}
+
 export const adRevenueService = {
   /**
    * Sends active reading progress heartbeat
@@ -124,6 +139,24 @@ export const adRevenueService = {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      });
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
+  },
+
+  /**
+   * Records chapter reading telemetry event
+   */
+  async trackReadEvent(payload: TrackReadPayload) {
+    try {
+      const headers = await getAuthHeaders();
+      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/ad-revenue/track`, {
+        method: 'POST',
+        headers,
         credentials: 'include',
         body: JSON.stringify(payload),
       });
@@ -171,11 +204,13 @@ export const adRevenueService = {
         amount: String(params.amount),
         currency: params.currency || 'USD',
       });
+      const headers = await getAuthHeaders();
       const res = await fetch(
         `${env.NEXT_PUBLIC_API_URL}/api/v1/ad-revenue/distribution/preview?${query.toString()}`,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           credentials: 'include',
+          cache: 'no-store',
         }
       );
       return await res.json();
@@ -195,11 +230,12 @@ export const adRevenueService = {
     notes?: string;
   }): Promise<{ success: boolean; data?: any; message?: string }> {
     try {
+      const headers = await getAuthHeaders();
       const res = await fetch(
         `${env.NEXT_PUBLIC_API_URL}/api/v1/ad-revenue/distribution/execute`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           credentials: 'include',
           body: JSON.stringify(payload),
         }
@@ -223,11 +259,14 @@ export const adRevenueService = {
     message?: string;
   }> {
     try {
+      const headers = await getAuthHeaders();
       const res = await fetch(
         `${env.NEXT_PUBLIC_API_URL}/api/v1/ad-revenue/distribution/history?page=${page}&limit=${limit}`,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           credentials: 'include',
+          cache: 'no-store',
+          next: { tags: ['AdRevenueHistory'] },
         }
       );
       return await res.json();
@@ -243,11 +282,13 @@ export const adRevenueService = {
     id: string
   ): Promise<{ success: boolean; data?: DistributionRunItem; message?: string }> {
     try {
+      const headers = await getAuthHeaders();
       const res = await fetch(
         `${env.NEXT_PUBLIC_API_URL}/api/v1/ad-revenue/distribution/${id}`,
         {
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           credentials: 'include',
+          cache: 'no-store',
         }
       );
       return await res.json();
@@ -264,11 +305,12 @@ export const adRevenueService = {
     revertReason?: string
   ): Promise<{ success: boolean; data?: any; message?: string }> {
     try {
+      const headers = await getAuthHeaders();
       const res = await fetch(
         `${env.NEXT_PUBLIC_API_URL}/api/v1/ad-revenue/distribution/${id}/revert`,
         {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           credentials: 'include',
           body: JSON.stringify({ revertReason }),
         }

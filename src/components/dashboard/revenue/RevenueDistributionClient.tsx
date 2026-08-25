@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, subDays, startOfMonth, endOfMonth, subMonths } from "date-fns";
 import {
   adRevenueService,
@@ -49,6 +49,15 @@ export function RevenueDistributionClient({
   const [history, setHistory] = useState<DistributionRunItem[]>(initialHistory);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [inspectRun, setInspectRun] = useState<DistributionRunItem | null>(null);
+
+  // Sync initialHistory from SSR or auto-fetch on mount if empty
+  useEffect(() => {
+    if (initialHistory && initialHistory.length > 0) {
+      setHistory(initialHistory);
+    } else {
+      refreshHistory();
+    }
+  }, [initialHistory]);
 
   // Revert Modal State
   const [revertModalOpen, setRevertModalOpen] = useState(false);
