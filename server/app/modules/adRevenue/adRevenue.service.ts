@@ -191,12 +191,6 @@ const trackReadEvent = async (
 
   const creatorId = chapter.series?.creatorId || null;
 
-  // 1. Run single-session bot heuristics
-  const singleBotResult = evaluateBotDetection(payload);
-
-  // 2. Run multi-session IP farming check
-  const ipBotResult = await checkHighFrequencyIp(clientIp, sessionId);
-
   // Check existing session for in-place upsert
   const existingEvent = await prisma.chapterReadEvent.findUnique({
     where: {
@@ -223,15 +217,24 @@ const trackReadEvent = async (
   );
   const effectiveUserId = userId || existingEvent?.userId || null;
 
-  const isBot =
-    singleBotResult.isBotLikely ||
-    ipBotResult.isHighFrequency ||
-    (existingEvent?.isBotLikely ?? false);
+  // 1. Run single-session bot heuristics on accumulated session telemetry
+  const singleBotResult = evaluateBotDetection({
+    ...payload,
+    durationSeconds: effectiveDuration,
+    pagesViewed: effectivePagesViewed,
+    completionPercent: effectiveCompletionPercent,
+    scrollDepthPercent: effectiveScrollDepth,
+    interactionCount: effectiveInteractions,
+  });
+
+  // 2. Run multi-session IP farming check
+  const ipBotResult = await checkHighFrequencyIp(clientIp, sessionId);
+
+  const isBot = singleBotResult.isBotLikely || ipBotResult.isHighFrequency;
 
   const botReason =
     singleBotResult.botReason ||
     ipBotResult.reason ||
-    existingEvent?.botReason ||
     null;
 
   // Calculate quality classification

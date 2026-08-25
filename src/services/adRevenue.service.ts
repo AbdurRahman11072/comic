@@ -174,10 +174,7 @@ export const adRevenueService = {
     const url = `${env.NEXT_PUBLIC_API_URL}/api/v1/ad-revenue/track`;
     const data = JSON.stringify({ ...payload, isExitBeacon: true });
 
-    if (navigator.sendBeacon) {
-      const blob = new Blob([data], { type: 'application/json' });
-      navigator.sendBeacon(url, blob);
-    } else {
+    try {
       fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -185,6 +182,11 @@ export const adRevenueService = {
         body: data,
         keepalive: true,
       }).catch(() => {});
+    } catch (_e) {
+      if (navigator.sendBeacon) {
+        const blob = new Blob([data], { type: 'application/json' });
+        navigator.sendBeacon(url, blob);
+      }
     }
   },
 
