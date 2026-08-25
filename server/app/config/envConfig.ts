@@ -3,7 +3,11 @@ import path from 'path';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+const appUrl =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  process.env.BETTER_AUTH_URL ||
+  process.env.RENDER_EXTERNAL_URL ||
+  (process.env.PORT ? `http://127.0.0.1:${process.env.PORT}` : 'http://localhost:5000');
 
 export const envConfig = {
   PORT: process.env.PORT || 5000,

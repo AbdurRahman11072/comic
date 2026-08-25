@@ -14,6 +14,9 @@ const trustedOrigins: string[] = Array.from(
   new Set([
     envConfig.APP_URL,
     process.env.NEXT_PUBLIC_APP_URL,
+    process.env.BETTER_AUTH_URL,
+    process.env.RENDER_EXTERNAL_URL,
+    'https://comicbd.onrender.com',
     'http://localhost:3000',
     'http://localhost:5000',
     'http://127.0.0.1:3000',
