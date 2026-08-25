@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio';
 import { prisma } from '../../../lib/prisma';
 import AppError from '../../error/AppError';
 import { deleteFromCloudinary } from '../../utils/cloudinary';
+import { cacheService } from '../../utils/redis';
 
 const formatCreator = (c: any) => {
   if (!c) return null;
@@ -41,129 +42,125 @@ const isPremiumChaptersEnabled = async (): Promise<boolean> => {
 };
 
 const getChapterByNumber = async (seriesSlug: string, number: number, userId?: string) => {
-  const series = await prisma.series.findUnique({
-    where: { slug: seriesSlug },
-    select: { id: true }
-  });
+  const cacheKey = `cache:chapter:${seriesSlug}:${number}`;
+  let baseChapterData = await cacheService.get<any>(cacheKey);
 
-  if (!series) return null;
+  if (!baseChapterData) {
+    const series = await prisma.series.findUnique({
+      where: { slug: seriesSlug },
+      select: { id: true },
+    });
 
-  // Increment series total views when reading a chapter
-  prisma.series.update({
-    where: { id: series.id },
-    data: { totalViews: { increment: 1 } },
-  }).catch(() => null);
+    if (!series) return null;
 
-  const [result, premiumEnabled] = await Promise.all([
-    prisma.chapter.findFirst({
-      where: { 
-        seriesId: series.id,
-        number: Number(number)
-      },
-      include: {
-        images: {
-          orderBy: { order: 'asc' },
+    const [result, premiumEnabled] = await Promise.all([
+      prisma.chapter.findFirst({
+        where: { 
+          seriesId: series.id,
+          number: Number(number),
         },
-        series: {
-          select: {
-            title: true,
-            slug: true,
-            coverUrl: true,
-            creator: {
-              select: {
-                id: true,
-                channelName: true,
-                profileImage: true,
-                description: true,
-                bannerUrl: true,
-                userId: true,
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    image: true,
+        include: {
+          images: {
+            orderBy: { order: 'asc' },
+          },
+          series: {
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              coverUrl: true,
+              creator: {
+                select: {
+                  id: true,
+                  channelName: true,
+                  profileImage: true,
+                  description: true,
+                  bannerUrl: true,
+                  userId: true,
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      image: true,
+                    },
                   },
                 },
               },
             },
           },
         },
-      },
-    }),
-    isPremiumChaptersEnabled(),
-  ]);
-  
-  if (!result) return null;
+      }),
+      isPremiumChaptersEnabled(),
+    ]);
+    
+    if (!result) return null;
+
+    // Find prev and next chapters in parallel
+    const [prevChapter, nextChapter] = await Promise.all([
+      prisma.chapter.findFirst({
+        where: {
+          seriesId: result.seriesId,
+          number: { lt: result.number },
+        },
+        orderBy: { number: 'desc' },
+        select: { number: true },
+      }),
+      prisma.chapter.findFirst({
+        where: {
+          seriesId: result.seriesId,
+          number: { gt: result.number },
+        },
+        orderBy: { number: 'asc' },
+        select: { number: true },
+      }),
+    ]);
+
+    let chapterSeries = result.series;
+    if (chapterSeries) {
+      const creator = formatCreator(chapterSeries.creator);
+      chapterSeries = {
+        ...chapterSeries,
+        creator: creator as any,
+      };
+    }
+
+    baseChapterData = {
+      ...result,
+      series: chapterSeries,
+      premiumEnabled,
+      prevChapterNumber: prevChapter?.number || null,
+      nextChapterNumber: nextChapter?.number || null,
+    };
+
+    await cacheService.set(cacheKey, baseChapterData, 1800);
+  }
+
+  // Increment series total views asynchronously
+  if (baseChapterData.series?.id) {
+    prisma.series.update({
+      where: { id: baseChapterData.series.id },
+      data: { totalViews: { increment: 1 } },
+    }).catch(() => null);
+  }
 
   // If premium chapters are disabled globally by admin, all chapters are unlocked & free
-  const effectivelyLocked = premiumEnabled ? result.isLocked : false;
+  const effectivelyLocked = baseChapterData.premiumEnabled ? baseChapterData.isLocked : false;
 
   // Check if the authenticated user already purchased this chapter
   let isPurchased = !effectivelyLocked;
   if (userId && effectivelyLocked) {
     const purchase = await prisma.chapterPurchase.findUnique({
-      where: { userId_chapterId: { userId, chapterId: result.id } },
+      where: { userId_chapterId: { userId, chapterId: baseChapterData.id } },
     });
     isPurchased = !!purchase;
   }
 
-  // Find prev and next chapters
-  const prevChapter = await prisma.chapter.findFirst({
-    where: {
-      seriesId: result.seriesId,
-      number: { lt: result.number },
-    },
-    orderBy: { number: 'desc' },
-  });
-
-  const nextChapter = await prisma.chapter.findFirst({
-    where: {
-      seriesId: result.seriesId,
-      number: { gt: result.number },
-    },
-    orderBy: { number: 'asc' },
-  });
-
-  let chapterSeries = result.series;
-  if (chapterSeries) {
-    let creator = formatCreator(chapterSeries.creator);
-    if (!creator) {
-      const defaultProfile = await prisma.creatorProfile.findFirst({
-        select: {
-          id: true,
-          channelName: true,
-          profileImage: true,
-          description: true,
-          bannerUrl: true,
-          userId: true,
-          user: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-            },
-          },
-        },
-      });
-      if (defaultProfile) {
-        creator = formatCreator(defaultProfile);
-      }
-    }
-    chapterSeries = {
-      ...chapterSeries,
-      creator: creator as any,
-    };
-  }
-
   return {
-    ...result,
+    ...baseChapterData,
     isLocked: effectivelyLocked,
-    coinCost: effectivelyLocked ? result.coinCost : 0,
-    series: chapterSeries,
-    images: (effectivelyLocked && !isPurchased) ? [] : result.images,
+    coinCost: effectivelyLocked ? baseChapterData.coinCost : 0,
+    images: (effectivelyLocked && !isPurchased) ? [] : baseChapterData.images,
     isPurchased: !effectivelyLocked || isPurchased,
-    prevChapterNumber: prevChapter?.number || null,
-    nextChapterNumber: nextChapter?.number || null,
   };
 };
 
@@ -287,6 +284,10 @@ const createChapter = async (data: any, userId?: string, role?: string) => {
       },
     },
   });
+
+  cacheService.delByPattern('cache:chapter:*').catch(() => null);
+  cacheService.delByPattern('cache:series:*').catch(() => null);
+
   return result;
 };
 
@@ -336,6 +337,10 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
       }),
     },
   });
+
+  cacheService.delByPattern('cache:chapter:*').catch(() => null);
+  cacheService.delByPattern('cache:series:*').catch(() => null);
+
   return result;
 };
 
@@ -366,9 +371,14 @@ const deleteChapter = async (id: string, userId?: string, role?: string) => {
     }
   }
 
-  return await prisma.chapter.delete({
+  const deleted = await prisma.chapter.delete({
     where: { id },
   });
+
+  cacheService.delByPattern('cache:chapter:*').catch(() => null);
+  cacheService.delByPattern('cache:series:*').catch(() => null);
+
+  return deleted;
 };
 
 const extractWebpageImages = async (pageUrl: string) => {

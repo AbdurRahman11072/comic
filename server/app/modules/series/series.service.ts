@@ -264,11 +264,46 @@ const getDiscountedSeries = async () => {
 };
 
 const getSeriesBySlug = async (slug: string, userId?: string) => {
-  const result = await prisma.series.findUnique({
-    where: { slug },
-    include: {
-      genres: true,
-      creator: {
+  const cacheKey = `cache:series:slug:${slug}`;
+  let baseSeries = await cacheService.get<any>(cacheKey);
+
+  if (!baseSeries) {
+    const result = await prisma.series.findUnique({
+      where: { slug },
+      include: {
+        genres: true,
+        creator: {
+          select: {
+            id: true,
+            channelName: true,
+            profileImage: true,
+            bannerUrl: true,
+            description: true,
+            userId: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                image: true,
+              },
+            },
+          },
+        },
+        chapters: {
+          orderBy: { number: 'desc' },
+        },
+        _count: {
+          select: { bookmarks: true },
+        },
+      },
+    });
+
+    if (!result) return null;
+
+    let creator = formatCreator(result.creator);
+    if (!creator) {
+      const defaultProfile = await prisma.creatorProfile.findFirst({
         select: {
           id: true,
           channelName: true,
@@ -285,50 +320,25 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
             },
           },
         },
-      },
-      chapters: {
-        orderBy: { number: 'desc' },
-      },
-      _count: {
-        select: { bookmarks: true },
-      },
-    },
-  });
+      });
+      if (defaultProfile) {
+        creator = formatCreator(defaultProfile);
+      }
+    }
 
-  if (!result) return null;
+    baseSeries = {
+      ...result,
+      creator,
+    };
+
+    await cacheService.set(cacheKey, baseSeries, 300);
+  }
 
   // Increment view count asynchronously
   prisma.series.update({
-    where: { id: result.id },
+    where: { id: baseSeries.id },
     data: { totalViews: { increment: 1 } },
   }).catch(() => null);
-
-  result.totalViews = (result.totalViews || 0) + 1;
-
-  let creator = formatCreator(result.creator);
-  if (!creator) {
-    const defaultProfile = await prisma.creatorProfile.findFirst({
-      select: {
-        id: true,
-        channelName: true,
-        profileImage: true,
-        bannerUrl: true,
-        description: true,
-        userId: true,
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-          },
-        },
-      },
-    });
-    if (defaultProfile) {
-      creator = formatCreator(defaultProfile);
-    }
-  }
 
   const isPremiumChaptersEnabled = async (): Promise<boolean> => {
     try {
@@ -344,7 +354,7 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
 
   const premiumEnabled = await isPremiumChaptersEnabled();
 
-  let chaptersWithPurchaseStatus = result.chapters.map((c) => ({
+  let chaptersWithPurchaseStatus = baseSeries.chapters.map((c: any) => ({
     ...c,
     isLocked: premiumEnabled ? c.isLocked : false,
     coinCost: premiumEnabled ? c.coinCost : 0,
@@ -352,26 +362,26 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
   }));
 
   if (userId) {
-    const isCreator = result.creator?.userId === userId;
+    const isCreator = baseSeries.creator?.userId === userId;
     const [isBookmarked, userRating, purchases] = await Promise.all([
       prisma.bookmark.findUnique({
         where: {
           userId_seriesId: {
             userId,
-            seriesId: result.id,
+            seriesId: baseSeries.id,
           },
         },
       }),
       prisma.review.findFirst({
         where: {
           userId,
-          seriesId: result.id,
+          seriesId: baseSeries.id,
         },
       }),
       prisma.chapterPurchase.findMany({
         where: {
           userId,
-          chapterId: { in: result.chapters.map((c) => c.id) },
+          chapterId: { in: baseSeries.chapters.map((c: any) => c.id) },
         },
         select: { chapterId: true },
       }),
@@ -379,7 +389,7 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
 
     const purchasedSet = new Set(purchases.map((p) => p.chapterId));
 
-    chaptersWithPurchaseStatus = result.chapters.map((c) => {
+    chaptersWithPurchaseStatus = baseSeries.chapters.map((c: any) => {
       const locked = premiumEnabled ? c.isLocked : false;
       return {
         ...c,
@@ -390,8 +400,7 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
     });
 
     return {
-      ...result,
-      creator,
+      ...baseSeries,
       chapters: chaptersWithPurchaseStatus,
       isBookmarked: !!isBookmarked,
       userRating: userRating ? userRating.rating : null,
@@ -399,8 +408,7 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
   }
 
   return {
-    ...result,
-    creator,
+    ...baseSeries,
     chapters: chaptersWithPurchaseStatus,
   };
 };

@@ -2,6 +2,10 @@ import { prisma } from '../../../lib/prisma';
 import { cacheService } from '../../utils/redis';
 
 const getConfig = async () => {
+  const cacheKey = 'cache:site_config:global';
+  const cached = await cacheService.get<any>(cacheKey);
+  if (cached) return cached;
+
   let config = await prisma.siteConfig.findUnique({
     where: { id: 'global' },
   });
@@ -31,7 +35,7 @@ const getConfig = async () => {
 
   // Flatten the config object for the frontend
   const links = (config.socialLinks as any) || {};
-  return {
+  const formatted = {
     ...config,
     facebook: links.facebook || '',
     twitter: links.twitter || '',
@@ -41,6 +45,9 @@ const getConfig = async () => {
     telegram: links.telegram || '',
     reddit: links.reddit || '',
   };
+
+  await cacheService.set(cacheKey, formatted, 600);
+  return formatted;
 };
 
 const updateConfig = async (data: any) => {
@@ -87,6 +94,8 @@ const updateConfig = async (data: any) => {
       ...configData,
     },
   });
+
+  await cacheService.del('cache:site_config:global');
 
   cacheService.delByPattern('cache:*site-config*').catch(() => null);
 
