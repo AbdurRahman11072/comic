@@ -82,38 +82,48 @@ const verifyPaymentAndAddPoints = async (sessionId: string) => {
       const points = parseInt(session.metadata?.points || '0');
 
       if (userId && points > 0) {
-        const payment = await prisma.payment.findUnique({
-          where: { stripeSessionId: sessionId },
+        const credited = await prisma.$transaction(async (tx) => {
+          // Atomically transition from PENDING -> COMPLETED
+          const updateResult = await tx.payment.updateMany({
+            where: {
+              stripeSessionId: sessionId,
+              status: { not: 'COMPLETED' },
+            },
+            data: {
+              status: 'COMPLETED',
+              stripePaymentId: (session.payment_intent as string) || sessionId,
+            },
+          });
+
+          // If another worker/webhook already completed it, skip point credit
+          if (updateResult.count === 0) {
+            return false;
+          }
+
+          // Exactly one transaction credits the user's balance
+          await tx.user.update({
+            where: { id: userId },
+            data: { points: { increment: points } },
+          });
+
+          await tx.pointTransaction.create({
+            data: {
+              userId,
+              amount: points,
+              type: 'BUY_POINTS',
+              description: `Purchased ${points} points via Stripe`,
+            },
+          });
+
+          return true;
         });
 
-        if (payment && payment.status !== 'COMPLETED') {
-          await prisma.$transaction([
-            prisma.payment.update({
-              where: { stripeSessionId: sessionId },
-              data: {
-                status: 'COMPLETED',
-                stripePaymentId: session.payment_intent as string,
-              },
-            }),
-            prisma.user.update({
-              where: { id: userId },
-              data: { points: { increment: points } },
-            }),
-            prisma.pointTransaction.create({
-              data: {
-                userId,
-                amount: points,
-                type: 'BUY_POINTS',
-                description: `Purchased ${points} points via Stripe`,
-              },
-            }),
-          ]);
+        if (credited) {
           console.log(`[Stripe Verification] Successfully added ${points} points to user ${userId}`);
-          return true;
-        } else if (payment && payment.status === 'COMPLETED') {
-          // Already completed
-          return true;
+        } else {
+          console.log(`[Stripe Verification] Payment already completed for session ${sessionId}`);
         }
+        return true;
       }
     }
     return false;
@@ -153,35 +163,46 @@ const handleWebhook = async (sig: string, payload: Buffer) => {
 
     if (userId && points > 0) {
       try {
-        const payment = await prisma.payment.findUnique({
-          where: { stripeSessionId: session.id },
+        const credited = await prisma.$transaction(async (tx) => {
+          // Atomically update status only if not already COMPLETED
+          const updateResult = await tx.payment.updateMany({
+            where: {
+              stripeSessionId: session.id,
+              status: { not: 'COMPLETED' },
+            },
+            data: {
+              status: 'COMPLETED',
+              stripePaymentId: (session.payment_intent as string) || session.id,
+            },
+          });
+
+          // Another concurrent webhook already completed this payment
+          if (updateResult.count === 0) {
+            return false;
+          }
+
+          // Credit points exactly once
+          await tx.user.update({
+            where: { id: userId },
+            data: { points: { increment: points } },
+          });
+
+          await tx.pointTransaction.create({
+            data: {
+              userId,
+              amount: points,
+              type: 'BUY_POINTS',
+              description: `Purchased ${points} points via Stripe`,
+            },
+          });
+
+          return true;
         });
 
-        if (payment && payment.status !== 'COMPLETED') {
-          await prisma.$transaction([
-            prisma.payment.update({
-              where: { stripeSessionId: session.id },
-              data: {
-                status: 'COMPLETED',
-                stripePaymentId: session.payment_intent as string,
-              },
-            }),
-            prisma.user.update({
-              where: { id: userId },
-              data: { points: { increment: points } },
-            }),
-            prisma.pointTransaction.create({
-              data: {
-                userId,
-                amount: points,
-                type: 'BUY_POINTS',
-                description: `Purchased ${points} points via Stripe`,
-              },
-            }),
-          ]);
+        if (credited) {
           console.log(`[Stripe Webhook] Successfully added ${points} points to user ${userId}`);
         } else {
-          console.log(`[Stripe Webhook] Payment already completed or not found for session ${session.id}`);
+          console.log(`[Stripe Webhook] Payment already completed for session ${session.id}, skipping duplicate credit.`);
         }
       } catch (dbError) {
         console.error('[Stripe Webhook] Database error while adding points:', dbError);
