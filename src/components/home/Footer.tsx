@@ -58,20 +58,20 @@ export function Footer() {
   ].filter((s) => Boolean(s.url && s.url.trim()));
 
   return (
-    <footer className="mt-16 py-12 px-4 text-center border-t border-white/5 bg-gradient-to-t from-black/40 to-transparent">
+    <footer className="mt-16 py-12 px-4 text-center border-t border-white/10 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
       <div className="max-w-[72rem] mx-auto space-y-6">
         {/* Brand */}
         <div>
-          <div className="font-heading text-2xl tracking-wider text-white">
+          <div className="font-heading text-3xl tracking-widest text-white font-bold drop-shadow-sm">
             {appName}
           </div>
-          <p className="text-muted-foreground text-xs max-w-md mx-auto mt-2 leading-relaxed">
+          <p className="text-zinc-400 text-xs max-w-md mx-auto mt-2 leading-relaxed font-normal">
             {appTagline}
           </p>
         </div>
 
         {/* Social links */}
-        <div className="flex gap-2.5 justify-center flex-wrap">
+        <div className="flex gap-3 justify-center flex-wrap">
           {socials.map((s) => {
             const Icon = s.icon;
             return (
@@ -80,7 +80,7 @@ export function Footer() {
                 href={s.url!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 glass glass-hover rounded-xl flex items-center justify-center text-white/80 hover:text-white transition-all hover:scale-110"
+                className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/[0.04] border border-white/10 text-zinc-300 hover:text-white hover:border-primary/50 hover:bg-primary/10 transition-all hover:scale-110 shadow-sm"
                 title={s.name}
               >
                 <Icon />
@@ -90,27 +90,27 @@ export function Footer() {
         </div>
 
         {/* Navigation & Legal Links */}
-        <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground flex-wrap">
-          <Link href="/series" className="hover:text-white transition">All Series</Link>
-          <Link href="/rewards" className="hover:text-white transition">Rewards</Link>
-          <Link href="/shop" className="hover:text-white transition">Coin Shop</Link>
-          <Link href="/about" className="hover:text-white transition">About Us</Link>
-          <Link href="/privacy" className="hover:text-white transition text-white/70">Privacy Policy</Link>
-          <Link href="/terms" className="hover:text-white transition text-white/70">Terms of Service</Link>
-          <Link href="/dmca" className="hover:text-white transition text-white/70">DMCA Notice</Link>
+        <div className="flex items-center justify-center gap-6 text-[13px] text-zinc-300 flex-wrap font-medium">
+          <Link href="/series" className="hover:text-primary transition-colors text-zinc-300">All Series</Link>
+          <Link href="/rewards" className="hover:text-primary transition-colors text-zinc-300">Rewards</Link>
+          <Link href="/shop" className="hover:text-primary transition-colors text-zinc-300">Coin Shop</Link>
+          <Link href="/about" className="hover:text-primary transition-colors text-zinc-300">About Us</Link>
+          <Link href="/privacy" className="hover:text-primary transition-colors text-zinc-400">Privacy Policy</Link>
+          <Link href="/terms" className="hover:text-primary transition-colors text-zinc-400">Terms of Service</Link>
+          <Link href="/dmca" className="hover:text-primary transition-colors text-zinc-400">DMCA Notice</Link>
           {config?.playStoreUrl && (
-            <Link href={config.playStoreUrl} target="_blank" className="hover:text-primary transition font-semibold">
+            <Link href={config.playStoreUrl} target="_blank" className="hover:text-primary transition font-semibold text-zinc-200">
               Android App
             </Link>
           )}
           {config?.appStoreUrl && (
-            <Link href={config.appStoreUrl} target="_blank" className="hover:text-primary transition font-semibold">
+            <Link href={config.appStoreUrl} target="_blank" className="hover:text-primary transition font-semibold text-zinc-200">
               iOS App
             </Link>
           )}
         </div>
 
-        <div className="text-[11px] text-white/30 pt-4 border-t border-white/5">
+        <div className="text-xs text-zinc-500 pt-6 border-t border-white/10 font-normal tracking-wide">
           © {new Date().getFullYear()} {appName}. All rights reserved.
         </div>
       </div>
