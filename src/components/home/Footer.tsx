@@ -58,14 +58,16 @@ export function Footer() {
   ].filter((s) => Boolean(s.url && s.url.trim()));
 
   return (
-    <footer className="mt-16 py-12 px-4 text-center border-t border-white/10 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-      <div className="max-w-[72rem] mx-auto space-y-6">
+    <footer className="relative z-20 mt-16 py-14 px-4 text-center bg-[#0d0d10] border-t border-white/[0.08] shadow-2xl">
+      <div className="max-w-[72rem] mx-auto space-y-7">
         {/* Brand */}
         <div>
-          <div className="font-heading text-3xl tracking-widest text-white font-bold drop-shadow-sm">
-            {appName}
-          </div>
-          <p className="text-zinc-400 text-xs max-w-md mx-auto mt-2 leading-relaxed font-normal">
+          <Link href="/" className="inline-block hover:opacity-90 transition">
+            <div className="font-heading text-3xl md:text-4xl tracking-widest text-white font-extrabold uppercase">
+              <span>COMIC</span> <span className="text-primary font-bold">BD</span>
+            </div>
+          </Link>
+          <p className="text-gray-300 text-sm max-w-lg mx-auto mt-2 leading-relaxed font-normal">
             {appTagline}
           </p>
         </div>
@@ -80,7 +82,7 @@ export function Footer() {
                 href={s.url!}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/[0.04] border border-white/10 text-zinc-300 hover:text-white hover:border-primary/50 hover:bg-primary/10 transition-all hover:scale-110 shadow-sm"
+                className="w-11 h-11 rounded-2xl flex items-center justify-center bg-white/[0.08] border border-white/15 text-white hover:text-primary hover:border-primary/60 hover:bg-primary/10 transition-all hover:scale-110 shadow-md"
                 title={s.name}
               >
                 <Icon />
@@ -90,27 +92,27 @@ export function Footer() {
         </div>
 
         {/* Navigation & Legal Links */}
-        <div className="flex items-center justify-center gap-6 text-[13px] text-zinc-300 flex-wrap font-medium">
-          <Link href="/series" className="hover:text-primary transition-colors text-zinc-300">All Series</Link>
-          <Link href="/rewards" className="hover:text-primary transition-colors text-zinc-300">Rewards</Link>
-          <Link href="/shop" className="hover:text-primary transition-colors text-zinc-300">Coin Shop</Link>
-          <Link href="/about" className="hover:text-primary transition-colors text-zinc-300">About Us</Link>
-          <Link href="/privacy" className="hover:text-primary transition-colors text-zinc-400">Privacy Policy</Link>
-          <Link href="/terms" className="hover:text-primary transition-colors text-zinc-400">Terms of Service</Link>
-          <Link href="/dmca" className="hover:text-primary transition-colors text-zinc-400">DMCA Notice</Link>
+        <div className="flex items-center justify-center gap-7 text-sm text-gray-200 flex-wrap font-medium">
+          <Link href="/series" className="text-gray-200 hover:text-primary transition-colors font-medium">All Series</Link>
+          <Link href="/rewards" className="text-gray-200 hover:text-primary transition-colors font-medium">Rewards</Link>
+          <Link href="/shop" className="text-gray-200 hover:text-primary transition-colors font-medium">Coin Shop</Link>
+          <Link href="/about" className="text-gray-200 hover:text-primary transition-colors font-medium">About Us</Link>
+          <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
+          <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link>
+          <Link href="/dmca" className="text-gray-400 hover:text-white transition-colors">DMCA Notice</Link>
           {config?.playStoreUrl && (
-            <Link href={config.playStoreUrl} target="_blank" className="hover:text-primary transition font-semibold text-zinc-200">
+            <Link href={config.playStoreUrl} target="_blank" className="hover:text-primary transition font-semibold text-white">
               Android App
             </Link>
           )}
           {config?.appStoreUrl && (
-            <Link href={config.appStoreUrl} target="_blank" className="hover:text-primary transition font-semibold text-zinc-200">
+            <Link href={config.appStoreUrl} target="_blank" className="hover:text-primary transition font-semibold text-white">
               iOS App
             </Link>
           )}
         </div>
 
-        <div className="text-xs text-zinc-500 pt-6 border-t border-white/10 font-normal tracking-wide">
+        <div className="text-xs text-gray-400 pt-6 border-t border-white/[0.08] font-normal tracking-wide">
           © {new Date().getFullYear()} {appName}. All rights reserved.
         </div>
       </div>
