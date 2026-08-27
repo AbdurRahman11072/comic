@@ -39,15 +39,52 @@ export function AdBanner({ placement, className = "", slotName }: AdBannerProps)
     }
   }, [ad?.id]);
 
-  // Handle AdSense script push
+  const adInsRef = useRef<HTMLModElement>(null);
+  const isPushed = useRef(false);
+
+  // Handle AdSense script push safely when element is rendered with non-zero width
   useEffect(() => {
-    if (ad?.provider === "ADSENSE" && typeof window !== "undefined") {
-      try {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-      } catch (e) {
-        console.error("AdSense push error", e);
-      }
+    if (ad?.provider !== "ADSENSE" || typeof window === "undefined" || isPushed.current) {
+      return;
     }
+
+    const tryPushAd = () => {
+      if (isPushed.current) return;
+      const el = adInsRef.current;
+      if (el && el.offsetWidth > 0) {
+        const status = el.getAttribute("data-adsbygoogle-status");
+        if (!status) {
+          try {
+            ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+            isPushed.current = true;
+          } catch (_e) {
+            // Suppress AdSense push timing errors
+          }
+        }
+      }
+    };
+
+    // Attempt push after next frame and resize observation
+    const frameId = requestAnimationFrame(tryPushAd);
+    const timer = setTimeout(tryPushAd, 250);
+
+    let observer: ResizeObserver | null = null;
+    if (adInsRef.current && typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect.width > 0) {
+            tryPushAd();
+          }
+        }
+      });
+      observer.observe(adInsRef.current);
+    }
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      clearTimeout(timer);
+      if (observer) observer.disconnect();
+    };
   }, [ad]);
 
   if (isLoading || !ad) {
@@ -61,10 +98,11 @@ export function AdBanner({ placement, className = "", slotName }: AdBannerProps)
         <span className="text-[9px] uppercase tracking-widest text-muted-foreground/60 mb-1">
           Advertisement
         </span>
-        <div className="w-full flex justify-center min-h-[90px] bg-white/[0.02] border border-white/5 rounded-2xl p-2 overflow-hidden">
+        <div className="w-full min-w-[280px] flex justify-center min-h-[90px] bg-white/[0.02] border border-white/5 rounded-2xl p-2 overflow-hidden">
           <ins
+            ref={adInsRef}
             className="adsbygoogle"
-            style={{ display: "block", textAlign: "center" }}
+            style={{ display: "block", width: "100%", minHeight: "90px", textAlign: "center" }}
             data-ad-client={ad.adClient || process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "ca-pub-8848458851675460"}
             data-ad-slot={ad.adSlotId}
             data-ad-format="auto"

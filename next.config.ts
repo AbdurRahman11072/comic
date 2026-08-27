@@ -2,11 +2,11 @@ import type { NextConfig } from "next";
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://pagead2.googlesyndication.com https://adservice.google.com https://www.googletagservices.com https://tpc.googlesyndication.com https://js.stripe.com https://www.google.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://pagead2.googlesyndication.com https://adservice.google.com https://www.googletagservices.com https://tpc.googlesyndication.com https://js.stripe.com https://www.google.com https://*.adtrafficquality.google https://partner.googleadservices.com https://*.doubleclick.net;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' blob: data: https: http:;
   font-src 'self' https://fonts.gstatic.com data:;
-  frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://js.stripe.com https://hooks.stripe.com;
+  frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://js.stripe.com https://hooks.stripe.com https://*.doubleclick.net;
   connect-src 'self' https: http: ws: wss:;
   media-src 'self' https: http: blob: data:;
   object-src 'none';
