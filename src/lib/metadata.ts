@@ -44,7 +44,13 @@ export async function constructMetadata({
   const finalDescription = description || appDescription;
   const finalKeywords = keywords ? keywords.join(", ") : metaKeywords;
 
+  const appBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    "https://comicbd.onrender.com";
+
   return {
+    metadataBase: new URL(appBaseUrl),
     title: finalTitle,
     description: finalDescription,
     keywords: finalKeywords,

@@ -35,13 +35,7 @@ export const envConfig = {
   RENDER_EXTERNAL_URL: process.env.RENDER_EXTERNAL_URL,
   KEEP_ALIVE_URL: process.env.KEEP_ALIVE_URL,
   KEEP_ALIVE_INTERVAL_MINUTES: Number(process.env.KEEP_ALIVE_INTERVAL_MINUTES) || 10,
-  AUTO_PING_ENABLED: process.env.AUTO_PING_ENABLED === 'true' || process.env.NODE_ENV === 'production' || !!process.env.RENDER || !!process.env.RENDER_EXTERNAL_URL,
-
-  EMAILJS_SERVICE_ID: process.env.EMAILJS_SERVICE_ID,
-  EMAILJS_TEMPLATE_ID: process.env.EMAILJS_TEMPLATE_ID,
-  EMAILJS_PUBLIC_KEY: process.env.EMAILJS_PUBLIC_KEY || process.env.EMAILJS_USER_ID,
-  EMAILJS_PRIVATE_KEY: process.env.EMAILJS_PRIVATE_KEY,
   RESEND_API_KEY: process.env.RESEND_API_KEY,
-  EMAIL_FROM: process.env.EMAIL_FROM || 'Comic BD <no-reply@comicbd.com>',
+  EMAIL_FROM: process.env.EMAIL_FROM || 'Comic BD <onboarding@resend.dev>',
 };
 

@@ -125,6 +125,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     async sendResetPassword(data) {
+      console.log(`[BetterAuth] sendResetPassword triggered for user: ${data.user.email}`);
       await sendPasswordResetEmail({
         to: data.user.email,
         name: data.user.name,
@@ -134,6 +135,7 @@ export const auth = betterAuth({
   },
   emailVerification: {
     async sendVerificationEmail(data) {
+      console.log(`[BetterAuth] sendVerificationEmail triggered for user: ${data.user.email}`);
       await sendVerificationEmail({
         to: data.user.email,
         name: data.user.name,

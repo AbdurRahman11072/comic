@@ -134,6 +134,7 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
 
               <SeriesActions
                 seriesId={series.id}
+                seriesTitle={series.title}
                 isBookmarked={series.isBookmarked}
                 slug={series.slug}
                 lastReadChapterNumber={series.lastReadChapterNumber}

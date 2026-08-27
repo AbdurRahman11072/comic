@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { BookOpen, Bookmark, Share2, Loader2, Link as LinkIcon, MessageCircle, Send } from "lucide-react";
+import { BookOpen, Bookmark, Share2, Loader2, Link as LinkIcon, MessageCircle, Send, Flag } from "lucide-react";
 import Link from "next/link";
 import { ToggleBookmarkAction } from "@/actions/user";
+import { ReportModal } from "@/components/common/ReportModal";
 import { toast } from "react-hot-toast";
 
 const FacebookIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
@@ -14,6 +15,7 @@ const FacebookIcon = ({ className = "w-4 h-4" }: { className?: string }) => (
 
 interface SeriesActionsProps {
   seriesId?: string;
+  seriesTitle?: string;
   slug: string;
   lastReadChapterNumber?: number | null;
   isBookmarked?: boolean;
@@ -21,6 +23,7 @@ interface SeriesActionsProps {
 
 export function SeriesActions({
   seriesId,
+  seriesTitle,
   slug,
   lastReadChapterNumber,
   isBookmarked = false,
@@ -28,6 +31,7 @@ export function SeriesActions({
   const [bookmarked, setBookmarked] = useState(isBookmarked);
   const [loading, setLoading] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const shareRef = useRef<HTMLDivElement>(null);
 
   const firstChapterHref = `/series/${slug}/chapter-1`;
@@ -87,7 +91,7 @@ export function SeriesActions({
         </Link>
       </div>
 
-      {/* Bookmark + Share */}
+      {/* Bookmark + Share + Report */}
       <div className="flex gap-2 relative" ref={shareRef}>
         <button
           onClick={handleBookmark}
@@ -101,16 +105,26 @@ export function SeriesActions({
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Bookmark className={`w-4 h-4 ${bookmarked ? "fill-cyan-400" : ""}`} />}
           {bookmarked ? "Bookmarked" : "Bookmark"}
         </button>
+
         <button 
           onClick={() => setShareOpen(!shareOpen)}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg glass glass-hover text-foreground/70 transition-all font-semibold text-sm"
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg glass glass-hover text-foreground/70 transition-all font-semibold text-sm"
+          title="Share Series"
         >
           <Share2 className="w-4 h-4" />
         </button>
 
+        <button 
+          onClick={() => setReportOpen(true)}
+          className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg glass glass-hover text-foreground/70 hover:text-red-400 hover:border-red-500/30 transition-all font-semibold text-sm"
+          title="Report Series"
+        >
+          <Flag className="w-4 h-4" />
+        </button>
+
         {/* Share Menu */}
         {shareOpen && (
-          <div className="absolute right-0 bottom-full mb-2 w-48 p-2 rounded-xl glass border border-white/10 shadow-2xl z-50 flex flex-col gap-1">
+          <div className="absolute right-0 bottom-full mb-2 w-48 p-2 rounded-xl glass border border-white/10 shadow-2xl z-50 flex flex-col gap-1 bg-[#15151b]">
             <a 
               href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
               target="_blank" rel="noopener noreferrer"
@@ -140,6 +154,17 @@ export function SeriesActions({
           </div>
         )}
       </div>
+
+      {/* Report Modal */}
+      {seriesId && (
+        <ReportModal
+          isOpen={reportOpen}
+          onClose={() => setReportOpen(false)}
+          targetType="series"
+          targetId={seriesId}
+          targetTitle={seriesTitle}
+        />
+      )}
     </div>
   );
 }
