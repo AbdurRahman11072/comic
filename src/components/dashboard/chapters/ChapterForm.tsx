@@ -393,15 +393,23 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
       const finalImages: { url: string; order: number }[] = [];
       const totalPages = pages.length;
 
+      setProgressInfo({
+        title: totalPages > 0 ? "Uploading Chapter Pages" : "Preparing Chapter",
+        current: 0,
+        total: totalPages,
+        percent: 5,
+        statusText: totalPages > 0 ? `Preparing 1 of ${totalPages} pages for upload...` : "Preparing chapter data...",
+      });
+
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i];
-        const pct = Math.round(((i + 1) / totalPages) * 100);
+        const startPct = Math.max(5, Math.round((i / totalPages) * 80));
 
         setProgressInfo({
           title: "Uploading Chapter Pages",
           current: i + 1,
           total: totalPages,
-          percent: pct,
+          percent: startPct,
           statusText: `Uploading page ${i + 1} of ${totalPages} to cloud storage...`,
         });
 
@@ -417,14 +425,23 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
         } else {
           finalImages.push({ url: page.existingUrl || page.previewUrl || "", order: i + 1 });
         }
+
+        const donePct = Math.round(((i + 1) / totalPages) * 80);
+        setProgressInfo({
+          title: "Uploading Chapter Pages",
+          current: i + 1,
+          total: totalPages,
+          percent: donePct,
+          statusText: `Uploaded page ${i + 1} of ${totalPages}...`,
+        });
       }
 
       setProgressInfo({
-        title: "Saving Chapter",
-        current: 100,
-        total: 100,
-        percent: 100,
-        statusText: "Finalizing chapter database records...",
+        title: isDraft ? "Saving Draft" : "Publishing Chapter",
+        current: totalPages,
+        total: totalPages,
+        percent: 85,
+        statusText: "Writing chapter and image records to database...",
       });
 
       const payload = {
@@ -440,10 +457,24 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
       if (initialData && initialData.id) {
         const res = await UpdateChapterAction(initialData.id, payload);
         if (!res.success) throw new Error(res.message);
+        setProgressInfo({
+          title: "Complete",
+          current: totalPages,
+          total: totalPages,
+          percent: 100,
+          statusText: isDraft ? "Draft saved successfully!" : "Chapter updated successfully!",
+        });
         toast.success(isDraft ? "Draft chapter saved!" : "Chapter updated successfully!");
       } else {
         const res = await CreateChapterAction(payload);
         if (!res.success) throw new Error(res.message);
+        setProgressInfo({
+          title: "Complete",
+          current: totalPages,
+          total: totalPages,
+          percent: 100,
+          statusText: isDraft ? "Draft saved successfully!" : "Chapter published successfully!",
+        });
         toast.success(isDraft ? "Draft chapter saved!" : "Chapter published successfully!");
       }
 
