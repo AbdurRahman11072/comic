@@ -12,6 +12,7 @@ import { SeriesBasicInfoSection } from "./SeriesBasicInfoSection";
 import { SeriesVisualsSection } from "./SeriesVisualsSection";
 import { SeriesGenreSelector } from "./SeriesGenreSelector";
 import { LoadingProgressModal, ProgressState } from "@/components/ui/LoadingProgressModal";
+import { FeedbackModal, FeedbackState } from "@/components/ui/FeedbackModal";
 
 interface SeriesFormProps {
   initialData?: Series;
@@ -21,6 +22,7 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [progressInfo, setProgressInfo] = useState<ProgressState | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [genres, setGenres] = useState<string[]>(initialData?.genres.map((g) => g.name) || []);
   const [genreInput, setGenreInput] = useState("");
 
@@ -96,7 +98,11 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
 
   const handleSave = async (isDraft: boolean = false) => {
     if (!formData.title.trim()) {
-      toast.error("Series title is required.");
+      setFeedback({
+        type: "error",
+        title: "Title Required",
+        message: "Please provide a title for the comic series.",
+      });
       return;
     }
 
@@ -156,27 +162,41 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
       if (initialData) {
         const res = await UpdateSeriesAction(initialData.id, payload);
         if (!res.success) throw new Error(res.message);
-        setProgressInfo({
-          title: "Complete",
-          percent: 100,
-          statusText: isDraft ? "Draft saved successfully!" : "Series updated successfully!",
+        setFeedback({
+          type: "success",
+          title: isDraft ? "Draft Saved!" : "Series Updated!",
+          message: isDraft
+            ? "Your draft series details have been saved."
+            : `${formData.title} has been updated successfully.`,
+          actionText: "Go to Series List",
+          onAction: () => {
+            router.push("/dashboard/series");
+            router.refresh();
+          },
         });
-        toast.success(isDraft ? "Draft saved successfully!" : "Series updated successfully!");
       } else {
         const res = await CreateSeriesAction(payload);
         if (!res.success) throw new Error(res.message);
-        setProgressInfo({
-          title: "Complete",
-          percent: 100,
-          statusText: isDraft ? "Draft saved successfully!" : "Series published successfully!",
+        setFeedback({
+          type: "success",
+          title: isDraft ? "Draft Saved!" : "Series Published!",
+          message: isDraft
+            ? "Your draft series has been saved."
+            : `${formData.title} has been published successfully!`,
+          actionText: "Go to Series List",
+          onAction: () => {
+            router.push("/dashboard/series");
+            router.refresh();
+          },
         });
-        toast.success(isDraft ? "Draft saved successfully!" : "Series published successfully!");
       }
-      router.push("/dashboard/series");
-      router.refresh();
     } catch (error: any) {
       console.error("Failed to save series:", error);
-      toast.error(error.message || "Failed to save series.");
+      setFeedback({
+        type: "error",
+        title: "Failed to Save Series",
+        message: error.message || "An unexpected error occurred while saving the series.",
+      });
     } finally {
       setLoading(false);
       setProgressInfo(null);
@@ -187,6 +207,9 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
     <div className="space-y-8 max-w-5xl">
       {/* Shared Progress Modal */}
       <LoadingProgressModal progressInfo={progressInfo} />
+
+      {/* Action / Error Feedback Modal */}
+      <FeedbackModal feedback={feedback} onClose={() => setFeedback(null)} />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

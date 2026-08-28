@@ -26,6 +26,7 @@ import { ChapterProgressBar, ProgressState } from "./ChapterProgressBar";
 import { ChapterExternalImporters, IngestionMode } from "./ChapterExternalImporters";
 import { ChapterPageGrid } from "./ChapterPageGrid";
 import { ChapterPageItemData } from "./ChapterPageItem";
+import { FeedbackModal, FeedbackState } from "@/components/ui/FeedbackModal";
 
 export interface ChapterFormProps {
   initialData?: any;
@@ -38,6 +39,7 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
   const [isScrapingUrl, setIsScrapingUrl] = useState(false);
   const [isDownloadingZip, setIsDownloadingZip] = useState(false);
   const [progressInfo, setProgressInfo] = useState<ProgressState | null>(null);
+  const [feedback, setFeedback] = useState<FeedbackState | null>(null);
   const [seriesList, setSeriesList] = useState<{ id: string; title: string; coverUrl?: string }[]>([]);
   const [activeTab, setActiveTab] = useState<IngestionMode>("files");
 
@@ -125,7 +127,6 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
         },
       ]);
       setImageUrlInput("");
-      toast.success("Page URL added to chapter list");
     }
   };
 
@@ -143,7 +144,6 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
     }));
 
     setPages((prev) => [...prev, ...newPages]);
-    toast.success(`Loaded ${files.length} images!`);
 
     if (imageInputRef.current) {
       imageInputRef.current.value = "";
@@ -172,7 +172,11 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
       });
 
       if (extractedImages.length === 0) {
-        toast.error("No valid image files found inside ZIP/CBZ.");
+        setFeedback({
+          type: "error",
+          title: "Empty Archive",
+          message: "No valid image files (.jpg, .png, .webp) were found inside the selected ZIP/CBZ archive.",
+        });
         return;
       }
 
@@ -184,10 +188,13 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
       }));
 
       setPages((prev) => [...prev, ...newPages]);
-      toast.success(`Extracted and sorted ${extractedImages.length} pages from ${file.name}!`);
     } catch (err: any) {
       console.error("ZIP extraction error:", err);
-      toast.error(err?.message || "Failed to extract ZIP file.");
+      setFeedback({
+        type: "error",
+        title: "ZIP Extraction Failed",
+        message: err?.message || "Failed to extract images from the ZIP archive.",
+      });
     } finally {
       setIsProcessingZip(false);
       setProgressInfo(null);
@@ -227,21 +234,28 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
         order: pages.length + idx + 1,
       }));
       setPages((prev) => [...prev, ...newPages]);
-      toast.success(`Loaded ${imageFiles.length} dropped images!`);
     }
   };
 
   const handleScrapeWebpageUrl = async () => {
     const trimmed = webpageUrlInput.trim();
     if (!trimmed) {
-      toast.error("Please enter a valid webpage URL");
+      setFeedback({
+        type: "error",
+        title: "Missing Webpage URL",
+        message: "Please enter a valid manga chapter webpage URL to scrape.",
+      });
       return;
     }
 
     try {
       new URL(trimmed);
     } catch {
-      toast.error("Invalid URL format");
+      setFeedback({
+        type: "error",
+        title: "Invalid URL",
+        message: "The entered URL format is invalid. Please enter a full URL (e.g. https://example.com/chapter-1).",
+      });
       return;
     }
 
@@ -270,10 +284,13 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
 
       setPages((prev) => [...prev, ...newPages]);
       setWebpageUrlInput("");
-      toast.success(`Successfully extracted ${scrapedImages.length} images from webpage!`);
     } catch (err: any) {
       console.error("Webpage scrape error:", err);
-      toast.error(err?.message || "Failed to scrape images from webpage.");
+      setFeedback({
+        type: "error",
+        title: "Webpage Scrape Failed",
+        message: err?.message || "Failed to extract images from the provided webpage URL.",
+      });
     } finally {
       setIsScrapingUrl(false);
       setProgressInfo(null);
@@ -291,13 +308,16 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
     if (pages.length === 0) return;
     if (confirm(`Remove all ${pages.length} pages from this chapter?`)) {
       setPages([]);
-      toast.success("All pages cleared.");
     }
   };
 
   const handleDownloadZip = async () => {
     if (pages.length === 0) {
-      toast.error("No pages to download.");
+      setFeedback({
+        type: "error",
+        title: "No Pages Available",
+        message: "There are no chapter pages to bundle into a ZIP archive.",
+      });
       return;
     }
 
@@ -330,11 +350,13 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
           statusText: statusText || `Packaging page ${current} of ${total}...`,
         });
       });
-
-      toast.success("ZIP archive downloaded successfully!");
     } catch (err: any) {
       console.error("Zip download failed:", err);
-      toast.error("Failed to generate ZIP archive.");
+      setFeedback({
+        type: "error",
+        title: "ZIP Download Failed",
+        message: err?.message || "Failed to generate chapter ZIP archive.",
+      });
     } finally {
       setIsDownloadingZip(false);
       setProgressInfo(null);
@@ -375,15 +397,27 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
 
   const handleSave = async (isDraft: boolean = false) => {
     if (!formData.seriesId) {
-      toast.error("Please select a series first.");
+      setFeedback({
+        type: "error",
+        title: "Series Not Selected",
+        message: "Please choose a comic series for this chapter before saving.",
+      });
       return;
     }
     if (!formData.number && formData.number !== 0) {
-      toast.error("Chapter number is required.");
+      setFeedback({
+        type: "error",
+        title: "Missing Chapter Number",
+        message: "Please enter a valid chapter number.",
+      });
       return;
     }
     if (pages.length === 0 && !isDraft) {
-      toast.error("Please upload at least one page for this chapter.");
+      setFeedback({
+        type: "error",
+        title: "No Chapter Pages",
+        message: "Please upload at least one page for this chapter before publishing.",
+      });
       return;
     }
 
@@ -457,32 +491,41 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
       if (initialData && initialData.id) {
         const res = await UpdateChapterAction(initialData.id, payload);
         if (!res.success) throw new Error(res.message);
-        setProgressInfo({
-          title: "Complete",
-          current: totalPages,
-          total: totalPages,
-          percent: 100,
-          statusText: isDraft ? "Draft saved successfully!" : "Chapter updated successfully!",
+        setFeedback({
+          type: "success",
+          title: isDraft ? "Draft Saved!" : "Chapter Updated!",
+          message: isDraft
+            ? "Your draft chapter has been saved successfully."
+            : `Chapter ${formData.number} has been updated successfully.`,
+          actionText: "Go to Series",
+          onAction: () => {
+            router.push(`/dashboard/series/${formData.seriesId}`);
+            router.refresh();
+          },
         });
-        toast.success(isDraft ? "Draft chapter saved!" : "Chapter updated successfully!");
       } else {
         const res = await CreateChapterAction(payload);
         if (!res.success) throw new Error(res.message);
-        setProgressInfo({
-          title: "Complete",
-          current: totalPages,
-          total: totalPages,
-          percent: 100,
-          statusText: isDraft ? "Draft saved successfully!" : "Chapter published successfully!",
+        setFeedback({
+          type: "success",
+          title: isDraft ? "Draft Saved!" : "Chapter Published!",
+          message: isDraft
+            ? "Your draft chapter has been saved successfully."
+            : `Chapter ${formData.number} has been published successfully.`,
+          actionText: "Go to Series",
+          onAction: () => {
+            router.push(`/dashboard/series/${formData.seriesId}`);
+            router.refresh();
+          },
         });
-        toast.success(isDraft ? "Draft chapter saved!" : "Chapter published successfully!");
       }
-
-      router.push(`/dashboard/series/${formData.seriesId}`);
-      router.refresh();
     } catch (error: any) {
       console.error("Failed to save chapter:", error);
-      toast.error(error?.message || "Failed to save chapter.");
+      setFeedback({
+        type: "error",
+        title: "Cannot Save Chapter",
+        message: error?.message || "Failed to save chapter.",
+      });
     } finally {
       setLoading(false);
       setProgressInfo(null);
@@ -595,6 +638,9 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
 
       {/* Real-time Upload Progress Bar */}
       <ChapterProgressBar progressInfo={progressInfo} />
+
+      {/* Action / Error Feedback Modal */}
+      <FeedbackModal feedback={feedback} onClose={() => setFeedback(null)} />
 
       {/* 2-Column Studio Grid Layout */}
       <div className="grid gap-8 lg:grid-cols-12 items-start">
