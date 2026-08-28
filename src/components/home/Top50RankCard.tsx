@@ -86,9 +86,9 @@ export function Top50RankCard({ series, periodLabel }: Top50RankCardProps) {
 
         {/* Period Views Banner at Bottom of Cover */}
         <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[11px] text-white z-10">
-          <span className="flex items-center gap-1 font-bold text-amber-300 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10">
+          <span className="flex items-center gap-1 font-bold text-amber-300 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded-md border border-white/10" title="Total Views">
             <Eye className="w-3 h-3 text-amber-400" />
-            {(series.periodViews || series.totalViews || 0).toLocaleString()}
+            {(series.totalViews ?? 0).toLocaleString()}
           </span>
           <span className="flex items-center gap-1 font-bold text-yellow-400 bg-black/70 backdrop-blur-md px-1.5 py-0.5 rounded-md border border-white/10">
             <Star className="w-3 h-3 fill-yellow-400" />

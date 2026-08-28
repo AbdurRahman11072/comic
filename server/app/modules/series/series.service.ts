@@ -678,39 +678,15 @@ const getFeaturedSeries = async () => {
 };
 
 const getTop50Series = async (period: 'today' | 'weekly' | 'monthly' = 'today') => {
-  const now = new Date();
-  let startDate: Date;
-
-  if (period === 'today') {
-    startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-  } else if (period === 'weekly') {
-    startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  } else {
-    startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  }
-
-  // 1. Group read events in the given timeframe
-  const readEvents = await prisma.chapterReadEvent.groupBy({
-    by: ['seriesId'],
-    where: {
-      createdAt: { gte: startDate },
-      series: { isHidden: false },
-    },
-    _count: { id: true },
-    orderBy: { _count: { id: 'desc' } },
-    take: 50,
-  });
-
-  const periodViewMap: Record<string, number> = {};
-  readEvents.forEach((item) => {
-    if (item.seriesId) {
-      periodViewMap[item.seriesId] = item._count.id;
-    }
-  });
-
-  // 2. Fetch series details
+  // Fetch Top 50 series sorted by totalViews in descending order
   const seriesList = await prisma.series.findMany({
     where: { isHidden: false },
+    orderBy: [
+      { totalViews: 'desc' },
+      { rating: 'desc' },
+      { createdAt: 'desc' },
+    ],
+    take: 50,
     include: {
       genres: true,
       chapters: {
@@ -735,27 +711,11 @@ const getTop50Series = async (period: 'today' | 'weekly' | 'monthly' = 'today') 
     },
   });
 
-  // 3. Sort by period views, fallback to totalViews
-  const ranked = seriesList
-    .map((s) => {
-      const periodViews = periodViewMap[s.id] || 0;
-      return {
-        ...s,
-        periodViews,
-        creator: formatCreator(s.creator),
-      };
-    })
-    .sort((a, b) => {
-      if (b.periodViews !== a.periodViews) {
-        return b.periodViews - a.periodViews;
-      }
-      return (b.totalViews || 0) - (a.totalViews || 0);
-    })
-    .slice(0, 50)
-    .map((s, idx) => ({
-      ...s,
-      rank: idx + 1,
-    }));
+  const ranked = seriesList.map((s, idx) => ({
+    ...s,
+    rank: idx + 1,
+    creator: formatCreator(s.creator),
+  }));
 
   return ranked;
 };
