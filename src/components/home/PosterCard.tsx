@@ -2,6 +2,8 @@ import type { Series } from "@/types";
 import { ChapterItem } from "./ChapterItem";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/providers/LanguageProvider";
+import { useMemo } from "react";
 
 interface PosterCardProps {
   series: Series;
@@ -9,8 +11,22 @@ interface PosterCardProps {
 }
 
 export function PosterCard({ series, className }: PosterCardProps) {
+  const { language } = useLanguage();
   const href = `/series/${series.slug}`;
   const image = series.coverUrl;
+
+  const displayChapters = useMemo(() => {
+    const allChapters = series.chapters || [];
+    if (!allChapters.length) return [];
+
+    const matching = allChapters.filter(
+      (c) => ((c as any).language || "en").toLowerCase() === language.toLowerCase()
+    );
+    if (matching.length > 0) {
+      return matching.slice(0, 3);
+    }
+    return allChapters.slice(0, 3);
+  }, [series.chapters, language]);
 
   return (
     <div
@@ -47,7 +63,7 @@ export function PosterCard({ series, className }: PosterCardProps) {
         </Link>
 
         <div className="flex flex-col">
-          {series.chapters?.slice(0, 3).map((chap, i) => (
+          {displayChapters.map((chap, i) => (
             <ChapterItem
               key={chap.id || `${chap.number}-${(chap as any).language || "en"}-${i}`}
               chapter={{

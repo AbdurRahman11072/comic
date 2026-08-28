@@ -8,11 +8,11 @@ interface SeriesMetaProps {
   lastUpdate: string;
   creator?: {
     id: string;
-    name: string;
+    name?: string | null;
     image?: string | null;
     creatorProfile?: {
       id: string;
-      channelName: string;
+      channelName?: string | null;
       profileImage?: string | null;
       description?: string | null;
     } | null;
@@ -34,7 +34,7 @@ export function SeriesMeta({
   creator,
 }: SeriesMetaProps) {
   const channelId = creator?.creatorProfile?.id || creator?.id;
-  const channelName = creator?.creatorProfile?.channelName || creator?.name;
+  const channelName = creator?.creatorProfile?.channelName || creator?.name || "Creator";
   const channelLogo = creator?.creatorProfile?.profileImage || creator?.image;
 
   return (

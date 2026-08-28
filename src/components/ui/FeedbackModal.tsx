@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AlertCircle, CheckCircle2, Info, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -20,13 +21,19 @@ interface FeedbackModalProps {
 }
 
 export function FeedbackModal({ feedback, onClose }: FeedbackModalProps) {
-  if (!feedback) return null;
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!feedback || !mounted) return null;
 
   const isSuccess = feedback.type === "success";
   const isError = feedback.type === "error";
 
-  return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150">
+  const content = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-150">
       <div className="w-full max-w-md p-6 rounded-2xl bg-card border border-border text-card-foreground shadow-2xl space-y-5 animate-in zoom-in-95 duration-150 text-center relative">
         {/* Close Button */}
         <button
@@ -93,4 +100,6 @@ export function FeedbackModal({ feedback, onClose }: FeedbackModalProps) {
       </div>
     </div>
   );
+
+  return createPortal(content, document.body);
 }

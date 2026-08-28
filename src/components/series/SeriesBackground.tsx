@@ -1,8 +1,10 @@
 interface SeriesBackgroundProps {
-  bgUrl: string;
+  bgUrl?: string | null;
 }
 
 export function SeriesBackground({ bgUrl }: SeriesBackgroundProps) {
+  if (!bgUrl) return null;
+
   return (
     <>
       {/* Full-bleed background image */}

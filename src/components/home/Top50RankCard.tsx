@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { Bookmark, Eye, Flame, Sparkles, Star, Trophy } from "lucide-react";
 import { type Series } from "@/types";
+import { useLanguage } from "@/providers/LanguageProvider";
 
 interface Top50RankCardProps {
   series: Series & { rank?: number; periodViews?: number };
@@ -11,8 +12,17 @@ interface Top50RankCardProps {
 }
 
 export function Top50RankCard({ series, periodLabel }: Top50RankCardProps) {
+  const { language } = useLanguage();
   const rank = series.rank || 1;
-  const latestChapter = series.chapters?.[0];
+
+  const latestChapter = useMemo(() => {
+    const allChapters = series.chapters || [];
+    if (!allChapters.length) return null;
+    const matching = allChapters.filter(
+      (c) => ((c as any).language || "en").toLowerCase() === language.toLowerCase()
+    );
+    return matching[0] || allChapters[0];
+  }, [series.chapters, language]);
 
   const getRankBadgeStyle = (r: number) => {
     if (r === 1) {
@@ -106,10 +116,10 @@ export function Top50RankCard({ series, periodLabel }: Top50RankCardProps) {
         <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px]">
           {latestChapter ? (
             <Link
-              href={`/series/${series.slug}/${latestChapter.number}`}
+              href={`/series/${series.slug}/${latestChapter.number}${(latestChapter as any).language ? `?lang=${(latestChapter as any).language}` : ""}`}
               className="text-[10px] font-bold text-primary bg-primary/10 hover:bg-primary hover:text-white px-2 py-0.5 rounded-md transition"
             >
-              Ch. {latestChapter.number}
+              Ch. {latestChapter.number}{(latestChapter as any).language && (latestChapter as any).language !== "en" ? ` (${(latestChapter as any).language.toUpperCase()})` : ""}
             </Link>
           ) : (
             <span className="text-[10px] text-muted-foreground">Ongoing</span>

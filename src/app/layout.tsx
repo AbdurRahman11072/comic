@@ -5,6 +5,7 @@ import { siteService } from "@/services/site.service";
 import { ReaderProvider } from "@/providers/ReaderProvider";
 import { PointsProvider } from "@/providers/PointsProvider";
 import { SiteConfigProvider } from "@/providers/SiteConfigProvider";
+import { LanguageProvider } from "@/providers/LanguageProvider";
 import { constructMetadata } from "@/lib/metadata";
 import { CookieConsent } from "@/components/ads/CookieConsent";
 import { ReferralCapture } from "@/components/home/ReferralCapture";
@@ -38,15 +39,17 @@ export default async function RootLayout({
             crossOrigin="anonymous"
           />
         )}
-        <ReaderProvider>
-          <SiteConfigProvider initialConfig={config}>
-            <PointsProvider>
-              <ReferralCapture />
-              {children}
-              <CookieConsent />
-            </PointsProvider>
-          </SiteConfigProvider>
-        </ReaderProvider>
+        <LanguageProvider>
+          <ReaderProvider>
+            <SiteConfigProvider initialConfig={config}>
+              <PointsProvider>
+                <ReferralCapture />
+                {children}
+                <CookieConsent />
+              </PointsProvider>
+            </SiteConfigProvider>
+          </ReaderProvider>
+        </LanguageProvider>
         <Toaster position="bottom-right" />
         {customAdScript && (
           <div dangerouslySetInnerHTML={{ __html: customAdScript }} />

@@ -4,12 +4,16 @@ import { useEffect, useState } from "react";
 import { PosterCard } from "@/components/home/PosterCard";
 import { type Series } from "@/types";
 import { seriesService } from "@/services/series.service";
+import { useLanguage } from "@/providers/LanguageProvider";
+import { FlagIcon } from "@/components/ui/FlagIcon";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function LatestClient() {
   const [series, setSeries] = useState<Series[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
+  const { language, setLanguage, languages } = useLanguage();
   const limit = 12;
 
   useEffect(() => {
@@ -17,8 +21,8 @@ export function LatestClient() {
       setLoading(true);
       try {
         const res = await seriesService.getAllSeries({ sort: "latest", page, limit });
-        setSeries(res.data);
-        setTotal(res.meta?.total || 0);
+        setSeries(res.data || []);
+        setTotal(res.meta?.total || res.pagination?.total || 0);
       } catch (error) {
         console.error("Failed to fetch latest updates:", error);
       } finally {
@@ -48,6 +52,28 @@ export function LatestClient() {
               </h1>
               <p className="text-muted-foreground">Keep up with the most recent chapter releases.</p>
             </div>
+
+            {/* Language Switcher Bar */}
+            <div className="flex items-center gap-1 bg-neutral-900/60 p-1 rounded-full border border-white/10 backdrop-blur-md self-start md:self-auto flex-wrap">
+              {languages.map((l) => {
+                const isSelected = language.toLowerCase() === l.code.toLowerCase();
+                return (
+                  <button
+                    key={l.code}
+                    type="button"
+                    onClick={() => setLanguage(l.code)}
+                    className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer ${
+                      isSelected
+                        ? "bg-primary text-white shadow-md shadow-primary/20 font-bold"
+                        : "text-muted-foreground hover:text-white hover:bg-white/5"
+                    }`}
+                  >
+                    <FlagIcon code={l.code} className="w-3.5 h-2.5 rounded-[1px]" />
+                    <span>{l.name}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -64,41 +90,26 @@ export function LatestClient() {
             )}
           </div>
 
+          {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center mt-10">
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="px-4 py-2 rounded-lg glass glass-hover text-sm font-medium disabled:opacity-30 transition-opacity"
-                >
-                  Previous
-                </button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: Math.min(5, totalPages) }).map((_, i) => {
-                    const p = i + 1;
-                    return (
-                      <button
-                        key={p}
-                        onClick={() => setPage(p)}
-                        className={`w-10 h-10 rounded-lg transition-all ${
-                          page === p ? "bg-primary text-white font-bold" : "glass glass-hover text-sm"
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    );
-                  })}
-                  {totalPages > 5 && <span className="px-2 text-muted-foreground">...</span>}
-                </div>
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="px-4 py-2 rounded-lg glass glass-hover text-sm font-medium disabled:opacity-30 transition-opacity"
-                >
-                  Next
-                </button>
-              </div>
+            <div className="flex items-center justify-center gap-2 pt-4">
+              <button
+                disabled={page <= 1}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white transition cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <span className="text-xs text-muted-foreground px-3 font-mono">
+                Page {page} of {totalPages}
+              </span>
+              <button
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-white transition cursor-pointer"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
           )}
         </div>

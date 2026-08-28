@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Flag, X, Loader2, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { CreateReportAction } from "@/actions/community";
 import { toast } from "react-hot-toast";
@@ -33,8 +34,13 @@ export function ReportModal({
   const [details, setDetails] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,10 +76,13 @@ export function ReportModal({
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+  const modalContent = (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+      {/* Backdrop click dismiss */}
+      <div className="fixed inset-0" onClick={onClose} />
+
       <div
-        className="relative w-full max-w-lg rounded-2xl glass border border-white/10 p-6 shadow-2xl space-y-5 bg-[#121217]"
+        className="relative w-full max-w-lg rounded-2xl border border-white/10 p-6 shadow-[0_25px_60px_rgba(0,0,0,0.9)] space-y-5 bg-[#141419] z-10 animate-in zoom-in-95 duration-150"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -93,7 +102,7 @@ export function ReportModal({
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 transition"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -127,7 +136,7 @@ export function ReportModal({
                       value={r}
                       checked={selectedReason === r}
                       onChange={() => setSelectedReason(r)}
-                      className="text-primary focus:ring-primary h-4 w-4 bg-transparent border-zinc-700"
+                      className="text-primary focus:ring-primary h-4 w-4 bg-transparent border-zinc-700 cursor-pointer"
                     />
                     <span>{r}</span>
                   </label>
@@ -159,14 +168,14 @@ export function ReportModal({
                 type="button"
                 onClick={onClose}
                 disabled={loading}
-                className="px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition"
+                className="px-4 py-2 rounded-xl text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/5 transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex items-center gap-2 px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition shadow-lg shadow-red-600/20 disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition shadow-lg shadow-red-600/20 disabled:opacity-50 cursor-pointer"
               >
                 {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                 Submit Report
@@ -177,4 +186,6 @@ export function ReportModal({
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 }

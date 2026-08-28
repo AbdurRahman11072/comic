@@ -8,10 +8,12 @@ import { UpdateCreatorProfileAction } from "@/actions/creator";
 import { LoginDialog } from "./LoginDialog";
 import { ChatDrawer } from "./ChatDrawer";
 import { BottomNav } from "./BottomNav";
-import { User as UserIcon, Settings, Bookmark, History, LayoutDashboard, MessageCircle, X } from "lucide-react";
+import { User as UserIcon, Settings, Bookmark, History, LayoutDashboard, MessageCircle, X, ChevronDown, Globe } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { usePoints } from "@/providers/PointsProvider";
 import { useSiteConfig } from "@/providers/SiteConfigProvider";
+import { useLanguage } from "@/providers/LanguageProvider";
+import { FlagIcon } from "@/components/ui/FlagIcon";
 import { SITE_DEFAULTS } from "@/config/site";
 
 const NAV_LINKS = [
@@ -54,9 +56,22 @@ export function Navbar() {
   const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const [loginOpen, setLoginOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const langMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { data: session, isPending } = useSession();
+  const { language, setLanguage, currentLanguageOption, languages } = useLanguage();
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target as Node)) {
+        setLangMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (mobileSearchOpen) {
@@ -198,12 +213,63 @@ export function Navbar() {
               <div className="rounded-full px-3 py-[5px] border border-white/5 bg-white/5 animate-pulse w-[70px] h-[30px]" />
             )}
 
+            {/* Language Selector Dropdown */}
+            <div className="relative" ref={langMenuRef}>
+              <button
+                type="button"
+                onClick={() => setLangMenuOpen((v) => !v)}
+                className="flex items-center gap-2 rounded-full px-2.5 sm:px-3 py-[5px] h-[34px] sm:h-[38px] text-[12px] font-semibold border glass glass-hover transition cursor-pointer text-muted-foreground hover:text-white"
+                title="Select Translation Language"
+              >
+                <FlagIcon code={currentLanguageOption.code} className="w-4 h-3 rounded-[2px]" />
+                <span className="hidden sm:inline text-xs font-bold text-white uppercase tracking-wider">{currentLanguageOption.code}</span>
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 opacity-60 ${langMenuOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {langMenuOpen && (
+                <div className="absolute right-0 top-[calc(100%+8px)] w-52 rounded-2xl border border-white/10 bg-[#121212] shadow-[0_15px_40px_rgba(0,0,0,0.95)] p-1.5 z-[999] animate-in fade-in zoom-in-95 duration-100">
+                  <div className="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground/70 border-b border-white/5 mb-1 flex items-center justify-between">
+                    <span>Language</span>
+                    <span className="text-[9px] font-mono text-primary font-bold uppercase">{language}</span>
+                  </div>
+                  <div className="space-y-0.5">
+                    {languages.map((l) => {
+                      const isSelected = l.code === language;
+                      return (
+                        <button
+                          key={l.code}
+                          type="button"
+                          onClick={() => {
+                            setLanguage(l.code);
+                            setLangMenuOpen(false);
+                          }}
+                          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition text-left cursor-pointer ${
+                            isSelected
+                              ? "bg-primary text-white font-bold shadow-md shadow-primary/20"
+                              : "text-neutral-300 hover:bg-white/5 hover:text-white"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <FlagIcon code={l.code} className="w-4 h-3 rounded-[2px]" />
+                            <span>{l.name}</span>
+                          </div>
+                          <span className={`text-[10px] font-mono uppercase ${isSelected ? "text-white/80" : "text-muted-foreground"}`}>
+                            {l.code}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Community Chat — desktop only */}
             {config?.enableGlobalChat !== false && (
               <button
                 data-chat-trigger="true"
                 onClick={() => setChatOpen((v) => !v)}
-                className="hidden md:flex items-center justify-center w-[38px] h-[38px] rounded-full border glass glass-hover transition-all"
+                className="hidden md:flex items-center justify-center w-[38px] h-[38px] rounded-full border glass glass-hover transition-all cursor-pointer"
                 title="Community Chat"
               >
                 <MessageCircle className="w-[18px] h-[18px]" />

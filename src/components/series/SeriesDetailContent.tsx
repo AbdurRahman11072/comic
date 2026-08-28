@@ -14,6 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare, Star, BookOpen, ArrowUpDown, ChevronLeft, ChevronRight, Unlock, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/providers/LanguageProvider";
+import { FlagIcon } from "@/components/ui/FlagIcon";
 
 interface Chapter {
   id?: string;
@@ -29,33 +31,35 @@ interface Chapter {
 
 interface Series {
   id?: string;
-  slug: string;
   title: string;
-  altTitles: string;
+  slug: string;
   coverUrl: string;
-  bgUrl: string;
-  status: "ONGOING" | "COMPLETED" | "HIATUS" | "DROPPED";
+  bgUrl?: string | null;
   type: string;
-  chapterCount: number;
-  lastUpdate: string;
+  status: string;
   rating: number;
-  favorites: number;
+  favorites?: number;
   totalViews?: number;
-  description: string;
-  genres: string[];
-  chapters: Chapter[];
+  bookmarkCount?: number;
+  chapterCount?: number;
+  lastUpdate?: string;
+  genres?: any[];
+  description?: string;
   isBookmarked?: boolean;
+  userRating?: number;
   lastReadChapterNumber?: number | null;
+  altTitles?: string;
+  chapters?: Chapter[];
   creator?: {
     id: string;
-    name: string;
+    name?: string;
+    channelName?: string;
     image?: string | null;
+    profileImage?: string | null;
     creatorProfile?: {
       id: string;
       channelName: string;
       profileImage?: string | null;
-      bannerUrl?: string | null;
-      description?: string | null;
     } | null;
   } | null;
 }
@@ -75,9 +79,9 @@ const LANGUAGE_META: Record<string, { name: string; flag: string }> = {
 
 export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
   const router = useRouter();
+  const { language, setLanguage } = useLanguage();
   const [reverseOrder, setReverseOrder] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("ALL");
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const [localPurchasedIds, setLocalPurchasedIds] = useState<Set<string>>(new Set());
   const itemsPerPage = 20;
@@ -98,10 +102,21 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
     return Array.from(langs);
   }, [series.chapters]);
 
+  // Determine active language: prefer user selection if present in this series, else fallback to first available
+  const activeLanguage = useMemo(() => {
+    const userLang = language.toLowerCase();
+    if (availableLanguages.includes(userLang)) {
+      return userLang;
+    }
+    return availableLanguages[0] || "en";
+  }, [availableLanguages, language]);
+
   const filteredChapters = useMemo(() => {
-    if (selectedLanguage === "ALL") return enrichedChapters;
-    return enrichedChapters.filter((c) => (c.language || "en").toLowerCase() === selectedLanguage);
-  }, [enrichedChapters, selectedLanguage]);
+    const matching = enrichedChapters.filter(
+      (c) => (c.language || "en").toLowerCase() === activeLanguage
+    );
+    return matching.length > 0 ? matching : enrichedChapters;
+  }, [enrichedChapters, activeLanguage]);
 
   const lockedChaptersCount = useMemo(() => {
     return filteredChapters.filter((c) => c.isLocked && !c.isPurchased).length;
@@ -136,22 +151,22 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
                 <SeriesCover src={series.coverUrl} alt={series.title} />
                 <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-white border border-white/10 flex items-center gap-1">
                   <BookOpen className="w-3 h-3 text-primary" />
-                  {series.chapterCount} Chapters
+                  {series.chapterCount ?? series.chapters?.length ?? 0} Chapters
                 </div>
               </div>
               
               <SeriesStats
-                rating={series.rating}
-                favorites={series.favorites}
+                rating={series.rating || 0}
+                favorites={series.favorites ?? series.bookmarkCount ?? 0}
                 views={series.totalViews || (series as any).views || 0}
               />
               
               <div className="p-4 rounded-xl glass">
                 <SeriesMeta
-                  status={series.status}
+                  status={series.status as "ONGOING" | "COMPLETED" | "HIATUS" | "DROPPED"}
                   type={series.type}
-                  chapterCount={series.chapterCount}
-                  lastUpdate={series.lastUpdate}
+                  chapterCount={series.chapterCount ?? series.chapters?.length ?? 0}
+                  lastUpdate={series.lastUpdate || "Recently"}
                   creator={series.creator}
                 />
               </div>
@@ -236,7 +251,7 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
               <TabsContent value="chapters" className="space-y-6">
                 {/* Description and Genres */}
                 <div className="p-6 rounded-2xl glass">
-                  <SeriesDescription html={series.description} genres={series.genres} />
+                  <SeriesDescription html={series.description || ""} genres={series.genres || []} />
                 </div>
 
                 {/* Chapter List */}
@@ -253,38 +268,25 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
                       {/* Multi-Language Filter Pills */}
                       {availableLanguages.length > 1 && (
                         <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/10 rounded-xl">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedLanguage("ALL");
-                              setCurrentPage(1);
-                            }}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
-                              selectedLanguage === "ALL"
-                                ? "bg-primary text-white shadow-sm"
-                                : "text-zinc-400 hover:text-white"
-                            }`}
-                          >
-                            All ({enrichedChapters.length})
-                          </button>
                           {availableLanguages.map((code) => {
                             const meta = LANGUAGE_META[code] || { name: code.toUpperCase(), flag: "🌐" };
                             const count = enrichedChapters.filter((c) => (c.language || "en").toLowerCase() === code).length;
+                            const isSelected = activeLanguage === code;
                             return (
                               <button
                                 key={code}
                                 type="button"
                                 onClick={() => {
-                                  setSelectedLanguage(code);
+                                  setLanguage(code);
                                   setCurrentPage(1);
                                 }}
-                                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
-                                  selectedLanguage === code
-                                    ? "bg-primary text-white shadow-sm"
+                                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer ${
+                                  isSelected
+                                    ? "bg-primary text-white shadow-sm font-bold"
                                     : "text-zinc-400 hover:text-white"
                                 }`}
                               >
-                                <span>{meta.flag}</span>
+                                <FlagIcon code={code} className="w-3.5 h-2.5 rounded-[1px]" />
                                 <span>{meta.name}</span>
                                 <span className="opacity-60 text-[10px]">({count})</span>
                               </button>
