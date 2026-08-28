@@ -10,6 +10,7 @@ interface SeriesBasicInfoSectionProps {
     type: string;
     status: string;
     description: string;
+    discount?: string;
   };
   onInputChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -105,6 +106,44 @@ export function SeriesBasicInfoSection({
                 Dropped
               </option>
             </select>
+          </div>
+        </div>
+
+        {/* Bulk Chapter Discount Field */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Bulk Chapter Discount (Optional)
+            </label>
+            <span className="text-[11px] text-primary/80 font-medium">
+              Featured in homepage "Bulk Discounted" carousel
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            {[
+              { label: "No Discount", val: "" },
+              { label: "10% OFF", val: "10%" },
+              { label: "20% OFF", val: "20%" },
+              { label: "30% OFF", val: "30%" },
+              { label: "50% OFF", val: "50%" },
+            ].map((d) => (
+              <button
+                key={d.val}
+                type="button"
+                onClick={() =>
+                  onInputChange({
+                    target: { id: "discount", value: d.val },
+                  } as any)
+                }
+                className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                  (formData.discount || "") === d.val
+                    ? "bg-rose-500/20 border-rose-500/50 text-rose-400 shadow-sm"
+                    : "bg-white/5 border-white/10 text-zinc-400 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {d.label}
+              </button>
+            ))}
           </div>
         </div>
 

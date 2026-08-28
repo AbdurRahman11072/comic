@@ -239,7 +239,10 @@ const getPinnedSeries = async () => {
 
 const getDiscountedSeries = async () => {
   const list = await prisma.series.findMany({
-    where: { discount: { not: null }, isHidden: false },
+    where: {
+      discount: { not: null },
+      isHidden: false,
+    },
     include: {
       genres: true,
       creator: {
@@ -558,6 +561,10 @@ const updateSeries = async (id: string, data: any) => {
   }
 
   const updatePayload: any = { ...seriesData };
+
+  if (seriesData.discount !== undefined) {
+    updatePayload.discount = seriesData.discount ? String(seriesData.discount).trim() : null;
+  }
 
   if (genres !== undefined && Array.isArray(genres)) {
     const genreNames: string[] = genres

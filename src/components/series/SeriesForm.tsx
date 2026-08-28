@@ -40,6 +40,7 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
     description: initialData?.description || "",
     coverUrl: initialData?.coverUrl || "",
     bgUrl: initialData?.bgUrl || "",
+    discount: initialData?.discount || "",
   });
 
   const toggleGenre = (genre: string) => {
@@ -157,6 +158,7 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
         status: isDraft ? "HIATUS" : (formData.status || "ONGOING").toUpperCase(),
         isHidden: isDraft ? true : ((initialData as any)?.isHidden || false),
         genres: genres.length > 0 ? genres : ["Action"],
+        discount: formData.discount ? formData.discount.trim() : null,
       };
 
       if (initialData) {
