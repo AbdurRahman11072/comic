@@ -67,13 +67,38 @@ export function ChaptersTable({ initialChapters, userRole }: ChaptersTableProps)
         columns={[
           { header: "Series", accessor: (item: any) => item.series?.title || "Unknown", className: "font-bold" },
           { header: "Chapter", accessor: (item: any) => `Chapter ${item.number}${item.title ? `: ${item.title}` : ""}` },
+          { 
+            header: "Language", 
+            accessor: (item: any) => {
+              const langCode = (item.language || "en").toLowerCase();
+              const badge =
+                langCode === "bn"
+                  ? { flag: "🇧🇩", label: "Bangla", cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/25" }
+                  : langCode === "es"
+                  ? { flag: "🇪🇸", label: "Spanish", cls: "bg-amber-500/10 text-amber-400 border-amber-500/25" }
+                  : langCode === "hi"
+                  ? { flag: "🇮🇳", label: "Hindi", cls: "bg-orange-500/10 text-orange-400 border-orange-500/25" }
+                  : langCode === "ar"
+                  ? { flag: "🇸🇦", label: "Arabic", cls: "bg-teal-500/10 text-teal-400 border-teal-500/25" }
+                  : langCode === "id"
+                  ? { flag: "🇮🇩", label: "Indonesian", cls: "bg-rose-500/10 text-rose-400 border-rose-500/25" }
+                  : { flag: "🇬🇧", label: "English", cls: "bg-blue-500/10 text-blue-400 border-blue-500/25" };
+
+              return (
+                <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${badge.cls}`}>
+                  <span>{badge.flag}</span>
+                  <span>{badge.label}</span>
+                </span>
+              );
+            }
+          },
           { header: "Coin Cost", accessor: (item: any) => item.coinCost > 0 ? `${item.coinCost} Coins` : "Free", className: "text-primary font-bold" },
           { header: "Published", accessor: (item: any) => new Date(item.createdAt).toLocaleDateString(), className: "text-muted-foreground" },
           { 
             header: "Actions", 
             accessor: (item: any) => (
               <div className="flex items-center justify-end gap-2">
-                <Link href={`/series/${item.series?.slug}/${item.number}`} className="p-2 hover:bg-blue-500/10 hover:text-blue-500 rounded-lg transition-colors">
+                <Link href={`/series/${item.series?.slug}/${item.number}?lang=${item.language || "en"}`} className="p-2 hover:bg-blue-500/10 hover:text-blue-500 rounded-lg transition-colors">
                   <Eye className="w-4 h-4" />
                 </Link>
                 {canModify && (

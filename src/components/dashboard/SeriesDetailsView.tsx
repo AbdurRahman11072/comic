@@ -307,6 +307,7 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
                 <thead>
                   <tr className="border-b border-white/10 text-muted-foreground font-semibold uppercase tracking-wider text-[10px] bg-white/[0.02]">
                     <th className="py-3.5 px-5">Chapter</th>
+                    <th className="py-3.5 px-4">Language</th>
                     <th className="py-3.5 px-4">Title</th>
                     <th className="py-3.5 px-4">Pages</th>
                     <th className="py-3.5 px-4">Access & Cost</th>
@@ -315,89 +316,112 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
-                  {filteredChapters.map((c) => (
-                    <tr key={c.id} className="hover:bg-white/[0.02] transition-colors group">
-                      <td className="py-4 px-5 font-bold text-white">
-                        <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-black text-primary inline-block">
-                          Ch. {c.number}
-                        </span>
-                      </td>
+                  {filteredChapters.map((c) => {
+                    const langCode = (c.language || "en").toLowerCase();
+                    const langBadge =
+                      langCode === "bn"
+                        ? { flag: "🇧🇩", label: "Bangla", code: "BN", cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/25" }
+                        : langCode === "es"
+                        ? { flag: "🇪🇸", label: "Spanish", code: "ES", cls: "bg-amber-500/10 text-amber-400 border-amber-500/25" }
+                        : langCode === "hi"
+                        ? { flag: "🇮🇳", label: "Hindi", code: "HI", cls: "bg-orange-500/10 text-orange-400 border-orange-500/25" }
+                        : langCode === "ar"
+                        ? { flag: "🇸🇦", label: "Arabic", code: "AR", cls: "bg-teal-500/10 text-teal-400 border-teal-500/25" }
+                        : langCode === "id"
+                        ? { flag: "🇮🇩", label: "Indonesian", code: "ID", cls: "bg-rose-500/10 text-rose-400 border-rose-500/25" }
+                        : { flag: "🇬🇧", label: "English", code: "EN", cls: "bg-blue-500/10 text-blue-400 border-blue-500/25" };
 
-                      <td className="py-4 px-4 text-neutral-300 font-medium max-w-[200px] truncate">
-                        {c.title || <span className="text-muted-foreground italic">Untitled</span>}
-                      </td>
+                    return (
+                      <tr key={c.id} className="hover:bg-white/[0.02] transition-colors group">
+                        <td className="py-4 px-5 font-bold text-white">
+                          <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-black text-primary inline-block">
+                            Ch. {c.number}
+                          </span>
+                        </td>
 
-                      <td className="py-4 px-4">
-                        <span className="flex items-center gap-1 text-muted-foreground font-mono">
-                          <ImageIcon className="w-3.5 h-3.5 text-neutral-400" />
-                          {c.images?.length || c._count?.images || 0} pages
-                        </span>
-                      </td>
+                        <td className="py-4 px-4">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 shadow-xs ${langBadge.cls}`}>
+                            <span>{langBadge.flag}</span>
+                            <span>{langBadge.label}</span>
+                          </span>
+                        </td>
 
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2">
-                          {c.isFastPass ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
-                              <Zap className="w-2.5 h-2.5" /> FastPass ({c.coinCost} Coins)
-                            </span>
-                          ) : c.isLocked ? (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
-                              <Lock className="w-2.5 h-2.5" /> Locked ({c.coinCost} Coins)
-                            </span>
-                          ) : (
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                              Free
-                            </span>
-                          )}
-                        </div>
-                      </td>
+                        <td className="py-4 px-4 text-neutral-300 font-medium max-w-[200px] truncate">
+                          {c.title || <span className="text-muted-foreground italic">Untitled</span>}
+                        </td>
 
-                      <td className="py-4 px-4 text-muted-foreground font-mono text-[11px]">
-                        {new Date(c.createdAt).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </td>
+                        <td className="py-4 px-4">
+                          <span className="flex items-center gap-1 text-muted-foreground font-mono">
+                            <ImageIcon className="w-3.5 h-3.5 text-neutral-400" />
+                            {c.images?.length || c._count?.images || 0} pages
+                          </span>
+                        </td>
 
-                      <td className="py-4 px-5 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <Link
-                            href={`/series/${series.slug}/${c.number}`}
-                            target="_blank"
-                            className="p-2 hover:bg-blue-500/10 text-neutral-400 hover:text-blue-400 rounded-xl transition"
-                            title="Read / Preview Chapter"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Link>
-
-                          {canModify && (
-                            <Link
-                              href={`/dashboard/chapters/edit/${c.id}`}
-                              className="p-2 hover:bg-primary/10 text-neutral-400 hover:text-primary rounded-xl transition"
-                              title="Edit Chapter"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </Link>
-                          )}
-
-                          <button
-                            type="button"
-                            disabled={deletingId === c.id}
-                            onClick={() => handleDeleteChapter(c.id, c.number)}
-                            className="p-2 hover:bg-red-500/10 text-neutral-400 hover:text-red-400 rounded-xl transition disabled:opacity-40"
-                            title="Delete Chapter"
-                          >
-                            {deletingId === c.id ? (
-                              <Loader2 className="w-4 h-4 animate-spin text-red-400" />
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2">
+                            {c.isFastPass ? (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-1">
+                                <Zap className="w-2.5 h-2.5" /> FastPass ({c.coinCost} Coins)
+                              </span>
+                            ) : c.isLocked ? (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                                <Lock className="w-2.5 h-2.5" /> Locked ({c.coinCost} Coins)
+                              </span>
                             ) : (
-                              <Trash2 className="w-4 h-4" />
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                Free
+                              </span>
                             )}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                          </div>
+                        </td>
+
+                        <td className="py-4 px-4 text-muted-foreground font-mono text-[11px]">
+                          {new Date(c.createdAt).toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </td>
+
+                        <td className="py-4 px-5 text-right">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <Link
+                              href={`/series/${series.slug}/${c.number}?lang=${c.language || "en"}`}
+                              target="_blank"
+                              className="p-2 hover:bg-blue-500/10 text-neutral-400 hover:text-blue-400 rounded-xl transition"
+                              title="Read / Preview Chapter"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Link>
+
+                            {canModify && (
+                              <Link
+                                href={`/dashboard/chapters/edit/${c.id}`}
+                                className="p-2 hover:bg-primary/10 text-neutral-400 hover:text-primary rounded-xl transition"
+                                title="Edit Chapter"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </Link>
+                            )}
+
+                            <button
+                              type="button"
+                              disabled={deletingId === c.id}
+                              onClick={() => handleDeleteChapter(c.id, c.number)}
+                              className="p-2 hover:bg-red-500/10 text-neutral-400 hover:text-red-400 rounded-xl transition disabled:opacity-40"
+                              title="Delete Chapter"
+                            >
+                              {deletingId === c.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin text-red-400" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
