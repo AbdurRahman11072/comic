@@ -14,7 +14,14 @@ const globalErrorHandler = (
 
   if (error.code === 'P2002') {
     statusCode = httpStatus.CONFLICT;
-    message = 'A record with this value already exists';
+    const target = error.meta?.target;
+    if (Array.isArray(target) && target.includes('number')) {
+      message = 'A chapter with this number and language already exists for this series.';
+    } else if (Array.isArray(target) && target.length > 0) {
+      message = `A record with this ${target.join(', ')} already exists.`;
+    } else {
+      message = 'A record with this value already exists';
+    }
   }
 
   // Structured logging

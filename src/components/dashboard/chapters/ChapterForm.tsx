@@ -84,6 +84,34 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
     fetchSeries();
   }, []);
 
+  // Auto-calculate next chapter number when series is selected (new chapter only)
+  useEffect(() => {
+    if (initialData?.id || !formData.seriesId) return;
+
+    const fetchNextChapterNumber = async () => {
+      try {
+        const res = await chapterService.getAllChapters({ seriesId: formData.seriesId, limit: 50 });
+        if (res.success && res.data && res.data.length > 0) {
+          const numbers = res.data
+            .map((c: any) => Number(c.number))
+            .filter((n: number) => !isNaN(n));
+          if (numbers.length > 0) {
+            const maxNumber = Math.max(...numbers);
+            const nextNumber = Math.floor(maxNumber) + 1;
+            setFormData((prev) => ({
+              ...prev,
+              number: nextNumber,
+            }));
+          }
+        }
+      } catch (_e) {
+        // Fallback silently
+      }
+    };
+
+    fetchNextChapterNumber();
+  }, [formData.seriesId, initialData?.id]);
+
   const addImageUrl = () => {
     const trimmed = imageUrlInput.trim();
     if (trimmed) {

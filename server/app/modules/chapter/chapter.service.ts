@@ -296,6 +296,7 @@ const getChapterById = async (id: string, userId?: string) => {
 const createChapter = async (data: any, userId?: string, role?: string) => {
   const { images = [], language, ...chapterData } = data;
   const cleanLang = language ? String(language).toLowerCase().trim() : 'en';
+  const chapterNumber = Number(chapterData.number);
 
   if (role === 'creator') {
     const series = await prisma.series.findUnique({
@@ -307,10 +308,29 @@ const createChapter = async (data: any, userId?: string, role?: string) => {
     }
   }
 
+  // Pre-check for duplicate chapter number & language in this series
+  const existingChapter = await prisma.chapter.findFirst({
+    where: {
+      seriesId: chapterData.seriesId,
+      number: chapterNumber,
+      language: cleanLang,
+    },
+  });
+
+  if (existingChapter) {
+    const langDisplay = cleanLang === 'bn' ? 'Bangla (BN)' : cleanLang === 'en' ? 'English (EN)' : cleanLang.toUpperCase();
+    throw new AppError(
+      httpStatus.CONFLICT,
+      `Chapter ${chapterNumber} in ${langDisplay} already exists for this series. Please select a different chapter number or switch translation language.`
+    );
+  }
+
   const result = await prisma.chapter.create({
     data: {
       ...chapterData,
+      number: chapterNumber,
       language: cleanLang,
+      publishAt: chapterData.publishAt ? new Date(chapterData.publishAt) : null,
       images: {
         create: (images || []).map((img: { url: string; order: number }) => ({
           url: img.url,
