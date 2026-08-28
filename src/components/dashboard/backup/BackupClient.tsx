@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { backupService, BackupStats } from "@/services/backup.service";
+import { LoadingProgressModal } from "@/components/ui/LoadingProgressModal";
 
 interface BackupClientProps {
   initialStats?: BackupStats | null;
@@ -61,6 +62,11 @@ export function BackupClient({ initialStats = null }: BackupClientProps) {
 
   return (
     <div className="space-y-8 w-full">
+      <LoadingProgressModal
+        open={exporting}
+        title="Exporting Database Backup"
+        statusText="Packaging database records and relations into JSON archive..."
+      />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

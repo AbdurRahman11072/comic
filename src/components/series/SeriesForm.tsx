@@ -11,6 +11,7 @@ import { uploadImage } from "@/lib/api";
 import { SeriesBasicInfoSection } from "./SeriesBasicInfoSection";
 import { SeriesVisualsSection } from "./SeriesVisualsSection";
 import { SeriesGenreSelector } from "./SeriesGenreSelector";
+import { LoadingProgressModal, ProgressState } from "@/components/ui/LoadingProgressModal";
 
 interface SeriesFormProps {
   initialData?: Series;
@@ -19,7 +20,7 @@ interface SeriesFormProps {
 export function SeriesForm({ initialData }: SeriesFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState("");
+  const [progressInfo, setProgressInfo] = useState<ProgressState | null>(null);
   const [genres, setGenres] = useState<string[]>(initialData?.genres.map((g) => g.name) || []);
   const [genreInput, setGenreInput] = useState("");
 
@@ -62,7 +63,6 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  // Instant local preview without uploading to Cloudinary
   const handleFileSelect = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: "coverUrl" | "bgUrl"
@@ -101,7 +101,11 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
     }
 
     setLoading(true);
-    setUploadStatus("Preparing assets...");
+    setProgressInfo({
+      title: "Preparing Series Assets",
+      percent: 10,
+      statusText: "Preparing series details...",
+    });
 
     try {
       let finalCoverUrl = formData.coverUrl;
@@ -109,7 +113,11 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
 
       // Upload cover file only on publish/save
       if (coverFile) {
-        setUploadStatus("Uploading cover poster to Cloudinary...");
+        setProgressInfo({
+          title: "Uploading Cover Poster",
+          percent: 35,
+          statusText: "Uploading cover image to cloud storage...",
+        });
         const res = await uploadImage(coverFile);
         if (res.data?.url) {
           finalCoverUrl = res.data.url;
@@ -118,14 +126,22 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
 
       // Upload background file only on publish/save
       if (bgFile) {
-        setUploadStatus("Uploading banner image to Cloudinary...");
+        setProgressInfo({
+          title: "Uploading Banner Image",
+          percent: 70,
+          statusText: "Uploading banner image to cloud storage...",
+        });
         const res = await uploadImage(bgFile);
         if (res.data?.url) {
           finalBgUrl = res.data.url;
         }
       }
 
-      setUploadStatus("Saving series publication details...");
+      setProgressInfo({
+        title: isDraft ? "Saving Draft" : "Publishing Series",
+        percent: 90,
+        statusText: "Writing series records to database...",
+      });
 
       const payload = {
         ...formData,
@@ -140,10 +156,20 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
       if (initialData) {
         const res = await UpdateSeriesAction(initialData.id, payload);
         if (!res.success) throw new Error(res.message);
+        setProgressInfo({
+          title: "Complete",
+          percent: 100,
+          statusText: isDraft ? "Draft saved successfully!" : "Series updated successfully!",
+        });
         toast.success(isDraft ? "Draft saved successfully!" : "Series updated successfully!");
       } else {
         const res = await CreateSeriesAction(payload);
         if (!res.success) throw new Error(res.message);
+        setProgressInfo({
+          title: "Complete",
+          percent: 100,
+          statusText: isDraft ? "Draft saved successfully!" : "Series published successfully!",
+        });
         toast.success(isDraft ? "Draft saved successfully!" : "Series published successfully!");
       }
       router.push("/dashboard/series");
@@ -153,12 +179,14 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
       toast.error(error.message || "Failed to save series.");
     } finally {
       setLoading(false);
-      setUploadStatus("");
+      setProgressInfo(null);
     }
   };
 
   return (
     <div className="space-y-8 max-w-5xl">
+      {/* Shared Progress Modal */}
+      <LoadingProgressModal progressInfo={progressInfo} />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -211,13 +239,6 @@ export function SeriesForm({ initialData }: SeriesFormProps) {
           onAddCustomGenre={addCustomGenre}
         />
 
-        {/* Upload Progress Status Indicator */}
-        {uploadStatus && (
-          <div className="p-4 rounded-2xl bg-primary/10 border border-primary/30 flex items-center gap-3 text-primary text-sm font-medium animate-pulse">
-            <Loader2 className="w-5 h-5 animate-spin shrink-0" />
-            <span>{uploadStatus}</span>
-          </div>
-        )}
 
         {/* Submit Actions */}
         <div className="flex flex-wrap items-center justify-end gap-3 pt-4 border-t border-white/10">
