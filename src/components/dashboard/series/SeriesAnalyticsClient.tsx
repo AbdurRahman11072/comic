@@ -65,7 +65,7 @@ export function SeriesAnalyticsClient({
 }: SeriesAnalyticsClientProps) {
   const [data] = useState<SingleSeriesAnalyticsData | null>(initialData);
   const [mounted, setMounted] = useState(false);
-  const canModify = userRole?.toLowerCase() === "creator";
+  const canModify = ["creator", "admin", "moderator"].includes(userRole?.toLowerCase() || "");
 
   useEffect(() => {
     setMounted(true);

@@ -18,7 +18,7 @@ export function ChaptersTable({ initialChapters, userRole }: ChaptersTableProps)
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const router = useRouter();
-  const canModify = userRole?.toLowerCase() === "creator";
+  const canModify = ["creator", "admin", "moderator"].includes(userRole?.toLowerCase() || "");
 
   // Debounce search
   useEffect(() => {

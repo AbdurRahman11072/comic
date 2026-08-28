@@ -7,7 +7,7 @@ import Link from "next/link";
 export default async function ChaptersPage() {
   const session = await userService.getUserSession();
   const role = (session?.user as any)?.role?.toLowerCase() ?? "";
-  const canUpload = role === "creator";
+  const canUpload = ["creator", "admin", "moderator"].includes(role);
 
   const fetchParams: any = { limit: 100 };
   if (role === "creator" && session?.user?.id) {

@@ -39,7 +39,7 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const canModify = userRole?.toLowerCase() === "creator";
+  const canModify = ["creator", "admin", "moderator"].includes(userRole?.toLowerCase() || "");
 
   if (!series) {
     return (
