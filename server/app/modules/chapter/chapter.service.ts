@@ -383,6 +383,21 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
   if (language !== undefined) {
     updatePayload.language = String(language).toLowerCase().trim() || 'en';
   }
+  if (updatePayload.number !== undefined) {
+    updatePayload.number = Number(updatePayload.number);
+  }
+  if (updatePayload.coinCost !== undefined) {
+    updatePayload.coinCost = Number(updatePayload.coinCost);
+  }
+  if (updatePayload.isLocked !== undefined) {
+    updatePayload.isLocked = Boolean(updatePayload.isLocked);
+  }
+  if (updatePayload.isFastPass !== undefined) {
+    updatePayload.isFastPass = Boolean(updatePayload.isFastPass);
+  }
+  if (updatePayload.publishAt !== undefined) {
+    updatePayload.publishAt = updatePayload.publishAt ? new Date(updatePayload.publishAt) : null;
+  }
 
   const result = await prisma.chapter.update({
     where: { id },

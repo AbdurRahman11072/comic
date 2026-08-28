@@ -5,8 +5,11 @@ export const createChapterSchema = z.object({
     seriesId: z.string().min(1, 'Series ID is required'),
     number: z.number().min(0, 'Chapter number must be 0 or positive'),
     title: z.string().optional(),
+    language: z.string().optional().default('en'),
     isLocked: z.boolean().optional().default(false),
+    isFastPass: z.boolean().optional().default(false),
     coinCost: z.number().min(0).optional().default(0),
+    publishAt: z.string().nullable().optional(),
     images: z
       .array(
         z.object({
@@ -26,8 +29,11 @@ export const updateChapterSchema = z.object({
   body: z.object({
     number: z.number().min(0).optional(),
     title: z.string().optional(),
+    language: z.string().optional(),
     isLocked: z.boolean().optional(),
+    isFastPass: z.boolean().optional(),
     coinCost: z.number().min(0).optional(),
+    publishAt: z.string().nullable().optional(),
     images: z
       .array(
         z.object({
