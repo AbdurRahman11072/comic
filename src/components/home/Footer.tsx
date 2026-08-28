@@ -97,6 +97,7 @@ export function Footer() {
           <Link href="/rewards" className="text-gray-200 hover:text-primary transition-colors font-medium">Rewards</Link>
           <Link href="/shop" className="text-gray-200 hover:text-primary transition-colors font-medium">Coin Shop</Link>
           <Link href="/about" className="text-gray-200 hover:text-primary transition-colors font-medium">About Us</Link>
+          <Link href="/contact" className="text-gray-200 hover:text-primary transition-colors font-medium">Contact Us</Link>
           <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
           <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link>
           <Link href="/dmca" className="text-gray-400 hover:text-white transition-colors">DMCA Notice</Link>
