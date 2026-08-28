@@ -42,10 +42,10 @@ const DEFAULT_REVENUE: RevenueDataPoint[] = [
 ];
 
 const DEFAULT_DISTRIBUTION: ContentDistributionItem[] = [
-  { name: "MANHWA", value: 1, color: "#e11d48" },
-  { name: "MANGA", value: 1, color: "#3b82f6" },
-  { name: "COMIC", value: 1, color: "#10b981" },
-  { name: "MANHUA", value: 1, color: "#8b5cf6" },
+  { name: "MANHWA", value: 0, color: "#e11d48" },
+  { name: "MANGA", value: 0, color: "#3b82f6" },
+  { name: "COMIC", value: 0, color: "#10b981" },
+  { name: "MANHUA", value: 0, color: "#8b5cf6" },
 ];
 
 export function OverviewCharts({
@@ -60,7 +60,9 @@ export function OverviewCharts({
   }, []);
 
   const chartRevenue = revenueData && revenueData.length > 0 ? revenueData : DEFAULT_REVENUE;
-  const chartDistribution = distributionData && distributionData.length > 0 ? distributionData : DEFAULT_DISTRIBUTION;
+  const chartDistribution = distributionData !== undefined && distributionData.length > 0 
+    ? distributionData 
+    : DEFAULT_DISTRIBUTION;
 
   if (!mounted) {
     return (

@@ -104,7 +104,7 @@ const getDashboardStats = async (user: UserContext) => {
       revenue: Math.round(revenueMap[month] * 100) / 100,
     }));
 
-    // Build Content Distribution
+    // Build Content Distribution (exact counts from database)
     const colorMap: Record<string, string> = {
       MANHWA: '#e11d48',
       MANGA: '#3b82f6',
@@ -112,10 +112,15 @@ const getDashboardStats = async (user: UserContext) => {
       MANHUA: '#8b5cf6',
     };
 
-    const contentDistribution = seriesByTypeRaw.map((item) => ({
-      name: item.type,
-      value: item._count.id,
-      color: colorMap[item.type] || '#f59e0b',
+    const typeCounts: Record<string, number> = {};
+    seriesByTypeRaw.forEach((item) => {
+      typeCounts[item.type] = item._count.id;
+    });
+
+    const contentDistribution = ['MANHWA', 'MANGA', 'COMIC', 'MANHUA'].map((type) => ({
+      name: type,
+      value: typeCounts[type] || 0,
+      color: colorMap[type] || '#f59e0b',
     }));
 
     // Format Recent Reports
@@ -151,10 +156,7 @@ const getDashboardStats = async (user: UserContext) => {
         totalCreators,
       },
       revenueChart,
-      contentDistribution: contentDistribution.length > 0 ? contentDistribution : [
-        { name: 'MANHWA', value: totalSeries || 1, color: '#e11d48' },
-        { name: 'MANGA', value: 0, color: '#3b82f6' }
-      ],
+      contentDistribution,
       recentReports,
     };
   } else {
@@ -227,10 +229,15 @@ const getDashboardStats = async (user: UserContext) => {
       MANHUA: '#8b5cf6',
     };
 
-    const contentDistribution = seriesByTypeRaw.map((item) => ({
-      name: item.type,
-      value: item._count.id,
-      color: colorMap[item.type] || '#f59e0b',
+    const typeCounts: Record<string, number> = {};
+    seriesByTypeRaw.forEach((item) => {
+      typeCounts[item.type] = item._count.id;
+    });
+
+    const contentDistribution = ['MANHWA', 'MANGA', 'COMIC', 'MANHUA'].map((type) => ({
+      name: type,
+      value: typeCounts[type] || 0,
+      color: colorMap[type] || '#f59e0b',
     }));
 
     return {
@@ -248,9 +255,7 @@ const getDashboardStats = async (user: UserContext) => {
         revenueGrowth: 8.0,
       },
       revenueChart,
-      contentDistribution: contentDistribution.length > 0 ? contentDistribution : [
-        { name: 'MANHWA', value: totalSeries || 1, color: '#e11d48' }
-      ],
+      contentDistribution,
       recentReports: [],
     };
   }
