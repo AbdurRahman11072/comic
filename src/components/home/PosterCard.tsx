@@ -49,11 +49,11 @@ export function PosterCard({ series, className }: PosterCardProps) {
         <div className="flex flex-col">
           {series.chapters?.slice(0, 3).map((chap, i) => (
             <ChapterItem
-              key={chap.number}
+              key={chap.id || `${chap.number}-${(chap as any).language || "en"}-${i}`}
               chapter={{
-                name: `Chapter ${chap.number}`,
-                href: `/series/${series.slug}/chapter-${chap.number}`,
-                date: new Date(chap.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+                name: `Chapter ${chap.number}${(chap as any).language && (chap as any).language !== "en" ? ` (${(chap as any).language.toUpperCase()})` : ""}`,
+                href: `/series/${series.slug}/${chap.number}${(chap as any).language ? `?lang=${(chap as any).language}` : ""}`,
+                date: new Date(chap.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
                 isLocked: chap.isLocked,
               }}
               isDivider={i > 0}

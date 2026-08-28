@@ -15,6 +15,7 @@ interface Chapter {
   id?: string;
   number: number;
   title: string;
+  language?: string;
   isLocked?: boolean;
   isPurchased?: boolean;
   coinCost?: number;
@@ -217,11 +218,11 @@ export function BulkUnlockModal({
 
             {/* Chapters Checkbox List */}
             <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1 scrollbar-thin">
-              {lockedChapters.map((ch) => {
+              {lockedChapters.map((ch, i) => {
                 const isSelected = selectedIds.includes(ch.id!);
                 return (
                   <div
-                    key={ch.id || ch.number}
+                    key={ch.id || `${ch.number}-${ch.language || "en"}-${i}`}
                     onClick={() => ch.id && toggleChapter(ch.id)}
                     className={`flex items-center justify-between p-3 rounded-xl border transition-all cursor-pointer text-xs ${
                       isSelected
