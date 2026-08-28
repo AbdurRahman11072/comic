@@ -73,6 +73,7 @@ export function SeriesClient({
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [hiddenFilter, setHiddenFilter] = useState("all");
+  const [scopeFilter, setScopeFilter] = useState<"ALL" | "MY_SERIES">("ALL");
   const [sort, setSort] = useState("latest");
   const [_total, setTotal] = useState(initialTotal || initialSeries.length);
 
@@ -87,7 +88,7 @@ export function SeriesClient({
 
   const role = userRole?.toLowerCase() || (session?.user as any)?.role?.toLowerCase() || "creator";
   const isModOrAdmin = ["admin", "moderator"].includes(role);
-  const canCreate = ["creator", "admin"].includes(role);
+  const canCreate = ["creator", "moderator", "admin"].includes(role);
 
   // Modal States
   const [requestModalSeries, setRequestModalSeries] = useState<UnifiedSeriesItem | null>(null);
@@ -191,8 +192,17 @@ export function SeriesClient({
 
   // Filtered & sorted series for view
   const filteredSeries = useMemo(() => {
+    const currentUserId = session?.user?.id || creatorId;
     return seriesList
       .filter((item) => {
+        const matchesScope =
+          !isModOrAdmin ||
+          scopeFilter === "ALL" ||
+          (scopeFilter === "MY_SERIES" &&
+            (item.creator?.id === currentUserId ||
+              (item.creator as any)?.userId === currentUserId ||
+              (item as any).creatorId === currentUserId));
+
         const matchesSearch =
           debouncedSearch === "" ||
           item.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
@@ -206,7 +216,7 @@ export function SeriesClient({
         const matchesType = typeFilter === "ALL" || item.type === typeFilter;
         const matchesHidden = hiddenFilter === "all" || String(!!item.isHidden) === hiddenFilter;
 
-        return matchesSearch && matchesStatus && matchesType && matchesHidden;
+        return matchesScope && matchesSearch && matchesStatus && matchesType && matchesHidden;
       })
       .sort((a, b) => {
         if (sort === "popular") return (b.totalViews || 0) - (a.totalViews || 0);
@@ -214,7 +224,7 @@ export function SeriesClient({
         if (sort === "oldest") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         return new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime();
       });
-  }, [seriesList, debouncedSearch, statusFilter, typeFilter, hiddenFilter, sort, isModOrAdmin]);
+  }, [seriesList, debouncedSearch, statusFilter, typeFilter, hiddenFilter, scopeFilter, sort, isModOrAdmin, session, creatorId]);
 
   // Delete Action
   const handleDeleteSeries = async () => {
@@ -364,12 +374,14 @@ export function SeriesClient({
       {/* Filter & Search Bar */}
       <SeriesFiltersToolbar
         search={search}
+        scopeFilter={scopeFilter}
         statusFilter={statusFilter}
         typeFilter={typeFilter}
         hiddenFilter={hiddenFilter}
         sort={sort}
         isModOrAdmin={isModOrAdmin}
         onSearchChange={setSearch}
+        onScopeFilterChange={setScopeFilter}
         onStatusFilterChange={setStatusFilter}
         onTypeFilterChange={setTypeFilter}
         onHiddenFilterChange={setHiddenFilter}

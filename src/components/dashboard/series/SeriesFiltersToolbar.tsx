@@ -5,12 +5,14 @@ import { Filter, Search } from "lucide-react";
 
 interface SeriesFiltersToolbarProps {
   search: string;
+  scopeFilter?: "ALL" | "MY_SERIES";
   statusFilter: string;
   typeFilter: string;
   hiddenFilter: string;
   sort: string;
   isModOrAdmin: boolean;
   onSearchChange: (val: string) => void;
+  onScopeFilterChange?: (val: "ALL" | "MY_SERIES") => void;
   onStatusFilterChange: (val: string) => void;
   onTypeFilterChange: (val: string) => void;
   onHiddenFilterChange: (val: string) => void;
@@ -19,12 +21,14 @@ interface SeriesFiltersToolbarProps {
 
 export function SeriesFiltersToolbar({
   search,
+  scopeFilter = "ALL",
   statusFilter,
   typeFilter,
   hiddenFilter,
   sort,
   isModOrAdmin,
   onSearchChange,
+  onScopeFilterChange,
   onStatusFilterChange,
   onTypeFilterChange,
   onHiddenFilterChange,
@@ -32,7 +36,35 @@ export function SeriesFiltersToolbar({
 }: SeriesFiltersToolbarProps) {
   return (
     <div className="glass p-4 rounded-2xl border border-white/5 space-y-4">
-      <div className="flex flex-col sm:flex-row items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+        {/* Scope Toggle for Staff */}
+        {isModOrAdmin && onScopeFilterChange && (
+          <div className="flex items-center gap-1.5 p-1 bg-white/[0.04] border border-white/10 rounded-xl w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => onScopeFilterChange("ALL")}
+              className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+                scopeFilter === "ALL"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              All Platform Series
+            </button>
+            <button
+              type="button"
+              onClick={() => onScopeFilterChange("MY_SERIES")}
+              className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-semibold transition ${
+                scopeFilter === "MY_SERIES"
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              My Official Series
+            </button>
+          </div>
+        )}
+
         <div className="relative flex-1 w-full">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input

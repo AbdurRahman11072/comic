@@ -128,12 +128,20 @@ export default async function proxy(request: NextRequest) {
           }
         }
 
-        // 3. Creator and Admin Only Studio Routes
+        // 3. Creator and Staff Studio Routes
         if (
           path.startsWith('/dashboard/channel') ||
           path.startsWith('/dashboard/series') ||
           path.startsWith('/dashboard/chapters') ||
-          path.startsWith('/dashboard/analytics') ||
+          path.startsWith('/dashboard/analytics')
+        ) {
+          if (!['creator', 'moderator', 'admin'].includes(userRole)) {
+            return NextResponse.redirect(new URL('/dashboard', request.url));
+          }
+        }
+
+        // 4. Creator and Admin Only Financial Studio Routes
+        if (
           path.startsWith('/dashboard/earnings') ||
           path.startsWith('/dashboard/promos') ||
           path.startsWith('/dashboard/cashout')
