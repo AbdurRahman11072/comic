@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, Loader2, Sparkles, UploadCloud } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export interface ProgressState {
   title: string;
@@ -18,84 +18,69 @@ interface ChapterProgressBarProps {
 export function ChapterProgressBar({ progressInfo }: ChapterProgressBarProps) {
   if (!progressInfo) return null;
 
-  const isCompleted = progressInfo.percent >= 100;
-
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="relative w-full max-w-md p-6 sm:p-8 rounded-3xl bg-[#0e0e14] border border-white/15 shadow-2xl space-y-6 text-center overflow-hidden animate-in zoom-in-95 duration-200">
-        {/* Ambient Top Glow */}
-        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
-        <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Central Circular Animated Spinner */}
-        <div className="relative mx-auto w-24 h-24 flex items-center justify-center">
-          {/* Outer Pulsing Ring */}
-          <div className="absolute inset-0 rounded-full border border-primary/20 animate-ping opacity-25" />
-          <div className="absolute inset-1 rounded-full border border-primary/30" />
-
-          {/* SVG Circular Progress Track */}
+    <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-150">
+      <div className="w-full max-w-sm p-6 rounded-2xl bg-card border border-border text-card-foreground shadow-2xl text-center space-y-5 animate-in zoom-in-95 duration-150">
+        {/* Clean Spinner with Percentage */}
+        <div className="relative mx-auto w-20 h-20 flex items-center justify-center">
+          {/* Background Track */}
           <svg className="w-full h-full -rotate-90 transform" viewBox="0 0 100 100">
             <circle
               cx="50"
               cy="50"
               r="40"
-              className="text-white/10"
+              className="text-muted/30"
               strokeWidth="6"
               stroke="currentColor"
               fill="transparent"
             />
+            {/* Active Primary Track */}
             <circle
               cx="50"
               cy="50"
               r="40"
-              className="text-primary transition-all duration-300 ease-out"
+              className="text-primary transition-all duration-200 ease-out"
               strokeWidth="6"
               strokeDasharray={251.2}
-              strokeDashoffset={251.2 - (251.2 * Math.max(5, progressInfo.percent)) / 100}
+              strokeDashoffset={251.2 - (251.2 * Math.max(0, Math.min(100, progressInfo.percent))) / 100}
               strokeLinecap="round"
               stroke="currentColor"
               fill="transparent"
             />
           </svg>
 
-          {/* Center Percent & Icon */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-            {isCompleted ? (
-              <CheckCircle2 className="w-8 h-8 text-emerald-400 animate-in zoom-in-50 duration-200" />
-            ) : (
-              <span className="text-xl font-black text-white tracking-tight">
-                {progressInfo.percent}%
-              </span>
-            )}
-          </div>
+          {/* Percentage */}
+          <span className="absolute inset-0 flex items-center justify-center text-base font-bold text-foreground">
+            {progressInfo.percent}%
+          </span>
         </div>
 
-        {/* Title & Status Info */}
-        <div className="space-y-1.5">
-          <h3 className="text-lg font-black text-white tracking-tight flex items-center justify-center gap-2">
-            {!isCompleted && <Loader2 className="w-4 h-4 text-primary animate-spin" />}
+        {/* Title and Subtitle */}
+        <div className="space-y-1">
+          <h3 className="text-sm font-semibold text-foreground flex items-center justify-center gap-2">
+            <Loader2 className="w-4 h-4 text-primary animate-spin" />
             {progressInfo.title}
           </h3>
           {progressInfo.statusText && (
-            <p className="text-xs text-zinc-400 font-medium px-2 leading-relaxed truncate">
+            <p className="text-xs text-muted-foreground truncate">
               {progressInfo.statusText}
             </p>
           )}
         </div>
 
-        {/* Horizontal Linear Progress Track */}
-        <div className="space-y-1.5 pt-1">
-          <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden p-0.5 shadow-inner">
+        {/* Solid Primary Linear Progress Bar (Global CSS color) */}
+        <div className="space-y-1">
+          <div className="w-full bg-muted/40 rounded-full h-1.5 overflow-hidden">
             <div
-              className="bg-gradient-to-r from-primary via-emerald-400 to-primary h-full rounded-full transition-all duration-300 ease-out shadow-[0_0_12px_rgba(var(--primary),0.8)]"
-              style={{ width: `${Math.max(5, progressInfo.percent)}%` }}
+              className="bg-primary h-full rounded-full transition-all duration-200 ease-out"
+              style={{ width: `${Math.max(0, Math.min(100, progressInfo.percent))}%` }}
             />
           </div>
-          <div className="flex items-center justify-between text-[10px] text-zinc-500 font-mono">
+          <div className="flex items-center justify-between text-[11px] text-muted-foreground">
             <span>
-              {progressInfo.current > 0 ? `Item ${progressInfo.current} of ${progressInfo.total}` : "Processing..."}
+              {progressInfo.total > 0 ? `${progressInfo.current} / ${progressInfo.total}` : ""}
             </span>
-            <span>{progressInfo.percent}% Completed</span>
+            <span>{progressInfo.percent}%</span>
           </div>
         </div>
       </div>
