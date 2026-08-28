@@ -20,7 +20,8 @@ const getChapterById = asyncHandler(async (req: Request, res: Response) => {
 const getChapterByNumber = asyncHandler(async (req: Request, res: Response) => {
   const { slug, number } = req.params;
   const userId = req.user?.id;
-  const result = await ChapterService.getChapterByNumber(slug as string, Number(number), userId);
+  const lang = req.query.lang as string | undefined;
+  const result = await ChapterService.getChapterByNumber(slug as string, Number(number), userId, lang);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

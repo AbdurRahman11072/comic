@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, List, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight, Globe, List, Settings } from "lucide-react";
 
 interface ReaderHeaderProps {
   slug: string;
@@ -40,7 +40,7 @@ export function ReaderHeader({
           : "-translate-y-full opacity-0 pointer-events-none"
       } ${headerThemeClasses[readerTheme]}`}
     >
-      <div className="max-w-[800px] mx-auto flex items-center justify-between">
+      <div className="max-w-[800px] mx-auto flex items-center justify-between gap-2">
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex flex-col min-w-0">
             <Link
@@ -49,7 +49,7 @@ export function ReaderHeader({
             >
               {chapter.series.title}
             </Link>
-            <h1 className="text-sm font-bold truncate max-w-[160px] sm:max-w-[240px]">
+            <h1 className="text-sm font-bold truncate max-w-[140px] sm:max-w-[200px]">
               Chapter {chapter.number} {chapter.title && `- ${chapter.title}`}
             </h1>
           </div>
@@ -60,7 +60,7 @@ export function ReaderHeader({
               href={`/channel/${
                 chapter.series.creator.creatorProfile?.id || chapter.series.creator.id
               }`}
-              className="flex items-center gap-2 px-2 py-1 sm:px-2.5 sm:py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group shrink-0"
+              className="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition group shrink-0"
               title={`Visit ${
                 chapter.series.creator.creatorProfile?.channelName ||
                 chapter.series.creator.name
@@ -87,7 +87,7 @@ export function ReaderHeader({
                   </span>
                 )}
               </div>
-              <span className="hidden sm:inline text-[11px] font-bold text-white group-hover:text-primary transition truncate max-w-[100px]">
+              <span className="text-[11px] font-bold text-white group-hover:text-primary transition truncate max-w-[90px]">
                 {chapter.series.creator.creatorProfile?.channelName ||
                   chapter.series.creator.name}
               </span>
@@ -96,6 +96,27 @@ export function ReaderHeader({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
+          {/* Multi-Language Translation Switcher */}
+          {chapter.availableTranslations && chapter.availableTranslations.length > 1 && (
+            <div className="flex items-center gap-1 bg-white/5 border border-white/10 rounded-lg p-0.5">
+              <Globe className="w-3.5 h-3.5 text-primary ml-1.5" />
+              <select
+                value={chapter.language || "en"}
+                onChange={(e) => {
+                  const newLang = e.target.value;
+                  window.location.href = `/series/${slug}/chapter-${chapter.number}?lang=${newLang}`;
+                }}
+                className="bg-transparent text-xs font-semibold px-1.5 py-1 outline-none cursor-pointer text-white"
+              >
+                {chapter.availableTranslations.map((t: any) => (
+                  <option key={t.id || t.language} value={t.language} className="bg-neutral-900 text-white">
+                    {t.language === "bn" ? "🇧🇩 BN" : t.language === "en" ? "🇬🇧 EN" : t.language.toUpperCase()}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <button
             onClick={onOpenSettings}
             className="p-2 glass glass-hover rounded-lg hover:opacity-80 transition-all cursor-pointer"

@@ -321,6 +321,7 @@ model Chapter {
   series     Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   number     Float
   title      String?
+  language   String    @default("en") // e.g. "en", "bn", "es", "hi", etc.
   isLocked   Boolean   @default(false)
   coinCost   Int       @default(0)
   isFastPass Boolean   @default(false)
@@ -334,8 +335,9 @@ model Chapter {
   comments   Comment[]
   readEvents ChapterReadEvent[]
 
-  @@unique([seriesId, number])
+  @@unique([seriesId, number, language])
   @@index([seriesId, number(sort: Desc)])
+  @@index([seriesId, language])
   @@index([seriesId, createdAt(sort: Desc)])
   @@index([publishAt])
   @@map("chapter")

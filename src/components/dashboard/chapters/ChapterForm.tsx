@@ -53,6 +53,7 @@ export function ChapterForm({ initialData }: ChapterFormProps) {
     seriesId: initialData?.seriesId || "",
     number: initialData?.number || 1,
     title: initialData?.title || "",
+    language: initialData?.language || "en",
     isLocked: initialData?.isLocked ?? false,
     isFastPass: initialData?.isFastPass ?? false,
     publishAt: initialData?.publishAt ? new Date(initialData.publishAt).toISOString().slice(0, 16) : "",

@@ -41,8 +41,9 @@ const isPremiumChaptersEnabled = async (): Promise<boolean> => {
   }
 };
 
-const getChapterByNumber = async (seriesSlug: string, number: number, userId?: string) => {
-  const cacheKey = `cache:chapter:${seriesSlug}:${number}`;
+const getChapterByNumber = async (seriesSlug: string, number: number, userId?: string, language?: string) => {
+  const cleanLang = language?.toLowerCase().trim();
+  const cacheKey = `cache:chapter:${seriesSlug}:${number}:${cleanLang || 'default'}`;
   let baseChapterData = await cacheService.get<any>(cacheKey);
 
   if (!baseChapterData) {
@@ -53,12 +54,36 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
 
     if (!series) return null;
 
+    // Find all available translations for this chapter number
+    const availableTranslations = await prisma.chapter.findMany({
+      where: {
+        seriesId: series.id,
+        number: Number(number),
+      },
+      select: {
+        id: true,
+        number: true,
+        language: true,
+        title: true,
+        isLocked: true,
+        coinCost: true,
+      },
+    });
+
+    if (availableTranslations.length === 0) return null;
+
+    // Find the specific chapter matching requested language, or fallback to English or first available
+    let matchingChapter = cleanLang
+      ? availableTranslations.find((t) => t.language.toLowerCase() === cleanLang)
+      : availableTranslations.find((t) => t.language.toLowerCase() === 'en') || availableTranslations[0];
+
+    if (!matchingChapter) {
+      matchingChapter = availableTranslations[0];
+    }
+
     const [result, premiumEnabled] = await Promise.all([
-      prisma.chapter.findFirst({
-        where: { 
-          seriesId: series.id,
-          number: Number(number),
-        },
+      prisma.chapter.findUnique({
+        where: { id: matchingChapter.id },
         include: {
           images: {
             orderBy: { order: 'asc' },
@@ -92,15 +117,16 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
       }),
       isPremiumChaptersEnabled(),
     ]);
-    
+
     if (!result) return null;
 
-    // Find prev and next chapters in parallel
+    // Find prev and next chapters in parallel (in same language if possible)
     const [prevChapter, nextChapter] = await Promise.all([
       prisma.chapter.findFirst({
         where: {
           seriesId: result.seriesId,
           number: { lt: result.number },
+          language: result.language,
         },
         orderBy: { number: 'desc' },
         select: { number: true },
@@ -109,6 +135,7 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
         where: {
           seriesId: result.seriesId,
           number: { gt: result.number },
+          language: result.language,
         },
         orderBy: { number: 'asc' },
         select: { number: true },
@@ -130,6 +157,12 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
       premiumEnabled,
       prevChapterNumber: prevChapter?.number || null,
       nextChapterNumber: nextChapter?.number || null,
+      availableTranslations: availableTranslations.map((t) => ({
+        id: t.id,
+        number: t.number,
+        language: t.language,
+        title: t.title,
+      })),
     };
 
     await cacheService.set(cacheKey, baseChapterData, 1800);
@@ -261,7 +294,8 @@ const getChapterById = async (id: string, userId?: string) => {
 };
 
 const createChapter = async (data: any, userId?: string, role?: string) => {
-  const { images = [], ...chapterData } = data;
+  const { images = [], language, ...chapterData } = data;
+  const cleanLang = language ? String(language).toLowerCase().trim() : 'en';
 
   if (role === 'creator') {
     const series = await prisma.series.findUnique({
@@ -276,6 +310,7 @@ const createChapter = async (data: any, userId?: string, role?: string) => {
   const result = await prisma.chapter.create({
     data: {
       ...chapterData,
+      language: cleanLang,
       images: {
         create: (images || []).map((img: { url: string; order: number }) => ({
           url: img.url,
@@ -292,7 +327,7 @@ const createChapter = async (data: any, userId?: string, role?: string) => {
 };
 
 const updateChapter = async (id: string, data: any, userId?: string, role?: string) => {
-  const { images, ...chapterData } = data;
+  const { images, language, ...chapterData } = data;
 
   const existing = await prisma.chapter.findUnique({
     where: { id },
@@ -318,23 +353,32 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
     const newUrls = new Set(images.map((img: any) => img.url));
     const oldImagesToDelete = existing.images.filter((img) => !newUrls.has(img.url));
     for (const oldImg of oldImagesToDelete) {
-      deleteFromCloudinary(oldImg.url).catch(() => null);
+      if (oldImg.url && oldImg.url.includes('cloudinary.com')) {
+        deleteFromCloudinary(oldImg.url).catch(() => null);
+      }
     }
+  }
+
+  const updatePayload: any = { ...chapterData };
+  if (language !== undefined) {
+    updatePayload.language = String(language).toLowerCase().trim() || 'en';
   }
 
   const result = await prisma.chapter.update({
     where: { id },
     data: {
-      ...chapterData,
-      ...(images && {
-        images: {
-          deleteMany: {},
-          create: images.map((img: { url: string; order: number }) => ({
-            url: img.url,
-            order: img.order,
-          })),
-        },
-      }),
+      ...updatePayload,
+      ...(images
+        ? {
+            images: {
+              deleteMany: {},
+              create: images.map((img: { url: string; order: number }) => ({
+                url: img.url,
+                order: img.order,
+              })),
+            },
+          }
+        : {}),
     },
   });
 

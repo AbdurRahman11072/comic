@@ -3,13 +3,23 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Calendar, Coins, Layers, Lock, Zap } from "lucide-react";
+import { Calendar, Coins, Globe, Layers, Lock, Zap } from "lucide-react";
+
+export const SUPPORTED_LANGUAGES = [
+  { code: "en", name: "English", flag: "🇬🇧" },
+  { code: "bn", name: "Bangla", flag: "🇧🇩" },
+  { code: "es", name: "Spanish", flag: "🇪🇸" },
+  { code: "hi", name: "Hindi", flag: "🇮🇳" },
+  { code: "ar", name: "Arabic", flag: "🇸🇦" },
+  { code: "id", name: "Indonesian", flag: "🇮🇩" },
+];
 
 interface ChapterMetadataFieldsProps {
   formData: {
     seriesId: string;
     number: number | string;
     title: string;
+    language?: string;
     isLocked: boolean;
     isFastPass: boolean;
     publishAt: string;
@@ -47,8 +57,26 @@ export function ChapterMetadataFields({
         </select>
       </div>
 
-      {/* Chapter Number & Coin Cost */}
-      <div className="grid grid-cols-2 gap-3">
+      {/* Chapter Language & Number */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="space-y-1.5">
+          <Label htmlFor="language" className="text-xs font-semibold flex items-center gap-1.5">
+            <Globe className="w-3.5 h-3.5 text-primary" /> Translation Language
+          </Label>
+          <select
+            id="language"
+            value={formData.language || "en"}
+            onChange={onInputChange}
+            className="w-full bg-background/60 border border-white/10 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/50 h-10 cursor-pointer"
+          >
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <option key={lang.code} value={lang.code} className="bg-neutral-900 text-white">
+                {lang.flag} {lang.name} ({lang.code.toUpperCase()})
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="space-y-1.5">
           <Label htmlFor="number" className="text-xs font-semibold">Chapter #</Label>
           <Input
@@ -61,18 +89,20 @@ export function ChapterMetadataFields({
             className="bg-background/60 rounded-xl h-10 text-sm font-semibold"
           />
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="coinCost" className="text-xs font-semibold flex items-center gap-1">
-            <Coins className="w-3 h-3 text-amber-400" /> Coin Cost
-          </Label>
-          <Input
-            id="coinCost"
-            type="number"
-            value={formData.coinCost}
-            onChange={onInputChange}
-            className="bg-background/60 rounded-xl h-10 text-sm font-semibold"
-          />
-        </div>
+      </div>
+
+      {/* Coin Cost */}
+      <div className="space-y-1.5">
+        <Label htmlFor="coinCost" className="text-xs font-semibold flex items-center gap-1">
+          <Coins className="w-3 h-3 text-amber-400" /> Coin Cost
+        </Label>
+        <Input
+          id="coinCost"
+          type="number"
+          value={formData.coinCost}
+          onChange={onInputChange}
+          className="bg-background/60 rounded-xl h-10 text-sm font-semibold"
+        />
       </div>
 
       {/* Chapter Title */}

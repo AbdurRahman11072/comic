@@ -8,21 +8,24 @@ import Link from "next/link";
 
 interface Props {
   params: Promise<{ slug: string; chapterNumber: string }>;
+  searchParams?: Promise<{ lang?: string }>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { slug, chapterNumber } = await params;
+  const { lang } = (await searchParams) || {};
   const numberStr = chapterNumber.replace("chapter-", "");
   const number = parseInt(numberStr);
 
   try {
-    const res = await chapterService.getChapterByNumber(slug, number);
+    const res = await chapterService.getChapterByNumber(slug, number, lang);
     const chapter = res?.data;
     if (chapter) {
       const seriesTitle = chapter.series?.title || slug;
       const chapterTitle = chapter.title ? ` - ${chapter.title}` : "";
+      const langLabel = chapter.language && chapter.language !== "en" ? ` [${chapter.language.toUpperCase()}]` : "";
       return constructMetadata({
-        title: `${seriesTitle} Chapter ${chapter.number}${chapterTitle}`,
+        title: `${seriesTitle} Chapter ${chapter.number}${chapterTitle}${langLabel}`,
         description: `Read ${seriesTitle} Chapter ${chapter.number} online in high definition for free.`,
         image: chapter.series?.coverUrl || undefined,
         keywords: [seriesTitle, `Chapter ${chapter.number}`, "manga chapter", "webtoon reader"],
@@ -39,13 +42,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-export default async function ChapterReadingPage({ params }: Props) {
+export default async function ChapterReadingPage({ params, searchParams }: Props) {
   const { slug, chapterNumber } = await params;
+  const { lang } = (await searchParams) || {};
 
   const numberStr = chapterNumber.replace("chapter-", "");
   const number = parseInt(numberStr);
 
-  const res = await chapterService.getChapterByNumber(slug, number);
+  const res = await chapterService.getChapterByNumber(slug, number, lang);
   const chapter = res?.data;
 
   if (!chapter) {

@@ -13,6 +13,7 @@ interface ChapterRowProps {
   id?: string; // chapter id for purchase
   number: number;
   title: string;
+  language?: string;
   date: string;
   isNew?: boolean;
   isLocked?: boolean;
@@ -26,6 +27,7 @@ export function ChapterRow({
   id,
   number,
   title,
+  language = "en",
   date,
   isNew,
   isLocked: initialIsLocked,
@@ -113,11 +115,17 @@ export function ChapterRow({
           <span className="text-foreground/40 text-xs font-mono w-6 shrink-0">
             {number}
           </span>
-          <span className={`text-sm font-medium transition-colors ${
+          <span className={`text-sm font-medium transition-colors truncate ${
             isLocked ? "text-foreground/50" : "text-foreground/90 group-hover:text-foreground"
           }`}>
             {title}
           </span>
+
+          {language && (
+            <span className="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold bg-white/[0.06] text-zinc-300 border border-white/10 flex items-center gap-1 font-mono">
+              {language.toLowerCase() === "bn" ? "🇧🇩 BN" : language.toLowerCase() === "en" ? "🇬🇧 EN" : language.toUpperCase()}
+            </span>
+          )}
           
           {isNew && (
             <span className="shrink-0 px-1.5 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-400 border border-green-500/30">

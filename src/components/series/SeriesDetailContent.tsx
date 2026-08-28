@@ -19,6 +19,7 @@ interface Chapter {
   id?: string;
   number: number;
   title: string;
+  language?: string;
   date: string;
   isNew?: boolean;
   isLocked?: boolean;
@@ -63,10 +64,20 @@ interface SeriesDetailContentProps {
   series: Series;
 }
 
+const LANGUAGE_META: Record<string, { name: string; flag: string }> = {
+  en: { name: "English", flag: "🇬🇧" },
+  bn: { name: "Bangla", flag: "🇧🇩" },
+  es: { name: "Spanish", flag: "🇪🇸" },
+  hi: { name: "Hindi", flag: "🇮🇳" },
+  ar: { name: "Arabic", flag: "🇸🇦" },
+  id: { name: "Indonesian", flag: "🇮🇩" },
+};
+
 export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
   const router = useRouter();
   const [reverseOrder, setReverseOrder] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("ALL");
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const [localPurchasedIds, setLocalPurchasedIds] = useState<Set<string>>(new Set());
   const itemsPerPage = 20;
@@ -79,20 +90,33 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
     }));
   }, [series.chapters, localPurchasedIds]);
 
+  const availableLanguages = useMemo(() => {
+    const langs = new Set<string>();
+    (series.chapters || []).forEach((c) => {
+      if (c.language) langs.add(c.language.toLowerCase());
+    });
+    return Array.from(langs);
+  }, [series.chapters]);
+
+  const filteredChapters = useMemo(() => {
+    if (selectedLanguage === "ALL") return enrichedChapters;
+    return enrichedChapters.filter((c) => (c.language || "en").toLowerCase() === selectedLanguage);
+  }, [enrichedChapters, selectedLanguage]);
+
   const lockedChaptersCount = useMemo(() => {
-    return enrichedChapters.filter((c) => c.isLocked && !c.isPurchased).length;
-  }, [enrichedChapters]);
+    return filteredChapters.filter((c) => c.isLocked && !c.isPurchased).length;
+  }, [filteredChapters]);
 
   const chaptersToDisplay = useMemo(() => {
-    let sorted = [...enrichedChapters];
+    let sorted = [...filteredChapters];
     if (reverseOrder) {
       sorted = sorted.reverse();
     }
     const startIndex = (currentPage - 1) * itemsPerPage;
     return sorted.slice(startIndex, startIndex + itemsPerPage);
-  }, [enrichedChapters, reverseOrder, currentPage]);
+  }, [filteredChapters, reverseOrder, currentPage]);
 
-  const totalPages = Math.ceil(enrichedChapters.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredChapters.length / itemsPerPage);
 
   const handleReverseToggle = () => {
     setReverseOrder((prev) => !prev);
@@ -218,12 +242,57 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
                 {/* Chapter List */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between px-2 flex-wrap gap-2">
-                    <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
-                      Chapters
-                      <span className="text-sm font-normal text-foreground/40">
-                        ({series.chapters.length})
-                      </span>
-                    </h3>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+                        Chapters
+                        <span className="text-sm font-normal text-foreground/40">
+                          ({filteredChapters.length})
+                        </span>
+                      </h3>
+
+                      {/* Multi-Language Filter Pills */}
+                      {availableLanguages.length > 1 && (
+                        <div className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/10 rounded-xl">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedLanguage("ALL");
+                              setCurrentPage(1);
+                            }}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
+                              selectedLanguage === "ALL"
+                                ? "bg-primary text-white shadow-sm"
+                                : "text-zinc-400 hover:text-white"
+                            }`}
+                          >
+                            All ({enrichedChapters.length})
+                          </button>
+                          {availableLanguages.map((code) => {
+                            const meta = LANGUAGE_META[code] || { name: code.toUpperCase(), flag: "🌐" };
+                            const count = enrichedChapters.filter((c) => (c.language || "en").toLowerCase() === code).length;
+                            return (
+                              <button
+                                key={code}
+                                type="button"
+                                onClick={() => {
+                                  setSelectedLanguage(code);
+                                  setCurrentPage(1);
+                                }}
+                                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
+                                  selectedLanguage === code
+                                    ? "bg-primary text-white shadow-sm"
+                                    : "text-zinc-400 hover:text-white"
+                                }`}
+                              >
+                                <span>{meta.flag}</span>
+                                <span>{meta.name}</span>
+                                <span className="opacity-60 text-[10px]">({count})</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
 
                     <div className="flex items-center gap-2">
                       {lockedChaptersCount > 0 && (
@@ -238,7 +307,7 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
                       )}
 
                       <button 
-                        onClick={handleReverseToggle}
+                          onClick={handleReverseToggle}
                         className="text-xs text-primary hover:underline flex items-center gap-1 glass px-3 py-1.5 rounded-full border border-primary/20 hover:bg-primary/10 transition-colors cursor-pointer"
                       >
                         <ArrowUpDown className="w-3.5 h-3.5" />
@@ -250,16 +319,17 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
                   <div className="grid gap-1 rounded-2xl glass p-2 max-h-[600px] overflow-y-auto scrollbar-thin">
                     {chaptersToDisplay.map((chapter) => (
                       <ChapterRow
-                        key={chapter.number}
+                        key={chapter.id || `${chapter.number}-${chapter.language}`}
                         id={chapter.id}
                         number={chapter.number}
                         title={chapter.title}
+                        language={chapter.language}
                         date={chapter.date}
                         isNew={chapter.isNew}
                         isLocked={chapter.isLocked}
                         isPurchased={chapter.isPurchased}
                         coinCost={chapter.coinCost}
-                        href={`/series/${series.slug}/chapter-${chapter.number}`}
+                        href={`/series/${series.slug}/chapter-${chapter.number}${chapter.language && chapter.language !== "en" ? `?lang=${chapter.language}` : ""}`}
                         onUnlocked={(unlockedId) => {
                           setLocalPurchasedIds((prev) => new Set([...prev, unlockedId]));
                           router.refresh();

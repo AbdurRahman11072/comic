@@ -286,6 +286,7 @@ exports.Prisma.ChapterScalarFieldEnum = {
   seriesId: 'seriesId',
   number: 'number',
   title: 'title',
+  language: 'language',
   isLocked: 'isLocked',
   coinCost: 'coinCost',
   isFastPass: 'isFastPass',

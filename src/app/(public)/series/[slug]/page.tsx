@@ -60,6 +60,7 @@ export default async function SeriesPage({ params }: Props) {
       id: c.id,
       number: c.number,
       title: c.title || `Chapter ${c.number}`,
+      language: c.language || "en",
       date: new Date(c.createdAt).toLocaleDateString(),
       isLocked: c.isLocked,
       isPurchased: c.isPurchased,

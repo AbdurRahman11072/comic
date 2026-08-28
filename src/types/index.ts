@@ -3,6 +3,7 @@ export interface Chapter {
   seriesId: string;
   number: number;
   title: string | null;
+  language?: string;
   isLocked: boolean;
   isPurchased?: boolean;
   coinCost: number;
@@ -13,6 +14,7 @@ export interface CreateChapterDTO {
   seriesId: string;
   number: number;
   title?: string;
+  language?: string;
   isLocked?: boolean;
   coinCost?: number;
   images: { url: string; order: number }[];

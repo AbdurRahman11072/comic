@@ -66,7 +66,7 @@ export const chapterService = {
     }
   },
 
-  getChapterByNumber: async (slug: string, number: number): Promise<ServiceResponse<any | null>> => {
+  getChapterByNumber: async (slug: string, number: number, language?: string): Promise<ServiceResponse<any | null>> => {
     try {
       let cookieHeader = "";
       try {
@@ -77,7 +77,8 @@ export const chapterService = {
         // Ignored when called in client context
       }
 
-      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/chapters/${slug}/${number}`, {
+      const query = language ? `?lang=${encodeURIComponent(language)}` : "";
+      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/chapters/${slug}/${number}${query}`, {
         headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
         credentials: "include",
         next: { tags: [`Chapter-${slug}-${number}`] },

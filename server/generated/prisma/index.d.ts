@@ -17358,6 +17358,7 @@ export namespace Prisma {
     seriesId: string | null
     number: number | null
     title: string | null
+    language: string | null
     isLocked: boolean | null
     coinCost: number | null
     isFastPass: boolean | null
@@ -17371,6 +17372,7 @@ export namespace Prisma {
     seriesId: string | null
     number: number | null
     title: string | null
+    language: string | null
     isLocked: boolean | null
     coinCost: number | null
     isFastPass: boolean | null
@@ -17384,6 +17386,7 @@ export namespace Prisma {
     seriesId: number
     number: number
     title: number
+    language: number
     isLocked: number
     coinCost: number
     isFastPass: number
@@ -17409,6 +17412,7 @@ export namespace Prisma {
     seriesId?: true
     number?: true
     title?: true
+    language?: true
     isLocked?: true
     coinCost?: true
     isFastPass?: true
@@ -17422,6 +17426,7 @@ export namespace Prisma {
     seriesId?: true
     number?: true
     title?: true
+    language?: true
     isLocked?: true
     coinCost?: true
     isFastPass?: true
@@ -17435,6 +17440,7 @@ export namespace Prisma {
     seriesId?: true
     number?: true
     title?: true
+    language?: true
     isLocked?: true
     coinCost?: true
     isFastPass?: true
@@ -17535,6 +17541,7 @@ export namespace Prisma {
     seriesId: string
     number: number
     title: string | null
+    language: string
     isLocked: boolean
     coinCost: number
     isFastPass: boolean
@@ -17567,6 +17574,7 @@ export namespace Prisma {
     seriesId?: boolean
     number?: boolean
     title?: boolean
+    language?: boolean
     isLocked?: boolean
     coinCost?: boolean
     isFastPass?: boolean
@@ -17587,6 +17595,7 @@ export namespace Prisma {
     seriesId?: boolean
     number?: boolean
     title?: boolean
+    language?: boolean
     isLocked?: boolean
     coinCost?: boolean
     isFastPass?: boolean
@@ -17601,6 +17610,7 @@ export namespace Prisma {
     seriesId?: boolean
     number?: boolean
     title?: boolean
+    language?: boolean
     isLocked?: boolean
     coinCost?: boolean
     isFastPass?: boolean
@@ -17615,6 +17625,7 @@ export namespace Prisma {
     seriesId?: boolean
     number?: boolean
     title?: boolean
+    language?: boolean
     isLocked?: boolean
     coinCost?: boolean
     isFastPass?: boolean
@@ -17623,7 +17634,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ChapterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "seriesId" | "number" | "title" | "isLocked" | "coinCost" | "isFastPass" | "publishAt" | "createdAt" | "updatedAt", ExtArgs["result"]["chapter"]>
+  export type ChapterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "seriesId" | "number" | "title" | "language" | "isLocked" | "coinCost" | "isFastPass" | "publishAt" | "createdAt" | "updatedAt", ExtArgs["result"]["chapter"]>
   export type ChapterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     series?: boolean | SeriesDefaultArgs<ExtArgs>
     images?: boolean | Chapter$imagesArgs<ExtArgs>
@@ -17655,6 +17666,7 @@ export namespace Prisma {
       seriesId: string
       number: number
       title: string | null
+      language: string
       isLocked: boolean
       coinCost: number
       isFastPass: boolean
@@ -18094,6 +18106,7 @@ export namespace Prisma {
     readonly seriesId: FieldRef<"Chapter", 'String'>
     readonly number: FieldRef<"Chapter", 'Float'>
     readonly title: FieldRef<"Chapter", 'String'>
+    readonly language: FieldRef<"Chapter", 'String'>
     readonly isLocked: FieldRef<"Chapter", 'Boolean'>
     readonly coinCost: FieldRef<"Chapter", 'Int'>
     readonly isFastPass: FieldRef<"Chapter", 'Boolean'>
@@ -45096,6 +45109,7 @@ export namespace Prisma {
     seriesId: 'seriesId',
     number: 'number',
     title: 'title',
+    language: 'language',
     isLocked: 'isLocked',
     coinCost: 'coinCost',
     isFastPass: 'isFastPass',
@@ -46831,6 +46845,7 @@ export namespace Prisma {
     seriesId?: StringFilter<"Chapter"> | string
     number?: FloatFilter<"Chapter"> | number
     title?: StringNullableFilter<"Chapter"> | string | null
+    language?: StringFilter<"Chapter"> | string
     isLocked?: BoolFilter<"Chapter"> | boolean
     coinCost?: IntFilter<"Chapter"> | number
     isFastPass?: BoolFilter<"Chapter"> | boolean
@@ -46850,6 +46865,7 @@ export namespace Prisma {
     seriesId?: SortOrder
     number?: SortOrder
     title?: SortOrderInput | SortOrder
+    language?: SortOrder
     isLocked?: SortOrder
     coinCost?: SortOrder
     isFastPass?: SortOrder
@@ -46866,13 +46882,14 @@ export namespace Prisma {
 
   export type ChapterWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    seriesId_number?: ChapterSeriesIdNumberCompoundUniqueInput
+    seriesId_number_language?: ChapterSeriesIdNumberLanguageCompoundUniqueInput
     AND?: ChapterWhereInput | ChapterWhereInput[]
     OR?: ChapterWhereInput[]
     NOT?: ChapterWhereInput | ChapterWhereInput[]
     seriesId?: StringFilter<"Chapter"> | string
     number?: FloatFilter<"Chapter"> | number
     title?: StringNullableFilter<"Chapter"> | string | null
+    language?: StringFilter<"Chapter"> | string
     isLocked?: BoolFilter<"Chapter"> | boolean
     coinCost?: IntFilter<"Chapter"> | number
     isFastPass?: BoolFilter<"Chapter"> | boolean
@@ -46885,13 +46902,14 @@ export namespace Prisma {
     purchases?: ChapterPurchaseListRelationFilter
     comments?: CommentListRelationFilter
     readEvents?: ChapterReadEventListRelationFilter
-  }, "id" | "seriesId_number">
+  }, "id" | "seriesId_number_language">
 
   export type ChapterOrderByWithAggregationInput = {
     id?: SortOrder
     seriesId?: SortOrder
     number?: SortOrder
     title?: SortOrderInput | SortOrder
+    language?: SortOrder
     isLocked?: SortOrder
     coinCost?: SortOrder
     isFastPass?: SortOrder
@@ -46913,6 +46931,7 @@ export namespace Prisma {
     seriesId?: StringWithAggregatesFilter<"Chapter"> | string
     number?: FloatWithAggregatesFilter<"Chapter"> | number
     title?: StringNullableWithAggregatesFilter<"Chapter"> | string | null
+    language?: StringWithAggregatesFilter<"Chapter"> | string
     isLocked?: BoolWithAggregatesFilter<"Chapter"> | boolean
     coinCost?: IntWithAggregatesFilter<"Chapter"> | number
     isFastPass?: BoolWithAggregatesFilter<"Chapter"> | boolean
@@ -49985,6 +50004,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -50004,6 +50024,7 @@ export namespace Prisma {
     seriesId: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -50021,6 +50042,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -50040,6 +50062,7 @@ export namespace Prisma {
     seriesId?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -50058,6 +50081,7 @@ export namespace Prisma {
     seriesId: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -50070,6 +50094,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -50083,6 +50108,7 @@ export namespace Prisma {
     seriesId?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -53154,9 +53180,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type ChapterSeriesIdNumberCompoundUniqueInput = {
+  export type ChapterSeriesIdNumberLanguageCompoundUniqueInput = {
     seriesId: string
     number: number
+    language: string
   }
 
   export type ChapterCountOrderByAggregateInput = {
@@ -53164,6 +53191,7 @@ export namespace Prisma {
     seriesId?: SortOrder
     number?: SortOrder
     title?: SortOrder
+    language?: SortOrder
     isLocked?: SortOrder
     coinCost?: SortOrder
     isFastPass?: SortOrder
@@ -53182,6 +53210,7 @@ export namespace Prisma {
     seriesId?: SortOrder
     number?: SortOrder
     title?: SortOrder
+    language?: SortOrder
     isLocked?: SortOrder
     coinCost?: SortOrder
     isFastPass?: SortOrder
@@ -53195,6 +53224,7 @@ export namespace Prisma {
     seriesId?: SortOrder
     number?: SortOrder
     title?: SortOrder
+    language?: SortOrder
     isLocked?: SortOrder
     coinCost?: SortOrder
     isFastPass?: SortOrder
@@ -59808,6 +59838,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -59825,6 +59856,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -60146,6 +60178,7 @@ export namespace Prisma {
     seriesId?: StringFilter<"Chapter"> | string
     number?: FloatFilter<"Chapter"> | number
     title?: StringNullableFilter<"Chapter"> | string | null
+    language?: StringFilter<"Chapter"> | string
     isLocked?: BoolFilter<"Chapter"> | boolean
     coinCost?: IntFilter<"Chapter"> | number
     isFastPass?: BoolFilter<"Chapter"> | boolean
@@ -61062,6 +61095,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -61080,6 +61114,7 @@ export namespace Prisma {
     seriesId: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -61112,6 +61147,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -61130,6 +61166,7 @@ export namespace Prisma {
     seriesId?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -61626,6 +61663,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -61644,6 +61682,7 @@ export namespace Prisma {
     seriesId: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -61844,6 +61883,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -61862,6 +61902,7 @@ export namespace Prisma {
     seriesId?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -62157,6 +62198,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -62175,6 +62217,7 @@ export namespace Prisma {
     seriesId: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -62304,6 +62347,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -62322,6 +62366,7 @@ export namespace Prisma {
     seriesId?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -62805,6 +62850,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -62823,6 +62869,7 @@ export namespace Prisma {
     seriesId: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -62952,6 +62999,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -62970,6 +63018,7 @@ export namespace Prisma {
     seriesId?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -65168,6 +65217,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -65186,6 +65236,7 @@ export namespace Prisma {
     seriesId: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -65421,6 +65472,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -65439,6 +65491,7 @@ export namespace Prisma {
     seriesId?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -67172,6 +67225,7 @@ export namespace Prisma {
     id?: string
     number: number
     title?: string | null
+    language?: string
     isLocked?: boolean
     coinCost?: number
     isFastPass?: boolean
@@ -67265,6 +67319,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -67282,6 +67337,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
@@ -67299,6 +67355,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     number?: FloatFieldUpdateOperationsInput | number
     title?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     coinCost?: IntFieldUpdateOperationsInput | number
     isFastPass?: BoolFieldUpdateOperationsInput | boolean
