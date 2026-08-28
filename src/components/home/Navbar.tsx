@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -8,7 +8,7 @@ import { UpdateCreatorProfileAction } from "@/actions/creator";
 import { LoginDialog } from "./LoginDialog";
 import { ChatDrawer } from "./ChatDrawer";
 import { BottomNav } from "./BottomNav";
-import { User as UserIcon, Settings, Bookmark, History, LayoutDashboard, MessageCircle } from "lucide-react";
+import { User as UserIcon, Settings, Bookmark, History, LayoutDashboard, MessageCircle, X } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { usePoints } from "@/providers/PointsProvider";
 import { useSiteConfig } from "@/providers/SiteConfigProvider";
@@ -50,11 +50,21 @@ const TransactionIcon = () => (
 
 export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const mobileSearchInputRef = useRef<HTMLInputElement>(null);
   const [loginOpen, setLoginOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const router = useRouter();
   const { data: session, isPending } = useSession();
+
+  useEffect(() => {
+    if (mobileSearchOpen) {
+      setTimeout(() => {
+        mobileSearchInputRef.current?.focus();
+      }, 50);
+    }
+  }, [mobileSearchOpen]);
 
   const { config } = useSiteConfig();
   const appName = config?.appName || SITE_DEFAULTS.appName;
@@ -153,8 +163,19 @@ export function Navbar() {
             </nav>
           </div>
 
-          {/* Right: points badge + auth */}
-          <div className="flex items-center gap-3">
+          {/* Right: mobile search + points badge + auth */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Search button — mobile only */}
+            <button
+              onClick={() => setMobileSearchOpen((v) => !v)}
+              className={`sm:hidden flex items-center justify-center w-[34px] h-[34px] rounded-full border glass glass-hover transition-all ${
+                mobileSearchOpen ? "text-primary border-primary/40 bg-primary/10" : "text-muted-foreground hover:text-white"
+              }`}
+              aria-label="Toggle search"
+            >
+              {mobileSearchOpen ? <X className="w-4 h-4" /> : <SearchIcon />}
+            </button>
+
             {/* Points pill */}
             {isLoggedIn && !isPointsLoading && (
               <Link
@@ -196,7 +217,7 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded-full px-4 py-[6px] h-[38px] text-[13px] font-medium border glass glass-hover whitespace-nowrap"
+                  className="flex items-center gap-2 rounded-full px-3 sm:px-4 py-[6px] h-[34px] sm:h-[38px] text-[13px] font-medium border glass glass-hover whitespace-nowrap"
                 >
                   {session.user.image ? (
                     <img
@@ -307,6 +328,47 @@ export function Navbar() {
             )}
           </div>
         </div>
+
+        {/* Mobile Search Expandable Bar */}
+        {mobileSearchOpen && (
+          <div className="sm:hidden border-t border-white/5 bg-background/95 backdrop-blur-xl px-4 py-2.5 animate-in slide-in-from-top-2 duration-200">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (searchQuery.trim()) {
+                  router.push(`/series?q=${encodeURIComponent(searchQuery)}`);
+                  setMobileSearchOpen(false);
+                }
+              }}
+              className="flex items-center gap-2.5 rounded-full px-3.5 py-1.5 text-[13px] font-medium border border-primary/30 bg-white/5 focus-within:border-primary focus-within:bg-white/10 transition-all w-full"
+            >
+              <SearchIcon />
+              <input
+                ref={mobileSearchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search series, manga, creators..."
+                className="bg-transparent border-none outline-none w-full text-foreground placeholder:text-muted-foreground text-[13px]"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="p-1 hover:text-foreground text-muted-foreground transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+              <button
+                type="submit"
+                className="px-2.5 py-1 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors"
+              >
+                Go
+              </button>
+            </form>
+          </div>
+        )}
       </header>
 
       <LoginDialog
