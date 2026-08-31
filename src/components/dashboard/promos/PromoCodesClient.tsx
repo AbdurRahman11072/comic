@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { format, isPast } from "date-fns";
+import { PaginationFooter } from "@/components/dashboard/PaginationFooter";
 
 interface PromoCodesClientProps {
   initialPromos?: PromoCode[];
@@ -18,6 +19,8 @@ export function PromoCodesClient({ initialPromos = [] }: PromoCodesClientProps) 
   const [isLoading, setIsLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [code, setCode] = useState("");
@@ -111,145 +114,157 @@ export function PromoCodesClient({ initialPromos = [] }: PromoCodesClientProps) 
     setCode(res);
   };
 
+  const totalPages = Math.ceil(promos.length / itemsPerPage) || 1;
+  const paginatedPromos = promos.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Gift className="w-6 h-6 text-primary" /> Promo & Coupon Codes
+          <h1 className="text-2xl font-bold flex items-center gap-2 text-white">
+            <Gift className="w-6 h-6 text-primary" /> Promo Codes & Vouchers
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Create 1-time reward & bulk chapter discount promo codes with custom expiry for your readers and campaigns.
+            Create promotional codes granting free reader points or bulk reading discounts.
           </p>
         </div>
+
         <button
           onClick={() => {
             generateRandomCode();
             setModalOpen(true);
           }}
-          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20 shrink-0 self-start sm:self-auto cursor-pointer"
+          className="px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20 flex items-center justify-center gap-2 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" /> Create Promo Code
         </button>
       </div>
 
-      {/* Info Alert */}
-      <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 flex items-center gap-3 text-xs text-muted-foreground">
-        <AlertCircle className="w-4 h-4 text-primary shrink-0" />
-        <span>
-          <strong>1-Time Per User & Expiry Enforced:</strong> Each user can redeem a promo code only once. Set an expiration date and time to run limited-time flash promotions.
-        </span>
-      </div>
-
-      {/* Promos List Table */}
+      {/* Promos Table */}
       <div className="glass rounded-2xl border border-white/5 overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : promos.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-white/10 bg-white/[0.02] text-xs uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="py-4 px-6">Promo Code</th>
-                  <th className="py-4 px-6">Type / Reward</th>
-                  <th className="py-4 px-6">Redemptions</th>
-                  <th className="py-4 px-6">Expiry Time</th>
-                  <th className="py-4 px-6">Status</th>
-                  <th className="py-4 px-6 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {promos.map((promo) => {
-                  const isExpired = promo.expiresAt && isPast(new Date(promo.expiresAt));
-                  const isFull = promo.usedCount >= promo.maxUses;
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-white/[0.02] border-b border-white/5 text-xs text-muted-foreground uppercase font-bold tracking-wider">
+                  <tr>
+                    <th className="py-4 px-6">Code</th>
+                    <th className="py-4 px-6">Type / Reward</th>
+                    <th className="py-4 px-6">Redemptions</th>
+                    <th className="py-4 px-6">Expiry Time</th>
+                    <th className="py-4 px-6">Status</th>
+                    <th className="py-4 px-6 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {paginatedPromos.map((promo) => {
+                    const isExpired = promo.expiresAt && isPast(new Date(promo.expiresAt));
+                    const isFull = promo.usedCount >= promo.maxUses;
 
-                  return (
-                    <tr key={promo.id} className="hover:bg-white/[0.02] transition">
-                      <td className="py-4 px-6 font-mono font-bold text-white flex items-center gap-2">
-                        <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">{promo.code}</span>
-                        <button
-                          onClick={() => handleCopy(promo.code, promo.id)}
-                          className="text-white/40 hover:text-white transition p-1 cursor-pointer"
-                          title="Copy Code"
-                        >
-                          {copiedId === promo.id ? (
-                            <Check className="w-3.5 h-3.5 text-emerald-400" />
-                          ) : (
-                            <Copy className="w-3.5 h-3.5" />
-                          )}
-                        </button>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {promo.pointsReward > 0 && (
-                            <span className="font-bold text-amber-400 text-xs px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
-                              +{promo.pointsReward} Points
-                            </span>
-                          )}
-                          {promo.discountPercent > 0 && (
-                            <span className="font-bold text-emerald-400 text-xs px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
-                              {promo.discountPercent}% Off Bulk
-                            </span>
-                          )}
-                          {promo.pointsReward === 0 && promo.discountPercent === 0 && (
-                            <span className="text-muted-foreground text-xs">Standard</span>
-                          )}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-white">{promo.usedCount}</span>
-                          <span className="text-white/40">/ {promo.maxUses}</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 text-xs text-muted-foreground">
-                        {promo.expiresAt ? (
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-white/40" />
-                            <span>{format(new Date(promo.expiresAt), "MMM dd, yyyy HH:mm")}</span>
+                    return (
+                      <tr key={promo.id} className="hover:bg-white/[0.02] transition">
+                        <td className="py-4 px-6 font-mono font-bold text-white flex items-center gap-2">
+                          <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10">{promo.code}</span>
+                          <button
+                            onClick={() => handleCopy(promo.code, promo.id)}
+                            className="text-white/40 hover:text-white transition p-1 cursor-pointer"
+                            title="Copy Code"
+                          >
+                            {copiedId === promo.id ? (
+                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                            ) : (
+                              <Copy className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {promo.pointsReward > 0 && (
+                              <span className="font-bold text-amber-400 text-xs px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
+                                +{promo.pointsReward} Points
+                              </span>
+                            )}
+                            {promo.discountPercent > 0 && (
+                              <span className="font-bold text-emerald-400 text-xs px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                                {promo.discountPercent}% Off Bulk
+                              </span>
+                            )}
+                            {promo.pointsReward === 0 && promo.discountPercent === 0 && (
+                              <span className="text-muted-foreground text-xs">Standard</span>
+                            )}
                           </div>
-                        ) : (
-                          <span className="text-emerald-400 font-medium">No Expiration</span>
-                        )}
-                      </td>
-                      <td className="py-4 px-6">
-                        {isExpired ? (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20">
-                            EXPIRED
-                          </span>
-                        ) : isFull ? (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
-                            LIMIT REACHED
-                          </span>
-                        ) : (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                            ACTIVE
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-4 px-6 text-right">
-                        <button
-                          onClick={() => handleDelete(promo.id)}
-                          disabled={deletingId === promo.id}
-                          className="p-2 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition cursor-pointer disabled:opacity-50"
-                          title="Delete Code"
-                        >
-                          {deletingId === promo.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                        </td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-white">{promo.usedCount}</span>
+                            <span className="text-white/40">/ {promo.maxUses}</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6 text-xs text-muted-foreground">
+                          {promo.expiresAt ? (
+                            <div className="flex items-center gap-1.5">
+                              <Clock className="w-3.5 h-3.5 text-white/40" />
+                              <span>{format(new Date(promo.expiresAt), "MMM dd, yyyy HH:mm")}</span>
+                            </div>
                           ) : (
-                            <Trash2 className="w-4 h-4" />
+                            <span className="text-emerald-400 font-medium">No Expiration</span>
                           )}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          {isExpired ? (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20">
+                              EXPIRED
+                            </span>
+                          ) : isFull ? (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">
+                              LIMIT REACHED
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              ACTIVE
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-4 px-6 text-right">
+                          <button
+                            onClick={() => handleDelete(promo.id)}
+                            disabled={deletingId === promo.id}
+                            className="p-2 text-white/30 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition cursor-pointer disabled:opacity-50"
+                            title="Delete Code"
+                          >
+                            {deletingId === promo.id ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="w-4 h-4" />
+                            )}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Footer */}
+            <div className="border-t border-white/5 px-4 bg-white/[0.01]">
+              <PaginationFooter
+                page={currentPage}
+                totalPages={totalPages}
+                totalItems={promos.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          </>
         ) : (
           <div className="text-center py-20 text-muted-foreground text-sm">
             No promo codes created yet. Click &quot;Create Promo Code&quot; to get started!

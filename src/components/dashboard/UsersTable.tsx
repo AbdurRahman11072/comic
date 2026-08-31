@@ -15,6 +15,7 @@ import {
 } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { PaginationFooter } from "./PaginationFooter";
 
 interface UsersTableProps {
   initialUsers: any[];
@@ -26,8 +27,11 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("ALL");
   const [filterStatus, setFilterStatus] = useState("ALL");
+  const [currentPage, setCurrentPage] = useState(1);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const router = useRouter();
+
+  const itemsPerPage = 10;
 
   const isAdmin = currentUserRole?.toLowerCase() === "admin";
 
@@ -135,6 +139,12 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
     return matchSearch && matchRole && matchStatus;
   });
 
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage) || 1;
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
     <div className="space-y-6 w-full">
       {/* Search & Filters */}
@@ -146,7 +156,10 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
               type="text"
               placeholder="Search by user name, email, or ID..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setCurrentPage(1);
+              }}
               className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm focus:border-primary/50 outline-none"
             />
           </div>
@@ -155,7 +168,10 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
             {/* Role Filter */}
             <select
               value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
+              onChange={(e) => {
+                setFilterRole(e.target.value);
+                setCurrentPage(1);
+              }}
               className="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs outline-none"
             >
               <option value="ALL" className="bg-neutral-900">All Roles</option>
@@ -168,7 +184,10 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
             {/* Status Filter */}
             <select
               value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              onChange={(e) => {
+                setFilterStatus(e.target.value);
+                setCurrentPage(1);
+              }}
               className="px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-xs outline-none"
             >
               <option value="ALL" className="bg-neutral-900">All Statuses</option>
@@ -190,65 +209,47 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
                 <th className="px-4 py-3.5">Assigned Role</th>
                 <th className="px-4 py-3.5">Points Balance</th>
                 <th className="px-4 py-3.5">Status</th>
-                <th className="px-4 py-3.5">Joined Date</th>
-                <th className="px-5 py-3.5 text-right">Moderation & Role Actions</th>
+                <th className="px-4 py-3.5">Registered</th>
+                <th className="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {filteredUsers.length > 0 ? (
-                filteredUsers.map((user) => (
+              {paginatedUsers.length > 0 ? (
+                paginatedUsers.map((user) => (
                   <tr key={user.id} className="hover:bg-white/[0.02] transition">
                     {/* User Info */}
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-white/10 overflow-hidden shrink-0 flex items-center justify-center border border-white/10">
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-bold text-primary text-xs shrink-0 overflow-hidden">
                           {user.image ? (
                             <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
                           ) : (
-                            <span className="font-bold text-xs text-white/80">{user.name?.[0]?.toUpperCase()}</span>
+                            user.name?.charAt(0)?.toUpperCase() || "U"
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-bold text-white text-sm truncate">{user.name}</p>
-                          <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
+                          <p className="font-semibold text-white truncate max-w-[150px]">{user.name || "Anonymous"}</p>
+                          <p className="text-[11px] text-muted-foreground truncate max-w-[150px]">{user.email}</p>
                         </div>
                       </div>
                     </td>
 
-                    {/* Role Selector */}
+                    {/* Role selector */}
                     <td className="px-4 py-3.5">
                       {isAdmin ? (
                         <select
-                          value={user.role?.toLowerCase()}
+                          value={user.role}
                           disabled={updatingId === user.id}
                           onChange={(e) => handleRoleChange(user, e.target.value)}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-bold border transition cursor-pointer ${
-                            user.role === "admin"
-                              ? "bg-red-500/20 text-red-400 border-red-500/30"
-                              : user.role === "moderator"
-                              ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-                              : user.role === "creator"
-                              ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                              : "bg-white/5 text-white/70 border-white/10"
-                          }`}
+                          className="bg-white/5 border border-white/10 rounded-lg px-2.5 py-1 text-xs text-white font-medium outline-none focus:border-primary/50 cursor-pointer disabled:opacity-50"
                         >
-                          <option value="user" className="bg-neutral-900 text-white">USER</option>
-                          <option value="creator" className="bg-neutral-900 text-emerald-400">CREATOR</option>
-                          <option value="moderator" className="bg-neutral-900 text-yellow-400">MODERATOR</option>
-                          <option value="admin" className="bg-neutral-900 text-red-400">ADMIN</option>
+                          <option value="user" className="bg-neutral-900">User</option>
+                          <option value="creator" className="bg-neutral-900">Creator</option>
+                          <option value="moderator" className="bg-neutral-900">Moderator</option>
+                          <option value="admin" className="bg-neutral-900">Admin</option>
                         </select>
                       ) : (
-                        <span
-                          className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                            user.role === "admin"
-                              ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                              : user.role === "moderator"
-                              ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                              : user.role === "creator"
-                              ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                              : "bg-white/10 text-white/70"
-                          }`}
-                        >
+                        <span className="capitalize px-2.5 py-1 rounded-md bg-white/5 text-white/80 font-medium">
                           {user.role}
                         </span>
                       )}
@@ -256,63 +257,67 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
 
                     {/* Points Balance */}
                     <td className="px-4 py-3.5">
-                      <span className="font-mono font-bold text-amber-400">
-                        {(user.points || 0).toLocaleString()} P
-                      </span>
+                      <span className="font-bold text-amber-400">{(user.points || 0).toLocaleString()} pts</span>
                     </td>
 
-                    {/* Status */}
+                    {/* Status badges */}
                     <td className="px-4 py-3.5">
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         {user.banned ? (
                           <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/20 text-red-400 border border-red-500/30">
-                            BANNED
-                          </span>
-                        ) : user.transactionsFrozen ? (
-                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                            FROZEN
+                            Banned
                           </span>
                         ) : (
                           <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                            ACTIVE
+                            Active
+                          </span>
+                        )}
+                        {user.transactionsFrozen && (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                            Frozen
+                          </span>
+                        )}
+                        {user.mutedUntil && new Date(user.mutedUntil) > new Date() && (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                            Muted
                           </span>
                         )}
                       </div>
                     </td>
 
-                    {/* Created Date */}
-                    <td className="px-4 py-3.5 text-muted-foreground">
-                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}
+                    {/* Registered Date */}
+                    <td className="px-4 py-3.5 text-muted-foreground whitespace-nowrap">
+                      {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}
                     </td>
 
                     {/* Actions */}
                     <td className="px-5 py-3.5 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        {/* Mute 24h */}
-                        <button
-                          onClick={() => handleMute(user)}
-                          disabled={updatingId === user.id}
-                          className="p-2 rounded-lg glass glass-hover text-white/60 hover:text-amber-400 transition"
-                          title="Mute 24 Hours"
-                        >
-                          <VolumeX className="w-3.5 h-3.5" />
-                        </button>
-
                         {/* Freeze Transactions */}
                         <button
                           onClick={() => handleFreeze(user)}
                           disabled={updatingId === user.id}
                           className={`p-2 rounded-lg transition ${
                             user.transactionsFrozen
-                              ? "bg-purple-500/20 text-purple-400"
-                              : "glass glass-hover text-white/60 hover:text-purple-400"
+                              ? "bg-blue-500/30 text-blue-300"
+                              : "glass glass-hover text-white/60 hover:text-blue-400"
                           }`}
                           title={user.transactionsFrozen ? "Unfreeze Transactions" : "Freeze Transactions"}
                         >
                           <Lock className="w-3.5 h-3.5" />
                         </button>
 
-                        {/* Ban / Unban */}
+                        {/* Mute User */}
+                        <button
+                          onClick={() => handleMute(user)}
+                          disabled={updatingId === user.id}
+                          className="p-2 rounded-lg glass glass-hover text-white/60 hover:text-amber-400 transition"
+                          title="Mute User (24 Hours)"
+                        >
+                          <VolumeX className="w-3.5 h-3.5" />
+                        </button>
+
+                        {/* Ban User */}
                         <button
                           onClick={() => handleBan(user)}
                           disabled={updatingId === user.id}
@@ -349,6 +354,17 @@ export function UsersTable({ initialUsers, currentUserRole }: UsersTableProps) {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Footer */}
+        <div className="border-t border-white/5 px-4 bg-white/[0.01]">
+          <PaginationFooter
+            page={currentPage}
+            totalPages={totalPages}
+            totalItems={filteredUsers.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+          />
         </div>
       </div>
     </div>

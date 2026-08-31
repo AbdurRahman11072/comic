@@ -18,6 +18,7 @@ import { SeriesRowItem } from "./SeriesRowItem";
 import { AdminHideSeriesModal } from "./AdminHideSeriesModal";
 import { RequestFeatureModal } from "./RequestFeatureModal";
 import { DeleteSeriesDialog } from "./DeleteSeriesDialog";
+import { PaginationFooter } from "@/components/dashboard/PaginationFooter";
 
 export interface UnifiedSeriesItem {
   id: string;
@@ -75,6 +76,8 @@ export function SeriesClient({
   const [hiddenFilter, setHiddenFilter] = useState("all");
   const [scopeFilter, setScopeFilter] = useState<"ALL" | "MY_SERIES">("ALL");
   const [sort, setSort] = useState("latest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
   const [_total, setTotal] = useState(initialTotal || initialSeries.length);
 
   // Sync URL search param changes
@@ -332,46 +335,42 @@ export function SeriesClient({
     }
   };
 
+  const totalPages = Math.ceil(filteredSeries.length / itemsPerPage) || 1;
+  const paginatedSeries = filteredSeries.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   return (
-    <div className="space-y-6 w-full">
-      {/* Header */}
+    <div className="space-y-6">
+      {/* Header with Title & Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
             <BookOpen className="w-6 h-6 text-primary" />
-            {isModOrAdmin ? "Series & Content Moderation" : "My Series & Studio Management"}
+            {isModOrAdmin ? "Series Catalog Management" : "My Created Series"}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             {isModOrAdmin
-              ? "Manage all platform series, monitor chapter counts, handle copyright/DMCA reports, and moderate content."
-              : "Publish, edit, upload chapters, and track engagement across your comic catalog."}
+              ? "Oversee all comic publications, feature high-performing titles, or moderate series visibility."
+              : "Manage your published titles, add new chapters, and track reading metrics across your catalog."}
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => fetchSeries()}
-            disabled={loading}
-            className="p-2.5 rounded-xl glass glass-hover text-white/70 hover:text-white border border-white/10 cursor-pointer disabled:opacity-50"
-            title="Refresh Series Catalog"
+        {canCreate && (
+          <Link
+            href="/dashboard/series/add"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-xs sm:text-sm font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20 shrink-0"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin text-primary" : ""}`} />
-          </button>
-          {canCreate && (
-            <Link
-              href="/dashboard/series/add"
-              className="px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-bold hover:bg-primary/90 transition shadow-lg shadow-primary/20 flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" /> Add New Series
-            </Link>
-          )}
-        </div>
+            <Plus className="w-4 h-4" /> Add New Series
+          </Link>
+        )}
       </div>
 
-      {/* KPI Metric Summary Cards */}
+      {/* KPI Overview Metrics */}
       <SeriesStatsOverview stats={stats} isModOrAdmin={isModOrAdmin} />
 
-      {/* Filter & Search Bar */}
+      {/* Search and Filters Toolbar */}
       <SeriesFiltersToolbar
         search={search}
         scopeFilter={scopeFilter}
@@ -380,12 +379,30 @@ export function SeriesClient({
         hiddenFilter={hiddenFilter}
         sort={sort}
         isModOrAdmin={isModOrAdmin}
-        onSearchChange={setSearch}
-        onScopeFilterChange={setScopeFilter}
-        onStatusFilterChange={setStatusFilter}
-        onTypeFilterChange={setTypeFilter}
-        onHiddenFilterChange={setHiddenFilter}
-        onSortChange={setSort}
+        onSearchChange={(val) => {
+          setSearch(val);
+          setCurrentPage(1);
+        }}
+        onScopeFilterChange={(val) => {
+          setScopeFilter(val);
+          setCurrentPage(1);
+        }}
+        onStatusFilterChange={(val) => {
+          setStatusFilter(val);
+          setCurrentPage(1);
+        }}
+        onTypeFilterChange={(val) => {
+          setTypeFilter(val);
+          setCurrentPage(1);
+        }}
+        onHiddenFilterChange={(val) => {
+          setHiddenFilter(val);
+          setCurrentPage(1);
+        }}
+        onSortChange={(val) => {
+          setSort(val);
+          setCurrentPage(1);
+        }}
       />
 
       {/* Series Table */}
@@ -396,38 +413,51 @@ export function SeriesClient({
             <p className="text-sm text-muted-foreground">Loading series catalog...</p>
           </div>
         ) : filteredSeries.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-white/[0.03] text-muted-foreground uppercase text-[10px] tracking-wider border-b border-white/10">
-                <tr>
-                  <th className="px-5 py-3.5">Series</th>
-                  {isModOrAdmin && <th className="px-4 py-3.5">Creator</th>}
-                  <th className="px-4 py-3.5">Chapters</th>
-                  <th className="px-4 py-3.5">Views & Rating</th>
-                  <th className="px-4 py-3.5">Status</th>
-                  <th className="px-4 py-3.5">Promotion</th>
-                  {isModOrAdmin && <th className="px-4 py-3.5">Visibility</th>}
-                  <th className="px-5 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {filteredSeries.map((item) => (
-                  <SeriesRowItem
-                    key={item.id}
-                    item={item}
-                    isModOrAdmin={isModOrAdmin}
-                    onToggleFeatured={handleToggleFeatured}
-                    onRequestFeature={setRequestModalSeries}
-                    onOpenHideModal={(s) => {
-                      setSelectedSeriesForHide(s);
-                      setHideReason(s.hiddenReason || "");
-                    }}
-                    onOpenDeleteDialog={setSeriesToDelete}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-white/[0.03] text-muted-foreground uppercase text-[10px] tracking-wider border-b border-white/10">
+                  <tr>
+                    <th className="px-5 py-3.5">Series</th>
+                    {isModOrAdmin && <th className="px-4 py-3.5">Creator</th>}
+                    <th className="px-4 py-3.5">Chapters</th>
+                    <th className="px-4 py-3.5">Views & Rating</th>
+                    <th className="px-4 py-3.5">Status</th>
+                    <th className="px-4 py-3.5">Promotion</th>
+                    {isModOrAdmin && <th className="px-4 py-3.5">Visibility</th>}
+                    <th className="px-5 py-3.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {paginatedSeries.map((item) => (
+                    <SeriesRowItem
+                      key={item.id}
+                      item={item}
+                      isModOrAdmin={isModOrAdmin}
+                      onToggleFeatured={handleToggleFeatured}
+                      onRequestFeature={setRequestModalSeries}
+                      onOpenHideModal={(s) => {
+                        setSelectedSeriesForHide(s);
+                        setHideReason(s.hiddenReason || "");
+                      }}
+                      onOpenDeleteDialog={setSeriesToDelete}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Footer */}
+            <div className="border-t border-white/5 px-4 bg-white/[0.01]">
+              <PaginationFooter
+                page={currentPage}
+                totalPages={totalPages}
+                totalItems={filteredSeries.length}
+                itemsPerPage={itemsPerPage}
+                onPageChange={setCurrentPage}
+              />
+            </div>
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-center px-4 space-y-4">
             <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-muted-foreground">
