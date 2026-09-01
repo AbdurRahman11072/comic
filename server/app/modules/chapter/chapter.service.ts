@@ -295,7 +295,7 @@ const getChapterById = async (id: string, userId?: string) => {
 
 const createChapter = async (data: any, userId?: string, role?: string) => {
   const { images = [], language, ...chapterData } = data;
-  const cleanLang = language ? String(language).toLowerCase().trim() : 'en';
+  const cleanLang = (language && String(language).toLowerCase().trim() === 'bn') ? 'bn' : 'en';
   const chapterNumber = Number(chapterData.number);
 
   if (role === 'creator') {
@@ -318,7 +318,7 @@ const createChapter = async (data: any, userId?: string, role?: string) => {
   });
 
   if (existingChapter) {
-    const langDisplay = cleanLang === 'bn' ? 'Bangla (BN)' : cleanLang === 'en' ? 'English (EN)' : cleanLang.toUpperCase();
+    const langDisplay = cleanLang === 'bn' ? 'Bangla (BN)' : 'English (EN)';
     throw new AppError(
       httpStatus.CONFLICT,
       `Chapter ${chapterNumber} in ${langDisplay} already exists for this series. Please select a different chapter number or switch translation language.`
@@ -381,7 +381,7 @@ const updateChapter = async (id: string, data: any, userId?: string, role?: stri
 
   const updatePayload: any = { ...chapterData };
   if (language !== undefined) {
-    updatePayload.language = String(language).toLowerCase().trim() || 'en';
+    updatePayload.language = (language && String(language).toLowerCase().trim() === 'bn') ? 'bn' : 'en';
   }
   if (updatePayload.number !== undefined) {
     updatePayload.number = Number(updatePayload.number);

@@ -17,10 +17,6 @@ import {
 export const SUPPORTED_LANGUAGES = [
   { code: "en", name: "English", flag: "🇬🇧" },
   { code: "bn", name: "Bangla", flag: "🇧🇩" },
-  { code: "es", name: "Spanish", flag: "🇪🇸" },
-  { code: "hi", name: "Hindi", flag: "🇮🇳" },
-  { code: "ar", name: "Arabic", flag: "🇸🇦" },
-  { code: "id", name: "Indonesian", flag: "🇮🇩" },
 ];
 
 interface ChapterMetadataFieldsProps {

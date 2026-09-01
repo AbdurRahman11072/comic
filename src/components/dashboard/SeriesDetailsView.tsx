@@ -321,14 +321,6 @@ export function SeriesDetailsView({ series, userRole }: SeriesDetailsViewProps) 
                     const langBadge =
                       langCode === "bn"
                         ? { flag: "🇧🇩", label: "Bangla", code: "BN", cls: "bg-emerald-500/10 text-emerald-400 border-emerald-500/25" }
-                        : langCode === "es"
-                        ? { flag: "🇪🇸", label: "Spanish", code: "ES", cls: "bg-amber-500/10 text-amber-400 border-amber-500/25" }
-                        : langCode === "hi"
-                        ? { flag: "🇮🇳", label: "Hindi", code: "HI", cls: "bg-orange-500/10 text-orange-400 border-orange-500/25" }
-                        : langCode === "ar"
-                        ? { flag: "🇸🇦", label: "Arabic", code: "AR", cls: "bg-teal-500/10 text-teal-400 border-teal-500/25" }
-                        : langCode === "id"
-                        ? { flag: "🇮🇩", label: "Indonesian", code: "ID", cls: "bg-rose-500/10 text-rose-400 border-rose-500/25" }
                         : { flag: "🇬🇧", label: "English", code: "EN", cls: "bg-blue-500/10 text-blue-400 border-blue-500/25" };
 
                     return (

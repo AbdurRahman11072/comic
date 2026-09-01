@@ -33,46 +33,6 @@ export function FlagIcon({ code, className = "w-4 h-3" }: { code: string; classN
         </svg>
       );
 
-    case "es":
-      // Spain Flag
-      return (
-        <svg viewBox="0 0 50 30" className={`${className} rounded-sm shrink-0 overflow-hidden shadow-sm`}>
-          <rect width="50" height="30" fill="#AA151B" />
-          <rect y="7.5" width="50" height="15" fill="#F1BF00" />
-        </svg>
-      );
-
-    case "hi":
-      // India Flag
-      return (
-        <svg viewBox="0 0 50 30" className={`${className} rounded-sm shrink-0 overflow-hidden shadow-sm`}>
-          <rect width="50" height="10" fill="#FF9933" />
-          <rect y="10" width="50" height="10" fill="#FFFFFF" />
-          <rect y="20" width="50" height="10" fill="#138808" />
-          <circle cx="25" cy="15" r="3.5" fill="none" stroke="#000080" strokeWidth="0.8" />
-        </svg>
-      );
-
-    case "ar":
-      // Saudi Arabia Flag
-      return (
-        <svg viewBox="0 0 50 30" className={`${className} rounded-sm shrink-0 overflow-hidden shadow-sm`}>
-          <rect width="50" height="30" fill="#006C35" />
-          <text x="25" y="18" fill="#FFFFFF" fontSize="9" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
-            عربي
-          </text>
-        </svg>
-      );
-
-    case "id":
-      // Indonesia Flag
-      return (
-        <svg viewBox="0 0 50 30" className={`${className} rounded-sm shrink-0 overflow-hidden shadow-sm`}>
-          <rect width="50" height="15" fill="#FF0000" />
-          <rect y="15" width="50" height="15" fill="#FFFFFF" />
-        </svg>
-      );
-
     default:
       return (
         <span className="text-xs">🌐</span>
