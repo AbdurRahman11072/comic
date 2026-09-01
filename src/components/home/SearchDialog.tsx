@@ -40,7 +40,7 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
     const timer = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await seriesService.getAllSeries({ title: query, limit: 12 });
+        const res = await seriesService.getAllSeries({ search: query, q: query, title: query, limit: 12 });
         setResults(res.data);
       } catch (error) {
         console.error("Search failed:", error);

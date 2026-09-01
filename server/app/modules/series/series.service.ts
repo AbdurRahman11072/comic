@@ -26,18 +26,37 @@ const formatCreator = (c: any) => {
 };
 
 const getAllSeries = async (query: any) => {
-  const { page = 1, limit = 10, type, status, genre, sort, isPinned, isDiscounted, creatorId, search, includeHidden } = query;
+  const {
+    page = 1,
+    limit = 10,
+    type,
+    status,
+    genre,
+    sort,
+    isPinned,
+    isDiscounted,
+    creatorId,
+    search,
+    searchTerm,
+    title,
+    q,
+    includeHidden,
+  } = query;
   const skip = (Number(page) - 1) * Number(limit);
+
+  const querySearch = typeof (search || searchTerm || title || q) === 'string'
+    ? (search || searchTerm || title || q).trim()
+    : undefined;
 
   const where: any = {};
   if (includeHidden !== 'true') {
     where.isHidden = false;
   }
-  if (search) {
+  if (querySearch) {
     where.OR = [
-      { title: { contains: search, mode: 'insensitive' } },
-      { altTitles: { contains: search, mode: 'insensitive' } },
-      { description: { contains: search, mode: 'insensitive' } },
+      { title: { contains: querySearch, mode: 'insensitive' } },
+      { altTitles: { contains: querySearch, mode: 'insensitive' } },
+      { description: { contains: querySearch, mode: 'insensitive' } },
     ];
   }
   if (type) where.type = type.toUpperCase();

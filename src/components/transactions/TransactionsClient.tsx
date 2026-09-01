@@ -207,7 +207,7 @@ export function TransactionsClient() {
 
   return (
     <div className="relative w-full">
-      <div className="max-w-[72rem] w-full mx-auto px-4 py-12 relative z-10 space-y-8">
+      <div className="max-w-[72rem] w-full mx-auto px-4 pt-6 sm:pt-12 pb-24 sm:pb-12 relative z-10 space-y-6 sm:space-y-8">
         {/* Unauthenticated View */}
         {!sessionLoading && !session ? (
           <div className="glass rounded-3xl p-8 sm:p-12 border border-white/10 text-center max-w-xl mx-auto space-y-6 shadow-2xl">

@@ -16,18 +16,25 @@ function SeriesContent() {
   const [total, setTotal] = useState(0);
   const limit = 18;
 
-  useEffect(() => {
-    setPage(1);
-  }, [searchParams]);
+  const searchParamsString = searchParams.toString();
 
   useEffect(() => {
+    setPage(1);
+  }, [searchParamsString]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
     const fetchSeries = async () => {
       setLoading(true);
       try {
+        const querySearch = searchParams.get("q") || searchParams.get("search") || searchParams.get("searchTerm") || undefined;
         const params = {
           page,
           limit,
-          searchTerm: searchParams.get("q") || undefined,
+          search: querySearch,
+          searchTerm: querySearch,
+          q: querySearch,
           type: searchParams.get("type") || undefined,
           status: searchParams.get("status") || undefined,
           genre: searchParams.get("genre") || undefined,
@@ -35,17 +42,27 @@ function SeriesContent() {
         };
 
         const res = await seriesService.getAllSeries(params);
-        setSeries(res.data);
-        setTotal(res.meta?.total || 0);
+        if (!isCancelled) {
+          setSeries(res?.data || []);
+          setTotal(res?.meta?.total || (res as any)?.pagination?.total || 0);
+        }
       } catch (error) {
-        console.error("Failed to fetch series:", error);
+        if (!isCancelled) {
+          console.error("Failed to fetch series:", error);
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     };
 
     fetchSeries();
-  }, [page, searchParams]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [page, searchParamsString]);
 
   const totalPages = Math.ceil(total / limit);
 

@@ -4,6 +4,8 @@ export interface SeriesFilterParams {
   page?: number;
   limit?: number;
   search?: string;
+  searchTerm?: string;
+  q?: string;
   title?: string;
   sort?: string;
   type?: string;

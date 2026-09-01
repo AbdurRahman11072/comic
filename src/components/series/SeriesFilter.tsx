@@ -2,7 +2,7 @@
 
 import { Search, Filter, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 const GENRES = [
@@ -17,53 +17,116 @@ export function SeriesFilter() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [query, setQuery] = useState(searchParams.get("q") || "");
-  const [type, setType] = useState(searchParams.get("type") || "");
-  const [status, setStatus] = useState(searchParams.get("status") || "");
-  const [sort, setSort] = useState(searchParams.get("sort") || "latest");
-  const [selectedGenres, setSelectedGenres] = useState<string[]>(
+  const [query, setQuery] = useState(() => searchParams.get("q") || "");
+  const [type, setType] = useState(() => searchParams.get("type") || "");
+  const [status, setStatus] = useState(() => searchParams.get("status") || "");
+  const [sort, setSort] = useState(() => searchParams.get("sort") || "latest");
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(() =>
     searchParams.get("genre") ? searchParams.get("genre")!.split(",") : []
   );
 
   const [debouncedQuery, setDebouncedQuery] = useState(query);
+  const isInitialMount = useRef(true);
 
-  // Debounce the search query
+  // Auto-focus search input when navigated from Navbar Search Icon (?focus=search)
+  useEffect(() => {
+    if (searchParams.get("focus") === "search") {
+      const timer = setTimeout(() => {
+        const input = document.getElementById("series-search-input");
+        if (input) {
+          input.focus();
+          input.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
+  // Sync state when URL searchParams change externally (e.g. Navbar search or browser Back/Forward)
+  useEffect(() => {
+    const currentQ = searchParams.get("q") || "";
+    const currentType = searchParams.get("type") || "";
+    const currentStatus = searchParams.get("status") || "";
+    const currentSort = searchParams.get("sort") || "latest";
+    const currentGenreStr = searchParams.get("genre") || "";
+    const currentGenres = currentGenreStr ? currentGenreStr.split(",") : [];
+
+    if (currentQ !== query) {
+      setQuery(currentQ);
+      setDebouncedQuery(currentQ);
+    }
+    if (currentType !== type) setType(currentType);
+    if (currentStatus !== status) setStatus(currentStatus);
+    if (currentSort !== sort) setSort(currentSort);
+    if (selectedGenres.join(",") !== currentGenreStr) {
+      setSelectedGenres(currentGenres);
+    }
+  }, [searchParams]);
+
+  // Debounce the search query input
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 500); // 500ms delay
+    }, 400);
 
     return () => {
       clearTimeout(handler);
     };
   }, [query]);
 
-  // Update URL when filters change
+  // Update URL only when filter states actually change and differ from current URL
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    
-    if (debouncedQuery) params.set("q", debouncedQuery); else params.delete("q");
-    if (type) params.set("type", type); else params.delete("type");
-    if (status) params.set("status", status); else params.delete("status");
-    if (sort) params.set("sort", sort); else params.delete("sort");
-    if (selectedGenres.length > 0) params.set("genre", selectedGenres.join(",")); else params.delete("genre");
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
 
-    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  }, [debouncedQuery, type, status, sort, selectedGenres, pathname, router]);
+    const params = new URLSearchParams();
+    if (debouncedQuery.trim()) params.set("q", debouncedQuery.trim());
+    if (type) params.set("type", type);
+    if (status) params.set("status", status);
+    if (sort && sort !== "latest") params.set("sort", sort);
+    if (selectedGenres.length > 0) params.set("genre", selectedGenres.join(","));
+
+    const newQueryString = params.toString();
+    const currentParams = new URLSearchParams(searchParams.toString());
+    // Normalize current params for comparison (ignoring internal focus/rsc parameters)
+    const normalizedCurrent = new URLSearchParams();
+    if (currentParams.get("q")) normalizedCurrent.set("q", currentParams.get("q")!);
+    if (currentParams.get("type")) normalizedCurrent.set("type", currentParams.get("type")!);
+    if (currentParams.get("status")) normalizedCurrent.set("status", currentParams.get("status")!);
+    if (currentParams.get("sort") && currentParams.get("sort") !== "latest") {
+      normalizedCurrent.set("sort", currentParams.get("sort")!);
+    }
+    if (currentParams.get("genre")) normalizedCurrent.set("genre", currentParams.get("genre")!);
+
+    if (newQueryString !== normalizedCurrent.toString()) {
+      const targetUrl = newQueryString ? `${pathname}?${newQueryString}` : pathname;
+      router.replace(targetUrl, { scroll: false });
+    }
+  }, [debouncedQuery, type, status, sort, selectedGenres, pathname]);
 
   const toggleGenre = (genre: string) => {
-    setSelectedGenres(prev => 
-      prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
+    setSelectedGenres((prev) =>
+      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
     );
   };
 
   const clearFilters = () => {
     setQuery("");
+    setDebouncedQuery("");
     setType("");
     setStatus("");
     setSort("latest");
     setSelectedGenres([]);
   };
+
+  const hasActiveFilters =
+    Boolean(query) ||
+    Boolean(type) ||
+    Boolean(status) ||
+    sort !== "latest" ||
+    selectedGenres.length > 0;
 
   return (
     <div className="space-y-6">
@@ -72,6 +135,7 @@ export function SeriesFilter() {
         <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input 
+            id="series-search-input"
             className="pl-10 w-full bg-background/50 border-white/10" 
             placeholder="Search series..." 
             value={query}
@@ -110,10 +174,10 @@ export function SeriesFilter() {
             <option value="rating">Top Rated</option>
           </select>
 
-          {(query || type || status || sort !== "latest" || selectedGenres.length > 0) && (
+          {hasActiveFilters && (
             <button 
               onClick={clearFilters}
-              className="p-2.5 glass rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+              className="p-2.5 glass rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
               title="Clear all filters"
             >
               <X className="w-4 h-4" />
@@ -138,7 +202,7 @@ export function SeriesFilter() {
             <button
               key={genre}
               onClick={() => toggleGenre(genre)}
-              className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all border ${
+              className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all border cursor-pointer ${
                 selectedGenres.includes(genre)
                   ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
                   : "glass glass-hover border-white/5 text-muted-foreground hover:text-white"
