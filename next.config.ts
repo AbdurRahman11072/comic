@@ -2,12 +2,12 @@ import type { NextConfig } from "next";
 
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://pagead2.googlesyndication.com https://adservice.google.com https://www.googletagservices.com https://tpc.googlesyndication.com https://js.stripe.com https://www.google.com https://*.adtrafficquality.google https://partner.googleadservices.com https://*.doubleclick.net;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://adservice.google.com https://*.adservice.google.com https://www.googletagservices.com https://*.googletagservices.com https://tpc.googlesyndication.com https://js.stripe.com https://www.google.com https://*.google.com https://*.adtrafficquality.google https://partner.googleadservices.com https://*.doubleclick.net;
   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
   img-src 'self' blob: data: https: http:;
   font-src 'self' https://fonts.gstatic.com data:;
-  frame-src 'self' https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://js.stripe.com https://hooks.stripe.com https://*.doubleclick.net;
-  connect-src 'self' https: http: ws: wss:;
+  frame-src 'self' https://pagead2.googlesyndication.com https://*.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://*.google.com https://*.doubleclick.net https://*.adtrafficquality.google https://js.stripe.com https://hooks.stripe.com;
+  connect-src 'self' https: http: ws: wss: https://*.googlesyndication.com https://pagead2.googlesyndication.com https://*.doubleclick.net https://*.adtrafficquality.google;
   media-src 'self' https: http: blob: data:;
   object-src 'none';
   base-uri 'self';

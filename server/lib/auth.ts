@@ -6,6 +6,17 @@ import { envConfig } from '../app/config/envConfig';
 import { generateUniqueReferralCode } from '../app/utils/referralCode';
 import { sendPasswordResetEmail, sendVerificationEmail } from '../app/utils/emailService';
 
+const customDomain = process.env.CUSTOM_DOMAIN?.trim();
+const customDomainOrigins = customDomain
+  ? [
+      customDomain.startsWith('http') ? customDomain : `https://${customDomain}`,
+      customDomain.startsWith('http') ? customDomain : `http://${customDomain}`,
+      customDomain.startsWith('http')
+        ? customDomain.replace('://', '://www.')
+        : `https://www.${customDomain.replace(/^www\./, '')}`,
+    ]
+  : [];
+
 const additionalOrigins = process.env.ADDITIONAL_ORIGINS
   ? process.env.ADDITIONAL_ORIGINS.split(',').map((o) => o.trim())
   : [];
@@ -16,11 +27,13 @@ const trustedOrigins: string[] = Array.from(
     process.env.NEXT_PUBLIC_APP_URL,
     process.env.BETTER_AUTH_URL,
     process.env.RENDER_EXTERNAL_URL,
+    process.env.FRONTEND_URL,
     'https://comicbd.onrender.com',
     'http://localhost:3000',
     'http://localhost:5000',
     'http://127.0.0.1:3000',
     'http://127.0.0.1:5000',
+    ...customDomainOrigins,
     ...additionalOrigins,
   ])
 ).filter((o): o is string => Boolean(o));
