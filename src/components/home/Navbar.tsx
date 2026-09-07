@@ -191,33 +191,43 @@ export function Navbar() {
             {/* Auth button (Desktop Only) */}
             <div className="hidden sm:flex items-center">
               {isPending ? (
-                <div className="rounded-full w-[90px] h-[38px] bg-white/5 animate-pulse" />
+                <div className="rounded-full w-[34px] sm:w-[38px] h-[34px] sm:h-[38px] bg-white/5 animate-pulse" />
               ) : isLoggedIn ? (
                 <div className="relative">
                   <button
                     onClick={() => setUserMenuOpen((v) => !v)}
-                    className="flex items-center gap-2 rounded-full px-3 sm:px-4 py-[6px] h-[34px] sm:h-[38px] text-[13px] font-medium border glass glass-hover whitespace-nowrap cursor-pointer"
+                    className="flex items-center justify-center w-[34px] sm:w-[38px] h-[34px] sm:h-[38px] rounded-full border glass glass-hover transition-all cursor-pointer overflow-hidden hover:border-primary/40"
+                    title={session.user.name || "User menu"}
+                    aria-label="User menu"
                   >
                     {session.user.image ? (
                       <img
                         src={session.user.image}
                         alt={session.user.name}
-                        className="w-5 h-5 rounded-full object-cover"
+                        className="w-full h-full rounded-full object-cover"
                       />
                     ) : (
-                      <span className="w-5 h-5 rounded-full bg-primary/30 flex items-center justify-center text-[10px] font-bold">
-                        {session.user.name?.[0]?.toUpperCase()}
+                      <span className="w-full h-full rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs sm:text-sm">
+                        {session.user.name?.[0]?.toUpperCase() || "U"}
                       </span>
                     )}
-                    <span className="max-w-[100px] truncate">{session.user.name}</span>
                   </button>
 
                   {/* Dropdown menu */}
                   {userMenuOpen && (
-                    <div
-                      className="absolute right-0 top-[calc(100%+8px)] w-[200px] rounded-2xl border border-white/10 bg-popover/95 backdrop-blur-xl shadow-2xl overflow-hidden z-[200] p-1 animate-in fade-in zoom-in-95 duration-100"
-                    >
-                      <div className="flex flex-col space-y-0.5">
+                    <>
+                      <div
+                        className="fixed inset-0 z-[190]"
+                        onClick={() => setUserMenuOpen(false)}
+                      />
+                      <div
+                        className="absolute right-0 top-[calc(100%+8px)] w-[220px] rounded-2xl border border-white/10 bg-popover/95 backdrop-blur-xl shadow-2xl overflow-hidden z-[200] p-1.5 animate-in fade-in zoom-in-95 duration-100"
+                      >
+                        <div className="px-3 py-2 border-b border-white/10 mb-1">
+                          <p className="text-xs font-bold text-white truncate">{session.user.name}</p>
+                          <p className="text-[11px] text-muted-foreground truncate">{session.user.email}</p>
+                        </div>
+                        <div className="flex flex-col space-y-0.5">
                         <Link
                           href="/profile"
                           onClick={() => setUserMenuOpen(false)}
@@ -306,7 +316,8 @@ export function Navbar() {
                         </button>
                       </div>
                     </div>
-                  )}
+                  </>
+                )}
                 </div>
               ) : (
                 <button
