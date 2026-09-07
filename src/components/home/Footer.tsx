@@ -46,6 +46,7 @@ export function Footer() {
   const { config } = useSiteConfig();
 
   const appName = config?.appName || "Comic BD";
+  const appLogoUrl = config?.appLogoUrl;
   const appTagline = config?.appTagline || "Dedicated to providing high-quality comic translations and reading experiences.";
 
   const socials = [
@@ -62,9 +63,37 @@ export function Footer() {
       <div className="max-w-[72rem] mx-auto space-y-7">
         {/* Brand */}
         <div>
-          <Link href="/" className="inline-block hover:opacity-90 transition">
-            <div className="font-heading text-3xl md:text-4xl tracking-widest text-white font-extrabold uppercase">
-              <span>COMIC</span> <span className="text-primary font-bold">BD</span>
+          <Link href="/" className="inline-flex items-center justify-center gap-3 hover:opacity-90 transition">
+            {appLogoUrl && (
+              <img
+                src={appLogoUrl}
+                alt={appName}
+                className="w-8 h-8 md:w-9 md:h-9 rounded-xl object-contain"
+              />
+            )}
+            <div className="font-heading text-3xl md:text-4xl tracking-widest uppercase font-extrabold flex items-center gap-2">
+              {(() => {
+                const words = appName.trim().split(" ");
+                if (words.length > 1) {
+                  return (
+                    <>
+                      <span className="text-white">{words.slice(0, -1).join(" ")}</span>{" "}
+                      <span className="text-primary font-bold">{words[words.length - 1]}</span>
+                    </>
+                  );
+                }
+                return (
+                  <span
+                    style={{
+                      background: "linear-gradient(90deg, #fff 60%, var(--primary, #e11d48))",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    {appName}
+                  </span>
+                );
+              })()}
             </div>
           </Link>
           <p className="text-gray-300 text-sm max-w-lg mx-auto mt-2 leading-relaxed font-normal">

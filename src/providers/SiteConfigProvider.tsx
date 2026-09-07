@@ -68,7 +68,12 @@ export function SiteConfigProvider({
   }, []);
 
   useEffect(() => {
-    if (!initialConfig) {
+    if (initialConfig) {
+      setConfig((prev) => ({
+        ...prev,
+        ...initialConfig,
+      }));
+    } else {
       fetchConfig();
     }
   }, [initialConfig, fetchConfig]);

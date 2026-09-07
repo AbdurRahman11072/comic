@@ -48,6 +48,7 @@ export function MobileUserDrawer({
   const isLoggedIn = !isPending && !!session?.user;
   const userRole = (session?.user as any)?.role || "user";
   const isStaff = ["creator", "moderator", "admin"].includes(userRole);
+  const appName = config?.appName || "Comic BD";
 
   // Close drawer on route change or ESC
   useEffect(() => {
@@ -156,7 +157,7 @@ export function MobileUserDrawer({
             <div className="space-y-3 py-1">
               <div className="space-y-1">
                 <h3 className="font-bold text-sm text-white flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-primary" /> Welcome to Comic BD
+                  <Sparkles className="w-4 h-4 text-primary" /> Welcome to {appName}
                 </h3>
                 <p className="text-xs text-muted-foreground">Sign in to sync bookmarks, unlock chapters, and earn free points.</p>
               </div>

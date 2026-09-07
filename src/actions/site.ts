@@ -1,7 +1,7 @@
 "use server";
 
 import { env } from "@/env";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { SiteConfigData } from "@/services/site.service";
@@ -21,6 +21,9 @@ export const UpdateSiteConfigAction = async (payload: Partial<SiteConfigData>) =
     const data = await res.json();
     if (res.ok && data.success) {
       (revalidateTag as any)("SiteConfig");
+      try {
+        revalidatePath("/", "layout");
+      } catch (_e) {}
       return data;
     }
     return { success: false, message: data?.message || "Failed to update site config" };
