@@ -4,7 +4,7 @@ import { useState } from "react";
 import { promoService, PromoCode } from "@/services/promo.service";
 import { CreatePromoCodeAction, DeletePromoCodeAction } from "@/actions/promo";
 import {
-  Gift, Plus, Trash2, Copy, Check, Sparkles, Loader2, AlertCircle, Clock
+  Gift, Plus, Trash2, Copy, Check, Sparkles, Loader2, AlertCircle, Clock, X
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { format, isPast } from "date-fns";
@@ -274,11 +274,26 @@ export function PromoCodesClient({ initialPromos = [] }: PromoCodesClientProps) 
 
       {/* Create Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setModalOpen(false);
+          }}
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+        >
           <div className="glass p-6 sm:p-8 rounded-3xl border border-white/10 max-w-md w-full shadow-2xl relative">
-            <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-white">
-              <Sparkles className="w-5 h-5 text-primary" /> Create Promo Code
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+                <Sparkles className="w-5 h-5 text-primary" /> Create Promo Code
+              </h2>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="p-1.5 rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition cursor-pointer"
+                title="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
             <form onSubmit={handleCreate} className="space-y-4">
               <div>

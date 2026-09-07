@@ -54,6 +54,16 @@ const CustomCashFlowTooltip = ({ active, payload }: any) => {
 };
 
 export function RevenueCashFlowChart({ data, mounted }: RevenueCashFlowChartProps) {
+  const isAllZero =
+    !data ||
+    data.length === 0 ||
+    data.every(
+      (d) =>
+        Number(d.revenue || 0) === 0 &&
+        Number(d.payouts || 0) === 0 &&
+        Number(d.margin || 0) === 0
+    );
+
   return (
     <div className="glass rounded-3xl p-6 border border-white/5 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -82,79 +92,90 @@ export function RevenueCashFlowChart({ data, mounted }: RevenueCashFlowChartProp
         </div>
       </div>
 
-      <div className="h-72 w-full pt-2">
+      <div className="h-72 w-full pt-2 relative">
         {mounted ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
-              <defs>
-                <linearGradient id="colorGross" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorPayouts" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="colorMargin" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
-              <XAxis
-                dataKey="date"
-                stroke="rgba(255,255,255,0.3)"
-                fontSize={10}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(str) => {
-                  try {
-                    return new Date(str).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    });
-                  } catch {
-                    return str;
-                  }
-                }}
-              />
-              <YAxis
-                stroke="rgba(255,255,255,0.3)"
-                fontSize={10}
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(val) => `$${val}`}
-              />
-              <RechartsTooltip content={<CustomCashFlowTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="revenue"
-                name="Gross Revenue"
-                stroke="#10b981"
-                fillOpacity={1}
-                fill="url(#colorGross)"
-                strokeWidth={2}
-              />
-              <Area
-                type="monotone"
-                dataKey="payouts"
-                name="Creator Payouts"
-                stroke="#f43f5e"
-                fillOpacity={1}
-                fill="url(#colorPayouts)"
-                strokeWidth={2}
-              />
-              <Area
-                type="monotone"
-                dataKey="margin"
-                name="Net Margin"
-                stroke="#06b6d4"
-                fillOpacity={1}
-                fill="url(#colorMargin)"
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorGross" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorPayouts" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="colorMargin" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.25} />
+                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" vertical={false} />
+                <XAxis
+                  dataKey="date"
+                  stroke="rgba(255,255,255,0.3)"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(str) => {
+                    try {
+                      return new Date(str).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      });
+                    } catch {
+                      return str;
+                    }
+                  }}
+                />
+                <YAxis
+                  stroke="rgba(255,255,255,0.3)"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(val) => `$${val}`}
+                />
+                <RechartsTooltip content={<CustomCashFlowTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  name="Gross Revenue"
+                  stroke="#10b981"
+                  fillOpacity={1}
+                  fill="url(#colorGross)"
+                  strokeWidth={2}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="payouts"
+                  name="Creator Payouts"
+                  stroke="#f43f5e"
+                  fillOpacity={1}
+                  fill="url(#colorPayouts)"
+                  strokeWidth={2}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="margin"
+                  name="Net Margin"
+                  stroke="#06b6d4"
+                  fillOpacity={1}
+                  fill="url(#colorMargin)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+
+            {isAllZero && (
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="px-4 py-2 rounded-2xl glass border border-white/10 text-xs font-semibold text-white/50 backdrop-blur-md flex items-center gap-2 shadow-lg">
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-400/60" />
+                  No cash flow transactions recorded in this period
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           <div className="w-full h-full bg-white/5 animate-pulse rounded-2xl" />
         )}
@@ -162,3 +183,4 @@ export function RevenueCashFlowChart({ data, mounted }: RevenueCashFlowChartProp
     </div>
   );
 }
+
