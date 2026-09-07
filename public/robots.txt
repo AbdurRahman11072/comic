@@ -26,4 +26,4 @@ Disallow: /transactions
 
 # Crawl Delay & Sitemap Index
 Crawl-delay: 1
-Sitemap: https://comicbd.com/sitemap.xml
+Sitemap: https://www.genzcomicbd.me/sitemap.xml

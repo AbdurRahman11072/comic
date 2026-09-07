@@ -26,9 +26,9 @@ export function ChannelManagerClient({
 
   // Form state
   const [channelName, setChannelName] = useState(initialProfile?.channelName || "");
-  const [description, setDescription] = useState(initialProfile?.channelDescription || "");
-  const [profileImage, setProfileImage] = useState(initialProfile?.user?.image || "");
-  const [bannerUrl, setBannerUrl] = useState(initialProfile?.channelBanner || "");
+  const [description, setDescription] = useState(initialProfile?.description || initialProfile?.channelDescription || "");
+  const [profileImage, setProfileImage] = useState(initialProfile?.profileImage || initialProfile?.user?.image || "");
+  const [bannerUrl, setBannerUrl] = useState(initialProfile?.bannerUrl || initialProfile?.channelBanner || "");
 
   // Uploading state
   const [uploadingProfile, setUploadingProfile] = useState(false);
@@ -46,7 +46,7 @@ export function ChannelManagerClient({
       const uploadUrl =
         typeof window !== "undefined"
           ? ""
-          : process.env.NEXT_PUBLIC_APP_URL || "http://127.0.0.1:5000";
+          : (process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "");
       const res = await fetch(`${uploadUrl}/api/v1/upload`, {
         method: "POST",
         body: formData,
@@ -77,8 +77,9 @@ export function ChannelManagerClient({
     try {
       const res = await UpdateCreatorProfileAction({
         channelName: channelName.trim(),
-        channelDescription: description.trim() || null,
-        channelBanner: bannerUrl || null,
+        description: description.trim() || null,
+        bannerUrl: bannerUrl || null,
+        profileImage: profileImage || null,
       });
       if (res.success && res.data) {
         setProfile(res.data);

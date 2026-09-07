@@ -107,7 +107,7 @@ server
 
     // SEO routes (robots.txt and dynamic sitemap.xml)
     app.get("/robots.txt", (req: Request, res: Response) => {
-      const baseUrl = envConfig.FRONTEND_URL || "https://comicbd.com";
+      const baseUrl = (envConfig.FRONTEND_URL || "").trim().replace(/\/+$/, "");
       const robotsTxt = `# Comic BD - Search Engine & Crawler Policy
 User-agent: *
 Allow: /
@@ -144,7 +144,7 @@ Sitemap: ${baseUrl}/sitemap.xml
     });
 
     app.get("/sitemap.xml", async (req: Request, res: Response) => {
-      const baseUrl = envConfig.FRONTEND_URL || "https://comicbd.com";
+      const baseUrl = (envConfig.FRONTEND_URL || "").trim().replace(/\/+$/, "");
       try {
         const staticPages = [
           { url: `${baseUrl}/`, priority: "1.0", changefreq: "always" },

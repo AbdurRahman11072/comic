@@ -88,12 +88,13 @@ const getAllCreators = async (query: any) => {
 const getProfile = async (userId: string) => {
   let profile = await prisma.creatorProfile.findUnique({
     where: { userId },
+    include: { user: { select: { id: true, name: true, image: true, role: true } } },
   });
 
   if (!profile) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { name: true, image: true, role: true },
+      select: { id: true, name: true, image: true, role: true },
     });
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, 'User not found');
@@ -104,9 +105,15 @@ const getProfile = async (userId: string) => {
         channelName: user.name || 'Creator Studio',
         profileImage: user.image || null,
       },
+      include: { user: { select: { id: true, name: true, image: true, role: true } } },
     });
   }
-  return profile;
+
+  return {
+    ...profile,
+    channelDescription: profile.description,
+    channelBanner: profile.bannerUrl,
+  };
 };
 
 const updateProfile = async (userId: string, payload: any) => {
@@ -118,31 +125,71 @@ const updateProfile = async (userId: string, payload: any) => {
     where: { id: userId },
     select: { name: true, image: true, role: true },
   });
+
   if (user && user.role === 'user') {
     await prisma.user.update({
       where: { id: userId },
       data: { role: 'creator' },
     });
   }
+
+  const channelName =
+    payload.channelName?.trim() ||
+    payload.name?.trim() ||
+    profile?.channelName ||
+    user?.name ||
+    'Creator Studio';
+
+  const description =
+    payload.description !== undefined
+      ? payload.description
+      : payload.channelDescription !== undefined
+      ? payload.channelDescription
+      : profile?.description ?? null;
+
+  const bannerUrl =
+    payload.bannerUrl !== undefined
+      ? payload.bannerUrl
+      : payload.channelBanner !== undefined
+      ? payload.channelBanner
+      : profile?.bannerUrl ?? null;
+
+  const profileImage =
+    payload.profileImage !== undefined
+      ? payload.profileImage
+      : payload.image !== undefined
+      ? payload.image
+      : profile?.profileImage ?? user?.image ?? null;
+
+  const cleanData = {
+    channelName,
+    description: description ? String(description).trim() : null,
+    bannerUrl: bannerUrl ? String(bannerUrl).trim() : null,
+    profileImage: profileImage ? String(profileImage).trim() : null,
+  };
+
+  let result;
   if (!profile) {
-    return await prisma.creatorProfile.create({
+    result = await prisma.creatorProfile.create({
       data: {
         userId,
-        channelName: payload.channelName?.trim() || user?.name || 'Creator Studio',
-        profileImage: payload.profileImage || user?.image || null,
-        description: payload.description || null,
-        bannerUrl: payload.bannerUrl || null,
-        ...payload,
-      }
+        ...cleanData,
+      },
+      include: { user: { select: { id: true, name: true, image: true, role: true } } },
+    });
+  } else {
+    result = await prisma.creatorProfile.update({
+      where: { userId },
+      data: cleanData,
+      include: { user: { select: { id: true, name: true, image: true, role: true } } },
     });
   }
 
-  const result = await prisma.creatorProfile.update({
-    where: { userId },
-    data: payload,
-  });
-
-  return result;
+  return {
+    ...result,
+    channelDescription: result.description,
+    channelBanner: result.bannerUrl,
+  };
 };
 
 const applyForSeries = async (userId: string, payload: any) => {

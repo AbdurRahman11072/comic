@@ -40,7 +40,10 @@ export function ReferralRewardsCard({ onOpenLogin }: ReferralRewardsCardProps) {
   }, [user]);
 
   const referralCode = referralStats?.referralCode || (user as any)?.referralCode || "";
-  const origin = typeof window !== "undefined" ? window.location.origin : "https://comicbd.com";
+  const origin =
+    typeof window !== "undefined"
+      ? window.location.origin
+      : (process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "");
   const shareableUrl = referralCode ? `${origin}/?ref=${referralCode}` : `${origin}/?ref=...`;
 
   const copyLink = () => {

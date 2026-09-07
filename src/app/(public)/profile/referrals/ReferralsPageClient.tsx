@@ -28,10 +28,11 @@ export function ReferralsPageClient({ profile }: { profile: any }) {
   }, []);
 
   const referralCode = referralStats?.referralCode || profile?.referralCode || "CBD-PENDING";
-  const shareableUrl =
+  const origin =
     typeof window !== "undefined"
-      ? `${window.location.origin}/?ref=${referralCode}`
-      : `https://comicbd.com/?ref=${referralCode}`;
+      ? window.location.origin
+      : (process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "");
+  const shareableUrl = `${origin}/?ref=${referralCode}`;
 
   const copyToClipboard = (text: string, isLink: boolean = false) => {
     navigator.clipboard.writeText(text);

@@ -44,13 +44,10 @@ export async function constructMetadata({
   const finalDescription = description || appDescription;
   const finalKeywords = keywords ? keywords.join(", ") : metaKeywords;
 
-  const appBaseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    process.env.RENDER_EXTERNAL_URL ||
-    "https://comicbd.onrender.com";
+  const appBaseUrl = (process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "");
 
   return {
-    metadataBase: new URL(appBaseUrl),
+    metadataBase: appBaseUrl ? new URL(appBaseUrl) : undefined,
     title: finalTitle,
     description: finalDescription,
     keywords: finalKeywords,
@@ -76,5 +73,11 @@ export async function constructMetadata({
     other: googleAdSense
       ? { "google-adsense-account": googleAdSense }
       : {},
+    verification: {
+      google:
+        process.env.GOOGLE_SITE_VERIFICATION ||
+        process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+        undefined,
+    },
   };
 }

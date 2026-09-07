@@ -3,12 +3,12 @@ import { MetadataRoute } from "next";
 export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://comicbd.com";
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "");
 
   // 1. Static Core & Policy Pages
   const staticRoutes: MetadataRoute.Sitemap = [
     {
-      url: `${baseUrl}`,
+      url: `${baseUrl}/`,
       lastModified: new Date(),
       changeFrequency: "always",
       priority: 1.0,

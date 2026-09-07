@@ -107,7 +107,7 @@ export function ProfileSidebar({
                   const url =
                     typeof window !== "undefined"
                       ? ""
-                      : process.env.NEXT_PUBLIC_APP_URL || "http://127.0.0.1:5000";
+                      : (process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "");
                   const res = await fetch(`${url}/api/v1/upload`, {
                     method: "POST",
                     body: formData,
