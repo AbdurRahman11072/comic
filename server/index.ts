@@ -153,26 +153,32 @@ Sitemap: ${baseUrl}/sitemap.xml
 
     app.get("/sitemap.xml", (req: Request, res: Response) => {
       const baseUrl = getBaseUrl(req);
+      const now = new Date().toISOString();
       const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <sitemap>
 <loc>${baseUrl}/sitemap-static.xml</loc>
+<lastmod>${now}</lastmod>
 </sitemap>
 <sitemap>
 <loc>${baseUrl}/sitemap-series.xml</loc>
+<lastmod>${now}</lastmod>
 </sitemap>
 <sitemap>
 <loc>${baseUrl}/sitemap-novels.xml</loc>
+<lastmod>${now}</lastmod>
 </sitemap>
 <sitemap>
 <loc>${baseUrl}/sitemap-novel-chapters.xml</loc>
+<lastmod>${now}</lastmod>
 </sitemap>
 <sitemap>
 <loc>${baseUrl}/sitemap-chapters-1.xml</loc>
+<lastmod>${now}</lastmod>
 </sitemap>
 </sitemapindex>`;
 
-      res.setHeader("Content-Type", "application/xml");
+      res.setHeader("Content-Type", "application/xml; charset=utf-8");
       res.setHeader("Cache-Control", "public, max-age=3600");
       res.status(200).send(sitemapIndex);
     });
@@ -200,7 +206,7 @@ Sitemap: ${baseUrl}/sitemap.xml
       }
       xml += `</urlset>`;
 
-      res.setHeader("Content-Type", "application/xml");
+      res.setHeader("Content-Type", "application/xml; charset=utf-8");
       res.setHeader("Cache-Control", "public, max-age=86400");
       res.status(200).send(xml);
     });
@@ -239,7 +245,7 @@ Sitemap: ${baseUrl}/sitemap.xml
 
         xml += `</urlset>`;
 
-        res.setHeader("Content-Type", "application/xml");
+        res.setHeader("Content-Type", "application/xml; charset=utf-8");
         res.setHeader("Cache-Control", "public, max-age=3600");
         res.status(200).send(xml);
       } catch (error) {
@@ -249,15 +255,17 @@ Sitemap: ${baseUrl}/sitemap.xml
     });
 
     app.get("/sitemap-novels.xml", (req: Request, res: Response) => {
-      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>`;
-      res.setHeader("Content-Type", "application/xml");
+      const baseUrl = getBaseUrl(req);
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${baseUrl}/series</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.5</priority>\n  </url>\n</urlset>`;
+      res.setHeader("Content-Type", "application/xml; charset=utf-8");
       res.setHeader("Cache-Control", "public, max-age=86400");
       res.status(200).send(xml);
     });
 
     app.get("/sitemap-novel-chapters.xml", (req: Request, res: Response) => {
-      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>`;
-      res.setHeader("Content-Type", "application/xml");
+      const baseUrl = getBaseUrl(req);
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${baseUrl}/latest</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n    <changefreq>hourly</changefreq>\n    <priority>0.5</priority>\n  </url>\n</urlset>`;
+      res.setHeader("Content-Type", "application/xml; charset=utf-8");
       res.setHeader("Cache-Control", "public, max-age=86400");
       res.status(200).send(xml);
     });
@@ -298,7 +306,7 @@ Sitemap: ${baseUrl}/sitemap.xml
 
         xml += `</urlset>`;
 
-        res.setHeader("Content-Type", "application/xml");
+        res.setHeader("Content-Type", "application/xml; charset=utf-8");
         res.setHeader("Cache-Control", "public, max-age=3600");
         res.status(200).send(xml);
       } catch (error) {
