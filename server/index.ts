@@ -105,9 +105,17 @@ server
     // API routes - BEFORE Next.js handler
     app.use("/api/v1", RootRoutes);
 
+    const getBaseUrl = (req: Request): string => {
+      const configuredUrl = (envConfig.FRONTEND_URL || envConfig.APP_URL || process.env.NEXT_PUBLIC_APP_URL || "").trim().replace(/\/+$/, "");
+      if (configuredUrl) return configuredUrl;
+      const protocol = (req.headers["x-forwarded-proto"] as string) || req.protocol || "http";
+      const host = (req.headers["x-forwarded-host"] as string) || req.get("host") || "";
+      return host ? `${protocol}://${host}` : "";
+    };
+
     // SEO routes (robots.txt and dynamic sitemap.xml)
     app.get("/robots.txt", (req: Request, res: Response) => {
-      const baseUrl = (envConfig.FRONTEND_URL || "").trim().replace(/\/+$/, "");
+      const baseUrl = getBaseUrl(req);
       const robotsTxt = `# Comic BD - Search Engine & Crawler Policy
 User-agent: *
 Allow: /
@@ -143,36 +151,71 @@ Sitemap: ${baseUrl}/sitemap.xml
       res.status(200).send(robotsTxt);
     });
 
-    app.get("/sitemap.xml", async (req: Request, res: Response) => {
-      const baseUrl = (envConfig.FRONTEND_URL || "").trim().replace(/\/+$/, "");
-      try {
-        const staticPages = [
-          { url: `${baseUrl}/`, priority: "1.0", changefreq: "always" },
-          { url: `${baseUrl}/latest`, priority: "0.9", changefreq: "hourly" },
-          { url: `${baseUrl}/about`, priority: "0.7", changefreq: "monthly" },
-          { url: `${baseUrl}/contact`, priority: "0.7", changefreq: "monthly" },
-          { url: `${baseUrl}/privacy`, priority: "0.5", changefreq: "monthly" },
-          { url: `${baseUrl}/terms`, priority: "0.5", changefreq: "monthly" },
-          { url: `${baseUrl}/dmca`, priority: "0.5", changefreq: "monthly" },
-          { url: `${baseUrl}/become-creator`, priority: "0.6", changefreq: "monthly" },
-          { url: `${baseUrl}/rewards`, priority: "0.6", changefreq: "weekly" },
-          { url: `${baseUrl}/shop`, priority: "0.7", changefreq: "weekly" },
-        ];
+    app.get("/sitemap.xml", (req: Request, res: Response) => {
+      const baseUrl = getBaseUrl(req);
+      const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<sitemap>
+<loc>${baseUrl}/sitemap-static.xml</loc>
+</sitemap>
+<sitemap>
+<loc>${baseUrl}/sitemap-series.xml</loc>
+</sitemap>
+<sitemap>
+<loc>${baseUrl}/sitemap-novels.xml</loc>
+</sitemap>
+<sitemap>
+<loc>${baseUrl}/sitemap-novel-chapters.xml</loc>
+</sitemap>
+<sitemap>
+<loc>${baseUrl}/sitemap-chapters-1.xml</loc>
+</sitemap>
+</sitemapindex>`;
 
+      res.setHeader("Content-Type", "application/xml");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+      res.status(200).send(sitemapIndex);
+    });
+
+    // Sub-sitemaps referenced in sitemapindex
+    app.get("/sitemap-static.xml", (req: Request, res: Response) => {
+      const baseUrl = getBaseUrl(req);
+      const staticPages = [
+        { url: `${baseUrl}/`, priority: "1.0", changefreq: "always" },
+        { url: `${baseUrl}/latest`, priority: "0.9", changefreq: "hourly" },
+        { url: `${baseUrl}/about`, priority: "0.7", changefreq: "monthly" },
+        { url: `${baseUrl}/contact`, priority: "0.7", changefreq: "monthly" },
+        { url: `${baseUrl}/privacy`, priority: "0.5", changefreq: "monthly" },
+        { url: `${baseUrl}/terms`, priority: "0.5", changefreq: "monthly" },
+        { url: `${baseUrl}/dmca`, priority: "0.5", changefreq: "monthly" },
+        { url: `${baseUrl}/become-creator`, priority: "0.6", changefreq: "monthly" },
+        { url: `${baseUrl}/rewards`, priority: "0.6", changefreq: "weekly" },
+        { url: `${baseUrl}/shop`, priority: "0.7", changefreq: "weekly" },
+      ];
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+      xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+      for (const page of staticPages) {
+        xml += `  <url>\n    <loc>${page.url}</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
+      }
+      xml += `</urlset>`;
+
+      res.setHeader("Content-Type", "application/xml");
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.status(200).send(xml);
+    });
+
+    app.get("/sitemap-series.xml", async (req: Request, res: Response) => {
+      const baseUrl = getBaseUrl(req);
+      try {
         const seriesList = await prisma.series.findMany({
           where: { isHidden: false },
           select: {
             slug: true,
             updatedAt: true,
-            chapters: {
-              select: {
-                number: true,
-                createdAt: true,
-              },
-              orderBy: { number: "desc" },
-            },
           },
-          take: 1000,
+          orderBy: { updatedAt: "desc" },
+          take: 50000,
         });
 
         const creators = await prisma.creatorProfile.findMany({
@@ -180,22 +223,14 @@ Sitemap: ${baseUrl}/sitemap.xml
             userId: true,
             updatedAt: true,
           },
-          take: 200,
+          take: 500,
         });
 
         let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
         xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
 
-        for (const page of staticPages) {
-          xml += `  <url>\n    <loc>${page.url}</loc>\n    <lastmod>${new Date().toISOString()}</lastmod>\n    <changefreq>${page.changefreq}</changefreq>\n    <priority>${page.priority}</priority>\n  </url>\n`;
-        }
-
         for (const s of seriesList) {
           xml += `  <url>\n    <loc>${baseUrl}/series/${s.slug}</loc>\n    <lastmod>${new Date(s.updatedAt).toISOString()}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>\n`;
-
-          for (const c of s.chapters) {
-            xml += `  <url>\n    <loc>${baseUrl}/series/${s.slug}/chapter-${c.number}</loc>\n    <lastmod>${new Date(c.createdAt).toISOString()}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
-          }
         }
 
         for (const cr of creators) {
@@ -208,10 +243,72 @@ Sitemap: ${baseUrl}/sitemap.xml
         res.setHeader("Cache-Control", "public, max-age=3600");
         res.status(200).send(xml);
       } catch (error) {
-        console.error("Error generating sitemap XML:", error);
+        console.error("Error generating series sitemap XML:", error);
         res.status(500).send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
       }
     });
+
+    app.get("/sitemap-novels.xml", (req: Request, res: Response) => {
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>`;
+      res.setHeader("Content-Type", "application/xml");
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.status(200).send(xml);
+    });
+
+    app.get("/sitemap-novel-chapters.xml", (req: Request, res: Response) => {
+      const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n</urlset>`;
+      res.setHeader("Content-Type", "application/xml");
+      res.setHeader("Cache-Control", "public, max-age=86400");
+      res.status(200).send(xml);
+    });
+
+    const handleChapterSitemap = async (req: Request, res: Response) => {
+      const baseUrl = getBaseUrl(req);
+      const pageNum = parseInt((req.params as any).page || "1", 10) || 1;
+      const pageSize = 10000;
+      const skip = (pageNum - 1) * pageSize;
+
+      try {
+        const chapters = await prisma.chapter.findMany({
+          where: {
+            series: { isHidden: false },
+          },
+          select: {
+            number: true,
+            createdAt: true,
+            series: {
+              select: {
+                slug: true,
+              },
+            },
+          },
+          orderBy: { createdAt: "desc" },
+          skip,
+          take: pageSize,
+        });
+
+        let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+        xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+        for (const c of chapters) {
+          if (c.series?.slug) {
+            xml += `  <url>\n    <loc>${baseUrl}/series/${c.series.slug}/chapter-${c.number}</loc>\n    <lastmod>${new Date(c.createdAt).toISOString()}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
+          }
+        }
+
+        xml += `</urlset>`;
+
+        res.setHeader("Content-Type", "application/xml");
+        res.setHeader("Cache-Control", "public, max-age=3600");
+        res.status(200).send(xml);
+      } catch (error) {
+        console.error("Error generating chapters sitemap XML:", error);
+        res.status(500).send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>');
+      }
+    };
+
+    app.get("/sitemap-chapters-1.xml", handleChapterSitemap);
+    app.get("/sitemap-chapters-:page.xml", handleChapterSitemap);
 
     // Next.js handler for all other routes (must be last)
     app.use((req: Request, res: Response) => {
