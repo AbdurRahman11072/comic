@@ -67,7 +67,7 @@ export function HeroSlider() {
       >
         {items.map((item, idx) => (
           <SwiperSlide key={`${item.id}-${idx}`}>
-            <Link href={item.href} className="block w-full h-full relative">
+            <Link href={item.href} prefetch={false} className="block w-full h-full relative">
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] group-hover:scale-105"
                 style={{ backgroundImage: `url(${item.image})` }}

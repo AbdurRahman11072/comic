@@ -64,7 +64,7 @@ export function Top50RankCard({ series, periodLabel }: Top50RankCardProps) {
       className={`relative group rounded-2xl glass p-2.5 border ${style.border} transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 flex flex-col h-full overflow-hidden`}
     >
       {/* Cover Image Container */}
-      <Link href={`/series/${series.slug}`} className="block relative aspect-[0.74/1] rounded-xl overflow-hidden bg-white/5">
+      <Link href={`/series/${series.slug}`} prefetch={false} className="block relative aspect-[0.74/1] rounded-xl overflow-hidden bg-white/5">
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
           style={{ backgroundImage: `url(${series.coverUrl || "/placeholder-cover.jpg"})` }}
@@ -102,6 +102,7 @@ export function Top50RankCard({ series, periodLabel }: Top50RankCardProps) {
         <div>
           <Link
             href={`/series/${series.slug}`}
+            prefetch={false}
             className="font-bold text-xs sm:text-sm text-white hover:text-primary transition line-clamp-1 block"
             title={series.title}
           >
@@ -117,6 +118,7 @@ export function Top50RankCard({ series, periodLabel }: Top50RankCardProps) {
           {latestChapter ? (
             <Link
               href={`/series/${series.slug}/${latestChapter.number}${(latestChapter as any).language ? `?lang=${(latestChapter as any).language}` : ""}`}
+              prefetch={false}
               className="text-[10px] font-bold text-primary bg-primary/10 hover:bg-primary hover:text-white px-2 py-0.5 rounded-md transition"
             >
               Ch. {latestChapter.number}{(latestChapter as any).language && (latestChapter as any).language !== "en" ? ` (${(latestChapter as any).language.toUpperCase()})` : ""}

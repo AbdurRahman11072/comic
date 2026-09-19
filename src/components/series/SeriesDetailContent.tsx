@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { SeriesBackground } from "./SeriesBackground";
 import { SeriesCover } from "./SeriesCover";
 import { SeriesStats } from "./SeriesStats";
@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/providers/LanguageProvider";
 import { FlagIcon } from "@/components/ui/FlagIcon";
+import { seriesService } from "@/services/series.service";
 
 interface Chapter {
   id?: string;
@@ -85,6 +86,14 @@ export function SeriesDetailContent({ series }: SeriesDetailContentProps) {
   const [bulkModalOpen, setBulkModalOpen] = useState(false);
   const [localPurchasedIds, setLocalPurchasedIds] = useState<Set<string>>(new Set());
   const itemsPerPage = 20;
+  const hasTrackedView = useRef(false);
+
+  useEffect(() => {
+    if (!hasTrackedView.current && series?.slug) {
+      hasTrackedView.current = true;
+      seriesService.recordSeriesView(series.slug).catch(() => {});
+    }
+  }, [series?.slug]);
 
   // Enrich chapters with local purchased state
   const enrichedChapters = useMemo(() => {

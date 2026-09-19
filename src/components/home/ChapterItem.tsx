@@ -15,6 +15,7 @@ export function ChapterItem({ chapter, isDivider }: ChapterItemProps) {
       )}
       <Link
         href={chapter.href}
+        prefetch={false}
         className={cn(
           "flex items-center justify-between py-[5px] px-1 text-[11px] rounded-md",
           "border-b border-dashed border-white/15 last:border-b-0",

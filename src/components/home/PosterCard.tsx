@@ -38,6 +38,7 @@ export function PosterCard({ series, className }: PosterCardProps) {
       {/* Cover thumbnail */}
       <Link
         href={href}
+        prefetch={false}
         className="relative flex-shrink-0 w-32 h-48 bg-white/10 bg-center bg-cover overflow-hidden"
         style={{ backgroundImage: `url(${image})` }}
       >
@@ -57,6 +58,7 @@ export function PosterCard({ series, className }: PosterCardProps) {
       <div className="flex-1 p-2.5 flex flex-col justify-between min-w-0">
         <Link
           href={href}
+          prefetch={false}
           className="text-sm font-semibold leading-tight line-clamp-3 mb-2 hover:text-accent transition-colors"
         >
           {series.title}

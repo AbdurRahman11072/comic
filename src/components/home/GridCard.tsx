@@ -15,6 +15,7 @@ export function GridCard({ series, className }: GridCardProps) {
   return (
     <Link
       href={href}
+      prefetch={false}
       className={cn(
         "relative block overflow-hidden rounded-[14px] cursor-pointer group",
         "bg-white/10 bg-center bg-cover",

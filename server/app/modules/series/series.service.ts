@@ -356,11 +356,6 @@ const getSeriesBySlug = async (slug: string, userId?: string) => {
     await cacheService.set(cacheKey, baseSeries, 300);
   }
 
-  // Increment view count asynchronously
-  prisma.series.update({
-    where: { id: baseSeries.id },
-    data: { totalViews: { increment: 1 } },
-  }).catch(() => null);
 
   const isPremiumChaptersEnabled = async (): Promise<boolean> => {
     try {
@@ -746,6 +741,47 @@ const getTop50Series = async (period: 'today' | 'weekly' | 'monthly' = 'today') 
   return ranked;
 };
 
+const recordSeriesView = async (
+  slugOrId: string,
+  clientIp?: string,
+  userId?: string,
+  userAgent?: string
+): Promise<{ counted: boolean; reason?: string }> => {
+  // Reject automated bots and crawlers
+  if (userAgent && /bot|crawler|spider|crawling|headless|prerender|preview|lighthouse/i.test(userAgent)) {
+    return { counted: false, reason: 'BOT_DETECTED' };
+  }
+
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+  const series = await prisma.series.findUnique({
+    where: isUuid ? { id: slugOrId } : { slug: slugOrId },
+    select: { id: true, slug: true },
+  });
+
+  if (!series) {
+    return { counted: false, reason: 'SERIES_NOT_FOUND' };
+  }
+
+  const identifier = userId || clientIp || 'anonymous';
+  const cooldownKey = `cooldown:view:series:${series.id}:${identifier}`;
+  const inCooldown = await cacheService.get(cooldownKey);
+
+  if (inCooldown) {
+    return { counted: false, reason: 'COOLDOWN_ACTIVE' };
+  }
+
+  // Set 30-minute cooldown (1800 seconds)
+  await cacheService.set(cooldownKey, 1, 1800);
+
+  // Increment total views asynchronously in DB
+  prisma.series.update({
+    where: { id: series.id },
+    data: { totalViews: { increment: 1 } },
+  }).catch(() => null);
+
+  return { counted: true };
+};
+
 export const SeriesService = {
   getAllSeries,
   getAdminSeriesList,
@@ -760,4 +796,5 @@ export const SeriesService = {
   getFeaturedSeries,
   getSeriesById,
   getTop50Series,
+  recordSeriesView,
 };

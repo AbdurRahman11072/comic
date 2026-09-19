@@ -168,14 +168,6 @@ const getChapterByNumber = async (seriesSlug: string, number: number, userId?: s
     await cacheService.set(cacheKey, baseChapterData, 1800);
   }
 
-  // Increment series total views asynchronously
-  if (baseChapterData.series?.id) {
-    prisma.series.update({
-      where: { id: baseChapterData.series.id },
-      data: { totalViews: { increment: 1 } },
-    }).catch(() => null);
-  }
-
   // If premium chapters are disabled globally by admin, all chapters are unlocked & free
   const effectivelyLocked = baseChapterData.premiumEnabled ? baseChapterData.isLocked : false;
 

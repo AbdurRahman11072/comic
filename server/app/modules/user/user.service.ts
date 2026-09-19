@@ -1,4 +1,5 @@
 import { prisma } from '../../../lib/prisma';
+import { SeriesService } from '../series/series.service';
 
 const getProfile = async (userId: string) => {
   const result = await prisma.user.findUnique({
@@ -51,7 +52,7 @@ const toggleBookmark = async (userId: string, seriesId: string) => {
   }
 };
 
-const updateHistory = async (userId: string, seriesId: string, chapterId: string) => {
+const updateHistory = async (userId: string, seriesId: string, chapterId: string, clientIp?: string) => {
   const [result] = await Promise.all([
     prisma.history.upsert({
       where: {
@@ -60,10 +61,7 @@ const updateHistory = async (userId: string, seriesId: string, chapterId: string
       update: { chapterId },
       create: { userId, seriesId, chapterId },
     }),
-    prisma.series.update({
-      where: { id: seriesId },
-      data: { totalViews: { increment: 1 } },
-    }).catch(() => null),
+    SeriesService.recordSeriesView(seriesId, clientIp, userId).catch(() => null),
   ]);
   return result;
 };

@@ -127,6 +127,18 @@ export const seriesService = {
     }
   },
 
+  recordSeriesView: async (slug: string): Promise<ServiceResponse<any>> => {
+    try {
+      const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/series/${slug}/view`, {
+        method: "POST",
+        credentials: "include",
+      });
+      return await res.json();
+    } catch (_error) {
+      return { success: false, data: null, message: "Failed to record series view" };
+    }
+  },
+
   getPinnedSeries: async (): Promise<ServiceResponse<any[]>> => {
     try {
       const res = await fetch(`${env.NEXT_PUBLIC_API_URL}/api/v1/series/pinned`, {

@@ -41,7 +41,12 @@ const updateHistory = asyncHandler(async (req: Request, res: Response) => {
 
   if (!userId) throw new AppError(httpStatus.UNAUTHORIZED, 'User not authenticated');
 
-  const result = await UserService.updateHistory(userId, seriesId, chapterId);
+  const clientIp =
+    (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() ||
+    req.socket?.remoteAddress ||
+    req.ip;
+
+  const result = await UserService.updateHistory(userId, seriesId, chapterId, clientIp);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
