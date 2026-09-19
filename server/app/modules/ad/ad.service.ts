@@ -159,7 +159,7 @@ const getAdByPlacement = async (placement: string, countryCode?: string) => {
       where: { id: 'global' },
       select: { adClient: true },
     });
-    const adClient = siteConfig?.adClient || process.env.NEXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-8848458851675460';
+    const adClient = siteConfig?.adClient || process.env.NEXT_PUBLIC_ADSENSE_CLIENT || 'ca-pub-9075860605152477';
     if (adClient) {
       return {
         id: `auto-${placement}`,

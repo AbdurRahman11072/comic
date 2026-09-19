@@ -1,6 +1,8 @@
 # Comic BD - Search Engine & Crawler Policy
 User-agent: *
 Allow: /
+Allow: /ads.txt
+Allow: /app-ads.txt
 Allow: /series
 Allow: /series/*
 Allow: /latest
@@ -15,6 +17,19 @@ Allow: /dmca
 Allow: /shop
 Allow: /rewards
 Allow: /become-creator
+
+# Google AdSense & AdMob Verification Crawlers
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: Google-Display-Ads-Bot
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: AdsBot-Google-Mobile
+Allow: /
 
 # Restricted Private Routes
 Disallow: /dashboard

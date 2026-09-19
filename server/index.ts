@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { toNodeHandler } from "better-auth/node";
 import cors from "cors";
 import type { Request, Response } from "express";
@@ -117,12 +119,29 @@ server
       return host ? `${protocol}://${host}` : "";
     };
 
+    // Ads.txt and app-ads.txt routes (guaranteed direct plain text response)
+    app.get(["/ads.txt", "/app-ads.txt"], (req: Request, res: Response) => {
+      const isAppAds = req.path.includes("app-ads");
+      const fileName = isAppAds ? "app-ads.txt" : "ads.txt";
+      const filePath = path.join(process.cwd(), "public", fileName);
+
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      res.setHeader("Cache-Control", "public, max-age=3600");
+
+      if (fs.existsSync(filePath)) {
+        return res.sendFile(filePath);
+      }
+      res.status(200).send("google.com, pub-9075860605152477, DIRECT, f08c47fec0942fa0\n");
+    });
+
     // SEO routes (robots.txt and dynamic sitemap.xml)
     app.get("/robots.txt", (req: Request, res: Response) => {
       const baseUrl = getBaseUrl(req);
       const robotsTxt = `# Comic BD - Search Engine & Crawler Policy
 User-agent: *
 Allow: /
+Allow: /ads.txt
+Allow: /app-ads.txt
 Allow: /series
 Allow: /series/*
 Allow: /latest
@@ -138,6 +157,19 @@ Allow: /shop
 Allow: /rewards
 Allow: /become-creator
 
+# Google AdSense & AdMob Verification Crawlers
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: Google-Display-Ads-Bot
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+User-agent: AdsBot-Google-Mobile
+Allow: /
+
 # Restricted Private Routes
 Disallow: /dashboard
 Disallow: /dashboard/*
@@ -150,7 +182,7 @@ Disallow: /transactions
 Crawl-delay: 1
 Sitemap: ${baseUrl}/sitemap.xml
 `;
-      res.setHeader("Content-Type", "text/plain");
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
       res.setHeader("Cache-Control", "public, max-age=86400");
       res.status(200).send(robotsTxt);
     });

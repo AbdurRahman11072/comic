@@ -23,7 +23,7 @@ export async function constructMetadata({
   let appDescription = SITE_DEFAULTS.heroSubtitle;
   let metaKeywords = "manga, manhwa, manhua, webtoon, comics, read online, scanlation";
   let ogImage = image;
-  let googleAdSense = "ca-pub-8954395091807116";
+  let googleAdSense = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "ca-pub-9075860605152477";
 
   try {
     const configRes = await siteService.getSiteConfig();
@@ -34,10 +34,16 @@ export async function constructMetadata({
       else if (c.heroSubtitle) appDescription = c.heroSubtitle;
       if (c.metaKeywords) metaKeywords = c.metaKeywords;
       if (!ogImage && c.ogImageUrl) ogImage = c.ogImageUrl;
-      if (c.googleAdsenseId) googleAdSense = c.googleAdsenseId;
+      if (c.adClient || (c as any).googleAdsenseId) {
+        googleAdSense = c.adClient || (c as any).googleAdsenseId;
+      }
     }
   } catch (e) {
     // Fallback cleanly to default constants
+  }
+
+  if (googleAdSense && !googleAdSense.startsWith("ca-pub-") && googleAdSense.startsWith("pub-")) {
+    googleAdSense = `ca-${googleAdSense}`;
   }
 
   const finalTitle = title ? `${title} | ${appName}` : `${appName} — ${SITE_DEFAULTS.appTagline}`;

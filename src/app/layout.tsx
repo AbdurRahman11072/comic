@@ -24,9 +24,13 @@ export default async function RootLayout({
   const config = configRes?.success ? configRes?.data : null;
   const customAdScript = config?.customAdScript || null;
 
-  const adSenseClient =
+  let adSenseClient =
     process.env.NEXT_PUBLIC_ADSENSE_CLIENT ||
-    (config?.adClient ? config.adClient : "ca-pub-8848458851675460");
+    (config?.adClient ? config.adClient : "ca-pub-9075860605152477");
+
+  if (adSenseClient && !adSenseClient.startsWith("ca-pub-") && adSenseClient.startsWith("pub-")) {
+    adSenseClient = `ca-${adSenseClient}`;
+  }
 
   return (
     <html lang="en">
