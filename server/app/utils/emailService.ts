@@ -16,12 +16,69 @@ export const sendEmail = async ({
   subject,
   html,
   text,
+  name,
   actionUrl,
 }: SendEmailParams): Promise<boolean> => {
   const resendApiKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.EMAIL_FROM || 'Comic BD <onboarding@resend.dev>';
 
-  // 1. Production Mode: Resend REST API (https://api.resend.com/emails)
+  const emailjsServiceId = process.env.EMAILJS_SERVICE_ID;
+  const emailjsTemplateId = process.env.EMAILJS_TEMPLATE_ID;
+  const emailjsPublicKey = process.env.EMAILJS_PUBLIC_KEY;
+  const emailjsPrivateKey = process.env.EMAILJS_PRIVATE_KEY;
+
+  const printTerminalFallback = (reason?: string) => {
+    console.warn(`\n[EmailService] ${reason || 'Falling back to terminal dispatch'}:`);
+    console.log('==================== 📧 [EMAIL DISPATCH] ====================');
+    console.log(`To:         ${to}`);
+    console.log(`From:       ${fromEmail}`);
+    console.log(`Subject:    ${subject}`);
+    if (actionUrl) {
+      console.log(`Action URL: ${actionUrl}`);
+    }
+    console.log('------------------------------------------------------------');
+    if (text) {
+      console.log(text);
+    } else {
+      console.log(html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
+    }
+    console.log('============================================================\n');
+  };
+
+  // 1. Try EmailJS REST API if configured
+  if (emailjsServiceId && emailjsTemplateId && emailjsPublicKey) {
+    try {
+      console.log(`[EmailService:EmailJS] Attempting dispatch to ${to}...`);
+      const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: emailjsServiceId,
+          template_id: emailjsTemplateId,
+          user_id: emailjsPublicKey,
+          accessToken: emailjsPrivateKey,
+          template_params: {
+            to_email: to,
+            to_name: name || to,
+            subject,
+            message: text || html,
+            action_url: actionUrl || '',
+          },
+        }),
+      });
+
+      if (res.ok) {
+        console.log(`[EmailService:EmailJS] Email successfully sent to ${to}`);
+        return true;
+      }
+      const errText = await res.text().catch(() => '');
+      console.warn(`[EmailService:EmailJS] Notice (${res.status}): ${errText}`);
+    } catch (err) {
+      console.warn('[EmailService:EmailJS] Request failed:', err);
+    }
+  }
+
+  // 2. Production Mode: Resend REST API (https://api.resend.com/emails)
   if (resendApiKey) {
     try {
       console.log(`[EmailService:Resend] Dispatching "${subject}" to ${to}...`);
@@ -44,8 +101,6 @@ export const sendEmail = async ({
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        console.error(`[EmailService:Resend] API Error (Status ${response.status}):`, data);
-
         // Auto-fallback: if unverified custom domain error, retry with default onboarding@resend.dev sender
         if (
           (data?.message?.includes('domain is not verified') || data?.message?.includes('domain')) &&
@@ -72,12 +127,9 @@ export const sendEmail = async ({
             console.log(`[EmailService:Resend] Email successfully sent to ${to} via onboarding@resend.dev (ID: ${retryData?.id || 'ok'})`);
             return true;
           }
-          console.error('[EmailService:Resend] Sandbox retry error:', retryData);
         }
 
-        if (data?.message?.includes('testing email')) {
-          console.warn('[EmailService:Resend] Tip: On Resend free tier without a verified domain, you can only send to your Resend account email.');
-        }
+        printTerminalFallback(`Provider rejected dispatch (${data?.message || 'Check domain/sandbox configuration'})`);
         return false;
       }
 
@@ -85,27 +137,13 @@ export const sendEmail = async ({
       return true;
     } catch (err) {
       console.error('[EmailService:Resend] Request failed:', err);
+      printTerminalFallback('Network error reaching email provider');
       return false;
     }
   }
 
-  // 2. Development / Fallback Mode: Clean, formatted terminal notification
-  console.warn('[EmailService] RESEND_API_KEY is not configured. Falling back to terminal display:');
-  console.log('\n==================== 📧 [EMAIL DISPATCH] ====================');
-  console.log(`To:         ${to}`);
-  console.log(`From:       ${fromEmail}`);
-  console.log(`Subject:    ${subject}`);
-  if (actionUrl) {
-    console.log(`Action URL: ${actionUrl}`);
-  }
-  console.log('------------------------------------------------------------');
-  if (text) {
-    console.log(text);
-  } else {
-    console.log(html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
-  }
-  console.log('============================================================\n');
-
+  // 3. Terminal Fallback Mode
+  printTerminalFallback('No email provider credentials configured');
   return true;
 };
 

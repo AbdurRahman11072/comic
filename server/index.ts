@@ -24,7 +24,11 @@ import { HealthRoutes } from "./app/routes/health.routes";
 import { initKeepAliveCron, stopKeepAliveCron } from "./app/utils/keepAlive";
 
 const dev = process.env.NODE_ENV !== "production";
-const server = next({ dev });
+const server = next({
+  dev,
+  dir: process.cwd(),
+  turbopack: false,
+});
 const handle = server.getRequestHandler();
 const port = envConfig.PORT || 3000;
 // Server initialized with full dynamic robots, sitemap & contact route indexing
